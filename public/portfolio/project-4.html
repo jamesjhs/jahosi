@@ -1,0 +1,693 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Project Four | James JHS</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&family=Space+Grotesk:wght@700;800&display=swap');
+
+    /* ── Base ── */
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: "Manrope", sans-serif;
+      background: #06070d;
+      color: #f0f2ff;
+      overflow-x: hidden;
+    }
+
+    /* ── Animated aurora background ── */
+    .aurora {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+      overflow: hidden;
+    }
+    .aurora span {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(80px);
+      opacity: 0.35;
+      animation: drift 14s ease-in-out infinite alternate;
+    }
+    .aurora span:nth-child(1) {
+      width: 60vw; height: 60vw;
+      background: radial-gradient(circle, #7c3aed, transparent 70%);
+      top: -20%; left: -10%;
+      animation-duration: 16s;
+    }
+    .aurora span:nth-child(2) {
+      width: 50vw; height: 50vw;
+      background: radial-gradient(circle, #0ea5e9, transparent 70%);
+      bottom: -15%; right: -10%;
+      animation-duration: 13s;
+      animation-delay: -4s;
+    }
+    .aurora span:nth-child(3) {
+      width: 40vw; height: 40vw;
+      background: radial-gradient(circle, #f43f5e, transparent 70%);
+      top: 40%; left: 50%;
+      animation-duration: 18s;
+      animation-delay: -8s;
+    }
+    .aurora span:nth-child(4) {
+      width: 35vw; height: 35vw;
+      background: radial-gradient(circle, #10b981, transparent 70%);
+      top: 20%; right: 15%;
+      animation-duration: 15s;
+      animation-delay: -2s;
+    }
+    @keyframes drift {
+      0%   { transform: translate(0, 0) scale(1); }
+      33%  { transform: translate(4%, 6%) scale(1.08); }
+      66%  { transform: translate(-3%, 3%) scale(0.94); }
+      100% { transform: translate(5%, -4%) scale(1.05); }
+    }
+
+    /* ── Floating particles ── */
+    .particles { position: fixed; inset: 0; z-index: 0; pointer-events: none; }
+    .particle {
+      position: absolute;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.7);
+      animation: float-up linear infinite;
+    }
+    @keyframes float-up {
+      0%   { transform: translateY(100vh) scale(1); opacity: 0; }
+      10%  { opacity: 1; }
+      90%  { opacity: 0.6; }
+      100% { transform: translateY(-10vh) scale(0.5); opacity: 0; }
+    }
+
+    /* ── Content layer ── */
+    .content { position: relative; z-index: 1; }
+
+    /* ── Gradient headline text ── */
+    .gradient-text {
+      background: linear-gradient(135deg, #a78bfa 0%, #38bdf8 40%, #34d399 80%, #fbbf24 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      background-size: 300% 300%;
+      animation: hue-shift 6s ease infinite;
+    }
+    @keyframes hue-shift {
+      0%   { background-position: 0% 50%; }
+      50%  { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    /* ── Glow badge ── */
+    .glow-badge {
+      display: inline-block;
+      padding: 4px 14px;
+      border-radius: 9999px;
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      background: rgba(139,92,246,0.18);
+      border: 1px solid rgba(139,92,246,0.5);
+      color: #c4b5fd;
+      box-shadow: 0 0 14px rgba(139,92,246,0.35);
+    }
+
+    /* ── Glass card ── */
+    .glass {
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.12);
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+      border-radius: 1.25rem;
+    }
+
+    /* ── Gallery card ── */
+    .gallery-card {
+      overflow: hidden;
+      border-radius: 0.875rem;
+      cursor: pointer;
+      position: relative;
+      aspect-ratio: 4/3;
+    }
+    .gallery-art {
+      width: 100%;
+      height: 100%;
+      transition: transform 0.4s ease;
+      position: relative;
+    }
+    .gallery-art svg {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+    }
+    .gallery-card:hover .gallery-art,
+    .gallery-card:active .gallery-art {
+      transform: scale(1.06);
+    }
+    .gallery-overlay {
+      position: absolute;
+      inset: 0;
+      border-radius: 0.875rem;
+      background: linear-gradient(to top, rgba(6,7,13,0.85) 0%, transparent 55%);
+      display: flex;
+      align-items: flex-end;
+      padding: 1rem;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+    .gallery-card:hover .gallery-overlay,
+    .gallery-card:focus .gallery-overlay { opacity: 1; }
+    @media (hover: none) { .gallery-overlay { opacity: 1; } }
+
+    /* ── Scroll-reveal ── */
+    .reveal {
+      opacity: 0;
+      transform: translateY(32px);
+      transition: opacity 0.7s ease, transform 0.7s ease;
+    }
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* ── Ripple ── */
+    .ripple-btn {
+      position: relative;
+      overflow: hidden;
+      cursor: pointer;
+    }
+    .ripple-btn .ripple-wave {
+      position: absolute;
+      border-radius: 50%;
+      transform: scale(0);
+      animation: ripple 0.6s linear;
+      background: rgba(255,255,255,0.25);
+      pointer-events: none;
+    }
+    @keyframes ripple {
+      to { transform: scale(4); opacity: 0; }
+    }
+
+    /* ── Spinning ring ── */
+    .spin-ring {
+      width: 80px; height: 80px;
+      border-radius: 50%;
+      border: 3px solid transparent;
+      border-top-color: #a78bfa;
+      border-right-color: #38bdf8;
+      animation: spin 3s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ── Stat counter ── */
+    .stat-number {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 2.5rem;
+      font-weight: 800;
+      background: linear-gradient(135deg, #a78bfa, #38bdf8);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    /* ── Tag pill ── */
+    .tag {
+      display: inline-block;
+      padding: 3px 12px;
+      border-radius: 9999px;
+      font-size: 0.75rem;
+      font-weight: 600;
+    }
+
+    /* ── Tilt card (parallax on touch/mouse) ── */
+    .tilt-card {
+      transform-style: preserve-3d;
+      transition: transform 0.1s ease;
+    }
+
+    /* ── Neon divider ── */
+    .neon-line {
+      height: 1px;
+      background: linear-gradient(90deg, transparent, #7c3aed, #0ea5e9, transparent);
+    }
+
+    /* ── Lightbox ── */
+    #lightbox {
+      display: none;
+      position: fixed;
+      inset: 0;
+      z-index: 100;
+      background: rgba(0,0,0,0.92);
+      align-items: center;
+      justify-content: center;
+    }
+    #lightbox.open { display: flex; }
+    #lightbox-art {
+      width: min(80vw, 560px);
+      aspect-ratio: 4/3;
+      border-radius: 1rem;
+      overflow: hidden;
+      box-shadow: 0 0 80px rgba(139,92,246,0.4);
+      animation: pop-in 0.3s ease;
+    }
+    #lightbox-art > div { width: 100%; height: 100%; }
+    #lightbox-art svg { width: 100%; height: 100%; }
+    @keyframes pop-in {
+      from { transform: scale(0.85); opacity: 0; }
+      to   { transform: scale(1); opacity: 1; }
+    }
+    #lightbox-close {
+      position: absolute;
+      top: 1.25rem; right: 1.25rem;
+      background: rgba(255,255,255,0.1);
+      border: 1px solid rgba(255,255,255,0.2);
+      color: #fff;
+      border-radius: 9999px;
+      width: 40px; height: 40px;
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer;
+      font-size: 1.25rem;
+      transition: background 0.2s;
+    }
+    #lightbox-close:hover { background: rgba(255,255,255,0.25); }
+
+    /* ── Back link ── */
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.875rem;
+      font-weight: 600;
+      color: #a78bfa;
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+    .back-link:hover { color: #c4b5fd; }
+
+    /* ── Scrollbar ── */
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: #06070d; }
+    ::-webkit-scrollbar-thumb { background: #7c3aed; border-radius: 3px; }
+  </style>
+</head>
+<body>
+
+  <!-- Aurora background -->
+  <div class="aurora" aria-hidden="true">
+    <span></span><span></span><span></span><span></span>
+  </div>
+
+  <!-- Floating particles -->
+  <div class="particles" id="particles" aria-hidden="true"></div>
+
+  <!-- Lightbox -->
+  <div id="lightbox" role="dialog" aria-modal="true" aria-label="Artwork preview">
+    <button id="lightbox-close" aria-label="Close preview">✕</button>
+    <div id="lightbox-art"></div>
+  </div>
+
+  <!-- Page content -->
+  <div class="content">
+    <main class="mx-auto max-w-4xl px-4 py-10 sm:px-6 lg:px-8">
+
+      <!-- Back link -->
+      <a href="../index.html" class="back-link">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M10 3L5 8l5 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        Back to portfolio
+      </a>
+
+      <!-- ── Hero ── -->
+      <section class="mt-8 reveal">
+        <div class="glass p-8 sm:p-12 text-center relative overflow-hidden">
+          <!-- Decorative ring -->
+          <div class="absolute top-6 right-6 spin-ring opacity-60"></div>
+
+          <div class="glow-badge mb-4">Creative · Interactive · Experimental</div>
+          <h1 class="mt-3 text-4xl sm:text-6xl font-extrabold leading-tight font-['Space_Grotesk'] gradient-text">
+            Neon Dreamscape
+          </h1>
+          <p class="mt-5 text-slate-300 max-w-xl mx-auto text-base sm:text-lg leading-relaxed">
+            A wild ride through colour, motion and interactivity — built entirely with CSS animations and vanilla JavaScript, optimised for touch devices.
+          </p>
+
+          <!-- Tags -->
+          <div class="mt-6 flex flex-wrap justify-center gap-2">
+            <span class="tag" style="background:rgba(139,92,246,0.2);color:#c4b5fd;border:1px solid rgba(139,92,246,0.4)">CSS Animations</span>
+            <span class="tag" style="background:rgba(14,165,233,0.2);color:#7dd3fc;border:1px solid rgba(14,165,233,0.4)">Vanilla JS</span>
+            <span class="tag" style="background:rgba(244,63,94,0.2);color:#fda4af;border:1px solid rgba(244,63,94,0.4)">Touch-Ready</span>
+            <span class="tag" style="background:rgba(16,185,129,0.2);color:#6ee7b7;border:1px solid rgba(16,185,129,0.4)">Responsive</span>
+            <span class="tag" style="background:rgba(251,191,36,0.2);color:#fde68a;border:1px solid rgba(251,191,36,0.4)">Glassmorphism</span>
+          </div>
+
+          <!-- CTA -->
+          <button id="hero-btn" class="ripple-btn mt-8 inline-flex items-center gap-2 px-7 py-3 rounded-full font-bold text-sm text-white"
+                  style="background:linear-gradient(135deg,#7c3aed,#0ea5e9);box-shadow:0 4px 24px rgba(124,58,237,0.45)"
+                  aria-label="Explore the gallery">
+            <span>Explore Gallery</span>
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+        </div>
+      </section>
+
+      <!-- ── Stats ── -->
+      <section class="mt-8 reveal" style="transition-delay:0.1s">
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
+          <div class="glass p-5 text-center rounded-2xl tilt-card">
+            <div class="stat-number" data-target="48">0</div>
+            <p class="mt-1 text-xs text-slate-400 uppercase tracking-widest">Photos</p>
+          </div>
+          <div class="glass p-5 text-center rounded-2xl tilt-card">
+            <div class="stat-number" data-target="12">0</div>
+            <p class="mt-1 text-xs text-slate-400 uppercase tracking-widest">Locations</p>
+          </div>
+          <div class="glass p-5 text-center rounded-2xl tilt-card">
+            <div class="stat-number" data-target="6">0</div>
+            <p class="mt-1 text-xs text-slate-400 uppercase tracking-widest">Months</p>
+          </div>
+          <div class="glass p-5 text-center rounded-2xl tilt-card">
+            <div class="stat-number" data-target="3">0</div>
+            <p class="mt-1 text-xs text-slate-400 uppercase tracking-widest">Awards</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Neon divider -->
+      <div class="neon-line my-10 reveal" style="transition-delay:0.15s"></div>
+
+      <!-- ── Gallery ── -->
+      <section id="gallery-section" class="reveal" style="transition-delay:0.2s">
+        <h2 class="text-xs font-bold uppercase tracking-[0.2em] text-slate-400 mb-5">Featured Gallery</h2>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4" id="gallery">
+
+          <!-- Card 1 — City Lights -->
+          <div class="gallery-card" tabindex="0" aria-label="Open City Lights artwork">
+            <div class="gallery-art" style="background:linear-gradient(135deg,#0f172a 0%,#1e3a5f 40%,#0c4a6e 70%,#0f172a 100%)">
+              <svg viewBox="0 0 400 300" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                <defs><linearGradient id="water" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#0ea5e9" stop-opacity=".4"/><stop offset="100%" stop-color="#0f172a" stop-opacity=".9"/></linearGradient></defs>
+                <circle cx="30"  cy="20"  r="1.5" fill="white" opacity=".7"/><circle cx="80"  cy="10"  r="1"   fill="white" opacity=".5"/><circle cx="140" cy="25"  r="2"   fill="white" opacity=".8"/><circle cx="200" cy="8"   r="1.5" fill="white" opacity=".6"/><circle cx="260" cy="18"  r="1"   fill="white" opacity=".5"/><circle cx="320" cy="12"  r="1.5" fill="white" opacity=".7"/><circle cx="370" cy="22"  r="1"   fill="white" opacity=".6"/>
+                <circle cx="340" cy="45" r="22" fill="#fde68a" opacity=".85"/><circle cx="350" cy="38" r="18" fill="#1e3a5f"/>
+                <rect x="10"  y="140" width="30" height="80"  fill="#0f172a"/><rect x="18"  y="120" width="14" height="20"  fill="#0f172a"/><rect x="50"  y="110" width="40" height="110" fill="#0a0f1e"/><rect x="100" y="150" width="20" height="70"  fill="#0f172a"/><rect x="130" y="100" width="50" height="120" fill="#0a0f1e"/><rect x="190" y="130" width="25" height="90"  fill="#0f172a"/><rect x="225" y="90"  width="55" height="130" fill="#0a0f1e"/><rect x="290" y="140" width="30" height="80"  fill="#0f172a"/><rect x="330" y="115" width="40" height="105" fill="#0a0f1e"/><rect x="375" y="155" width="25" height="65"  fill="#0f172a"/>
+                <rect x="56"  y="118" width="4" height="4" fill="#fbbf24" opacity=".9"/><rect x="65"  y="125" width="4" height="4" fill="#fbbf24" opacity=".7"/><rect x="75"  y="118" width="4" height="4" fill="#60a5fa" opacity=".9"/><rect x="136" y="108" width="4" height="4" fill="#fbbf24" opacity=".8"/><rect x="148" y="115" width="4" height="4" fill="#60a5fa" opacity=".9"/><rect x="160" y="108" width="4" height="4" fill="#fbbf24" opacity=".7"/><rect x="231" y="100" width="4" height="4" fill="#fbbf24" opacity=".9"/><rect x="245" y="108" width="4" height="4" fill="#60a5fa" opacity=".8"/><rect x="258" y="100" width="4" height="4" fill="#fbbf24" opacity=".7"/><rect x="336" y="122" width="4" height="4" fill="#fbbf24" opacity=".8"/><rect x="350" y="130" width="4" height="4" fill="#60a5fa" opacity=".9"/>
+                <rect x="0" y="210" width="400" height="90" fill="url(#water)" opacity=".8"/>
+                <ellipse cx="100" cy="240" rx="60" ry="5" fill="none" stroke="#0ea5e9" stroke-width="1" opacity=".3"/><ellipse cx="280" cy="255" rx="80" ry="6" fill="none" stroke="#0ea5e9" stroke-width="1" opacity=".25"/>
+              </svg>
+            </div>
+            <div class="gallery-overlay"><span class="text-sm font-semibold text-white">City Lights</span></div>
+          </div>
+
+          <!-- Card 2 — Aurora Hues -->
+          <div class="gallery-card" tabindex="0" aria-label="Open Aurora Hues artwork">
+            <div class="gallery-art" style="background:linear-gradient(180deg,#0a0118 0%,#1a0533 30%,#0d1f4a 60%,#020c1a 100%)">
+              <svg viewBox="0 0 400 300" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                <defs><filter id="ab1"><feGaussianBlur stdDeviation="8"/></filter><filter id="ab2"><feGaussianBlur stdDeviation="12"/></filter><linearGradient id="snow1" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#e0e7ff"/><stop offset="100%" stop-color="#c7d2fe"/></linearGradient></defs>
+                <path d="M-20,40 Q60,120 140,80 Q200,50 260,110 Q320,150 420,60" fill="none" stroke="#a78bfa" stroke-width="40" opacity=".35" filter="url(#ab1)"/>
+                <path d="M-20,70 Q80,160 170,110 Q230,70 300,130 Q360,170 420,90" fill="none" stroke="#34d399" stroke-width="30" opacity=".3" filter="url(#ab2)"/>
+                <path d="M-20,55 Q100,140 200,95 Q280,60 380,120" fill="none" stroke="#38bdf8" stroke-width="25" opacity=".28" filter="url(#ab1)"/>
+                <path d="M0,100 Q90,180 200,130 Q310,85 420,140" fill="none" stroke="#f43f5e" stroke-width="20" opacity=".22" filter="url(#ab2)"/>
+                <circle cx="25"  cy="15" r="1.5" fill="white" opacity=".9"/><circle cx="60"  cy="8"  r="1"   fill="white" opacity=".7"/><circle cx="100" cy="20" r="2"   fill="white" opacity=".8"/><circle cx="150" cy="10" r="1.5" fill="white" opacity=".6"/><circle cx="200" cy="5"  r="1"   fill="white" opacity=".7"/><circle cx="310" cy="12" r="1"   fill="white" opacity=".8"/><circle cx="360" cy="22" r="2"   fill="white" opacity=".6"/>
+                <rect x="0" y="255" width="400" height="45" fill="url(#snow1)"/>
+                <polygon points="50,255 60,180 70,255"  fill="#0a0118" opacity=".9"/><polygon points="55,220 65,160 75,220" fill="#0a0118" opacity=".8"/><polygon points="320,255 330,190 340,255" fill="#0a0118" opacity=".9"/><polygon points="350,255 362,200 374,255" fill="#0a0118" opacity=".85"/>
+              </svg>
+            </div>
+            <div class="gallery-overlay"><span class="text-sm font-semibold text-white">Aurora Hues</span></div>
+          </div>
+
+          <!-- Card 3 — Hidden Path -->
+          <div class="gallery-card" tabindex="0" aria-label="Open Hidden Path artwork">
+            <div class="gallery-art" style="background:linear-gradient(160deg,#052e16 0%,#14532d 30%,#166534 60%,#052e16 100%)">
+              <svg viewBox="0 0 400 300" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                <defs><filter id="gf3"><feGaussianBlur stdDeviation="4" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter><radialGradient id="sb" cx="50%" cy="0%" r="70%"><stop offset="0%" stop-color="#fde68a" stop-opacity=".5"/><stop offset="100%" stop-color="transparent"/></radialGradient></defs>
+                <rect x="0" y="0" width="400" height="120" fill="url(#sb)"/>
+                <rect x="20"  y="60" width="18" height="240" fill="#1a0f00" rx="4"/><rect x="60"  y="80" width="14" height="220" fill="#1a0f00" rx="3"/><rect x="320" y="70" width="18" height="230" fill="#1a0f00" rx="4"/><rect x="355" y="85" width="14" height="215" fill="#1a0f00" rx="3"/><rect x="170" y="40" width="12" height="260" fill="#1a0f00" rx="3"/><rect x="225" y="50" width="12" height="250" fill="#1a0f00" rx="3"/>
+                <ellipse cx="29" cy="55" rx="38" ry="30" fill="#166534" opacity=".9"/><ellipse cx="67" cy="78" rx="30" ry="22" fill="#14532d" opacity=".85"/><ellipse cx="176" cy="35" rx="35" ry="25" fill="#15803d" opacity=".9"/><ellipse cx="231" cy="45" rx="32" ry="22" fill="#166534" opacity=".85"/><ellipse cx="329" cy="65" rx="38" ry="28" fill="#14532d" opacity=".9"/><ellipse cx="362" cy="80" rx="30" ry="22" fill="#166534" opacity=".85"/>
+                <ellipse cx="200" cy="0" rx="220" ry="50" fill="#052e16" opacity=".7"/>
+                <path d="M140,300 Q175,200 190,150 Q200,120 200,80" fill="none" stroke="#8B6914" stroke-width="30" opacity=".5"/><path d="M140,300 Q175,200 190,150 Q200,120 200,80" fill="none" stroke="#d97706" stroke-width="12" opacity=".3"/>
+                <circle cx="185" cy="200" r="12" fill="#fde68a" opacity=".12" filter="url(#gf3)"/><circle cx="205" cy="155" r="8" fill="#fde68a" opacity=".15" filter="url(#gf3)"/><circle cx="195" cy="120" r="6" fill="#fde68a" opacity=".18" filter="url(#gf3)"/>
+                <ellipse cx="100" cy="290" rx="60" ry="15" fill="#14532d" opacity=".7"/><ellipse cx="310" cy="285" rx="55" ry="14" fill="#14532d" opacity=".7"/>
+              </svg>
+            </div>
+            <div class="gallery-overlay"><span class="text-sm font-semibold text-white">Hidden Path</span></div>
+          </div>
+
+          <!-- Card 4 — Open Ocean -->
+          <div class="gallery-card" tabindex="0" aria-label="View Open Ocean artwork in lightbox">
+            <div class="gallery-art" style="background:linear-gradient(180deg,#fbbf24 0%,#f59e0b 15%,#ef4444 28%,#be185d 42%,#7c3aed 60%,#1d4ed8 78%,#0c2461 100%)">
+              <svg viewBox="0 0 400 300" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                <defs><linearGradient id="ocean4" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#1d4ed8"/><stop offset="100%" stop-color="#0c2461"/></linearGradient><filter id="bf4"><feGaussianBlur stdDeviation="6"/></filter></defs>
+                <circle cx="200" cy="70" r="36" fill="#fbbf24"/><circle cx="200" cy="70" r="48" fill="#fbbf24" opacity=".25" filter="url(#bf4)"/>
+                <ellipse cx="200" cy="158" rx="200" ry="18" fill="#f59e0b" opacity=".4" filter="url(#bf4)"/>
+                <rect x="0" y="148" width="400" height="152" fill="url(#ocean4)"/>
+                <path d="M160,155 Q200,165 240,155 Q220,175 200,195 Q180,175 160,155Z" fill="#fbbf24" opacity=".35"/>
+                <path d="M0,170 Q50,160 100,172 Q150,184 200,170 Q250,156 300,170 Q350,184 400,170" fill="none" stroke="rgba(255,255,255,0.25)" stroke-width="2"/><path d="M0,188 Q60,178 120,190 Q180,202 240,188 Q300,174 360,188 Q380,193 400,188" fill="none" stroke="rgba(255,255,255,0.18)" stroke-width="1.5"/><path d="M0,210 Q70,200 140,212 Q210,224 280,210 Q340,198 400,210" fill="none" stroke="rgba(255,255,255,0.12)" stroke-width="1"/>
+                <ellipse cx="80"  cy="40" rx="55" ry="18" fill="white" opacity=".25"/><ellipse cx="100" cy="32" rx="35" ry="14" fill="white" opacity=".2"/><ellipse cx="310" cy="55" rx="50" ry="16" fill="white" opacity=".2"/>
+                <path d="M120,88 Q125,83 130,88" fill="none" stroke="rgba(0,0,0,0.5)" stroke-width="1.5"/><path d="M138,80 Q143,75 148,80" fill="none" stroke="rgba(0,0,0,0.5)" stroke-width="1.5"/><path d="M252,92 Q257,87 262,92" fill="none" stroke="rgba(0,0,0,0.45)" stroke-width="1.5"/>
+              </svg>
+            </div>
+            <div class="gallery-overlay"><span class="text-sm font-semibold text-white">Open Ocean</span></div>
+          </div>
+
+          <!-- Card 5 — Peak Hour -->
+          <div class="gallery-card" tabindex="0" aria-label="Open Peak Hour artwork">
+            <div class="gallery-art" style="background:linear-gradient(180deg,#bfdbfe 0%,#dbeafe 25%,#e0e7ff 50%,#c7d2fe 70%,#a5b4fc 100%)">
+              <svg viewBox="0 0 400 300" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                <defs><linearGradient id="snow5" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="white"/><stop offset="100%" stop-color="#e0e7ff"/></linearGradient><filter id="bf5"><feGaussianBlur stdDeviation="5"/></filter></defs>
+                <ellipse cx="80"  cy="35" rx="70" ry="22" fill="white" opacity=".6"/><ellipse cx="50"  cy="42" rx="40" ry="16" fill="white" opacity=".5"/><ellipse cx="300" cy="28" rx="65" ry="20" fill="white" opacity=".55"/>
+                <polygon points="0,200 70,80 140,200"  fill="#93c5fd" opacity=".7"/><polygon points="60,200 140,60 220,200" fill="#a5b4fc" opacity=".65"/><polygon points="160,200 250,55 340,200" fill="#93c5fd" opacity=".6"/>
+                <polygon points="100,220 200,30 300,220" fill="white" opacity=".95"/><polygon points="200,30 300,220 255,220" fill="#c7d2fe" opacity=".6"/>
+                <polygon points="170,100 200,30 230,100 218,95 200,40 182,95" fill="white" opacity=".9"/>
+                <rect x="0" y="265" width="400" height="35" fill="url(#snow5)"/>
+                <polygon points="30,270 40,230 50,270"  fill="#1e3a5f" opacity=".7"/><polygon points="340,265 352,220 364,265" fill="#1e3a5f" opacity=".7"/><polygon points="360,270 370,240 380,270" fill="#1e3a5f" opacity=".6"/>
+                <rect x="0" y="210" width="400" height="30" fill="white" opacity=".2" filter="url(#bf5)"/>
+              </svg>
+            </div>
+            <div class="gallery-overlay"><span class="text-sm font-semibold text-white">Peak Hour</span></div>
+          </div>
+
+          <!-- Card 6 — Colour Field -->
+          <div class="gallery-card" tabindex="0" aria-label="Open Colour Field artwork">
+            <div class="gallery-art" style="background:#0f0f1a">
+              <svg viewBox="0 0 400 300" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                <defs><filter id="bf6"><feGaussianBlur stdDeviation="18"/></filter><filter id="bf7"><feGaussianBlur stdDeviation="10"/></filter></defs>
+                <circle cx="80"  cy="80"  r="90" fill="#7c3aed" opacity=".6" filter="url(#bf6)"/><circle cx="320" cy="80"  r="80" fill="#0ea5e9" opacity=".55" filter="url(#bf6)"/><circle cx="200" cy="200" r="100" fill="#f43f5e" opacity=".5" filter="url(#bf6)"/><circle cx="80"  cy="220" r="70" fill="#10b981" opacity=".45" filter="url(#bf6)"/><circle cx="330" cy="210" r="75" fill="#fbbf24" opacity=".4" filter="url(#bf6)"/><circle cx="200" cy="80"  r="60" fill="#a78bfa" opacity=".45" filter="url(#bf7)"/>
+                <line x1="0"   y1="100" x2="400" y2="100" stroke="rgba(255,255,255,0.07)" stroke-width="1"/><line x1="0"   y1="200" x2="400" y2="200" stroke="rgba(255,255,255,0.07)" stroke-width="1"/><line x1="133" y1="0"   x2="133" y2="300" stroke="rgba(255,255,255,0.07)" stroke-width="1"/><line x1="267" y1="0"   x2="267" y2="300" stroke="rgba(255,255,255,0.07)" stroke-width="1"/>
+                <circle cx="200" cy="150" r="8"  fill="white" opacity=".9" filter="url(#bf7)"/><circle cx="200" cy="150" r="3"  fill="white"/><circle cx="80"  cy="80"  r="5"  fill="white" opacity=".7" filter="url(#bf7)"/><circle cx="320" cy="80"  r="5"  fill="white" opacity=".7" filter="url(#bf7)"/><circle cx="80"  cy="220" r="5"  fill="white" opacity=".6" filter="url(#bf7)"/><circle cx="320" cy="220" r="5"  fill="white" opacity=".6" filter="url(#bf7)"/>
+              </svg>
+            </div>
+            <div class="gallery-overlay"><span class="text-sm font-semibold text-white">Colour Field</span></div>
+          </div>
+
+        </div>
+        <p class="mt-4 text-center text-xs text-slate-500">Tap any artwork to enlarge ✦ Hover to reveal title</p>
+      </section>
+
+      <!-- Neon divider -->
+      <div class="neon-line my-10 reveal" style="transition-delay:0.25s"></div>
+
+      <!-- ── About section ── -->
+      <section class="reveal" style="transition-delay:0.3s">
+        <div class="grid sm:grid-cols-2 gap-6">
+
+          <!-- Description -->
+          <div class="glass p-6 rounded-2xl">
+            <h2 class="text-lg font-bold text-white mb-3 flex items-center gap-2">
+              <span style="font-size:1.2em">🎨</span> About This Project
+            </h2>
+            <p class="text-sm text-slate-300 leading-relaxed">
+              Neon Dreamscape explores the intersection of motion, light, and digital art. Every element is carefully choreographed to feel alive — from the drifting aurora blobs behind the page to the particles that float upward like embers.
+            </p>
+            <p class="mt-3 text-sm text-slate-300 leading-relaxed">
+              Designed mobile-first, with touch ripples, a pinch-to-close lightbox, and a tilt-response parallax on supported devices.
+            </p>
+          </div>
+
+          <!-- Tech stack -->
+          <div class="glass p-6 rounded-2xl">
+            <h2 class="text-lg font-bold text-white mb-3 flex items-center gap-2">
+              <span style="font-size:1.2em">⚡</span> Tech Stack
+            </h2>
+            <ul class="space-y-2 text-sm text-slate-300">
+              <li class="flex items-center gap-2"><span class="w-2 h-2 rounded-full bg-violet-400 inline-block"></span>Pure HTML5 + CSS3 animations</li>
+              <li class="flex items-center gap-2"><span class="w-2 h-2 rounded-full bg-sky-400 inline-block"></span>Vanilla JS — zero dependencies</li>
+              <li class="flex items-center gap-2"><span class="w-2 h-2 rounded-full bg-emerald-400 inline-block"></span>Intersection Observer for scroll-reveal</li>
+              <li class="flex items-center gap-2"><span class="w-2 h-2 rounded-full bg-rose-400 inline-block"></span>Touch-event ripple effect</li>
+              <li class="flex items-center gap-2"><span class="w-2 h-2 rounded-full bg-amber-400 inline-block"></span>DeviceOrientation tilt parallax</li>
+              <li class="flex items-center gap-2"><span class="w-2 h-2 rounded-full bg-fuchsia-400 inline-block"></span>Glassmorphism + backdrop-filter</li>
+            </ul>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- ── Colour mood board ── -->
+      <section class="mt-8 reveal" style="transition-delay:0.35s">
+        <h2 class="text-xs font-bold uppercase tracking-[0.2em] text-slate-400 mb-5">Colour Palette</h2>
+        <div class="flex gap-4 flex-wrap items-end">
+          <div class="flex flex-col items-center gap-1">
+            <div class="w-14 h-14 rounded-xl" style="background:#7c3aed;box-shadow:0 4px 18px rgba(124,58,237,0.5)"></div>
+            <span class="text-[10px] text-slate-500">#7c3aed</span>
+          </div>
+          <div class="flex flex-col items-center gap-1">
+            <div class="w-14 h-14 rounded-xl" style="background:#0ea5e9;box-shadow:0 4px 18px rgba(14,165,233,0.5)"></div>
+            <span class="text-[10px] text-slate-500">#0ea5e9</span>
+          </div>
+          <div class="flex flex-col items-center gap-1">
+            <div class="w-14 h-14 rounded-xl" style="background:#f43f5e;box-shadow:0 4px 18px rgba(244,63,94,0.45)"></div>
+            <span class="text-[10px] text-slate-500">#f43f5e</span>
+          </div>
+          <div class="flex flex-col items-center gap-1">
+            <div class="w-14 h-14 rounded-xl" style="background:#10b981;box-shadow:0 4px 18px rgba(16,185,129,0.45)"></div>
+            <span class="text-[10px] text-slate-500">#10b981</span>
+          </div>
+          <div class="flex flex-col items-center gap-1">
+            <div class="w-14 h-14 rounded-xl" style="background:#fbbf24;box-shadow:0 4px 18px rgba(251,191,36,0.45)"></div>
+            <span class="text-[10px] text-slate-500">#fbbf24</span>
+          </div>
+          <div class="flex flex-col items-center gap-1">
+            <div class="w-14 h-14 rounded-xl" style="background:#06070d;border:1px solid rgba(255,255,255,0.15)"></div>
+            <span class="text-[10px] text-slate-500">#06070d</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- Footer -->
+      <footer class="mt-16 mb-6 text-center text-xs text-slate-500 reveal" style="transition-delay:0.4s">
+        ✦ James JHS · Project Four · Neon Dreamscape ✦
+      </footer>
+
+    </main>
+  </div>
+
+  <script>
+    /* ── Floating particles ── */
+    (function () {
+      const container = document.getElementById('particles');
+      const count = window.innerWidth < 600 ? 18 : 30;
+      for (let i = 0; i < count; i++) {
+        const p = document.createElement('div');
+        p.className = 'particle';
+        const size = Math.random() * 3 + 1.5;
+        p.style.cssText = [
+          `width:${size}px`, `height:${size}px`,
+          `left:${Math.random() * 100}%`,
+          `animation-duration:${Math.random() * 12 + 8}s`,
+          `animation-delay:-${Math.random() * 12}s`,
+          `opacity:${Math.random() * 0.5 + 0.2}`
+        ].join(';');
+        container.appendChild(p);
+      }
+    })();
+
+    /* ── Scroll-reveal via Intersection Observer ── */
+    const revealObserver = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          e.target.classList.add('visible');
+          revealObserver.unobserve(e.target);
+        }
+      });
+    }, { threshold: 0.05, rootMargin: '0px 0px -40px 0px' });
+    document.querySelectorAll('.reveal').forEach(el => {
+      revealObserver.observe(el);
+      /* Fallback: reveal everything after 1 s in case observer fires late */
+      setTimeout(() => el.classList.add('visible'), 1000);
+    });
+
+    /* ── Animated stat counters ── */
+    const counterObserver = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (!e.isIntersecting) return;
+        const el = e.target;
+        const target = +el.dataset.target;
+        const dur = 1400;
+        const start = performance.now();
+        function step(now) {
+          const progress = Math.min((now - start) / dur, 1);
+          const eased = 1 - Math.pow(1 - progress, 3);
+          el.textContent = Math.round(eased * target);
+          if (progress < 1) requestAnimationFrame(step);
+        }
+        requestAnimationFrame(step);
+        counterObserver.unobserve(el);
+      });
+    }, { threshold: 0.5 });
+    document.querySelectorAll('.stat-number').forEach(el => counterObserver.observe(el));
+
+    /* ── Ripple effect (works on touch and click) ── */
+    function addRipple(el) {
+      el.addEventListener('pointerdown', function (e) {
+        const rect = el.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+        const wave = document.createElement('span');
+        wave.className = 'ripple-wave';
+        const size = Math.max(rect.width, rect.height);
+        wave.style.cssText = `width:${size}px;height:${size}px;left:${x - size / 2}px;top:${y - size / 2}px`;
+        el.appendChild(wave);
+        wave.addEventListener('animationend', () => wave.remove());
+      });
+    }
+    document.querySelectorAll('.ripple-btn').forEach(addRipple);
+
+    /* ── Hero button scrolls to gallery ── */
+    document.getElementById('hero-btn').addEventListener('click', () => {
+      document.getElementById('gallery-section').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+
+    /* ── Lightbox (clones the SVG art) ── */
+    const lightbox     = document.getElementById('lightbox');
+    const lightboxArt  = document.getElementById('lightbox-art');
+    function openLightbox(card) {
+      const art = card.querySelector('.gallery-art').cloneNode(true);
+      lightboxArt.innerHTML = '';
+      lightboxArt.appendChild(art);
+      lightbox.classList.add('open');
+      document.body.style.overflow = 'hidden';
+    }
+    function closeLightbox() {
+      lightbox.classList.remove('open');
+      document.body.style.overflow = '';
+    }
+    document.querySelectorAll('.gallery-card').forEach(card => {
+      card.addEventListener('click', () => openLightbox(card));
+      card.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openLightbox(card); } });
+    });
+    document.getElementById('lightbox-close').addEventListener('click', closeLightbox);
+    lightbox.addEventListener('click', e => { if (e.target === lightbox) closeLightbox(); });
+    document.addEventListener('keydown', e => { if (e.key === 'Escape') closeLightbox(); });
+
+    /* ── Tilt parallax on tilt-cards (mouse + device orientation) ── */
+    let usingDeviceOrientation = false;
+    const tiltCards = document.querySelectorAll('.tilt-card');
+    tiltCards.forEach(card => {
+      card.addEventListener('mousemove', e => {
+        if (usingDeviceOrientation) return; /* device orientation takes priority on mobile */
+        const rect = card.getBoundingClientRect();
+        const cx = rect.left + rect.width / 2;
+        const cy = rect.top + rect.height / 2;
+        const rx = ((e.clientY - cy) / (rect.height / 2)) * 8;
+        const ry = ((e.clientX - cx) / (rect.width / 2)) * -8;
+        card.style.transform = `perspective(600px) rotateX(${rx}deg) rotateY(${ry}deg)`;
+      });
+      card.addEventListener('mouseleave', () => {
+        if (!usingDeviceOrientation) card.style.transform = '';
+      });
+    });
+    /* Device-orientation tilt for mobile — sets flag so mouse handler yields */
+    if (window.DeviceOrientationEvent) {
+      window.addEventListener('deviceorientation', e => {
+        if (e.beta === null && e.gamma === null) return;
+        usingDeviceOrientation = true;
+        const beta  = Math.max(-15, Math.min(15, e.beta  || 0));
+        const gamma = Math.max(-15, Math.min(15, e.gamma || 0));
+        tiltCards.forEach(card => {
+          card.style.transform = `perspective(600px) rotateX(${beta * 0.4}deg) rotateY(${gamma * 0.4}deg)`;
+        });
+      });
+    }
+  </script>
+</body>
+</html>
