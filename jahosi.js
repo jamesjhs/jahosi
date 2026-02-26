@@ -10,6 +10,6 @@ app.get("*", (req, res) => {
   res.status(404).sendFile(path.join(__dirname, "public", "index.html"));
 });
 
-app.listen(port, () => {
-  console.log(`Portfolio server running on http://localhost:${port}`);
+app.listen(port, "127.0.0.1", () => {
+  console.log(`Portfolio server running on http://127.0.0.1:${port}`);
 });
