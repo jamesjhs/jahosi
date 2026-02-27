@@ -3,11 +3,12 @@
   "version": "1.0.0",
   "private": true,
   "description": "Simple Node.js portfolio site",
-  "main": "server.js",
+  "main": "jahosi.js",
   "scripts": {
-    "start": "node server.js"
+    "start": "node jahosi.js"
   },
   "dependencies": {
-    "express": "^4.21.2"
+    "express": "^4.21.2",
+    "nodemailer": "^6.10.1"
   }
 }
