@@ -20,11 +20,20 @@
 <body class="min-h-screen">
   <main class="mx-auto max-w-5xl px-4 py-10 sm:px-6 lg:px-8">
     <section class="rounded-3xl border border-slate-200 bg-white/85 p-8 shadow-xl backdrop-blur-sm sm:p-12">
-      <p class="text-sm font-semibold uppercase tracking-[0.18em] text-sky-500">Portfolio</p>
-      <h1 class="mt-3 text-4xl font-extrabold leading-tight sm:text-5xl">Dr James Rowson</h1>
-      <p class="mt-4 max-w-2xl text-base text-slate-600 sm:text-lg">
-        Welcome to my portfolio. Explore project pages below. Content is placeholder for now and ready to be populated.
-      </p>
+      <div class="flex flex-col gap-6 sm:flex-row sm:items-start sm:justify-between">
+        <div>
+          <p class="text-sm font-semibold uppercase tracking-[0.18em] text-sky-500">Portfolio</p>
+          <h1 class="mt-3 text-4xl font-extrabold leading-tight sm:text-5xl">Dr James Rowson</h1>
+          <p class="mt-4 max-w-2xl text-base text-slate-600 sm:text-lg">
+            Welcome to my portfolio. Explore project pages below. Content is placeholder for now and ready to be populated.
+          </p>
+        </div>
+        <img
+          src="me.jpg"
+          alt="Portrait of Dr James Rowson"
+          class="h-28 w-28 rounded-xl border border-slate-200 object-cover shadow-md sm:h-32 sm:w-32"
+        >
+      </div>
 
       <div class="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         <a href="portfolio/project-1.html" class="group overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm transition hover:-translate-y-0.5 hover:shadow-lg">
