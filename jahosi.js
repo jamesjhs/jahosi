@@ -10,8 +10,8 @@ const CONTACT_PAGE_PATH =
 const CONTACT_TO_EMAIL = process.env.CONTACT_TO_EMAIL || "jrowson@gmail.com";
 const CONTACT_FROM_EMAIL =
   process.env.CONTACT_FROM_EMAIL || "Portfolio Contact <no-reply@localhost>";
-const TURNSTILE_SITE_KEY = process.env.TURNSTILE_SITE_KEY || "";
-const TURNSTILE_SECRET_KEY = process.env.TURNSTILE_SECRET_KEY || "";
+const RECAPTCHA_SITE_KEY = process.env.RECAPTCHA_SITE_KEY || "";
+const RECAPTCHA_SECRET_KEY = process.env.RECAPTCHA_SECRET_KEY || "";
 
 const MAX_REQUESTS_PER_WINDOW = 5;
 const RATE_LIMIT_WINDOW_MS = 15 * 60 * 1000;
@@ -49,25 +49,22 @@ function isValidEmail(email) {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email || "");
 }
 
-async function verifyTurnstile(token, remoteIp) {
-  if (!TURNSTILE_SECRET_KEY) {
+async function verifyRecaptcha(token, remoteIp) {
+  if (!RECAPTCHA_SECRET_KEY) {
     return false;
   }
 
   const payload = new URLSearchParams({
-    secret: TURNSTILE_SECRET_KEY,
+    secret: RECAPTCHA_SECRET_KEY,
     response: token || "",
     remoteip: remoteIp || "",
   });
 
-  const response = await fetch(
-    "https://challenges.cloudflare.com/turnstile/v0/siteverify",
-    {
-      method: "POST",
-      headers: { "Content-Type": "application/x-www-form-urlencoded" },
-      body: payload.toString(),
-    }
-  );
+  const response = await fetch("https://www.google.com/recaptcha/api/siteverify", {
+    method: "POST",
+    headers: { "Content-Type": "application/x-www-form-urlencoded" },
+    body: payload.toString(),
+  });
 
   if (!response.ok) {
     return false;
@@ -89,11 +86,11 @@ function renderContactPage({ status, error }) {
       ? '<div class="rounded-lg border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-900">There was a problem sending your message. Please try again.</div>'
       : "";
 
-  const captchaUi = TURNSTILE_SITE_KEY
-    ? `<div class="cf-turnstile mt-2" data-sitekey="${escapeHtml(
-        TURNSTILE_SITE_KEY
+  const captchaUi = RECAPTCHA_SITE_KEY
+    ? `<div class="g-recaptcha mt-2" data-sitekey="${escapeHtml(
+        RECAPTCHA_SITE_KEY
       )}"></div>`
-    : '<p class="mt-2 text-sm text-rose-700">Contact form is not configured yet. CAPTCHA site key is missing.</p>';
+    : '<p class="mt-2 text-sm text-rose-700">Contact form is not configured yet. reCAPTCHA site key is missing.</p>';
 
   return `<!DOCTYPE html>
 <html lang="en">
@@ -103,7 +100,7 @@ function renderContactPage({ status, error }) {
   <meta name="robots" content="noindex,nofollow,noarchive">
   <title>Contact Me</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+  <script src="https://www.google.com/recaptcha/api.js" async defer></script>
   <style>
     body {
       font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
@@ -188,8 +185,8 @@ app.post("/api/contact/submit", async (req, res) => {
     return redirectWithError("blocked");
   }
 
-  const captchaToken = req.body["cf-turnstile-response"];
-  const captchaOk = await verifyTurnstile(captchaToken, ip);
+  const captchaToken = req.body["g-recaptcha-response"];
+  const captchaOk = await verifyRecaptcha(captchaToken, ip);
   if (!captchaOk) {
     return redirectWithError("blocked");
   }

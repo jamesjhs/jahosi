@@ -23,8 +23,8 @@ Required environment variables for contact form delivery:
 - `SMTP_SECURE` (`true` for SSL/TLS port 465, else `false`)
 - `SMTP_USER`
 - `SMTP_PASS`
-- `TURNSTILE_SITE_KEY`
-- `TURNSTILE_SECRET_KEY`
+- `RECAPTCHA_SITE_KEY`
+- `RECAPTCHA_SECRET_KEY`
 
 Optional:
 
