@@ -1,3 +1,5 @@
+require("dotenv").config();
+const crypto = require("crypto");
 const express = require("express");
 const nodemailer = require("nodemailer");
 const path = require("path");
@@ -12,10 +14,12 @@ const CONTACT_FROM_EMAIL =
   process.env.CONTACT_FROM_EMAIL || "Portfolio Contact <no-reply@localhost>";
 const RECAPTCHA_SITE_KEY = process.env.RECAPTCHA_SITE_KEY || "";
 const RECAPTCHA_SECRET_KEY = process.env.RECAPTCHA_SECRET_KEY || "";
+const MATH_SECRET = process.env.MATH_SECRET || "jahosi-math-fallback-secret";
 
 const MAX_REQUESTS_PER_WINDOW = 5;
 const RATE_LIMIT_WINDOW_MS = 15 * 60 * 1000;
 const MIN_FORM_FILL_MS = 3000;
+const MATH_CHALLENGE_WINDOW_MS = 60 * 60 * 1000;
 const RATE_LIMIT_BUCKETS = new Map();
 
 app.use(express.urlencoded({ extended: false }));
@@ -74,7 +78,41 @@ async function verifyRecaptcha(token, remoteIp) {
   return Boolean(result.success);
 }
 
-function renderContactPage({ status, error }) {
+function generateMathChallenge() {
+  const a = Math.floor(Math.random() * 9) + 1;
+  const b = Math.floor(Math.random() * 9) + 1;
+  const answer = a + b;
+  const windowSlot = Math.floor(Date.now() / MATH_CHALLENGE_WINDOW_MS);
+  const hmac = crypto
+    .createHmac("sha256", MATH_SECRET)
+    .update(`${answer}:${windowSlot}`)
+    .digest("hex");
+  return { a, b, hmac };
+}
+
+function verifyMathAnswer(userAnswer, hmac) {
+  if (typeof hmac !== "string" || hmac.length !== 64) return false;
+  const now = Date.now();
+  const windowSlot = Math.floor(now / MATH_CHALLENGE_WINDOW_MS);
+  const value = parseInt(userAnswer, 10);
+  if (!Number.isFinite(value)) return false;
+  for (const w of [windowSlot, windowSlot - 1]) {
+    const expected = crypto
+      .createHmac("sha256", MATH_SECRET)
+      .update(`${value}:${w}`)
+      .digest("hex");
+    try {
+      if (crypto.timingSafeEqual(Buffer.from(expected, "hex"), Buffer.from(hmac, "hex"))) {
+        return true;
+      }
+    } catch {
+      // length mismatch — ignore
+    }
+  }
+  return false;
+}
+
+function renderContactPage({ status, error, mathChallenge }) {
   const statusMessage =
     status === "sent"
       ? '<div class="rounded-lg border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-800">Thanks. Your message has been sent.</div>'
@@ -90,7 +128,15 @@ function renderContactPage({ status, error }) {
     ? `<div class="g-recaptcha mt-2" data-sitekey="${escapeHtml(
         RECAPTCHA_SITE_KEY
       )}"></div>`
-    : '<p class="mt-2 text-sm text-rose-700">Contact form is not configured yet. reCAPTCHA site key is missing.</p>';
+    : mathChallenge
+    ? `<div class="mt-2">
+        <label class="block">
+          <span class="mb-1 block text-sm font-semibold">Human check: what is ${escapeHtml(String(mathChallenge.a))} + ${escapeHtml(String(mathChallenge.b))}?</span>
+          <input class="w-32 rounded-lg border border-slate-300 px-3 py-2" type="number" name="mathAnswer" min="1" max="18" required>
+          <input type="hidden" name="mathHmac" value="${escapeHtml(mathChallenge.hmac)}">
+        </label>
+      </div>`
+    : '<p class="mt-2 text-sm text-rose-700">Contact form is not configured. Please refresh the page and try again.</p>';
 
   return `<!DOCTYPE html>
 <html lang="en">
@@ -143,10 +189,12 @@ function renderContactPage({ status, error }) {
 
 app.get(CONTACT_PAGE_PATH, (req, res) => {
   res.set("X-Robots-Tag", "noindex, nofollow, noarchive");
+  const mathChallenge = RECAPTCHA_SITE_KEY ? null : generateMathChallenge();
   res.send(
     renderContactPage({
       status: req.query.status,
       error: req.query.error,
+      mathChallenge,
     })
   );
 });
@@ -186,7 +234,9 @@ app.post("/api/contact/submit", async (req, res) => {
   }
 
   const captchaToken = req.body["g-recaptcha-response"];
-  const captchaOk = await verifyRecaptcha(captchaToken, ip);
+  const captchaOk = RECAPTCHA_SECRET_KEY
+    ? await verifyRecaptcha(captchaToken, ip)
+    : verifyMathAnswer(req.body["mathAnswer"], req.body["mathHmac"]);
   if (!captchaOk) {
     return redirectWithError("blocked");
   }
