@@ -19,12 +19,10 @@ It is not linked from the public pages and is marked `noindex`.
 Required environment variables for contact form delivery:
 
 - `SMTP_HOST`
-- `SMTP_PORT` (usually `587`)
-- `SMTP_SECURE` (`true` for SSL/TLS port 465, else `false`)
+- `SMTP_PORT` (usually `587` for STARTTLS or `465` for SSL/TLS)
+- `SMTP_SECURE` (`false` for STARTTLS/port 587, `true` for SSL/TLS/port 465)
 - `SMTP_USER`
 - `SMTP_PASS`
-- `RECAPTCHA_SITE_KEY`
-- `RECAPTCHA_SECRET_KEY`
 
 Optional:
 
