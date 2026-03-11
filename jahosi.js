@@ -12,8 +12,6 @@ const CONTACT_PAGE_PATH =
 const CONTACT_TO_EMAIL = process.env.CONTACT_TO_EMAIL || "jrowson@gmail.com";
 const CONTACT_FROM_EMAIL =
   process.env.CONTACT_FROM_EMAIL || "Portfolio Contact <no-reply@localhost>";
-const RECAPTCHA_SITE_KEY = process.env.RECAPTCHA_SITE_KEY || "";
-const RECAPTCHA_SECRET_KEY = process.env.RECAPTCHA_SECRET_KEY || "";
 const MATH_SECRET = process.env.MATH_SECRET || "jahosi-math-fallback-secret";
 
 const MAX_REQUESTS_PER_WINDOW = 5;
@@ -51,31 +49,6 @@ function isRateLimited(ip) {
 
 function isValidEmail(email) {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email || "");
-}
-
-async function verifyRecaptcha(token, remoteIp) {
-  if (!RECAPTCHA_SECRET_KEY) {
-    return false;
-  }
-
-  const payload = new URLSearchParams({
-    secret: RECAPTCHA_SECRET_KEY,
-    response: token || "",
-    remoteip: remoteIp || "",
-  });
-
-  const response = await fetch("https://www.google.com/recaptcha/api/siteverify", {
-    method: "POST",
-    headers: { "Content-Type": "application/x-www-form-urlencoded" },
-    body: payload.toString(),
-  });
-
-  if (!response.ok) {
-    return false;
-  }
-
-  const result = await response.json();
-  return Boolean(result.success);
 }
 
 function generateMathChallenge() {
@@ -124,11 +97,7 @@ function renderContactPage({ status, error, mathChallenge }) {
       ? '<div class="rounded-lg border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-900">There was a problem sending your message. Please try again.</div>'
       : "";
 
-  const captchaUi = RECAPTCHA_SITE_KEY
-    ? `<div class="g-recaptcha mt-2" data-sitekey="${escapeHtml(
-        RECAPTCHA_SITE_KEY
-      )}"></div>`
-    : mathChallenge
+  const captchaUi = mathChallenge
     ? `<div class="mt-2">
         <label class="block">
           <span class="mb-1 block text-sm font-semibold">Human check: what is ${escapeHtml(String(mathChallenge.a))} + ${escapeHtml(String(mathChallenge.b))}?</span>
@@ -146,7 +115,6 @@ function renderContactPage({ status, error, mathChallenge }) {
   <meta name="robots" content="noindex,nofollow,noarchive">
   <title>Contact Me</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <script src="https://www.google.com/recaptcha/api.js" async defer></script>
   <style>
     body {
       font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
@@ -189,7 +157,7 @@ function renderContactPage({ status, error, mathChallenge }) {
 
 app.get(CONTACT_PAGE_PATH, (req, res) => {
   res.set("X-Robots-Tag", "noindex, nofollow, noarchive");
-  const mathChallenge = RECAPTCHA_SITE_KEY ? null : generateMathChallenge();
+  const mathChallenge = generateMathChallenge();
   res.send(
     renderContactPage({
       status: req.query.status,
@@ -233,10 +201,7 @@ app.post("/api/contact/submit", async (req, res) => {
     return redirectWithError("blocked");
   }
 
-  const captchaToken = req.body["g-recaptcha-response"];
-  const captchaOk = RECAPTCHA_SECRET_KEY
-    ? await verifyRecaptcha(captchaToken, ip)
-    : verifyMathAnswer(req.body["mathAnswer"], req.body["mathHmac"]);
+  const captchaOk = verifyMathAnswer(req.body["mathAnswer"], req.body["mathHmac"]);
   if (!captchaOk) {
     return redirectWithError("blocked");
   }
