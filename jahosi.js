@@ -85,16 +85,19 @@ function verifyMathAnswer(userAnswer, hmac) {
   return false;
 }
 
-function renderContactPage({ status, error, mathChallenge }) {
+function renderContactPage({ status, error, debug, mathChallenge }) {
   const statusMessage =
     status === "sent"
       ? '<div class="rounded-lg border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-800">Thanks. Your message has been sent.</div>'
       : "";
+  const debugSuffix = debug
+    ? ` <span class="font-mono text-rose-600 opacity-80">[debug: ${escapeHtml(debug)}]</span>`
+    : "";
   const errorMessage =
     error === "blocked"
       ? '<div class="rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900">Your request could not be accepted. Please try again later.</div>'
       : error === "failed"
-      ? '<div class="rounded-lg border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-900">There was a problem sending your message. Please try again.</div>'
+      ? `<div class="rounded-lg border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-900">There was a problem sending your message. Please try again.${debugSuffix}</div>`
       : "";
 
   const captchaUi = mathChallenge
@@ -162,6 +165,7 @@ app.get(CONTACT_PAGE_PATH, (req, res) => {
     renderContactPage({
       status: req.query.status,
       error: req.query.error,
+      debug: req.query.debug,
       mathChallenge,
     })
   );
@@ -169,8 +173,11 @@ app.get(CONTACT_PAGE_PATH, (req, res) => {
 
 app.post("/api/contact/submit", async (req, res) => {
   const ip = req.ip || req.socket.remoteAddress || "unknown";
-  const redirectWithError = (code) =>
-    res.redirect(`${CONTACT_PAGE_PATH}?error=${encodeURIComponent(code)}`);
+  const redirectWithError = (code, debugReason) => {
+    const params = new URLSearchParams({ error: code });
+    if (debugReason) params.set("debug", debugReason);
+    return res.redirect(`${CONTACT_PAGE_PATH}?${params.toString()}`);
+  };
   const redirectWithStatus = (code) =>
     res.redirect(`${CONTACT_PAGE_PATH}?status=${encodeURIComponent(code)}`);
 
@@ -213,7 +220,11 @@ app.post("/api/contact/submit", async (req, res) => {
   const smtpPass = process.env.SMTP_PASS;
 
   if (!smtpHost || !smtpUser || !smtpPass) {
-    return redirectWithError("failed");
+    const missing = [!smtpHost && "SMTP_HOST", !smtpUser && "SMTP_USER", !smtpPass && "SMTP_PASS"]
+      .filter(Boolean)
+      .join(", ");
+    console.error(`Contact form failed: missing SMTP config (${missing})`);
+    return redirectWithError("failed", `missing env: ${missing}`);
   }
 
   try {
@@ -236,9 +247,9 @@ app.post("/api/contact/submit", async (req, res) => {
     });
 
     return redirectWithStatus("sent");
-  } catch (error) {
-    console.error("Contact form send failed:", error);
-    return redirectWithError("failed");
+  } catch (err) {
+    console.error("Contact form send failed:", err);
+    return redirectWithError("failed", `smtp error: ${err.code || "unknown"}`);
   }
 });
 
