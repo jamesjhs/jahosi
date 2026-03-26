@@ -8,7 +8,7 @@ const app = express();
 const port = process.env.PORT || 3000;
 
 const CONTACT_PAGE_PATH =
-  process.env.CONTACT_PAGE_PATH || "/about/staff-contact-9d2f7c";
+  process.env.CONTACT_PAGE_PATH || "/contact";
 const CONTACT_TO_EMAIL = process.env.CONTACT_TO_EMAIL || "jrowson@gmail.com";
 const CONTACT_FROM_EMAIL =
   process.env.CONTACT_FROM_EMAIL || "Portfolio Contact <no-reply@localhost>";
