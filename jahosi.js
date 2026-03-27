@@ -4,6 +4,8 @@ const express = require("express");
 const nodemailer = require("nodemailer");
 const path = require("path");
 
+const fs = require("fs");
+
 const app = express();
 const port = process.env.PORT || 3000;
 
@@ -32,6 +34,15 @@ const MATH_CHALLENGE_WINDOW_MS = 60 * 60 * 1000;
 const RATE_LIMIT_BUCKETS = new Map();
 
 app.use(express.urlencoded({ extended: false }));
+
+const INDEX_HTML_TEMPLATE = fs.readFileSync(path.join(__dirname, "public", "index.html"), "utf8");
+const INDEX_HTML = INDEX_HTML_TEMPLATE.replace("__CONTACT_PAGE_PATH__", CONTACT_PAGE_PATH);
+
+// index.html is served dynamically so the contact link reflects CONTACT_PAGE_PATH at runtime.
+app.get("/", (req, res) => {
+  res.send(INDEX_HTML);
+});
+
 app.use(express.static(path.join(__dirname, "public")));
 
 function escapeHtml(value) {
@@ -161,7 +172,10 @@ function renderContactPage({ status, error, debug, mathChallenge }) {
           <textarea class="min-h-40 w-full rounded-lg border border-slate-300 px-3 py-2" name="message" maxlength="5000" required></textarea>
         </label>
         ${captchaUi}
-        <button class="rounded-lg bg-sky-600 px-4 py-2 text-sm font-semibold text-white hover:bg-sky-700" type="submit">Send</button>
+        <div class="flex items-center gap-3">
+          <button class="rounded-lg bg-sky-600 px-4 py-2 text-sm font-semibold text-white hover:bg-sky-700" type="submit">Send</button>
+          <a class="rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-semibold text-slate-700 hover:border-slate-400 hover:text-slate-900" href="/">Back</a>
+        </div>
       </form>
     </section>
   </main>
