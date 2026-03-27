@@ -4,6 +4,8 @@ const express = require("express");
 const nodemailer = require("nodemailer");
 const path = require("path");
 
+const fs = require("fs");
+
 const app = express();
 const port = process.env.PORT || 3000;
 
@@ -32,6 +34,15 @@ const MATH_CHALLENGE_WINDOW_MS = 60 * 60 * 1000;
 const RATE_LIMIT_BUCKETS = new Map();
 
 app.use(express.urlencoded({ extended: false }));
+
+const INDEX_HTML_TEMPLATE = fs.readFileSync(path.join(__dirname, "public", "index.html"), "utf8");
+const INDEX_HTML = INDEX_HTML_TEMPLATE.replace("__CONTACT_PAGE_PATH__", CONTACT_PAGE_PATH);
+
+// index.html is served dynamically so the contact link reflects CONTACT_PAGE_PATH at runtime.
+app.get("/", (req, res) => {
+  res.send(INDEX_HTML);
+});
+
 app.use(express.static(path.join(__dirname, "public")));
 
 function escapeHtml(value) {
