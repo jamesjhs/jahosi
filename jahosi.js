@@ -7,12 +7,23 @@ const path = require("path");
 const app = express();
 const port = process.env.PORT || 3000;
 
-const CONTACT_PAGE_PATH =
-  process.env.CONTACT_PAGE_PATH || "/contact";
-const CONTACT_TO_EMAIL = process.env.CONTACT_TO_EMAIL || "jrowson@gmail.com";
-const CONTACT_FROM_EMAIL =
-  process.env.CONTACT_FROM_EMAIL || "Portfolio Contact <no-reply@localhost>";
-const MATH_SECRET = process.env.MATH_SECRET || "jahosi-math-fallback-secret";
+const REQUIRED_ENV = [
+  "CONTACT_PAGE_PATH",
+  "CONTACT_TO_EMAIL",
+  "CONTACT_FROM_EMAIL",
+  "MATH_SECRET",
+];
+const missingEnv = REQUIRED_ENV.filter((k) => !process.env[k]);
+if (missingEnv.length) {
+  console.error(`Missing required environment variables: ${missingEnv.join(", ")}`);
+  console.error("Copy .env.example to .env and fill in the values.");
+  process.exit(1);
+}
+
+const CONTACT_PAGE_PATH = process.env.CONTACT_PAGE_PATH;
+const CONTACT_TO_EMAIL = process.env.CONTACT_TO_EMAIL;
+const CONTACT_FROM_EMAIL = process.env.CONTACT_FROM_EMAIL;
+const MATH_SECRET = process.env.MATH_SECRET;
 
 const MAX_REQUESTS_PER_WINDOW = 5;
 const RATE_LIMIT_WINDOW_MS = 15 * 60 * 1000;
