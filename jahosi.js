@@ -27,7 +27,7 @@ const CONTACT_PAGE_PATH = process.env.CONTACT_PAGE_PATH;
 const CONTACT_TO_EMAIL = process.env.CONTACT_TO_EMAIL;
 const CONTACT_FROM_EMAIL = process.env.CONTACT_FROM_EMAIL;
 const MATH_SECRET = process.env.MATH_SECRET;
-const SERVICE_NAME = process.env.SERVICE_NAME || "jameshovercraft-cms";
+const SERVICE_NAME = process.env.SERVICE_NAME || "jahosi";
 const SERVICE_VERSION = process.env.APP_VERSION || packageJson.version;
 
 const MAX_REQUESTS_PER_WINDOW = 5;
