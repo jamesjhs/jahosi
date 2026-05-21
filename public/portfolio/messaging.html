@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TLS — Secure Messaging | James JHS</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&display=swap');
+    body { font-family: "Manrope", sans-serif; }
+    .tls-mockup { font-family: sans-serif; }
+  </style>
+</head>
+<body class="min-h-screen bg-slate-50 text-slate-900">
+  <main class="mx-auto max-w-3xl px-4 py-10 sm:px-6">
+    <a href="../index.html" class="text-sm font-semibold text-sky-700 hover:text-sky-900">← Back to portfolio</a>
+    <section class="mt-4 rounded-3xl border border-slate-200 bg-white p-8 shadow-sm">
+      <p class="text-sm font-semibold uppercase tracking-widest text-sky-500">Project</p>
+      <h1 class="mt-2 text-3xl font-extrabold">TLS — Secure Messaging</h1>
+      <p class="mt-1 text-slate-500 text-sm">Private two-person chat · Node.js / TypeScript · SQLCipher · PWA</p>
+
+      <p class="mt-5 text-slate-600">TLS is a self-hosted, end-to-end authenticated two-person chat application built for private use. Every message, image, and video passes through your own server, with the database encrypted at rest using SQLCipher — no third-party servers, no data leaving your infrastructure.</p>
+
+      <p class="mt-4 text-slate-600">The goal was a messaging app that genuinely prioritises privacy without sacrificing usability. View-once media, in-app video recording with FFmpeg WASM compression, emoji reactions, swipe-to-reply threading, and five colour schemes make it feel polished for daily use. It ships as a PWA so it installs to the home screen and runs full-screen on Android and iOS.</p>
+
+      <!-- Mockup 1: Chat conversation -->
+      <div class="mt-6 w-full rounded-xl overflow-hidden border border-slate-200 shadow-md pointer-events-none select-none tls-mockup" aria-hidden="true" style="background:#2c2c2c;">
+        <!-- App header -->
+        <div style="background:#2c2c2c; border-bottom:1px solid #444; padding:9px 14px; display:flex; align-items:center; gap:9px;">
+          <div style="width:30px; height:30px; border-radius:50%; background:#1b4f5e; display:flex; align-items:center; justify-content:center; color:white; font-size:14px; font-weight:700;">T</div>
+          <span style="color:white; font-size:15px; font-weight:600; flex:1;">TLS</span>
+          <span style="color:#4caf50; font-size:14px; margin-right:2px;">●</span>
+          <span style="font-size:20px; opacity:0.8;">⚙️</span>
+        </div>
+        <!-- Messages -->
+        <div style="padding:14px 14px 6px; display:flex; flex-direction:column; gap:10px; background:#2c2c2c;">
+          <!-- theirs 1 -->
+          <div style="display:flex; justify-content:flex-start;">
+            <div style="max-width:72%; background:#215e6d; border-radius:12px 12px 12px 2px; padding:9px 13px;">
+              <div style="font-size:11px; color:#ccc; margin-bottom:4px;">Alex</div>
+              <div style="color:white; font-size:14px; line-height:1.45;">Hey, are you free tonight? 👋</div>
+              <div style="text-align:right; font-size:10px; color:#aaa; margin-top:5px;">20:14 &nbsp;✓✓</div>
+            </div>
+          </div>
+          <!-- mine 1 -->
+          <div style="display:flex; justify-content:flex-end;">
+            <div style="max-width:72%; background:#206123; border-radius:12px 12px 2px 12px; padding:9px 13px;">
+              <div style="color:white; font-size:14px; line-height:1.45;">Just got in — what's up?</div>
+              <div style="text-align:right; font-size:10px; color:#4fc3f7; margin-top:5px;">20:15 &nbsp;✓✓</div>
+            </div>
+          </div>
+          <!-- theirs 2 with view-once media -->
+          <div style="display:flex; justify-content:flex-start;">
+            <div style="max-width:74%; background:#215e6d; border-radius:12px 12px 12px 2px; padding:9px 13px;">
+              <div style="font-size:11px; color:#ccc; margin-bottom:4px;">Alex</div>
+              <div style="background:rgba(0,0,0,0.25); border-left:3px solid #4fc3f7; padding:5px 9px; border-radius:4px; margin-bottom:8px;">
+                <div style="font-size:10px; color:#4fc3f7; font-weight:700; margin-bottom:2px;">You</div>
+                <div style="font-size:12px; color:#bbb; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:200px;">Just got in — what's up?</div>
+              </div>
+              <div style="background:#1a3a4d; border-radius:8px; padding:14px; text-align:center; font-size:13px; color:#7dd3fc; margin-bottom:2px;">👁️ &nbsp;Tap to view (once)</div>
+              <div style="font-size:13px; color:white; margin-top:6px; line-height:1.45;">Check it out — view once 📷</div>
+              <div style="text-align:right; font-size:10px; color:#aaa; margin-top:5px;">20:16 &nbsp;✓</div>
+            </div>
+          </div>
+          <!-- mine 2 with reactions -->
+          <div style="display:flex; justify-content:flex-end;">
+            <div style="max-width:72%; background:#206123; border-radius:12px 12px 2px 12px; padding:9px 13px;">
+              <div style="color:white; font-size:14px; line-height:1.45;">Ha, amazing! Can't wait 🔥</div>
+              <div style="display:flex; gap:4px; margin-top:7px; flex-wrap:wrap;">
+                <span style="background:rgba(255,255,255,0.15); border:1px solid rgba(255,255,255,0.25); border-radius:12px; padding:2px 9px; font-size:12px;">🔥 1</span>
+                <span style="background:rgba(255,255,255,0.15); border:1px solid rgba(255,255,255,0.25); border-radius:12px; padding:2px 9px; font-size:12px;">❤️ 1</span>
+              </div>
+              <div style="text-align:right; font-size:10px; color:#4fc3f7; margin-top:5px;">20:17 &nbsp;✓✓</div>
+            </div>
+          </div>
+          <!-- theirs 3 -->
+          <div style="display:flex; justify-content:flex-start;">
+            <div style="max-width:72%; background:#215e6d; border-radius:12px 12px 12px 2px; padding:9px 13px;">
+              <div style="font-size:11px; color:#ccc; margin-bottom:4px;">Alex</div>
+              <div style="color:white; font-size:14px; line-height:1.45;">Sending now! Give it a sec ✌️</div>
+              <div style="text-align:right; font-size:10px; color:#aaa; margin-top:5px;">20:17 &nbsp;✓✓</div>
+            </div>
+          </div>
+        </div>
+        <!-- Typing indicator -->
+        <div style="padding:2px 16px 5px; font-size:11px; color:#aaa; font-style:italic; background:#2c2c2c;">Alex is typing…</div>
+        <!-- Input bar -->
+        <div style="display:flex; align-items:center; gap:7px; padding:9px; border-top:1px solid #555; background:#2c2c2c;">
+          <div style="flex:1; background:#444; border-radius:12px; padding:10px 13px; color:#666; font-size:14px;">Type a message…</div>
+          <div style="width:38px; height:38px; border-radius:50%; background:#444; display:flex; align-items:center; justify-content:center; font-size:17px;">📎</div>
+          <div style="width:38px; height:38px; border-radius:50%; background:#444; display:flex; align-items:center; justify-content:center; font-size:17px;">📷</div>
+          <div style="width:38px; height:38px; border-radius:50%; background:#555; display:flex; align-items:center; justify-content:center; font-size:15px; color:white;">➤</div>
+        </div>
+      </div>
+      <p class="mt-2 text-xs text-slate-400 text-center">Main chat interface — read receipts (✓ / ✓✓), emoji reactions, reply threading, and view-once media</p>
+
+      <h2 class="mt-8 text-xl font-bold">Key features</h2>
+      <ul class="mt-3 space-y-1 text-slate-600 text-sm list-disc list-inside">
+        <li>SQLCipher-encrypted SQLite database (AES-256)</li>
+        <li>Session-cookie authentication (7-day TTL, HttpOnly, SameSite=Strict)</li>
+        <li>Optional two-factor authentication via OTP email</li>
+        <li>Forced password change on first login</li>
+        <li>View-once images and videos</li>
+        <li>In-app video recorder with optional FFmpeg WASM compression</li>
+        <li>Swipe-to-reply and threaded message context</li>
+        <li>Emoji reactions: 👍 ❤️ 😂 😮 😢 👏 🔥 😡</li>
+        <li>Typing indicator and dual-tick read receipts</li>
+        <li>Five colour schemes: Default, Ocean, Purple, Warm, Forest</li>
+        <li>Image blur toggle for sensitive or NSFW media</li>
+        <li>PWA — installs full-screen on Android (Chrome) and iOS (Safari)</li>
+        <li>Admin panel: user management, message reports, app settings, post import</li>
+        <li>Cloudflare Turnstile captcha support (optional)</li>
+        <li>Report function — flag messages to admin with one tap</li>
+        <li>Emergency exit button (configurable)</li>
+        <li>Soft-delete: content retained for admin audit, access immediately revoked</li>
+      </ul>
+
+      <!-- Mockup 2: Login + Settings side by side -->
+      <div class="mt-6 grid grid-cols-2 gap-3">
+        <!-- Login screen -->
+        <div class="rounded-xl overflow-hidden border border-slate-200 shadow-md pointer-events-none select-none tls-mockup" aria-hidden="true" style="background:#2c2c2c; padding:24px 16px; display:flex; align-items:center; justify-content:center; min-height:280px;">
+          <div style="background:#333; border-radius:16px; padding:24px 20px; width:100%; max-width:260px; display:flex; flex-direction:column; align-items:center; gap:10px; box-shadow:0 8px 32px rgba(0,0,0,0.5);">
+            <div style="width:52px; height:52px; border-radius:50%; background:#1b4f5e; display:flex; align-items:center; justify-content:center; font-size:22px; color:white; font-weight:700;">T</div>
+            <div style="color:white; font-size:16px; font-weight:600; text-align:center;">Sign In</div>
+            <div style="background:#444; border:1px solid #666; border-radius:8px; color:#888; padding:9px 12px; font-size:13px; width:100%; text-align:center;">Username</div>
+            <div style="background:#444; border:1px solid #666; border-radius:8px; color:#888; padding:9px 12px; font-size:13px; width:100%; text-align:center;">••••••••</div>
+            <div style="background:#1a1a2e; border-radius:8px; width:100%; padding:10px; text-align:center; color:#666; font-size:11px; border:1px solid #333;">Turnstile captcha widget</div>
+            <div style="background:#007bff; border-radius:8px; color:white; padding:10px; font-size:14px; width:100%; text-align:center; font-weight:600;">Sign In</div>
+          </div>
+        </div>
+        <!-- Settings panel -->
+        <div class="rounded-xl overflow-hidden border border-slate-200 shadow-md pointer-events-none select-none tls-mockup" aria-hidden="true" style="background:#2c2c2c; padding:16px; display:flex; align-items:flex-start; justify-content:flex-end; min-height:280px;">
+          <!-- Fake chat behind -->
+          <div style="position:absolute; left:0; right:0; top:0; bottom:0; opacity:0.3; overflow:hidden;"></div>
+          <!-- Settings panel overlay -->
+          <div style="background:#333; border:1px solid #555; border-radius:12px; padding:14px; width:190px; box-shadow:0 4px 20px rgba(0,0,0,0.5); flex-shrink:0;">
+            <div style="font-weight:700; color:white; margin-bottom:8px; font-size:14px;">Settings</div>
+            <div style="font-size:11px; color:#aaa; margin-bottom:6px;">Colour Scheme</div>
+            <div style="display:flex; align-items:center; gap:7px; background:rgba(255,255,255,0.1); border:1px solid #777; border-radius:8px; padding:6px 9px; margin-bottom:4px;">
+              <div style="display:flex; gap:3px;"><span style="width:12px; height:12px; border-radius:50%; background:#2c2c2c; display:inline-block;"></span><span style="width:12px; height:12px; border-radius:50%; background:#206123; display:inline-block;"></span><span style="width:12px; height:12px; border-radius:50%; background:#215e6d; display:inline-block;"></span></div>
+              <span style="color:white; font-size:12px;">Default</span>
+            </div>
+            <div style="display:flex; align-items:center; gap:7px; border:1px solid #555; border-radius:8px; padding:6px 9px; margin-bottom:4px;">
+              <div style="display:flex; gap:3px;"><span style="width:12px; height:12px; border-radius:50%; background:#1a2a3a; display:inline-block;"></span><span style="width:12px; height:12px; border-radius:50%; background:#1a4f6e; display:inline-block;"></span><span style="width:12px; height:12px; border-radius:50%; background:#0d4d4d; display:inline-block;"></span></div>
+              <span style="color:#ccc; font-size:12px;">Ocean</span>
+            </div>
+            <div style="display:flex; align-items:center; gap:7px; border:1px solid #555; border-radius:8px; padding:6px 9px; margin-bottom:4px;">
+              <div style="display:flex; gap:3px;"><span style="width:12px; height:12px; border-radius:50%; background:#1e1a2e; display:inline-block;"></span><span style="width:12px; height:12px; border-radius:50%; background:#533483; display:inline-block;"></span><span style="width:12px; height:12px; border-radius:50%; background:#0f3460; display:inline-block;"></span></div>
+              <span style="color:#ccc; font-size:12px;">Purple</span>
+            </div>
+            <div style="display:flex; align-items:center; gap:7px; border:1px solid #555; border-radius:8px; padding:6px 9px; margin-bottom:4px;">
+              <div style="display:flex; gap:3px;"><span style="width:12px; height:12px; border-radius:50%; background:#2a1f0a; display:inline-block;"></span><span style="width:12px; height:12px; border-radius:50%; background:#7c4500; display:inline-block;"></span><span style="width:12px; height:12px; border-radius:50%; background:#5c3d02; display:inline-block;"></span></div>
+              <span style="color:#ccc; font-size:12px;">Warm</span>
+            </div>
+            <div style="border-top:1px solid #555; margin:8px 0;"></div>
+            <div style="display:flex; align-items:center; gap:7px; color:#ddd; font-size:12px; padding:5px 0;">⏎ Enter to Send</div>
+            <div style="border-top:1px solid #555; margin:8px 0;"></div>
+            <div style="font-size:11px; color:#aaa; margin-bottom:5px;">Font Size</div>
+            <div style="height:4px; background:#007bff; border-radius:2px; width:60%; margin-bottom:8px;"></div>
+            <div style="color:#ddd; font-size:12px; padding:4px 0;">🔑 Change Password</div>
+            <div style="border-top:1px solid #555; margin:8px 0;"></div>
+            <div style="color:#ff7070; font-size:12px; padding:4px 0;">🚪 Logout</div>
+          </div>
+        </div>
+      </div>
+      <p class="mt-2 text-xs text-slate-400 text-center">Login with optional Turnstile captcha and OTP 2FA (left) · Settings panel with five colour schemes (right)</p>
+
+      <!-- Mockup 3: Admin panel -->
+      <div class="mt-6 w-full rounded-xl overflow-hidden border border-slate-200 shadow-md pointer-events-none select-none tls-mockup" aria-hidden="true" style="background:#1a1a1a; font-size:13px;">
+        <!-- Admin nav -->
+        <div style="background:#252525; border-bottom:1px solid #444; padding:0 16px; display:flex; align-items:center; gap:0;">
+          <a style="color:#aaa; font-size:13px; padding:14px 12px; text-decoration:none;">← TLS</a>
+          <div style="display:flex; gap:4px; margin-left:8px;">
+            <div style="background:#333; color:white; border:1px solid #555; border-radius:6px 6px 0 0; padding:8px 14px; font-size:12px; font-weight:600;">👥 Users</div>
+            <div style="color:#aaa; padding:8px 14px; font-size:12px;">🚨 Reports</div>
+            <div style="color:#aaa; padding:8px 14px; font-size:12px;">⚙️ Settings</div>
+            <div style="color:#aaa; padding:8px 14px; font-size:12px;">📥 Import</div>
+          </div>
+          <div style="margin-left:auto; color:#aaa; padding:8px 14px; font-size:12px;">Logout</div>
+        </div>
+        <!-- Admin content -->
+        <div style="padding:16px;">
+          <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:14px;">
+            <h2 style="color:white; margin:0; font-size:16px; font-weight:700;">User Management</h2>
+            <div style="background:#007bff; color:white; border-radius:6px; padding:6px 14px; font-size:12px; font-weight:600;">+ New User</div>
+          </div>
+          <!-- Table -->
+          <div style="overflow:auto; border-radius:8px; border:1px solid #333;">
+            <table style="width:100%; border-collapse:collapse; color:#e0e0e0;">
+              <thead>
+                <tr style="background:#252525; border-bottom:1px solid #444;">
+                  <th style="padding:8px 12px; text-align:left; font-size:11px; color:#aaa; font-weight:600;">ID</th>
+                  <th style="padding:8px 12px; text-align:left; font-size:11px; color:#aaa; font-weight:600;">Username</th>
+                  <th style="padding:8px 12px; text-align:left; font-size:11px; color:#aaa; font-weight:600;">Display Name</th>
+                  <th style="padding:8px 12px; text-align:left; font-size:11px; color:#aaa; font-weight:600;">Role</th>
+                  <th style="padding:8px 12px; text-align:left; font-size:11px; color:#aaa; font-weight:600;">2FA</th>
+                  <th style="padding:8px 12px; text-align:left; font-size:11px; color:#aaa; font-weight:600;">Status</th>
+                  <th style="padding:8px 12px; text-align:left; font-size:11px; color:#aaa; font-weight:600;">Last Seen</th>
+                  <th style="padding:8px 12px; text-align:left; font-size:11px; color:#aaa; font-weight:600;">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr style="border-bottom:1px solid #2a2a2a; background:#1e1e1e;">
+                  <td style="padding:8px 12px; font-size:12px;">1</td>
+                  <td style="padding:8px 12px; font-size:12px; font-weight:600;">admin</td>
+                  <td style="padding:8px 12px; font-size:12px;">James</td>
+                  <td style="padding:8px 12px;"><span style="background:rgba(255,165,0,0.2); color:#ffa500; border-radius:4px; padding:2px 8px; font-size:11px;">admin</span></td>
+                  <td style="padding:8px 12px; font-size:12px; color:#4caf50;">✓ On</td>
+                  <td style="padding:8px 12px;"><span style="background:rgba(76,175,80,0.2); color:#4caf50; border-radius:4px; padding:2px 8px; font-size:11px;">active</span></td>
+                  <td style="padding:8px 12px; font-size:11px; color:#aaa;">just now</td>
+                  <td style="padding:8px 12px; display:flex; gap:6px;">
+                    <span style="color:#4fc3f7; font-size:11px; cursor:pointer;">Edit</span>
+                  </td>
+                </tr>
+                <tr style="border-bottom:1px solid #2a2a2a; background:#1a1a1a;">
+                  <td style="padding:8px 12px; font-size:12px;">2</td>
+                  <td style="padding:8px 12px; font-size:12px; font-weight:600;">alex</td>
+                  <td style="padding:8px 12px; font-size:12px;">Alex</td>
+                  <td style="padding:8px 12px;"><span style="background:rgba(100,100,255,0.15); color:#aaa; border-radius:4px; padding:2px 8px; font-size:11px;">user</span></td>
+                  <td style="padding:8px 12px; font-size:12px; color:#aaa;">— Off</td>
+                  <td style="padding:8px 12px;"><span style="background:rgba(76,175,80,0.2); color:#4caf50; border-radius:4px; padding:2px 8px; font-size:11px;">active</span></td>
+                  <td style="padding:8px 12px; font-size:11px; color:#aaa;">2 min ago</td>
+                  <td style="padding:8px 12px; display:flex; gap:6px;">
+                    <span style="color:#4fc3f7; font-size:11px; cursor:pointer;">Edit</span>
+                    <span style="color:#ff5252; font-size:11px; cursor:pointer;">Disable</span>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+      <p class="mt-2 text-xs text-slate-400 text-center">Admin panel — user management with roles, 2FA status, last-seen, and enable/disable controls</p>
+
+      <h2 class="mt-8 text-xl font-bold">Stack</h2>
+      <div class="mt-3 grid grid-cols-2 gap-2 text-sm sm:grid-cols-4">
+        <div class="rounded-lg bg-slate-50 border border-slate-200 px-3 py-2 text-center font-semibold text-slate-700">Node.js / TS</div>
+        <div class="rounded-lg bg-slate-50 border border-slate-200 px-3 py-2 text-center font-semibold text-slate-700">Express 5</div>
+        <div class="rounded-lg bg-slate-50 border border-slate-200 px-3 py-2 text-center font-semibold text-slate-700">SQLCipher</div>
+        <div class="rounded-lg bg-slate-50 border border-slate-200 px-3 py-2 text-center font-semibold text-slate-700">PWA</div>
+      </div>
+
+      <div class="mt-8 flex flex-wrap gap-3">
+        <a href="https://github.com/jamesjhs/TLS" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-semibold text-slate-700 hover:border-slate-400 hover:text-slate-900">
+          View on GitHub →
+        </a>
+      </div>
+    </section>
+  </main>
+</body>
+</html>
