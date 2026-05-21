@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>PingMe Help — Support Portal | James JHS</title>
+  <title>PingMe Help | James JHS</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&display=swap');
@@ -16,167 +16,30 @@
     <section class="mt-4 rounded-3xl border border-slate-200 bg-white p-8 shadow-sm">
       <p class="text-sm font-semibold uppercase tracking-widest text-amber-500">Project</p>
       <h1 class="mt-2 text-3xl font-extrabold">PingMe Help</h1>
-      <p class="mt-1 text-slate-500 text-sm">Self-hosted help &amp; support portal · Node.js / TypeScript · Tailwind CSS</p>
+      <p class="mt-1 text-slate-500 text-sm">Project documentation and support content for PingMe</p>
 
-      <p class="mt-5 text-slate-600">PingMe Help is a lightweight, self-hosted helpdesk and support request portal. Users can submit help tickets, track their status through to resolution, and receive email updates — all within a clean, private environment on your own server.</p>
+      <p class="mt-5 text-slate-600">
+        PingMe Help is the help/documentation project for PingMe, maintained from the
+        <code class="rounded bg-slate-100 px-1 py-0.5 text-xs">jamesjhs/pingme-help</code> repository
+        and published at <a class="font-semibold text-sky-700 hover:text-sky-900" href="https://pingme.help" target="_blank" rel="noopener noreferrer">pingme.help</a>.
+      </p>
 
-      <p class="mt-4 text-slate-600">Designed for small teams and private deployments where a full-fat commercial helpdesk is overkill, PingMe Help keeps things simple: raise a request, assign a category and priority, watch it move from Open through to Resolved. Administrators get a full queue view with filtering and bulk actions, and every state change triggers an optional email notification to the submitter.</p>
+      <p class="mt-4 text-slate-600">
+        This portfolio entry has been refactored to remove speculative product claims and instead reflect only verified source references.
+      </p>
 
-      <!-- Mockup 1: Ticket list view -->
-      <div class="mt-6 w-full rounded-xl overflow-hidden border border-slate-200 shadow-md pointer-events-none select-none" aria-hidden="true" style="font-family:sans-serif; background:#f8fafc;">
-        <!-- App header -->
-        <div style="background:#fff; border-bottom:1px solid #e2e8f0; padding:12px 20px; display:flex; align-items:center; gap:12px;">
-          <div style="display:flex; align-items:center; gap:8px; flex:1;">
-            <div style="width:30px; height:30px; border-radius:8px; background:#f59e0b; display:flex; align-items:center; justify-content:center; font-size:16px; color:white; font-weight:700;">P</div>
-            <span style="font-size:16px; font-weight:700; color:#0f172a;">PingMe Help</span>
-          </div>
-          <div style="display:flex; gap:8px; align-items:center;">
-            <div style="background:#f59e0b; color:white; border-radius:8px; padding:7px 16px; font-size:13px; font-weight:600;">+ New Request</div>
-            <div style="width:32px; height:32px; border-radius:50%; background:#e2e8f0; display:flex; align-items:center; justify-content:center; font-size:14px;">👤</div>
-          </div>
-        </div>
-        <!-- Filters row -->
-        <div style="background:#fff; border-bottom:1px solid #e2e8f0; padding:10px 20px; display:flex; align-items:center; gap:10px; flex-wrap:wrap;">
-          <div style="display:flex; gap:4px;">
-            <div style="background:#f59e0b; color:white; border-radius:20px; padding:4px 14px; font-size:12px; font-weight:600;">All</div>
-            <div style="color:#64748b; border:1px solid #e2e8f0; border-radius:20px; padding:4px 14px; font-size:12px;">Open</div>
-            <div style="color:#64748b; border:1px solid #e2e8f0; border-radius:20px; padding:4px 14px; font-size:12px;">In Progress</div>
-            <div style="color:#64748b; border:1px solid #e2e8f0; border-radius:20px; padding:4px 14px; font-size:12px;">Resolved</div>
-          </div>
-          <div style="margin-left:auto; background:#f1f5f9; border:1px solid #e2e8f0; border-radius:8px; padding:6px 14px; font-size:12px; color:#94a3b8; min-width:160px;">🔍 Search tickets…</div>
-        </div>
-        <!-- Ticket list -->
-        <div style="padding:0;">
-          <!-- Ticket row 1 - Open -->
-          <div style="border-bottom:1px solid #e2e8f0; padding:14px 20px; background:#fff; display:flex; align-items:center; gap:12px;">
-            <div style="flex-shrink:0; width:36px; height:36px; border-radius:8px; background:#fef3c7; display:flex; align-items:center; justify-content:center; font-size:16px;">🖨️</div>
-            <div style="flex:1; min-width:0;">
-              <div style="font-size:14px; font-weight:600; color:#0f172a; margin-bottom:3px;">Printer not responding on 2nd floor</div>
-              <div style="font-size:11px; color:#94a3b8;">Raised by Sarah · <span style="color:#64748b;">IT / Hardware</span> · 2 hours ago</div>
-            </div>
-            <div style="display:flex; gap:6px; align-items:center; flex-shrink:0;">
-              <span style="background:#fef9c3; color:#a16207; border:1px solid #fde68a; border-radius:6px; padding:3px 10px; font-size:11px; font-weight:600;">High</span>
-              <span style="background:#fef3c7; color:#b45309; border:1px solid #fcd34d; border-radius:6px; padding:3px 10px; font-size:11px; font-weight:600;">Open</span>
-            </div>
-          </div>
-          <!-- Ticket row 2 - In Progress -->
-          <div style="border-bottom:1px solid #e2e8f0; padding:14px 20px; background:#f8fafc; display:flex; align-items:center; gap:12px;">
-            <div style="flex-shrink:0; width:36px; height:36px; border-radius:8px; background:#dbeafe; display:flex; align-items:center; justify-content:center; font-size:16px;">🔑</div>
-            <div style="flex:1; min-width:0;">
-              <div style="font-size:14px; font-weight:600; color:#0f172a; margin-bottom:3px;">Can't log in to staff portal — account locked</div>
-              <div style="font-size:11px; color:#94a3b8;">Raised by Tom · <span style="color:#64748b;">IT / Access</span> · 5 hours ago</div>
-            </div>
-            <div style="display:flex; gap:6px; align-items:center; flex-shrink:0;">
-              <span style="background:#fee2e2; color:#b91c1c; border:1px solid #fca5a5; border-radius:6px; padding:3px 10px; font-size:11px; font-weight:600;">Urgent</span>
-              <span style="background:#dbeafe; color:#1d4ed8; border:1px solid #93c5fd; border-radius:6px; padding:3px 10px; font-size:11px; font-weight:600;">In Progress</span>
-            </div>
-          </div>
-          <!-- Ticket row 3 - Open -->
-          <div style="border-bottom:1px solid #e2e8f0; padding:14px 20px; background:#fff; display:flex; align-items:center; gap:12px;">
-            <div style="flex-shrink:0; width:36px; height:36px; border-radius:8px; background:#f0fdf4; display:flex; align-items:center; justify-content:center; font-size:16px;">📡</div>
-            <div style="flex:1; min-width:0;">
-              <div style="font-size:14px; font-weight:600; color:#0f172a; margin-bottom:3px;">WiFi signal weak in the main hall</div>
-              <div style="font-size:11px; color:#94a3b8;">Raised by Mike · <span style="color:#64748b;">IT / Network</span> · yesterday</div>
-            </div>
-            <div style="display:flex; gap:6px; align-items:center; flex-shrink:0;">
-              <span style="background:#f1f5f9; color:#475569; border:1px solid #e2e8f0; border-radius:6px; padding:3px 10px; font-size:11px; font-weight:600;">Normal</span>
-              <span style="background:#fef3c7; color:#b45309; border:1px solid #fcd34d; border-radius:6px; padding:3px 10px; font-size:11px; font-weight:600;">Open</span>
-            </div>
-          </div>
-          <!-- Ticket row 4 - Resolved -->
-          <div style="padding:14px 20px; background:#f8fafc; display:flex; align-items:center; gap:12px; opacity:0.7;">
-            <div style="flex-shrink:0; width:36px; height:36px; border-radius:8px; background:#d1fae5; display:flex; align-items:center; justify-content:center; font-size:16px;">💻</div>
-            <div style="flex:1; min-width:0;">
-              <div style="font-size:14px; font-weight:600; color:#475569; margin-bottom:3px; text-decoration:line-through;">Laptop screen flickering on startup</div>
-              <div style="font-size:11px; color:#94a3b8;">Raised by Anna · <span style="color:#64748b;">Hardware</span> · 3 days ago</div>
-            </div>
-            <div style="display:flex; gap:6px; align-items:center; flex-shrink:0;">
-              <span style="background:#f1f5f9; color:#475569; border:1px solid #e2e8f0; border-radius:6px; padding:3px 10px; font-size:11px; font-weight:600;">Normal</span>
-              <span style="background:#d1fae5; color:#065f46; border:1px solid #6ee7b7; border-radius:6px; padding:3px 10px; font-size:11px; font-weight:600;">Resolved</span>
-            </div>
-          </div>
-        </div>
-      </div>
-      <p class="mt-2 text-xs text-slate-400 text-center">Ticket queue — priority badges, status tags, category labels, and rapid open/in-progress/resolved filtering</p>
-
-      <h2 class="mt-8 text-xl font-bold">Key features</h2>
-      <ul class="mt-3 space-y-1 text-slate-600 text-sm list-disc list-inside">
-        <li>Submit help requests with category, priority, and a free-text description</li>
-        <li>Priority levels: Normal, High, Urgent — each colour-coded in the queue</li>
-        <li>Status workflow: Open → In Progress → Resolved (→ Closed)</li>
-        <li>Email notifications to the submitter on each status change</li>
-        <li>Admin queue view with full filtering and search</li>
-        <li>Internal notes — add private comments visible only to admins</li>
-        <li>Category management — configure categories and sub-categories in settings</li>
-        <li>Audit trail — every status change timestamped and logged</li>
-        <li>Multi-user: user accounts with role-based access (user / admin)</li>
-        <li>Clean, minimal responsive UI</li>
+      <h2 class="mt-8 text-xl font-bold">Verified references</h2>
+      <ul class="mt-3 space-y-2 text-slate-600 text-sm list-disc list-inside">
+        <li>GitHub repository: <a class="font-semibold text-sky-700 hover:text-sky-900" href="https://github.com/jamesjhs/pingme-help" target="_blank" rel="noopener noreferrer">jamesjhs/pingme-help</a></li>
+        <li>Live site: <a class="font-semibold text-sky-700 hover:text-sky-900" href="https://pingme.help" target="_blank" rel="noopener noreferrer">https://pingme.help</a></li>
       </ul>
-
-      <!-- Mockup 2: New request form + ticket detail -->
-      <div class="mt-6 grid grid-cols-2 gap-3">
-        <!-- New request form -->
-        <div class="rounded-xl overflow-hidden border border-slate-200 shadow-md pointer-events-none select-none" aria-hidden="true" style="font-family:sans-serif; background:#fff; padding:20px;">
-          <div style="font-size:15px; font-weight:700; color:#0f172a; margin-bottom:16px;">New Help Request</div>
-          <div style="margin-bottom:12px;">
-            <div style="font-size:11px; font-weight:600; color:#475569; margin-bottom:4px;">Summary</div>
-            <div style="border:1px solid #e2e8f0; border-radius:8px; padding:9px 12px; font-size:13px; color:#94a3b8; background:#f8fafc;">Briefly describe your issue…</div>
-          </div>
-          <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-bottom:12px;">
-            <div>
-              <div style="font-size:11px; font-weight:600; color:#475569; margin-bottom:4px;">Category</div>
-              <div style="border:1px solid #e2e8f0; border-radius:8px; padding:9px 12px; font-size:13px; color:#64748b; background:#f8fafc; display:flex; justify-content:space-between;">IT / Hardware <span>▾</span></div>
-            </div>
-            <div>
-              <div style="font-size:11px; font-weight:600; color:#475569; margin-bottom:4px;">Priority</div>
-              <div style="border:1px solid #e2e8f0; border-radius:8px; padding:9px 12px; font-size:13px; color:#64748b; background:#f8fafc; display:flex; justify-content:space-between;">Normal <span>▾</span></div>
-            </div>
-          </div>
-          <div style="margin-bottom:16px;">
-            <div style="font-size:11px; font-weight:600; color:#475569; margin-bottom:4px;">Details</div>
-            <div style="border:1px solid #e2e8f0; border-radius:8px; padding:9px 12px; font-size:13px; color:#94a3b8; background:#f8fafc; height:64px;">Full description…</div>
-          </div>
-          <div style="display:flex; gap:8px;">
-            <div style="background:#f59e0b; color:white; border-radius:8px; padding:9px 20px; font-size:13px; font-weight:600;">Submit</div>
-            <div style="border:1px solid #e2e8f0; color:#64748b; border-radius:8px; padding:9px 16px; font-size:13px; font-weight:600; background:#fff;">Cancel</div>
-          </div>
-        </div>
-        <!-- Ticket detail -->
-        <div class="rounded-xl overflow-hidden border border-slate-200 shadow-md pointer-events-none select-none" aria-hidden="true" style="font-family:sans-serif; background:#fff; padding:20px; overflow-y:auto;">
-          <div style="display:flex; align-items:flex-start; justify-content:space-between; margin-bottom:12px; gap:8px;">
-            <div style="font-size:14px; font-weight:700; color:#0f172a; line-height:1.4; flex:1;">Can't log in to staff portal — account locked</div>
-            <span style="background:#dbeafe; color:#1d4ed8; border:1px solid #93c5fd; border-radius:6px; padding:3px 10px; font-size:11px; font-weight:600; flex-shrink:0;">In Progress</span>
-          </div>
-          <div style="display:flex; gap:6px; flex-wrap:wrap; margin-bottom:14px;">
-            <span style="background:#fee2e2; color:#b91c1c; border:1px solid #fca5a5; border-radius:6px; padding:2px 8px; font-size:11px; font-weight:600;">Urgent</span>
-            <span style="background:#f1f5f9; color:#475569; border:1px solid #e2e8f0; border-radius:6px; padding:2px 8px; font-size:11px;">IT / Access</span>
-            <span style="font-size:11px; color:#94a3b8; padding:2px 0;">Tom · 5 hours ago</span>
-          </div>
-          <div style="font-size:13px; color:#475569; line-height:1.6; margin-bottom:14px; padding-bottom:14px; border-bottom:1px solid #e2e8f0;">Getting "Account locked" when trying to log in. Happened after I got my password wrong twice this morning. I need access urgently — have a meeting at 2pm.</div>
-          <!-- Internal note -->
-          <div style="background:#fefce8; border:1px solid #fde68a; border-radius:8px; padding:10px 12px; margin-bottom:12px;">
-            <div style="font-size:10px; color:#a16207; font-weight:600; margin-bottom:3px;">🔒 Admin note · James, 1 hour ago</div>
-            <div style="font-size:12px; color:#92400e;">Unlocked the account. Asked Tom to enable 2FA to prevent repeat lockouts.</div>
-          </div>
-          <div style="display:flex; gap:6px;">
-            <div style="background:#1d4ed8; color:white; border-radius:8px; padding:7px 14px; font-size:12px; font-weight:600;">Mark Resolved</div>
-            <div style="border:1px solid #e2e8f0; color:#64748b; border-radius:8px; padding:7px 12px; font-size:12px;">Add Note</div>
-          </div>
-        </div>
-      </div>
-      <p class="mt-2 text-xs text-slate-400 text-center">New request form (left) · Ticket detail with internal admin notes (right)</p>
-
-      <h2 class="mt-8 text-xl font-bold">Stack</h2>
-      <div class="mt-3 grid grid-cols-2 gap-2 text-sm sm:grid-cols-4">
-        <div class="rounded-lg bg-slate-50 border border-slate-200 px-3 py-2 text-center font-semibold text-slate-700">Node.js / TS</div>
-        <div class="rounded-lg bg-slate-50 border border-slate-200 px-3 py-2 text-center font-semibold text-slate-700">SQLite</div>
-        <div class="rounded-lg bg-slate-50 border border-slate-200 px-3 py-2 text-center font-semibold text-slate-700">Tailwind CSS</div>
-        <div class="rounded-lg bg-slate-50 border border-slate-200 px-3 py-2 text-center font-semibold text-slate-700">Nodemailer</div>
-      </div>
 
       <div class="mt-8 flex flex-wrap gap-3">
         <a href="https://github.com/jamesjhs/pingme-help" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-semibold text-slate-700 hover:border-slate-400 hover:text-slate-900">
           View on GitHub →
+        </a>
+        <a href="https://pingme.help" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-semibold text-slate-700 hover:border-slate-400 hover:text-slate-900">
+          Visit website →
         </a>
       </div>
     </section>
