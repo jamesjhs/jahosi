@@ -29,3 +29,18 @@ Optional:
 - `CONTACT_PAGE_PATH`
 - `CONTACT_TO_EMAIL` (defaults to `jrowson@gmail.com`)
 - `CONTACT_FROM_EMAIL`
+
+## SEO and crawler support
+
+The site includes modern crawl/index signals across public pages:
+
+- Canonical URLs (`rel="canonical"`)
+- Rich social metadata (Open Graph + Twitter card tags)
+- Descriptive page-level meta descriptions
+- Explicit robots directives for public pages and noindex on redirect/private pages
+- JSON-LD structured data on key pages
+
+Crawler endpoints served by the app:
+
+- `/sitemap.xml` (XML sitemap for public pages)
+- `/robots.txt` (crawler rules + sitemap reference)

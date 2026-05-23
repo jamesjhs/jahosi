@@ -27,8 +27,25 @@ const CONTACT_PAGE_PATH = process.env.CONTACT_PAGE_PATH;
 const CONTACT_TO_EMAIL = process.env.CONTACT_TO_EMAIL;
 const CONTACT_FROM_EMAIL = process.env.CONTACT_FROM_EMAIL;
 const MATH_SECRET = process.env.MATH_SECRET;
+const SITE_URL = (process.env.SITE_URL || "https://jahosi.co.uk").replace(/\/+$/, "");
 const SERVICE_NAME = process.env.SERVICE_NAME || "jahosi";
 const SERVICE_VERSION = process.env.APP_VERSION || packageJson.version;
+const SITEMAP_PATHS = [
+  "/",
+  "/portfolio/hovercraft.html",
+  "/portfolio/hamster.html",
+  "/portfolio/museum-gallery.html",
+  "/portfolio/museum-vms.html",
+  "/portfolio/tasker.html",
+  "/portfolio/taskit.html",
+  "/portfolio/leccy.html",
+  "/portfolio/project-ai.html",
+  "/portfolio/messaging.html",
+  "/portfolio/qglimpse.html",
+  "/portfolio/pingme-help.html",
+  "/splash/",
+  "/splash/help.htm",
+];
 
 const MAX_REQUESTS_PER_WINDOW = 5;
 const RATE_LIMIT_WINDOW_MS = 15 * 60 * 1000;
@@ -53,6 +70,34 @@ app.get("/readyz", (req, res) => {
     version: SERVICE_VERSION,
     timestamp: new Date().toISOString(),
   });
+});
+
+function resolvePublicBaseUrl(req) {
+  const forwardedProto = req.get("x-forwarded-proto");
+  const protocol = forwardedProto ? forwardedProto.split(",")[0].trim() : req.protocol;
+  const host = req.get("host");
+  return host ? `${protocol}://${host}` : SITE_URL;
+}
+
+app.get("/sitemap.xml", (req, res) => {
+  const baseUrl = resolvePublicBaseUrl(req);
+  const xml = `<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+${SITEMAP_PATHS.map((routePath) => `  <url><loc>${baseUrl}${routePath}</loc></url>`).join("\n")}
+</urlset>`;
+  res.type("application/xml").send(xml);
+});
+
+app.get("/robots.txt", (req, res) => {
+  const baseUrl = resolvePublicBaseUrl(req);
+  const robotsTxt = [
+    "User-agent: *",
+    "Allow: /",
+    `Disallow: ${CONTACT_PAGE_PATH}`,
+    "Disallow: /api/contact/submit",
+    `Sitemap: ${baseUrl}/sitemap.xml`,
+  ].join("\n");
+  res.type("text/plain").send(`${robotsTxt}\n`);
 });
 
 app.use(express.static(path.join(__dirname, "public")));
