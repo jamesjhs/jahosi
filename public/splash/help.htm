@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>splash! help guide</title>
+<style>
+  :root {
+    --blue:#0077b6;
+    --blue-lt:#e0f2fe;
+    --bg:#eef6fc;
+    --card:#ffffff;
+    --text:#1a202c;
+    --muted:#64748b;
+    --border:#cde8f5;
+    --shadow:0 2px 10px rgba(0,80,160,0.1);
+  }
+  *{box-sizing:border-box}
+  body{margin:0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--text);line-height:1.6}
+  header{background:linear-gradient(135deg,#023e8a 0%,#0096c7 100%);color:#fff;padding:1.5rem 2rem}
+  main{max-width:980px;margin:0 auto;padding:1rem}
+  .card{background:var(--card);border:1px solid var(--border);border-radius:14px;box-shadow:var(--shadow);padding:1.25rem 1.4rem;margin-bottom:1rem}
+  h1{margin:0;font-size:1.7rem}
+  h2{font-size:1rem;color:var(--blue);text-transform:uppercase;letter-spacing:.04em;margin:0 0 .75rem}
+  p,li{font-size:.95rem}
+  ul,ol{padding-left:1.2rem}
+  .back{display:inline-flex;align-items:center;gap:.45rem;margin-bottom:1rem;color:var(--blue);font-weight:700;text-decoration:none}
+  .note{background:var(--blue-lt);border-left:4px solid var(--blue);padding:.9rem 1rem;border-radius:0 10px 10px 0}
+  footer{text-align:center;padding:1.5rem;color:var(--muted);font-size:.8rem}
+  code{background:#f1f5f9;padding:.1rem .35rem;border-radius:6px}
+</style>
+</head>
+<body>
+<header>
+  <h1>splash! help guide</h1>
+  <p>Friendly guidance for the planner, forecast inputs, exports, and model assumptions.</p>
+</header>
+<main>
+  <a class="back" href="./index.htm">← Back to splash!</a>
+
+  <section class="card">
+    <h2>What splash! does</h2>
+    <p>splash! estimates how a small outdoor playpool behaves thermally. It combines your pool size, heater output, tariff, passive cover plan, current water temperature, and forecast weather to estimate heating effort, overnight losses, and running cost.</p>
+    <div class="note">This is a planning tool, not a guarantee. Real pools respond to wind, humidity, rainfall, bather load, splashing, pipe losses, and site-specific shelter in ways that simple public-input models cannot perfectly capture.</div>
+  </section>
+
+  <section class="card">
+    <h2>Forecast entry options</h2>
+    <ul>
+      <li><strong>Manual entry:</strong> type the three daily air temperatures, cloud percentages, and any extra heater hours yourself. This is always available.</li>
+      <li><strong>UK postcode auto-fill:</strong> when online, you can enter a UK postcode and click <em>Use postcode forecast</em>. The page looks up latitude and longitude via <code>api.postcodes.io</code>, then requests a 3-day daily forecast from <code>api.open-meteo.com/v1/forecast</code>.</li>
+      <li>The fetched values are still editable afterwards, so you can adjust them if your local knowledge differs from the public feed.</li>
+      <li>A simple 3-day pool temperature forecast chart updates immediately from either manual values or postcode-filled weather.</li>
+    </ul>
+  </section>
+
+  <section class="card">
+    <h2>Mathematical model deep-dive</h2>
+    <ul>
+      <li><strong>Thermal storage:</strong> the water is treated as one well-mixed thermal mass with heat capacity <code>mass × specific heat</code>. That is usually reasonable for small playpools after circulation or normal mixing.</li>
+      <li><strong>Heat losses:</strong> losses are represented with an overall <code>UA</code> value split across the surface, side walls, and base. Surface loss is the most important term because it bundles convection, evaporation, and long-wave radiation.</li>
+      <li><strong>Solar gain:</strong> monthly public solar baselines are converted into daytime heat input. In v1.0.0, solar is only applied during daylight hours and is reduced by cloud cover and any daylight cover use.</li>
+      <li><strong>Forecast stepping:</strong> the 3-day forecast uses stepped simulation over each day rather than a single 24-hour average temperature equation. That reduces a common error where night-time temperatures looked too optimistic because daytime solar had been smeared across the whole day.</li>
+      <li><strong>Custom heating hours:</strong> if you choose a custom number of heating hours per day, the planner treats that as equivalent average daily heater duty unless you explicitly choose off-peak-only mode. This is deliberate because the exact timing is unknown.</li>
+    </ul>
+  </section>
+
+  <section class="card">
+    <h2>Critical appraisal and corrected mis-steps</h2>
+    <ol>
+      <li><strong>Solar timing correction:</strong> earlier forecast logic could over-credit solar heat overnight by spreading daily solar energy evenly across 24 hours. v1.0.0 fixes that by restricting solar gain to daylight.</li>
+      <li><strong>Boost-hour cap:</strong> extra heater hours are now capped so the model cannot charge for more than 24 total heater hours in a single day.</li>
+      <li><strong>Heat-up energy label:</strong> the July heat-up energy card now reports estimated heater input implied by the model, rather than only the minimum thermal-mass energy requirement.</li>
+      <li><strong>Remaining limitations:</strong> the planner still uses public monthly climate normals and a simplified single-body water model. Wind spikes, rain, splashing, and stratification can shift real outcomes noticeably.</li>
+    </ol>
+  </section>
+
+  <section class="card">
+    <h2>Temporary pool season costs</h2>
+    <p>If your pool is set up seasonally (rather than used year-round), you can enter <strong>Pool In from</strong> and <strong>Pool Away by</strong> dates in the Pool Season card in the settings panel. This unlocks a season summary section in the results showing:</p>
+    <ul>
+      <li><strong>Season Duration</strong> — the number of days the pool is in use.</li>
+      <li><strong>Season Electricity Cost</strong> — heating electricity cost for the season, calculated by weighting each calendar month's monthly cost figure by how many days of that month fall within your season.</li>
+      <li><strong>Water Fill Cost</strong> — pool volume × number of fills × water rate. The default rate of <code>0.55 p/L</code> reflects the Anglian Water metered domestic rate. Change it to match your local supplier or your tariff letter.</li>
+      <li><strong>Total Season Cost</strong> — electricity plus water fills combined.</li>
+      <li><strong>Cost per Day</strong> — total season cost divided by season duration.</li>
+    </ul>
+    <div class="note">Water cost uses your full pool volume as the fill volume. If you only top up rather than empty and refill, set fills to 0 or reduce the water rate manually to reflect top-up volume only.</div>
+  </section>
+
+  <section class="card">
+    <h2>Understanding exports</h2>
+    <p>The text summary, JSON, and CSV exports are generated locally in your browser. They include the current settings, calculated outputs, and version/copyright metadata.</p>
+    <p>The forecast boost figure is expressed as a <strong>peak-rate equivalent</strong> for the heat added by top-ups and extra heater runtime. Treat it as a planning comparison metric rather than a guaranteed metered bill for hot-water already stored in a cylinder.</p>
+  </section>
+</main>
+<footer>
+  splash! v1.0.0 · Copyright © jahosi.co.uk 2026
+</footer>
+</body>
+</html>
