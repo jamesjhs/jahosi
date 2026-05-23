@@ -14,6 +14,8 @@
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="splash! — costing for your playpool">
 <meta name="twitter:description" content="Plan your playpool heating costs with thermodynamic modelling and interactive data visualisation.">
+<link rel="icon" type="image/svg+xml" href="./icons/pool-icon-192.svg">
+<link rel="apple-touch-icon" href="./icons/pool-icon-192.svg">
 <link rel="manifest" href="./manifest.webmanifest">
 <title>splash! — costing for your playpool</title>
 <script type="application/ld+json">
@@ -201,7 +203,7 @@ footer{text-align:center;padding:1.5rem;font-size:.72rem;color:var(--muted)}
 
 <header>
   <h1>splash!</h1>
-  <p>costing for your playpool · v1.1.0</p>
+  <p>costing for your playpool · v1.2.0</p>
 </header>
 
 <div class="wrap">
@@ -226,7 +228,7 @@ footer{text-align:center;padding:1.5rem;font-size:.72rem;color:var(--muted)}
         <ul class="intro-list">
           <li>Manual forecast entry always stays available, even after postcode auto-fill.</li>
           <li>Set pool season start and end dates to see a cost breakdown for your actual outdoor season, including water fill costs (UK Anglian Water metered baseline: 0.55 p/L).</li>
-          <li>v1.1.0 adds no-active-heating as the default schedule mode, target-temperature presets for common pool use, and rectangular X × Y pool sizing.</li>
+          <li>v1.2.0 keeps no-active-heating as the default schedule mode, target-temperature presets for common pool use, and rectangular X × Y pool sizing.</li>
           <li>Exports are created locally in your browser and now include version and copyright details.</li>
         </ul>
       </div>
@@ -683,8 +685,8 @@ footer{text-align:center;padding:1.5rem;font-size:.72rem;color:var(--muted)}
       </div>
 
       <div class="card" style="margin-bottom:1rem">
-        <div class="card-title">Model review in v1.1.0</div>
-        <p class="inline-help">Core daylight-solar and forecast-cap safeguards from v1.0.0 remain in place. v1.1.0 adds no-active-heating as the default schedule mode, common target-temperature presets, and rectangular X × Y geometry input so area and heat-loss assumptions better match non-circular pools. Manual forecasts are still planning estimates, not guarantees.</p>
+        <div class="card-title">Model review in v1.2.0</div>
+        <p class="inline-help">Core daylight-solar and forecast-cap safeguards from v1.0.0 remain in place. v1.2.0 keeps no-active-heating as the default schedule mode, common target-temperature presets, and rectangular X × Y geometry input so area and heat-loss assumptions better match non-circular pools. Manual forecasts are still planning estimates, not guarantees.</p>
       </div>
 
       <div class="card" style="margin-bottom:1rem">
@@ -776,13 +778,17 @@ footer{text-align:center;padding:1.5rem;font-size:.72rem;color:var(--muted)}
         </ul>
         <p class="mini-note">These public-query and forum-derived heuristics are used for planning prompts and cover assumptions; always treat them as indicative rather than guaranteed outcomes.</p>
       </div>
+      <div class="card" style="margin-bottom:1rem">
+        <div class="card-title">Why buried/permanent pools are not modelled yet</div>
+        <p class="inline-help">splash! currently targets temporary or lightly installed outdoor playpools and uses a simplified, single-body water model with public climate inputs. Fully buried or permanent pools need extra site-specific physics the app does not yet collect reliably, including layered wall/base construction, insulation thickness and type, soil moisture and drainage, ground-temperature lag, and nearby building effects on wind shelter, sky-view radiation, and shading. Without those inputs, one-size-fits-all buried-pool outputs would look precise but often be wrong, so this version keeps buried/permanent pool modelling out of scope and treats results as planning estimates, not guarantees.</p>
+      </div>
     </main>
   </div>
 
 </div><!-- /wrap -->
 
 <footer>
-  splash! &mdash; costing for your playpool · v1.1.0.<br>
+  splash! &mdash; costing for your playpool · v1.2.0.<br>
   Physics model: surface losses combine free-convection, evaporation (dominant) and long-wave radiation; parameterised by shade/shelter.
   UK East Anglia climate data. Costs are indicative estimates only. Not for safety-critical application.<br>
   Copyright © jahosi.co.uk 2026
@@ -817,7 +823,7 @@ const COVER_TYPES = {
   liquid:  {label:'Liquid solar cover',             surfaceLossFactor:0.65, solarTransmittance:0.98, evaporationReduction:0.40}
 };
 
-const APP_VERSION = '1.1.0';
+const APP_VERSION = '1.2.0';
 const APP_COPYRIGHT = 'Copyright © jahosi.co.uk 2026';
 const TARGET_TEMP_MIN = 18;
 const TARGET_TEMP_MAX = 40;

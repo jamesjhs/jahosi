@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" type="image/svg+xml" href="./icons/pool-icon-192.svg">
 <title>splash! help guide</title>
 <style>
   :root {
@@ -59,7 +60,7 @@
     <ul>
       <li><strong>Thermal storage:</strong> the water is treated as one well-mixed thermal mass with heat capacity <code>mass × specific heat</code>. That is usually reasonable for small playpools after circulation or normal mixing.</li>
       <li><strong>Heat losses:</strong> losses are represented with an overall <code>UA</code> value split across the surface, side walls, and base. Surface loss is the most important term because it bundles convection, evaporation, and long-wave radiation.</li>
-      <li><strong>Solar gain:</strong> monthly public solar baselines are converted into daytime heat input. In v1.1.0, solar is only applied during daylight hours and is reduced by cloud cover and any daylight cover use.</li>
+      <li><strong>Solar gain:</strong> monthly public solar baselines are converted into daytime heat input. In v1.2.0, solar is only applied during daylight hours and is reduced by cloud cover and any daylight cover use.</li>
       <li><strong>Forecast stepping:</strong> the 3-day forecast uses stepped simulation over each day rather than a single 24-hour average temperature equation. That reduces a common error where night-time temperatures looked too optimistic because daytime solar had been smeared across the whole day.</li>
       <li><strong>Custom heating hours:</strong> if you choose a custom number of heating hours per day, the planner treats that as equivalent average daily heater duty unless you explicitly choose off-peak-only mode. This is deliberate because the exact timing is unknown.</li>
     </ul>
@@ -68,7 +69,7 @@
   <section class="card">
     <h2>Critical appraisal and corrected mis-steps</h2>
     <ol>
-      <li><strong>Solar timing correction:</strong> earlier forecast logic could over-credit solar heat overnight by spreading daily solar energy evenly across 24 hours. v1.1.0 keeps this correction by restricting solar gain to daylight.</li>
+      <li><strong>Solar timing correction:</strong> earlier forecast logic could over-credit solar heat overnight by spreading daily solar energy evenly across 24 hours. v1.2.0 keeps this correction by restricting solar gain to daylight.</li>
       <li><strong>Boost-hour cap:</strong> extra heater hours are now capped so the model cannot charge for more than 24 total heater hours in a single day.</li>
       <li><strong>Heat-up energy label:</strong> the July heat-up energy card now reports estimated heater input implied by the model, rather than only the minimum thermal-mass energy requirement.</li>
       <li><strong>Remaining limitations:</strong> the planner still uses public monthly climate normals and a simplified single-body water model. Wind spikes, rain, splashing, and stratification can shift real outcomes noticeably.</li>
@@ -76,7 +77,7 @@
   </section>
 
   <section class="card">
-    <h2>What’s new in v1.1.0</h2>
+    <h2>What’s new in v1.2.0</h2>
     <ul>
       <li><strong>Heating Schedule Mode default:</strong> the default is now <em>No active heating</em>, with optional hot-water or kettle top-up variants still available.</li>
       <li><strong>Target temperature presets:</strong> you can quickly apply common ranges for public swimming, children/learn-to-swim, therapy/hydro, and hot tub/spa use-cases.</li>
@@ -104,7 +105,7 @@
   </section>
 </main>
 <footer>
-  splash! v1.1.0 · Copyright © jahosi.co.uk 2026
+  splash! v1.2.0 · Copyright © jahosi.co.uk 2026
 </footer>
 </body>
 </html>
