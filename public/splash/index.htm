@@ -165,6 +165,22 @@ tr.totals td{background:#eef6fc!important;font-weight:700;border-top:2px solid v
 .source-list a{color:var(--blue);font-weight:600}
 
 .sec{font-size:1rem;font-weight:700;color:var(--blue);margin:0 0 .75rem;display:flex;align-items:center;gap:.5rem}
+.intro-grid{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(260px,.7fr);gap:1rem;align-items:start}
+.intro-copy p{font-size:.88rem;color:var(--text);line-height:1.7;margin-bottom:.8rem}
+.intro-list{padding-left:1.15rem;display:grid;gap:.45rem;font-size:.82rem;color:var(--text)}
+.info-actions{display:flex;flex-wrap:wrap;gap:.75rem;margin-top:1rem}
+.action-btn,.link-btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:.45rem;
+  border:0;border-radius:8px;background:var(--blue);color:#fff;
+  padding:.68rem 1rem;font-weight:700;cursor:pointer;box-shadow:var(--shadow);text-decoration:none
+}
+.link-btn{background:#0f766e}
+.action-btn:disabled{opacity:.65;cursor:wait}
+.status-chip{display:inline-flex;align-items:center;gap:.4rem;padding:.45rem .7rem;border-radius:999px;font-size:.75rem;font-weight:700}
+.status-chip.info{background:#e0f2fe;color:#075985}
+.status-chip.ok{background:#dcfce7;color:#166534}
+.status-chip.warn{background:#fef3c7;color:#92400e}
+.inline-help{font-size:.75rem;color:var(--muted);line-height:1.5}
 footer{text-align:center;padding:1.5rem;font-size:.72rem;color:var(--muted)}
 
 @media(max-width:980px){
@@ -176,6 +192,7 @@ footer{text-align:center;padding:1.5rem;font-size:.72rem;color:var(--muted)}
   .drawer-backdrop{display:block;position:fixed;inset:0;background:rgba(2,30,56,.45);opacity:0;pointer-events:none;transition:opacity .25s ease;z-index:999}
   .drawer-backdrop.open{opacity:1;pointer-events:auto}
   body.drawer-open{overflow:hidden}
+  .intro-grid{grid-template-columns:1fr}
 }
 </style>
 </head>
@@ -183,7 +200,7 @@ footer{text-align:center;padding:1.5rem;font-size:.72rem;color:var(--muted)}
 
 <header>
   <h1>splash!</h1>
-  <p>costing for your playpool</p>
+  <p>costing for your playpool · v1.0.0</p>
 </header>
 
 <div class="wrap">
@@ -195,11 +212,40 @@ footer{text-align:center;padding:1.5rem;font-size:.72rem;color:var(--muted)}
   </noscript>
 
   <section class="card" style="margin-bottom:1rem">
+    <div class="intro-grid">
+      <div class="intro-copy">
+        <h2 class="sec">👋 Welcome to splash!</h2>
+        <p>
+          splash! is a friendly planning tool for estimating how a small outdoor playpool warms up, cools down overnight, and what it may cost to hold a target temperature.
+          You can type your own 3-day forecast manually at any time, or, when you are online in the UK, use a postcode to auto-fill the next three days from free public weather services.
+        </p>
+        <p>
+          The planner blends pool size, heater output, tariffs, passive cover use, current water temperature, and short-term weather into one place so you can compare likely outcomes before spending money or time.
+        </p>
+        <ul class="intro-list">
+          <li>Manual forecast entry always stays available, even after postcode auto-fill.</li>
+          <li>v1.0.0 corrects earlier forecasting shortcuts by limiting solar to daylight, capping impossible extra heater hours, and reporting a truer heat-up energy figure.</li>
+          <li>Exports are created locally in your browser and now include version and copyright details.</li>
+        </ul>
+      </div>
+      <div class="card" style="margin:0">
+        <div class="card-title">Quick start</div>
+        <p class="inline-help">1. Set your pool, heater, tariff, and cover assumptions.</p>
+        <p class="inline-help">2. Enter the current pool temperature and either type the next 3 days manually or fetch them from a UK postcode.</p>
+        <p class="inline-help">3. Review the forecast, charts, maths checks, and exports.</p>
+        <div class="info-actions">
+          <a class="link-btn" href="./help.htm">Open help guide</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="card" style="margin-bottom:1rem">
     <h2 class="sec">Thermal model overview</h2>
     <p style="font-size:.85rem;color:var(--muted)">
       This calculator models playpool heating using energy balance:
       heater input + solar gain − environmental heat loss.
-      Outputs include monthly maintenance demand, target reachability, and annual electricity cost for UK climate assumptions.
+      Outputs include monthly maintenance demand, target reachability, short-range forecast behaviour, and annual electricity cost for UK climate assumptions.
     </p>
   </section>
 
@@ -396,6 +442,18 @@ footer{text-align:center;padding:1.5rem;font-size:.72rem;color:var(--muted)}
           </div>
           <p class="hint">Hot-water and kettle additions are treated as instant mixing boosts before the forecast starts.</p>
 
+          <div class="field-row">
+            <div class="field">
+              <label for="forecast-postcode">UK Postcode (optional)</label>
+              <input type="text" id="forecast-postcode" inputmode="text" autocomplete="postal-code" placeholder="e.g. NR1 1AA">
+            </div>
+            <div class="field" style="align-self:end">
+              <button type="button" class="action-btn" id="fetch-weather">Use postcode forecast</button>
+            </div>
+          </div>
+          <p class="hint">Manual forecast entry stays enabled. When online, postcode auto-fill uses Postcodes.io for UK coordinates and Open-Meteo for the next 3 daily weather values, then you can still edit everything by hand.</p>
+          <p class="status-chip info" id="weather-status" aria-live="polite">Manual entry is active. Postcode weather auto-fill is optional.</p>
+
           <div class="field">
             <label>Forecast Day 1</label>
             <div class="field-row">
@@ -465,7 +523,7 @@ footer{text-align:center;padding:1.5rem;font-size:.72rem;color:var(--muted)}
         <div class="stat"><div class="lbl">Max Temp — Continuous</div><div class="val" id="s-tmax">—</div><div class="sub">°C above ambient (July)</div></div>
         <div class="stat"><div class="lbl">Max Temp — Selected Schedule</div><div class="val" id="s-tmop">—</div><div class="sub">°C above ambient (July)</div></div>
         <div class="stat"><div class="lbl">Time to Heat Pool</div><div class="val" id="s-time">—</div><div class="sub">hours, ambient → target (July)</div></div>
-        <div class="stat"><div class="lbl">Heat-up Energy (July)</div><div class="val" id="s-egy">—</div><div class="sub">kWh, ambient → target</div></div>
+        <div class="stat"><div class="lbl">Heat-up Energy (July)</div><div class="val" id="s-egy">—</div><div class="sub">kWh of heater input, ambient → target</div></div>
         <div class="stat"><div class="lbl">Annual Electricity Cost</div><div class="val" id="s-ann">—</div><div class="sub">£ / year (all 12 months)</div></div>
         <div class="stat"><div class="lbl">Overnight Drop (July)</div><div class="val" id="s-night">—</div><div class="sub">°C from target, no heating</div></div>
         <div class="stat"><div class="lbl">Cover Saving</div><div class="val" id="s-coversave">—</div><div class="sub">£ / year vs no cover</div></div>
@@ -501,7 +559,7 @@ footer{text-align:center;padding:1.5rem;font-size:.72rem;color:var(--muted)}
         <div class="stat"><div class="lbl">Hot Water Needed</div><div class="val" id="s-hotreq">—</div><div class="sub">L from tank to hit target now</div></div>
         <div class="stat"><div class="lbl">Kettle Fills Needed</div><div class="val" id="s-kettlereq">—</div><div class="sub">boils to hit target now</div></div>
         <div class="stat"><div class="lbl">Forecast Day 3 End</div><div class="val" id="s-day3">—</div><div class="sub">°C after 72-hour forecast</div></div>
-        <div class="stat"><div class="lbl">3-Day Boost Cost</div><div class="val" id="s-boostcost">—</div><div class="sub">£ for top-ups + extra heater</div></div>
+        <div class="stat"><div class="lbl">3-Day Boost Eq.</div><div class="val" id="s-boostcost">—</div><div class="sub">£ peak-rate equivalent for top-ups + extra heater</div></div>
       </div>
 
       <div class="card" style="margin-bottom:1rem">
@@ -523,7 +581,13 @@ footer{text-align:center;padding:1.5rem;font-size:.72rem;color:var(--muted)}
             <tbody id="forecast-tbody"></tbody>
           </table>
         </div>
-        <p class="mini-note" id="forecast-note">Forecast results use a one-day average energy-balance model and begin from the current pool temperature after optional hot-water and kettle boosts.</p>
+        <div class="chart-box" style="margin-top:1rem;height:220px"><canvas id="forecastChart"></canvas></div>
+        <p class="mini-note" id="forecast-note">Forecast results use a stepped day/night energy-balance model, begin from the current pool temperature after optional hot-water and kettle boosts, and cap total heater runtime at 24 hours per day.</p>
+      </div>
+
+      <div class="card" style="margin-bottom:1rem">
+        <div class="card-title">Model review in v1.0.0</div>
+        <p class="inline-help">This release corrects three important modelling shortcuts: solar gain is now only applied during daylight, impossible forecast boost hours are capped before costing, and the July heat-up energy card now reports estimated heater input rather than only the minimum thermal-mass requirement. Manual forecasts are still planning estimates, not guarantees.</p>
       </div>
 
       <div class="card" style="margin-bottom:1rem">
@@ -613,9 +677,10 @@ footer{text-align:center;padding:1.5rem;font-size:.72rem;color:var(--muted)}
 </div><!-- /wrap -->
 
 <footer>
-  splash! &mdash; costing for your playpool.<br>
+  splash! &mdash; costing for your playpool · v1.0.0.<br>
   Physics model: surface losses combine free-convection, evaporation (dominant) and long-wave radiation; parameterised by shade/shelter.
-  UK East Anglia climate data. Costs are indicative estimates only. Not for safety-critical application.
+  UK East Anglia climate data. Costs are indicative estimates only. Not for safety-critical application.<br>
+  Copyright © jahosi.co.uk 2026
 </footer>
 
 <script>
@@ -643,6 +708,14 @@ const COVER_TYPES = {
   bubble:  {label:'Solar bubble cover',             surfaceLossFactor:0.22, solarTransmittance:0.82, evaporationReduction:0.95},
   thermal: {label:'Thermal blanket / foam cover',   surfaceLossFactor:0.12, solarTransmittance:0.18, evaporationReduction:0.98},
   liquid:  {label:'Liquid solar cover',             surfaceLossFactor:0.65, solarTransmittance:0.98, evaporationReduction:0.40}
+};
+
+const APP_VERSION = '1.0.0';
+const APP_COPYRIGHT = 'Copyright © jahosi.co.uk 2026';
+const WEATHER_AUTOFILL = {
+  postcodeLookupUrl: 'https://api.postcodes.io/postcodes/',
+  forecastUrl: 'https://api.open-meteo.com/v1/forecast',
+  forecastDays: 3
 };
 
 const PUBLIC_HEURISTICS = [
@@ -866,6 +939,53 @@ function cloudSolarFactor(cloudPct) {
   return 1 - 0.75 * c;
 }
 
+function heatingHoursWithBoost(inp, extraHours) {
+  const baseHours = schedHoursFromInput(inp);
+  const totalHours = clamp(baseHours + extraHours, 0, 24);
+  return {baseHours, totalHours, appliedExtraHours: Math.max(0, totalHours - baseHours)};
+}
+
+function daylightWindow(mi) {
+  const daylight = DAYLIGHT_H[mi];
+  const sunrise = 12 - daylight / 2;
+  return {sunrise, sunset: sunrise + daylight, daylight};
+}
+
+function isWithinWindow(hour, start, end) {
+  return end > start ? (hour >= start && hour < end) : (hour >= start || hour < end);
+}
+
+function buildCoverUsageProfile(inp, mi) {
+  const cover = getCover(inp);
+  const {sunrise, sunset, daylight} = daylightWindow(mi);
+  const dark = 24 - daylight;
+  const coverHours = clamp(inp.coverHours, 0, 24);
+  const coveredNightHours = Math.min(dark, coverHours);
+  const coveredDayHours = clamp(coverHours - coveredNightHours, 0, daylight);
+  const nightStart = sunset;
+  const nightEnd = (sunset + coveredNightHours) % 24;
+  const dayStart = sunrise;
+  const dayEnd = Math.min(24, sunrise + coveredDayHours);
+  return {
+    cover,
+    coverHours,
+    coveredNightHours,
+    coveredDayHours,
+    isCovered(hour) {
+      if (coveredNightHours > 0 && isWithinWindow(hour, nightStart, nightEnd)) return true;
+      if (coveredDayHours > 0 && hour >= dayStart && hour < dayEnd) return true;
+      return false;
+    }
+  };
+}
+
+function solarPowerAtHour(baseDailySolarW, hour, mi) {
+  const {sunrise, sunset, daylight} = daylightWindow(mi);
+  if (daylight <= 0 || hour < sunrise || hour >= sunset) return 0;
+  const phase = (hour - sunrise) / daylight;
+  return Math.max(0, baseDailySolarW * (Math.PI / 2) * Math.sin(Math.PI * phase));
+}
+
 function heatUpTimeFromStart(pool, monthState, startTemp, target, ambT) {
   const T_eq = ambT + (pool.heaterW + monthState.solarW) / monthState.UA;
   if (T_eq < target) return Infinity;
@@ -873,27 +993,42 @@ function heatUpTimeFromStart(pool, monthState, startTemp, target, ambT) {
   return -monthState.tau_h * Math.log((target - T_eq) / (startTemp - T_eq));
 }
 
-function forecastDayPrediction(inp, pool, mi, airTemp, cloudPct, extraHours, startTemp) {
+function simulateForecastDay(inp, pool, mi, airTemp, cloudPct, extraHours, startTemp) {
+  const coverUsage = buildCoverUsageProfile(inp, mi);
   const coverFx = coverProfile(inp, pool, mi);
-  const totalHours = clamp(schedHoursFromInput(inp) + extraHours, 0, 24);
-  const solarW = UK_S[mi] * 1000 / 24
+  const heating = heatingHoursWithBoost(inp, extraHours);
+  const totalHeaterPower = pool.heaterW * heating.totalHours / 24;
+  const baseDailySolarW = UK_S[mi] * 1000 / 24
                * (1 - inp.shade / 100)
-               * coverFx.solarFactor
                * cloudSolarFactor(cloudPct)
                * pool.A_surf * AABS;
-  const heaterAvgW = pool.heaterW * totalHours / 24;
-  const T_eq = airTemp + (heaterAvgW + solarW) / coverFx.UA;
-  const endTemp = T_eq + (startTemp - T_eq) * Math.exp(-24 / coverFx.tau_h);
-  const extraHeaterKWh = pool.heaterW * extraHours / 1000;
+  const dt_h = 0.5;
+  const steps = Math.round(24 / dt_h);
+  let T = startTemp;
+  let solarKWh = 0;
+  for (let i = 0; i < steps; i++) {
+    const hour = i * dt_h + dt_h / 2;
+    const covered = coverUsage.isCovered(hour);
+    const surfaceFactor = covered ? coverUsage.cover.surfaceLossFactor : 1;
+    const solarFactor = covered ? coverUsage.cover.solarTransmittance : 1;
+    const UA = pool.UA_s_open * surfaceFactor + pool.UA_w + pool.UA_b;
+    const solarW = solarPowerAtHour(baseDailySolarW, hour, mi) * solarFactor;
+    solarKWh += solarW * dt_h / 1000;
+    const Pnet = totalHeaterPower + solarW - UA * (T - airTemp);
+    T += Pnet / pool.cap * dt_h * 3600;
+  }
+  const avgSolarW = solarKWh * 1000 / 24;
+  const extraHeaterKWh = pool.heaterW * heating.appliedExtraHours / 1000;
   const extraCost = extraHeaterKWh * inp.peakRate / 100;
   return {
     airTemp,
     cloudPct,
     extraHours,
-    totalHours,
+    appliedExtraHours: heating.appliedExtraHours,
+    totalHours: heating.totalHours,
     startTemp,
-    endTemp,
-    solarW,
+    endTemp: T,
+    solarW: avgSolarW,
     extraHeaterKWh,
     extraCost,
     tau_h: coverFx.tau_h
@@ -913,28 +1048,45 @@ function buildInversePoints(inp, pool, tMin=18, tMax=38, tStep=0.5) {
 
 // ─── 7-DAY NUMERICAL SIMULATION ───────────────────────────────────────────────
 function simulate7Days(inp, pool, monthState, mi) {
-  const ambT  = UK_T[mi];
-  const solarW = monthState.solarW;
-  const dt_h   = 0.25;   // time step 15 min
-  const steps  = Math.round(7 * 24 / dt_h);
-  const s      = parseHHMM(inp.opStart);
-  const e      = parseHHMM(inp.opEnd);
+  const ambT = UK_T[mi];
+  const dt_h = 0.25;
+  const steps = Math.round(7 * 24 / dt_h);
+  const coverUsage = buildCoverUsageProfile(inp, mi);
+  const baseHours = schedHoursFromInput(inp);
+  const manualDutyPower = inp.heatMode === 'offpeak' ? 0 : pool.heaterW * baseHours / 24;
+  const baseDailySolarW = UK_S[mi] * 1000 / 24
+    * (1 - inp.shade / 100)
+    * pool.A_surf * AABS;
 
   const timeArr = [], tempArr = [];
-  // Start at equilibrium temperature with no heating so pool begins from a realistic state
-  let T = Math.min(ambT + solarW / monthState.UA, inp.target);
-  // Warm up the simulation for 3 days first (burn-in)
+  let T = Math.min(ambT + (manualDutyPower + monthState.solarW) / monthState.UA, inp.target);
+
+  const heaterPowerAtHour = (hour) => {
+    if (inp.heatMode === 'offpeak') {
+      return isWithinWindow(hour, parseHHMM(inp.opStart), parseHHMM(inp.opEnd)) ? pool.heaterW : 0;
+    }
+    return manualDutyPower;
+  };
+
   for (let i = 0; i < Math.round(3 * 24 / dt_h); i++) {
-    const tod = (i * dt_h) % 24;
-    const on  = e > s ? (tod >= s && tod < e) : (tod >= s || tod < e);
-    const Pnet = (on ? pool.heaterW : 0) + solarW - monthState.UA * (T - ambT);
+    const tod = (i * dt_h + dt_h / 2) % 24;
+    const covered = coverUsage.isCovered(tod);
+    const surfaceFactor = covered ? coverUsage.cover.surfaceLossFactor : 1;
+    const solarFactor = covered ? coverUsage.cover.solarTransmittance : 1;
+    const UA = pool.UA_s_open * surfaceFactor + pool.UA_w + pool.UA_b;
+    const solarW = solarPowerAtHour(baseDailySolarW, tod, mi) * solarFactor;
+    const Pnet = heaterPowerAtHour(tod) + solarW - UA * (T - ambT);
     T += Pnet / pool.cap * dt_h * 3600;
   }
   for (let i = 0; i < steps; i++) {
-    const tod  = (i * dt_h) % 24;
-    const on   = e > s ? (tod >= s && tod < e) : (tod >= s || tod < e);
-    const Pnet = (on ? pool.heaterW : 0) + solarW - monthState.UA * (T - ambT);
-    T  += Pnet / pool.cap * dt_h * 3600;
+    const tod = (i * dt_h + dt_h / 2) % 24;
+    const covered = coverUsage.isCovered(tod);
+    const surfaceFactor = covered ? coverUsage.cover.surfaceLossFactor : 1;
+    const solarFactor = covered ? coverUsage.cover.solarTransmittance : 1;
+    const UA = pool.UA_s_open * surfaceFactor + pool.UA_w + pool.UA_b;
+    const solarW = solarPowerAtHour(baseDailySolarW, tod, mi) * solarFactor;
+    const Pnet = heaterPowerAtHour(tod) + solarW - UA * (T - ambT);
+    T += Pnet / pool.cap * dt_h * 3600;
     timeArr.push(i * dt_h);
     tempArr.push(+T.toFixed(2));
   }
@@ -957,7 +1109,7 @@ function heatingCurve(pool, monthState, ambT) {
 
 // ─── CHART INSTANCES ──────────────────────────────────────────────────────────
 const CHARTS_AVAILABLE = typeof window.Chart !== 'undefined';
-let chartCost, chartHeat, chartLoss, chartSched, chartInverse;
+let chartCost, chartHeat, chartLoss, chartSched, chartInverse, chartForecast;
 let lastReportData = null;
 
 function makeChart(id, config) {
@@ -1029,6 +1181,19 @@ function initCharts() {
       elements:{point:{radius:0}}
     }
   });
+
+  chartForecast = makeChart('forecastChart', {
+    type:'line',
+    data:{labels:[], datasets:[]},
+    options:{
+      responsive:true, maintainAspectRatio:false,
+      plugins:{legend:{position:'bottom',labels:{boxWidth:12,font:{size:11}}}},
+      scales:{
+        x:{title:{display:true,text:'Forecast day'}},
+        y:{title:{display:true,text:'Pool temperature (°C)'}}
+      }
+    }
+  });
 }
 
 function setQuestion(id, html) {
@@ -1037,6 +1202,13 @@ function setQuestion(id, html) {
 
 function setExportStatus(message) {
   document.getElementById('export-status').textContent = message;
+}
+
+function setWeatherStatus(message, tone = 'info') {
+  const el = document.getElementById('weather-status');
+  if (!el) return;
+  el.textContent = message;
+  el.className = `status-chip ${tone}`;
 }
 
 function downloadBlob(filename, content, type) {
@@ -1066,6 +1238,8 @@ function exportSummaryReport() {
   ).join('\n');
   const heuristics = r.heuristics.map(h => `- ${h.source}: ${h.takeaway} (${h.url})`).join('\n');
   const content = `splash! planner report
+Version: ${APP_VERSION}
+${APP_COPYRIGHT}
 Generated: ${r.generatedAt}
 
 Inputs
@@ -1091,7 +1265,7 @@ Headline results
 - Hot water needed to hit target now: ${r.summary.hotWaterNeededL === null ? 'not feasible with selected tank temperature' : `${r.summary.hotWaterNeededL.toFixed(1)} L`}
 - Kettle fills needed to hit target now: ${r.summary.kettleFillsNeeded === null ? 'n/a' : r.summary.kettleFillsNeeded}
 - Forecast day-3 end temperature: ${r.summary.forecastDay3EndC.toFixed(1)} °C
-- Forecast boost cost: £${r.summary.forecastBoostCostGBP.toFixed(2)}
+- Forecast added-heat equivalent: £${r.summary.forecastBoostCostGBP.toFixed(2)}
 
 Planner answers
 - Range: ${r.planner.range}
@@ -1121,7 +1295,14 @@ function exportJsonReport() {
   if (!lastReportData) return;
   downloadBlob(
     `splash-report-${safeSlugPart(lastReportData.inputs.coverType)}.json`,
-    JSON.stringify(lastReportData, null, 2),
+    JSON.stringify({
+      meta: {
+        app: 'splash!',
+        version: APP_VERSION,
+        copyright: APP_COPYRIGHT
+      },
+      ...lastReportData
+    }, null, 2),
     'application/json;charset=utf-8'
   );
   setExportStatus('JSON report downloaded.');
@@ -1139,7 +1320,13 @@ function exportMonthlyCsv() {
     m.heatingAvailableKWh, m.maxContinuousC, m.maxSelectedC, m.targetReachable ? 'yes' : 'no',
     m.dailyCostP, m.monthlyCostGBP
   ]);
-  const csv = [header, ...rows]
+  const csv = [
+    ['Report Version', APP_VERSION],
+    ['Copyright', APP_COPYRIGHT],
+    [],
+    header,
+    ...rows
+  ]
     .map(row => row.map(v => `"${String(v).replace(/"/g, '""')}"`).join(','))
     .join('\n');
   downloadBlob(`splash-monthly-${safeSlugPart(lastReportData.inputs.coverType)}.csv`, csv, 'text/csv;charset=utf-8');
@@ -1221,8 +1408,7 @@ function go() {
   const tHeat = heatUpTime(pool, julData, UK_T[JUL], inp.target);
   if (isFinite(tHeat)) {
    document.getElementById('s-time').textContent = fmt(tHeat, 1) + ' h';
-   // Approx energy for heat-up (ignoring losses for simplicity — dominated by thermal mass)
-   const egykWh = pool.cap * Math.max(0, inp.target - UK_T[JUL]) / 3.6e6;
+   const egykWh = pool.heaterW * tHeat / 1000;
    document.getElementById('s-egy').textContent  = fmt(egykWh, 1) + ' kWh';
   } else {
     document.getElementById('s-time').textContent = '∞ (too slow)';
@@ -1262,7 +1448,7 @@ function go() {
   const kettleBoostKWh = thermalKWhForWaterLitres(addedKettleLitres, inp.currentTemp, 98);
   let rollingTemp = afterBoostTemp;
   const forecastRows = inp.forecast.map((day, idx) => {
-    const row = forecastDayPrediction(inp, pool, nowMonth, day.air, day.cloud, day.boost, rollingTemp);
+    const row = simulateForecastDay(inp, pool, nowMonth, day.air, day.cloud, day.boost, rollingTemp);
     rollingTemp = row.endTemp;
     return {day:`Day ${idx + 1}`, ...row};
   });
@@ -1479,14 +1665,14 @@ function go() {
       <td>${row.day}</td>
       <td>${fmt(row.airTemp,1)} °C</td>
       <td>${fmt(row.cloudPct,0)} %</td>
-      <td>${fmt(row.extraHours,1)} h</td>
+      <td>${fmt(row.appliedExtraHours,1)} h</td>
       <td>${fmt(row.startTemp,1)} °C</td>
       <td>${fmt(row.endTemp,1)} °C</td>
       <td>${fmt(row.solarW,0)} W</td>
       <td>£${fmt(row.extraCost,2)}</td>
     </tr>`).join('');
   document.getElementById('forecast-note').textContent =
-    `Forecast starts at ${fmt(afterBoostTemp,1)}°C after optional top-ups. Hot-water equivalent adds about ${fmt(hotBoostKWh + kettleBoostKWh,1)} kWh, while extra heater boosts add ${fmt(forecastRows.reduce((sum, row) => sum + row.extraHeaterKWh, 0),1)} kWh over 3 days.`;
+    `Forecast starts at ${fmt(afterBoostTemp,1)}°C after optional top-ups. Hot-water and kettle top-ups contribute about ${fmt(hotBoostKWh + kettleBoostKWh,1)} kWh of equivalent heat, while applied extra heater boosts add ${fmt(forecastRows.reduce((sum, row) => sum + row.extraHeaterKWh, 0),1)} kWh over 3 days.`;
 
   const minCost = inversePts[0].x;
   const maxCost = inversePts[inversePts.length - 1].x;
@@ -1502,6 +1688,31 @@ function go() {
     chartInverse.options.scales.y.min = tMin;
     chartInverse.options.scales.y.max = tMax;
     chartInverse.update();
+  }
+
+  if (chartForecast) {
+    chartForecast.data.labels = ['Start', ...forecastRows.map(row => row.day)];
+    chartForecast.data.datasets = [
+      {
+        label:'Forecast pool temperature (°C)',
+        data:[afterBoostTemp, ...forecastRows.map(row => +row.endTemp.toFixed(2))],
+        borderColor:'#0077b6',
+        backgroundColor:'rgba(0,119,182,0.15)',
+        borderWidth:2,
+        fill:true,
+        tension:.25
+      },
+      {
+        label:`Target ${fmt(inp.target,1)}°C`,
+        data:['Start', ...forecastRows.map(row => row.day)].map(() => inp.target),
+        borderColor:'#dc2626',
+        borderWidth:1.5,
+        borderDash:[6,4],
+        fill:false,
+        pointRadius:0
+      }
+    ];
+    chartForecast.update();
   }
 
   lastReportData = {
@@ -1551,6 +1762,8 @@ function go() {
       overnight: document.getElementById('qa-overnight').textContent,
       cover: document.getElementById('qa-cover').textContent
     },
+    version: APP_VERSION,
+    copyright: APP_COPYRIGHT,
     heuristics: PUBLIC_HEURISTICS,
     predictive: {
       hotWaterTankTempC: inp.hotTemp,
@@ -1563,7 +1776,7 @@ function go() {
         day: row.day,
         airTempC: +fmt(row.airTemp, 1),
         cloudPct: +fmt(row.cloudPct, 0),
-        extraHeaterHours: +fmt(row.extraHours, 1),
+        extraHeaterHours: +fmt(row.appliedExtraHours, 1),
         startTempC: +fmt(row.startTemp, 1),
         endTempC: +fmt(row.endTemp, 1),
         solarGainW: +fmt(row.solarW, 0),
@@ -1588,6 +1801,78 @@ function go() {
   setExportStatus(
     `${CHARTS_AVAILABLE ? 'Ready to export.' : 'Charts unavailable offline, but calculations and exports still work.'} Current annual projection: £${fmt(annualCost, 2)}.`
   );
+}
+
+function sanitizePostcode(value) {
+  return String(value || '').trim().toUpperCase().replace(/\s+/g, ' ');
+}
+
+async function fetchForecastFromPostcode() {
+  const btn = document.getElementById('fetch-weather');
+  const field = document.getElementById('forecast-postcode');
+  if (!btn || !field) return;
+
+  const postcode = sanitizePostcode(field.value);
+  if (!postcode) {
+    setWeatherStatus('Enter a UK postcode first, or keep using manual forecast entry.', 'warn');
+    field.focus();
+    return;
+  }
+
+  const originalLabel = btn.textContent;
+  btn.disabled = true;
+  btn.textContent = 'Fetching…';
+  setWeatherStatus('Looking up postcode…', 'info');
+
+  try {
+    const lookupRes = await fetch(`${WEATHER_AUTOFILL.postcodeLookupUrl}${encodeURIComponent(postcode)}`);
+    if (!lookupRes.ok) throw new Error('postcode_lookup_failed');
+    const lookup = await lookupRes.json();
+    const place = lookup?.result;
+    if (!place || !Number.isFinite(place.latitude) || !Number.isFinite(place.longitude)) {
+      throw new Error('postcode_lookup_invalid');
+    }
+
+    setWeatherStatus('Fetching 3-day weather…', 'info');
+    const params = new URLSearchParams({
+      latitude: String(place.latitude),
+      longitude: String(place.longitude),
+      daily: 'temperature_2m_max,temperature_2m_min,cloud_cover_mean',
+      forecast_days: String(WEATHER_AUTOFILL.forecastDays),
+      timezone: 'auto'
+    });
+    const forecastRes = await fetch(`${WEATHER_AUTOFILL.forecastUrl}?${params.toString()}`);
+    if (!forecastRes.ok) throw new Error('forecast_lookup_failed');
+    const forecast = await forecastRes.json();
+    const maxArr = forecast?.daily?.temperature_2m_max || [];
+    const minArr = forecast?.daily?.temperature_2m_min || [];
+    const cloudArr = forecast?.daily?.cloud_cover_mean || [];
+    if (maxArr.length < WEATHER_AUTOFILL.forecastDays || minArr.length < WEATHER_AUTOFILL.forecastDays || cloudArr.length < WEATHER_AUTOFILL.forecastDays) {
+      throw new Error('forecast_incomplete');
+    }
+
+    for (let i = 0; i < WEATHER_AUTOFILL.forecastDays; i++) {
+      const meanAir = (Number(maxArr[i]) + Number(minArr[i])) / 2;
+      document.getElementById(`fc${i + 1}-air`).value = meanAir.toFixed(1);
+      document.getElementById(`fc${i + 1}-cloud`).value = String(Math.round(clamp(Number(cloudArr[i]), 0, 100) / 5) * 5);
+    }
+
+    field.value = place.postcode || postcode;
+    go();
+    const area = place.admin_district || place.region || place.country || 'the selected area';
+    setWeatherStatus(`Forecast filled from ${field.value} (${area}) using Postcodes.io + Open-Meteo. You can still edit every value manually.`, 'ok');
+  } catch {
+    setWeatherStatus('Live weather could not be loaded just now, so manual forecast entry remains in place.', 'warn');
+  } finally {
+    btn.disabled = false;
+    btn.textContent = originalLabel;
+  }
+}
+
+function initWeatherAutofill() {
+  const btn = document.getElementById('fetch-weather');
+  if (!btn) return;
+  btn.addEventListener('click', fetchForecastFromPostcode);
 }
 
 // ─── UI DRAWER + PWA ──────────────────────────────────────────────────────────
@@ -1625,6 +1910,7 @@ document.addEventListener('DOMContentLoaded', () => {
   initControlsDrawer();
   initCharts();
   initExportActions();
+  initWeatherAutofill();
   go();
   registerServiceWorker();
 });
