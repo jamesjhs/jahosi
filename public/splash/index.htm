@@ -46,7 +46,7 @@
   --shadow:    0 2px 8px rgba(0,80,160,0.10);
 }
 *{box-sizing:border-box;margin:0;padding:0}
-body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--text);line-height:1.5;font-size:14px}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--text);line-height:1.5;font-size:14px;scrollbar-gutter:stable}
 
 header{
   background:linear-gradient(135deg,#023e8a 0%,#0096c7 100%);
@@ -232,7 +232,7 @@ footer{text-align:center;padding:1.5rem;font-size:.72rem;color:var(--muted)}
       <div class="card" style="margin:0">
         <div class="card-title">Quick start</div>
         <p class="inline-help">1. Set your pool, heater, tariff, and cover assumptions.</p>
-        <p class="inline-help">2. Enter the current pool temperature and either type the next 3 days manually or fetch them from a UK postcode.</p>
+        <p class="inline-help">2. Use either a measured current pool temperature or the model estimate, then type the next 3 days manually or fetch them from a UK postcode.</p>
         <p class="inline-help">2b. Optionally set pool-in and pool-away dates plus your water rate to unlock a season cost summary.</p>
         <p class="inline-help">3. Review the forecast, charts, maths checks, and exports.</p>
         <div class="info-actions">
@@ -442,10 +442,19 @@ footer{text-align:center;padding:1.5rem;font-size:.72rem;color:var(--muted)}
           <div class="card-title">Current Temperature &amp; 3-Day Forecast</div>
 
           <div class="field">
+            <label for="current-temp-source">Current Temperature Source</label>
+            <select id="current-temp-source" onchange="go()">
+              <option value="manual" selected>Use measured temperature</option>
+              <option value="estimate">Use current estimate</option>
+            </select>
+          </div>
+
+          <div class="field">
             <label for="current-temp">Current Pool Temperature</label>
             <input type="number" id="current-temp" min="0" max="45" step="0.1" value="22"
                   oninput="go()"> <span style="font-size:.75rem;color:var(--muted)">°C</span>
           </div>
+          <p class="hint" id="current-temp-estimate">Estimated current temperature: —</p>
 
           <div class="field-row">
             <div class="field">
@@ -993,6 +1002,22 @@ function cloudSolarFactor(cloudPct) {
   return 1 - 0.75 * c;
 }
 
+function estimateCurrentTemp(inp, pool, mi) {
+  const coverFx = coverProfile(inp, pool, mi);
+  const day1 = inp.forecast?.[0] || {};
+  const airTemp = isFinite(day1.air) ? day1.air : UK_T[mi];
+  const cloudPct = isFinite(day1.cloud) ? day1.cloud : 50;
+  const schedHours = schedHoursFromInput(inp);
+  const avgHeaterW = pool.heaterW * schedHours / 24;
+  const avgSolarW = UK_S[mi] * 1000 / 24
+    * (1 - inp.shade / 100)
+    * cloudSolarFactor(cloudPct)
+    * coverFx.solarFactor
+    * pool.A_surf * AABS;
+  const estimated = airTemp + (avgHeaterW + avgSolarW) / coverFx.UA;
+  return clamp(estimated, 0, 45);
+}
+
 // ─── SEASON HELPERS ───────────────────────────────────────────────────────────
 function parseDateLocal(str) {
   if (!str) return null;
@@ -1421,7 +1446,7 @@ Season summary (temporary pool)
 - July overnight drop: ${r.summary.overnightDropJulyC.toFixed(1)} °C
 - Cover saving vs no cover: £${r.summary.coverSavingGBP.toFixed(2)} / year
 - Days reaching desired minimum: ${r.summary.desiredRangeDays}
-- Current pool temperature: ${r.summary.currentTempC.toFixed(1)} °C
+- Current pool temperature: ${r.summary.currentTempC.toFixed(1)} °C (${r.summary.currentTempSource === 'estimate' ? 'model estimate' : 'measured'})
 - Post top-up temperature: ${r.summary.afterBoostTempC.toFixed(1)} °C
 - Hot water needed to hit target now: ${r.summary.hotWaterNeededL === null ? 'not feasible with selected tank temperature' : `${r.summary.hotWaterNeededL.toFixed(1)} L`}
 - Kettle fills needed to hit target now: ${r.summary.kettleFillsNeeded === null ? 'n/a' : r.summary.kettleFillsNeeded}
@@ -1521,7 +1546,8 @@ function go() {
    rangeMax: gi('range-max'),
    coverType: gs('cover-type'),
    coverHours: gi('cover-hours'),
-   currentTemp: gi('current-temp'),
+   currentTempSource: gs('current-temp-source'),
+   currentTempManual: gi('current-temp'),
    hotTemp: gi('hot-temp'),
    hotLitres: gi('hot-litres'),
    kettleLitres: gi('kettle-litres'),
@@ -1540,7 +1566,7 @@ function go() {
   inp.hotLitres = Math.max(0, inp.hotLitres);
   inp.kettleLitres = clamp(inp.kettleLitres, 0.5, 3);
   inp.kettleCount = Math.max(0, Math.round(inp.kettleCount));
-  inp.currentTemp = clamp(inp.currentTemp, 0, 45);
+  inp.currentTempManual = clamp(inp.currentTempManual, 0, 45);
   inp.hotTemp = clamp(inp.hotTemp, 25, 80);
   inp.forecast = inp.forecast.map(day => ({
    air: clamp(day.air, -10, 45),
@@ -1556,6 +1582,17 @@ function go() {
   const noCoverInp = {...inp, coverType:'none', coverHours:0};
   const noCoverMonthly = MONTHS.map((_,mi) => monthCalc(noCoverInp, pool, mi));
   const nowMonth = new Date().getMonth();
+  const estimatedCurrentTemp = estimateCurrentTemp(inp, pool, nowMonth);
+  const useEstimatedCurrentTemp = inp.currentTempSource === 'estimate';
+  inp.currentTemp = useEstimatedCurrentTemp ? estimatedCurrentTemp : inp.currentTempManual;
+  const currentTempInput = document.getElementById('current-temp');
+  if (currentTempInput) currentTempInput.disabled = useEstimatedCurrentTemp;
+  const estimateHint = document.getElementById('current-temp-estimate');
+  if (estimateHint) {
+    estimateHint.textContent = useEstimatedCurrentTemp
+      ? `Estimated current temperature in use: ${fmt(estimatedCurrentTemp, 1)} °C`
+      : `Estimated current temperature: ${fmt(estimatedCurrentTemp, 1)} °C`;
+  }
 
   // July index = 6
   const JUL    = 6;
@@ -1702,7 +1739,8 @@ function go() {
   html += `<strong>Heat-up note:</strong> The ${fmtN(pool.cap/1000)} kJ/°C thermal mass means the pool `;
   html += `changes temperature slowly (${fmt(julData.tau_h,1)} h effective July time constant). `;
   html += `With the selected cover plan it drops about <strong>${fmt(nightSelected.drop,1)}°C</strong> over ${fmt(nightSelected.dark,1)} night-time hours in July, versus ${fmt(nightBare.drop,1)}°C without cover.`;
-  html += `<br><strong>Current boost model:</strong> Starting from <strong>${fmt(inp.currentTemp,1)}°C</strong>, your entered top-ups lift the pool to about <strong>${fmt(afterBoostTemp,1)}°C</strong>. `;
+  const currentTempSourceLabel = useEstimatedCurrentTemp ? 'current estimate' : 'measured value';
+  html += `<br><strong>Current boost model:</strong> Starting from <strong>${fmt(inp.currentTemp,1)}°C</strong> (${currentTempSourceLabel}), your entered top-ups lift the pool to about <strong>${fmt(afterBoostTemp,1)}°C</strong>. `;
   html += isFinite(immediateHeatHours)
     ? `From there, reaching the ${fmt(inp.target,1)}°C target under the first-day forecast takes about <strong>${fmt(immediateHeatHours,1)} h</strong> of total heater running.`
     : `Under the first-day forecast the current heater and solar setup still cannot fully reach ${fmt(inp.target,1)}°C.`;
@@ -1958,7 +1996,8 @@ function go() {
       poolSeasonStart: inp.poolStart || null,
       poolSeasonEnd: inp.poolEnd || null,
       fillsPerSeason: inp.poolFills,
-      waterRatePpL: inp.waterRatePpL
+      waterRatePpL: inp.waterRatePpL,
+      currentTempSource: inp.currentTempSource
     },
     summary: {
       poolVolumeL: Math.round(pool.vol * 1000),
@@ -1973,6 +2012,7 @@ function go() {
       coverSavingGBP: +fmt(coverSaving, 2),
       desiredRangeDays: desiredMinDays,
       currentTempC: +fmt(inp.currentTemp, 1),
+      currentTempSource: inp.currentTempSource,
       afterBoostTempC: +fmt(afterBoostTemp, 1),
       hotWaterNeededL: isFinite(hotWaterNeededL) ? +fmt(hotWaterNeededL, 1) : null,
       kettleFillsNeeded: isFinite(kettleWaterNeededL) ? Math.ceil(kettleWaterNeededL / inp.kettleLitres) : null,
@@ -2129,6 +2169,7 @@ const CONFIG_FIELDS = [
   {id:'cost-target'},
   {id:'pool-start'},   {id:'pool-end'},
   {id:'pool-fills'},   {id:'water-rate'},
+  {id:'current-temp-source'},
   {id:'current-temp'}, {id:'hot-temp'},
   {id:'hot-litres'},   {id:'kettle-litres'}, {id:'kettle-count'},
   {id:'forecast-postcode'},
