@@ -340,16 +340,16 @@ footer{text-align:center;padding:1.5rem;font-size:.72rem;color:var(--muted)}
           <div class="field">
             <label for="cover-type">Passive Thermal Cover</label>
             <select id="cover-type" onchange="go()">
-              <option value="none">None</option>
-              <option value="bubble" selected>Solar bubble cover</option>
+              <option value="none" selected>None</option>
+              <option value="bubble">Solar bubble cover</option>
               <option value="thermal">Thermal blanket / foam cover</option>
               <option value="liquid">Liquid solar cover</option>
             </select>
           </div>
 
           <div class="field">
-            <label>Cover Usage <span class="fval" id="cover-hours-v">12.0 h/day</span></label>
-            <input type="range" id="cover-hours" min="0" max="24" step="0.5" value="12"
+            <label>Cover Usage <span class="fval" id="cover-hours-v">0.0 h/day</span></label>
+            <input type="range" id="cover-hours" min="0" max="24" step="0.5" value="0"
                   oninput="sv('cover-hours','cover-hours-v',' h/day',1);go()">
           </div>
           <p class="hint">Cover hours are applied to the coolest hours first, then to daylight hours. More cover lowers evaporation but may slightly reduce passive solar gain.</p>
@@ -385,16 +385,16 @@ footer{text-align:center;padding:1.5rem;font-size:.72rem;color:var(--muted)}
           <div class="field" style="margin-top:.4rem">
             <label for="heat-mode">Heating Schedule Mode</label>
             <select id="heat-mode" onchange="go()">
-              <option value="hours" selected>Custom heating hours/day</option>
+              <option value="hours">Custom heating hours/day</option>
               <option value="offpeak">Off-peak only</option>
-              <option value="noheat">No heating — hot-water tank topups only</option>
+              <option value="noheat" selected>No heating — hot-water tank topups only</option>
               <option value="kettleonly">No heating — kettle topups only</option>
             </select>
           </div>
 
           <div class="field">
-            <label for="heat-hours">Heating Hours per Day <span class="fval" id="heat-hours-v">24.0 h</span></label>
-            <input type="range" id="heat-hours" min="0" max="24" step="0.5" value="24"
+            <label for="heat-hours">Heating Hours per Day <span class="fval" id="heat-hours-v">0.0 h</span></label>
+            <input type="range" id="heat-hours" min="0" max="24" step="0.5" value="0"
                   aria-describedby="heat-hours-help"
                   oninput="sv('heat-hours','heat-hours-v',' h',1);go()">
           </div>
@@ -487,6 +487,7 @@ footer{text-align:center;padding:1.5rem;font-size:.72rem;color:var(--muted)}
             <div class="field">
               <label for="forecast-postcode">UK Postcode (optional)</label>
               <input type="text" id="forecast-postcode" inputmode="text" autocomplete="postal-code" placeholder="e.g. NR1 1AA">
+              <input type="hidden" id="forecast-latitude" value="52.6">
             </div>
             <div class="field" style="align-self:end">
               <button type="button" class="action-btn" id="fetch-weather">Use postcode forecast</button>
@@ -753,6 +754,8 @@ footer{text-align:center;padding:1.5rem;font-size:.72rem;color:var(--muted)}
 const MONTHS  = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
 const DAYSMON = [31,28,31,30,31,30,31,31,30,31,30,31];
 const SUMMER  = new Set([4,5,6,7,8]); // May-Sep (0-based)
+const REF_LAT = 52.6;
+const MONTH_MID_DAY = [15,45,74,105,135,166,196,227,258,288,319,349];
 
 // Monthly mean air temperature °C
 const UK_T = [3.8,4.0,6.1,8.9,12.2,15.4,17.8,17.6,14.5,11.0,7.1,4.7];
@@ -814,6 +817,32 @@ function schedHoursFromInput(inp) {
 
 function fmt(n, dp=0) { return n.toFixed(dp); }
 function fmtN(n) { return Math.round(n).toLocaleString(); }
+function degToRad(deg) { return deg * Math.PI / 180; }
+
+function extraterrestrialDailyHorizontalKWh(latDeg, mi) {
+  const lat = degToRad(clamp(latDeg, 49, 61));
+  const n = MONTH_MID_DAY[mi] || 196;
+  const dr = 1 + 0.033 * Math.cos((2 * Math.PI * n) / 365);
+  const delta = 0.409 * Math.sin((2 * Math.PI * n) / 365 - 1.39);
+  const cosWs = clamp(-Math.tan(lat) * Math.tan(delta), -1, 1);
+  const ws = Math.acos(cosWs);
+  const gsc = 1367; // W/m²
+  const joulesPerM2 = (24 * 3600 / Math.PI) * gsc * dr
+    * (ws * Math.sin(lat) * Math.sin(delta) + Math.cos(lat) * Math.cos(delta) * Math.sin(ws));
+  return Math.max(0, joulesPerM2 / 3.6e6);
+}
+
+function latitudeSolarScale(latDeg, mi) {
+  const ref = extraterrestrialDailyHorizontalKWh(REF_LAT, mi);
+  if (ref <= 0) return 1;
+  const ratio = extraterrestrialDailyHorizontalKWh(latDeg, mi) / ref;
+  return clamp(ratio, 0.6, 1.5);
+}
+
+function monthlySolarIrradiance(inp, mi) {
+  const lat = Number.isFinite(inp.latitude) ? inp.latitude : REF_LAT;
+  return UK_S[mi] * latitudeSolarScale(lat, mi);
+}
 
 function getCover(inp) {
   return COVER_TYPES[inp.coverType] || COVER_TYPES.none;
@@ -906,7 +935,7 @@ function monthCalc(inp, pool, mi) {
   const qLoss = coverFx.UA * Math.max(0, dT);
 
   // Solar gain averaged over 24 h (W)
-  const solarW = UK_S[mi] * 1000 / 24     // mean irradiance W/m²
+  const solarW = monthlySolarIrradiance(inp, mi) * 1000 / 24  // mean irradiance W/m²
                * (1 - inp.shade / 100)     // shade attenuation
                * coverFx.solarFactor       // cover can block some passive gain
                * pool.A_surf * AABS;
@@ -1120,7 +1149,7 @@ function simulateForecastDay(inp, pool, mi, airTemp, cloudPct, extraHours, start
   const coverFx = coverProfile(inp, pool, mi);
   const heating = heatingHoursWithBoost(inp, extraHours);
   const totalHeaterPower = pool.heaterW * heating.totalHours / 24;
-  const baseDailySolarW = UK_S[mi] * 1000 / 24
+  const baseDailySolarW = monthlySolarIrradiance(inp, mi) * 1000 / 24
                * (1 - inp.shade / 100)
                * cloudSolarFactor(cloudPct)
                * pool.A_surf * AABS;
@@ -1176,7 +1205,7 @@ function simulate7Days(inp, pool, monthState, mi) {
   const coverUsage = buildCoverUsageProfile(inp, mi);
   const baseHours = schedHoursFromInput(inp);
   const manualDutyPower = inp.heatMode === 'offpeak' ? 0 : pool.heaterW * baseHours / 24;
-  const baseDailySolarW = UK_S[mi] * 1000 / 24
+  const baseDailySolarW = monthlySolarIrradiance(inp, mi) * 1000 / 24
     * (1 - inp.shade / 100)
     * pool.A_surf * AABS;
 
@@ -1235,7 +1264,7 @@ function simulate36HourForecast(inp, pool, nowMonth, startTemp) {
     const surfFactor = covered ? coverUsage.cover.surfaceLossFactor : 1;
     const solFactor  = covered ? coverUsage.cover.solarTransmittance  : 1;
     const UA = pool.UA_s_open * surfFactor + pool.UA_w + pool.UA_b;
-    const baseSolarW = UK_S[nowMonth] * 1000 / 24
+    const baseSolarW = monthlySolarIrradiance(inp, nowMonth) * 1000 / 24
       * (1 - inp.shade / 100)
       * cloudSolarFactor(fDay.cloud)
       * pool.A_surf * AABS;
@@ -1552,6 +1581,7 @@ function go() {
    hotLitres: gi('hot-litres'),
    kettleLitres: gi('kettle-litres'),
    kettleCount: gi('kettle-count'),
+   latitude: clamp(gi('forecast-latitude'), 49, 61),
    poolStart: gs('pool-start'),
    poolEnd:   gs('pool-end'),
    poolFills: Math.max(1, Math.round(gi('pool-fills') || 1)),
@@ -1605,8 +1635,8 @@ function go() {
 
   const julMaxCont = julData.maxTCont;
   const julMaxOP   = julData.maxTSched;
-  document.getElementById('s-tmax').textContent = fmt(julMaxCont, 1) + ' °C';
-  document.getElementById('s-tmop').textContent = fmt(julMaxOP,   1) + ' °C';
+  document.getElementById('s-tmax').textContent = fmt(Math.max(0, julMaxCont - UK_T[JUL]), 1) + ' °C';
+  document.getElementById('s-tmop').textContent = fmt(Math.max(0, julMaxOP - UK_T[JUL]),   1) + ' °C';
 
   const tHeat = heatUpTime(pool, julData, UK_T[JUL], inp.target);
   if (isFinite(tHeat)) {
@@ -1660,7 +1690,7 @@ function go() {
   const currentMonthCoverFx = coverProfile(inp, pool, nowMonth);
   const currentMonthState = {
     ...currentMonthCoverFx,
-    solarW: UK_S[nowMonth] * 1000 / 24 * (1 - inp.shade / 100) * currentMonthCoverFx.solarFactor
+    solarW: monthlySolarIrradiance(inp, nowMonth) * 1000 / 24 * (1 - inp.shade / 100) * currentMonthCoverFx.solarFactor
       * cloudSolarFactor(inp.forecast[0].cloud) * pool.A_surf * AABS
   };
   const immediateHeatHours = heatUpTimeFromStart(pool, currentMonthState, afterBoostTemp, inp.target, inp.forecast[0].air);
@@ -2133,6 +2163,8 @@ async function fetchForecastFromPostcode() {
     }
 
     field.value = place.postcode || postcode;
+    const latField = document.getElementById('forecast-latitude');
+    if (latField) latField.value = String(clamp(Number(place.latitude), 49, 61));
     go();
     const area = place.admin_district || place.region || place.country || 'the selected area';
     setWeatherStatus(`Forecast filled from ${field.value} (${area}) using Postcodes.io + Open-Meteo. You can still edit every value manually.`, 'ok');
@@ -2173,6 +2205,7 @@ const CONFIG_FIELDS = [
   {id:'current-temp'}, {id:'hot-temp'},
   {id:'hot-litres'},   {id:'kettle-litres'}, {id:'kettle-count'},
   {id:'forecast-postcode'},
+  {id:'forecast-latitude'},
   {id:'fc1-air'},  {id:'fc1-cloud'},  {id:'fc1-boost'},
   {id:'fc2-air'},  {id:'fc2-cloud'},  {id:'fc2-boost'},
   {id:'fc3-air'},  {id:'fc3-cloud'},  {id:'fc3-boost'}
