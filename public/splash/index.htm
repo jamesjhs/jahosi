@@ -359,6 +359,98 @@ footer{text-align:center;padding:1.5rem;font-size:.72rem;color:var(--muted)}
           <p class="hint" id="heat-hours-help">Choose custom heating hours/day or enforce off-peak-only running.</p>
           <p class="hint" id="cost-target-help">The annual cost target is used for the inverse temperature-vs-budget chart.</p>
         </div>
+
+        <div class="card">
+          <div class="card-title">Current Temperature &amp; 3-Day Forecast</div>
+
+          <div class="field">
+            <label for="current-temp">Current Pool Temperature</label>
+            <input type="number" id="current-temp" min="0" max="45" step="0.1" value="22"
+                  oninput="go()"> <span style="font-size:.75rem;color:var(--muted)">°C</span>
+          </div>
+
+          <div class="field-row">
+            <div class="field">
+              <label for="hot-temp">Hot-Water Tank Temp</label>
+              <input type="number" id="hot-temp" min="25" max="80" step="1" value="55"
+                    oninput="go()"> <span style="font-size:.75rem;color:var(--muted)">°C</span>
+            </div>
+            <div class="field">
+              <label for="hot-litres">Hot Water Added</label>
+              <input type="number" id="hot-litres" min="0" max="5000" step="10" value="0"
+                    oninput="go()"> <span style="font-size:.75rem;color:var(--muted)">L</span>
+            </div>
+          </div>
+
+          <div class="field-row">
+            <div class="field">
+              <label for="kettle-litres">Kettle Size</label>
+              <input type="number" id="kettle-litres" min="0.5" max="3" step="0.1" value="1.7"
+                    oninput="go()"> <span style="font-size:.75rem;color:var(--muted)">L / boil</span>
+            </div>
+            <div class="field">
+              <label for="kettle-count">Kettle Fills</label>
+              <input type="number" id="kettle-count" min="0" max="2000" step="1" value="0"
+                    oninput="go()"> <span style="font-size:.75rem;color:var(--muted)">boils</span>
+            </div>
+          </div>
+          <p class="hint">Hot-water and kettle additions are treated as instant mixing boosts before the forecast starts.</p>
+
+          <div class="field">
+            <label>Forecast Day 1</label>
+            <div class="field-row">
+              <div>
+                <input type="number" id="fc1-air" min="-10" max="45" step="0.5" value="18"
+                      oninput="go()"> <span style="font-size:.75rem;color:var(--muted)">air °C</span>
+              </div>
+              <div>
+                <input type="number" id="fc1-cloud" min="0" max="100" step="5" value="40"
+                      oninput="go()"> <span style="font-size:.75rem;color:var(--muted)">cloud %</span>
+              </div>
+            </div>
+            <div style="margin-top:.4rem">
+              <input type="number" id="fc1-boost" min="0" max="24" step="0.5" value="0"
+                    oninput="go()"> <span style="font-size:.75rem;color:var(--muted)">extra heater hours (peak)</span>
+            </div>
+          </div>
+
+          <div class="field">
+            <label>Forecast Day 2</label>
+            <div class="field-row">
+              <div>
+                <input type="number" id="fc2-air" min="-10" max="45" step="0.5" value="18"
+                      oninput="go()"> <span style="font-size:.75rem;color:var(--muted)">air °C</span>
+              </div>
+              <div>
+                <input type="number" id="fc2-cloud" min="0" max="100" step="5" value="50"
+                      oninput="go()"> <span style="font-size:.75rem;color:var(--muted)">cloud %</span>
+              </div>
+            </div>
+            <div style="margin-top:.4rem">
+              <input type="number" id="fc2-boost" min="0" max="24" step="0.5" value="0"
+                    oninput="go()"> <span style="font-size:.75rem;color:var(--muted)">extra heater hours (peak)</span>
+            </div>
+          </div>
+
+          <div class="field">
+            <label>Forecast Day 3</label>
+            <div class="field-row">
+              <div>
+                <input type="number" id="fc3-air" min="-10" max="45" step="0.5" value="17"
+                      oninput="go()"> <span style="font-size:.75rem;color:var(--muted)">air °C</span>
+              </div>
+              <div>
+                <input type="number" id="fc3-cloud" min="0" max="100" step="5" value="65"
+                      oninput="go()"> <span style="font-size:.75rem;color:var(--muted)">cloud %</span>
+              </div>
+            </div>
+            <div style="margin-top:.4rem">
+              <input type="number" id="fc3-boost" min="0" max="24" step="0.5" value="0"
+                    oninput="go()"> <span style="font-size:.75rem;color:var(--muted)">extra heater hours (peak)</span>
+            </div>
+          </div>
+          <p class="hint">Forecast days use current-month daylight and solar baselines, scaled by your cloud-cover input.</p>
+        </div>
       </div>
     </aside>
 
@@ -401,6 +493,37 @@ footer{text-align:center;padding:1.5rem;font-size:.72rem;color:var(--muted)}
           <h3>What does the cover change?</h3>
           <p id="qa-cover">Loading…</p>
         </article>
+      </div>
+
+      <div class="sec">🔮 Boost model &amp; 3-day prediction</div>
+      <div class="stats-row" id="forecast-stats-row">
+        <div class="stat"><div class="lbl">Temp After Top-Ups</div><div class="val" id="s-afterboost">—</div><div class="sub">°C after hot water + kettles</div></div>
+        <div class="stat"><div class="lbl">Hot Water Needed</div><div class="val" id="s-hotreq">—</div><div class="sub">L from tank to hit target now</div></div>
+        <div class="stat"><div class="lbl">Kettle Fills Needed</div><div class="val" id="s-kettlereq">—</div><div class="sub">boils to hit target now</div></div>
+        <div class="stat"><div class="lbl">Forecast Day 3 End</div><div class="val" id="s-day3">—</div><div class="sub">°C after 72-hour forecast</div></div>
+        <div class="stat"><div class="lbl">3-Day Boost Cost</div><div class="val" id="s-boostcost">—</div><div class="sub">£ for top-ups + extra heater</div></div>
+      </div>
+
+      <div class="card" style="margin-bottom:1rem">
+        <div class="card-title">3-Day Forecast Simulation</div>
+        <div class="tbl-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Day</th>
+                <th>Forecast Air</th>
+                <th>Cloud Cover</th>
+                <th>Extra Heater</th>
+                <th>Start Temp</th>
+                <th>End Temp</th>
+                <th>Solar Gain</th>
+                <th>Extra Cost</th>
+              </tr>
+            </thead>
+            <tbody id="forecast-tbody"></tbody>
+          </table>
+        </div>
+        <p class="mini-note" id="forecast-note">Forecast results use a one-day average energy-balance model and begin from the current pool temperature after optional hot-water and kettle boosts.</p>
       </div>
 
       <div class="card" style="margin-bottom:1rem">
@@ -723,6 +846,60 @@ function annualCostForTarget(inp, pool, target) {
   return MONTHS.reduce((sum, _, mi) => sum + monthCalc(probeInp, pool, mi).monCost, 0);
 }
 
+function mixTemperature(baseTemp, baseVolumeL, addVolumeL, addTemp) {
+  if (addVolumeL <= 0) return baseTemp;
+  return ((baseVolumeL * baseTemp) + (addVolumeL * addTemp)) / (baseVolumeL + addVolumeL);
+}
+
+function requiredHotVolumeL(poolVolumeL, startTemp, targetTemp, sourceTemp) {
+  if (startTemp >= targetTemp) return 0;
+  if (sourceTemp <= targetTemp) return Infinity;
+  return poolVolumeL * (targetTemp - startTemp) / (sourceTemp - targetTemp);
+}
+
+function thermalKWhForWaterLitres(volumeL, fromTemp, toTemp) {
+  return Math.max(0, volumeL * 4.186 * (toTemp - fromTemp) / 3600);
+}
+
+function cloudSolarFactor(cloudPct) {
+  const c = clamp(cloudPct, 0, 100) / 100;
+  return 1 - 0.75 * c;
+}
+
+function heatUpTimeFromStart(pool, monthState, startTemp, target, ambT) {
+  const T_eq = ambT + (pool.heaterW + monthState.solarW) / monthState.UA;
+  if (T_eq < target) return Infinity;
+  if (startTemp >= target) return 0;
+  return -monthState.tau_h * Math.log((target - T_eq) / (startTemp - T_eq));
+}
+
+function forecastDayPrediction(inp, pool, mi, airTemp, cloudPct, extraHours, startTemp) {
+  const coverFx = coverProfile(inp, pool, mi);
+  const totalHours = clamp(schedHoursFromInput(inp) + extraHours, 0, 24);
+  const solarW = UK_S[mi] * 1000 / 24
+               * (1 - inp.shade / 100)
+               * coverFx.solarFactor
+               * cloudSolarFactor(cloudPct)
+               * pool.A_surf * AABS;
+  const heaterAvgW = pool.heaterW * totalHours / 24;
+  const T_eq = airTemp + (heaterAvgW + solarW) / coverFx.UA;
+  const endTemp = T_eq + (startTemp - T_eq) * Math.exp(-24 / coverFx.tau_h);
+  const extraHeaterKWh = pool.heaterW * extraHours / 1000;
+  const extraCost = extraHeaterKWh * inp.peakRate / 100;
+  return {
+    airTemp,
+    cloudPct,
+    extraHours,
+    totalHours,
+    startTemp,
+    endTemp,
+    solarW,
+    extraHeaterKWh,
+    extraCost,
+    tau_h: coverFx.tau_h
+  };
+}
+
 function buildInversePoints(inp, pool, tMin=18, tMax=38, tStep=0.5) {
   const tCount = Math.round((tMax - tMin) / tStep);
   const pts = [];
@@ -884,6 +1061,9 @@ function exportSummaryReport() {
   const monthLines = r.monthly.map(m =>
     `${m.month}: avg air ${m.avgAirC.toFixed(1)}°C | max selected ${m.maxSelectedC.toFixed(1)}°C | daily need ${m.dailyNeedKWh.toFixed(2)} kWh | monthly cost £${m.monthlyCostGBP.toFixed(2)}`
   ).join('\n');
+  const forecastLines = r.predictive.forecastRows.map(row =>
+    `${row.day}: air ${row.airTempC.toFixed(1)}°C | cloud ${row.cloudPct.toFixed(0)}% | extra heater ${row.extraHeaterHours.toFixed(1)} h | ${row.startTempC.toFixed(1)}°C → ${row.endTempC.toFixed(1)}°C | extra cost £${row.extraCostGBP.toFixed(2)}`
+  ).join('\n');
   const heuristics = r.heuristics.map(h => `- ${h.source}: ${h.takeaway} (${h.url})`).join('\n');
   const content = `splash! planner report
 Generated: ${r.generatedAt}
@@ -906,12 +1086,26 @@ Headline results
 - July overnight drop: ${r.summary.overnightDropJulyC.toFixed(1)} °C
 - Cover saving vs no cover: £${r.summary.coverSavingGBP.toFixed(2)} / year
 - Days reaching desired minimum: ${r.summary.desiredRangeDays}
+- Current pool temperature: ${r.summary.currentTempC.toFixed(1)} °C
+- Post top-up temperature: ${r.summary.afterBoostTempC.toFixed(1)} °C
+- Hot water needed to hit target now: ${r.summary.hotWaterNeededL === null ? 'not feasible with selected tank temperature' : `${r.summary.hotWaterNeededL.toFixed(1)} L`}
+- Kettle fills needed to hit target now: ${r.summary.kettleFillsNeeded === null ? 'n/a' : r.summary.kettleFillsNeeded}
+- Forecast day-3 end temperature: ${r.summary.forecastDay3EndC.toFixed(1)} °C
+- Forecast boost cost: £${r.summary.forecastBoostCostGBP.toFixed(2)}
 
 Planner answers
 - Range: ${r.planner.range}
 - Budget: ${r.planner.budget}
 - Overnight: ${r.planner.overnight}
 - Cover: ${r.planner.cover}
+
+Predictive model
+- Hot-water tank temperature: ${r.predictive.hotWaterTankTempC.toFixed(0)} °C
+- Hot water added: ${r.predictive.hotWaterAddedL.toFixed(0)} L
+- Kettle size and fills: ${r.predictive.kettleLitres.toFixed(1)} L × ${r.predictive.kettleCount}
+- Immediate heater hours to target: ${r.predictive.immediateHeatHoursToTarget === null ? 'target unreachable under day-1 forecast' : `${r.predictive.immediateHeatHoursToTarget.toFixed(2)} h`}
+- Top-up equivalent heat added: ${r.predictive.topUpEquivalentKWh.toFixed(2)} kWh
+${forecastLines}
 
 Monthly analysis
 ${monthLines}
@@ -978,9 +1172,29 @@ function go() {
    rangeMin: gi('range-min'),
    rangeMax: gi('range-max'),
    coverType: gs('cover-type'),
-   coverHours: gi('cover-hours')
+   coverHours: gi('cover-hours'),
+   currentTemp: gi('current-temp'),
+   hotTemp: gi('hot-temp'),
+   hotLitres: gi('hot-litres'),
+   kettleLitres: gi('kettle-litres'),
+   kettleCount: gi('kettle-count'),
+   forecast: [
+     {air:gi('fc1-air'), cloud:gi('fc1-cloud'), boost:gi('fc1-boost')},
+     {air:gi('fc2-air'), cloud:gi('fc2-cloud'), boost:gi('fc2-boost')},
+     {air:gi('fc3-air'), cloud:gi('fc3-cloud'), boost:gi('fc3-boost')}
+   ]
   };
   if (!isFinite(inp.costTarget) || inp.costTarget < 0) inp.costTarget = 0;
+  inp.hotLitres = Math.max(0, inp.hotLitres);
+  inp.kettleLitres = clamp(inp.kettleLitres, 0.5, 3);
+  inp.kettleCount = Math.max(0, Math.round(inp.kettleCount));
+  inp.currentTemp = clamp(inp.currentTemp, 0, 45);
+  inp.hotTemp = clamp(inp.hotTemp, 25, 80);
+  inp.forecast = inp.forecast.map(day => ({
+   air: clamp(day.air, -10, 45),
+   cloud: clamp(day.cloud, 0, 100),
+   boost: clamp(day.boost, 0, 24)
+  }));
   normalizeDesiredRange(inp);
   document.getElementById('heat-hours').disabled = inp.heatMode === 'offpeak';
 
@@ -988,6 +1202,7 @@ function go() {
   const monthly = MONTHS.map((_,mi) => monthCalc(inp, pool, mi));
   const noCoverInp = {...inp, coverType:'none', coverHours:0};
   const noCoverMonthly = MONTHS.map((_,mi) => monthCalc(noCoverInp, pool, mi));
+  const nowMonth = new Date().getMonth();
 
   // July index = 6
   const JUL    = 6;
@@ -1029,6 +1244,36 @@ function go() {
   document.getElementById('s-night').textContent = fmt(nightSelected.drop, 1) + ' °C';
   document.getElementById('s-coversave').textContent = `${coverSaving >= 0 ? '+' : '-'}£${fmt(Math.abs(coverSaving), 2)}`;
   document.getElementById('s-range-days').textContent = fmtN(desiredMinDays);
+
+  const poolVolumeL = pool.vol * 1000;
+  const hotWaterNeededL = requiredHotVolumeL(poolVolumeL, inp.currentTemp, inp.target, inp.hotTemp);
+  const kettleWaterNeededL = requiredHotVolumeL(poolVolumeL, inp.currentTemp, inp.target, 98);
+  const addedKettleLitres = inp.kettleLitres * inp.kettleCount;
+  const afterHotTemp = mixTemperature(inp.currentTemp, poolVolumeL, inp.hotLitres, inp.hotTemp);
+  const afterBoostTemp = mixTemperature(afterHotTemp, poolVolumeL + inp.hotLitres, addedKettleLitres, 98);
+  const currentMonthCoverFx = coverProfile(inp, pool, nowMonth);
+  const currentMonthState = {
+    ...currentMonthCoverFx,
+    solarW: UK_S[nowMonth] * 1000 / 24 * (1 - inp.shade / 100) * currentMonthCoverFx.solarFactor
+      * cloudSolarFactor(inp.forecast[0].cloud) * pool.A_surf * AABS
+  };
+  const immediateHeatHours = heatUpTimeFromStart(pool, currentMonthState, afterBoostTemp, inp.target, inp.forecast[0].air);
+  const hotBoostKWh = thermalKWhForWaterLitres(inp.hotLitres, inp.currentTemp, inp.hotTemp);
+  const kettleBoostKWh = thermalKWhForWaterLitres(addedKettleLitres, inp.currentTemp, 98);
+  let rollingTemp = afterBoostTemp;
+  const forecastRows = inp.forecast.map((day, idx) => {
+    const row = forecastDayPrediction(inp, pool, nowMonth, day.air, day.cloud, day.boost, rollingTemp);
+    rollingTemp = row.endTemp;
+    return {day:`Day ${idx + 1}`, ...row};
+  });
+  const forecastBoostCost = hotBoostKWh * inp.peakRate / 100
+    + kettleBoostKWh * inp.peakRate / 100
+    + forecastRows.reduce((sum, row) => sum + row.extraCost, 0);
+  document.getElementById('s-afterboost').textContent = `${fmt(afterBoostTemp, 1)} °C`;
+  document.getElementById('s-hotreq').textContent = isFinite(hotWaterNeededL) ? `${fmt(hotWaterNeededL, 0)} L` : '—';
+  document.getElementById('s-kettlereq').textContent = isFinite(kettleWaterNeededL) ? `${fmt(Math.ceil(kettleWaterNeededL / inp.kettleLitres), 0)}` : '—';
+  document.getElementById('s-day3').textContent = `${fmt(forecastRows[forecastRows.length - 1].endTemp, 1)} °C`;
+  document.getElementById('s-boostcost').textContent = `£${fmt(forecastBoostCost, 2)}`;
 
   // ── Analysis text ────────────────────────────────────────────────────────────
   const heaterKW    = inp.hpow;
@@ -1079,6 +1324,10 @@ function go() {
   html += `<strong>Heat-up note:</strong> The ${fmtN(pool.cap/1000)} kJ/°C thermal mass means the pool `;
   html += `changes temperature slowly (${fmt(julData.tau_h,1)} h effective July time constant). `;
   html += `With the selected cover plan it drops about <strong>${fmt(nightSelected.drop,1)}°C</strong> over ${fmt(nightSelected.dark,1)} night-time hours in July, versus ${fmt(nightBare.drop,1)}°C without cover.`;
+  html += `<br><strong>Current boost model:</strong> Starting from <strong>${fmt(inp.currentTemp,1)}°C</strong>, your entered top-ups lift the pool to about <strong>${fmt(afterBoostTemp,1)}°C</strong>. `;
+  html += isFinite(immediateHeatHours)
+    ? `From there, reaching the ${fmt(inp.target,1)}°C target under the first-day forecast takes about <strong>${fmt(immediateHeatHours,1)} h</strong> of total heater running.`
+    : `Under the first-day forecast the current heater and solar setup still cannot fully reach ${fmt(inp.target,1)}°C.`;
 
   document.getElementById('analysis-box').innerHTML = html;
 
@@ -1226,6 +1475,19 @@ function go() {
         : `${cover.label} at <strong>${fmt(inp.coverHours,1)} h/day</strong> trims overnight loss, but at this usage pattern it blocks enough free solar gain to add about <strong>£${fmt(Math.abs(coverSaving),2)}</strong>/year versus no cover. Try fewer daylight cover hours or a higher-transmittance cover if passive solar heating matters more.`
   );
 
+  document.getElementById('forecast-tbody').innerHTML = forecastRows.map(row => `<tr>
+      <td>${row.day}</td>
+      <td>${fmt(row.airTemp,1)} °C</td>
+      <td>${fmt(row.cloudPct,0)} %</td>
+      <td>${fmt(row.extraHours,1)} h</td>
+      <td>${fmt(row.startTemp,1)} °C</td>
+      <td>${fmt(row.endTemp,1)} °C</td>
+      <td>${fmt(row.solarW,0)} W</td>
+      <td>£${fmt(row.extraCost,2)}</td>
+    </tr>`).join('');
+  document.getElementById('forecast-note').textContent =
+    `Forecast starts at ${fmt(afterBoostTemp,1)}°C after optional top-ups. Hot-water equivalent adds about ${fmt(hotBoostKWh + kettleBoostKWh,1)} kWh, while extra heater boosts add ${fmt(forecastRows.reduce((sum, row) => sum + row.extraHeaterKWh, 0),1)} kWh over 3 days.`;
+
   const minCost = inversePts[0].x;
   const maxCost = inversePts[inversePts.length - 1].x;
   if (chartInverse) {
@@ -1275,7 +1537,13 @@ function go() {
       idealTargetAtBudgetC: +fmt(idealPoint.y, 1),
       overnightDropJulyC: +fmt(nightSelected.drop, 2),
       coverSavingGBP: +fmt(coverSaving, 2),
-      desiredRangeDays: desiredMinDays
+      desiredRangeDays: desiredMinDays,
+      currentTempC: +fmt(inp.currentTemp, 1),
+      afterBoostTempC: +fmt(afterBoostTemp, 1),
+      hotWaterNeededL: isFinite(hotWaterNeededL) ? +fmt(hotWaterNeededL, 1) : null,
+      kettleFillsNeeded: isFinite(kettleWaterNeededL) ? Math.ceil(kettleWaterNeededL / inp.kettleLitres) : null,
+      forecastDay3EndC: +fmt(forecastRows[forecastRows.length - 1].endTemp, 1),
+      forecastBoostCostGBP: +fmt(forecastBoostCost, 2)
     },
     planner: {
       range: document.getElementById('qa-range').textContent,
@@ -1284,6 +1552,24 @@ function go() {
       cover: document.getElementById('qa-cover').textContent
     },
     heuristics: PUBLIC_HEURISTICS,
+    predictive: {
+      hotWaterTankTempC: inp.hotTemp,
+      hotWaterAddedL: inp.hotLitres,
+      kettleLitres: inp.kettleLitres,
+      kettleCount: inp.kettleCount,
+      immediateHeatHoursToTarget: isFinite(immediateHeatHours) ? +fmt(immediateHeatHours, 2) : null,
+      topUpEquivalentKWh: +fmt(hotBoostKWh + kettleBoostKWh, 2),
+      forecastRows: forecastRows.map(row => ({
+        day: row.day,
+        airTempC: +fmt(row.airTemp, 1),
+        cloudPct: +fmt(row.cloudPct, 0),
+        extraHeaterHours: +fmt(row.extraHours, 1),
+        startTempC: +fmt(row.startTemp, 1),
+        endTempC: +fmt(row.endTemp, 1),
+        solarGainW: +fmt(row.solarW, 0),
+        extraCostGBP: +fmt(row.extraCost, 2)
+      }))
+    },
     monthly: monthly.map((m, mi) => ({
       month: MONTHS[mi],
       avgAirC: +fmt(m.ambT, 1),
