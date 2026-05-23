@@ -57,6 +57,12 @@ app.get("/readyz", (req, res) => {
 
 app.use(express.static(path.join(__dirname, "public")));
 
+app.use("/splash", express.static(path.join(__dirname, "public", "splash"), { index: "index.htm" }));
+
+app.get("/splash", (req, res) => {
+  res.redirect("/splash/");
+});
+
 function escapeHtml(value) {
   return String(value || "")
     .replace(/&/g, "&amp;")
