@@ -387,6 +387,8 @@ footer{text-align:center;padding:1.5rem;font-size:.72rem;color:var(--muted)}
             <select id="heat-mode" onchange="go()">
               <option value="hours" selected>Custom heating hours/day</option>
               <option value="offpeak">Off-peak only</option>
+              <option value="noheat">No heating — hot-water tank topups only</option>
+              <option value="kettleonly">No heating — kettle topups only</option>
             </select>
           </div>
 
@@ -563,6 +565,12 @@ footer{text-align:center;padding:1.5rem;font-size:.72rem;color:var(--muted)}
 
       <div class="alert" id="analysis-box">Loading…</div>
 
+      <div class="card" style="margin-bottom:1rem" id="forecast36-card">
+        <div class="card-title">🌡️ 36-Hour Pool Temperature Forecast</div>
+        <div style="position:relative;height:220px"><canvas id="forecast36Chart"></canvas></div>
+        <p class="mini-note" id="forecast36-note">Forecast from current pool temperature using day-1 and day-2 weather conditions.</p>
+      </div>
+
       <div class="sec" id="season-sec" style="display:none">🗓️ Temporary Pool Season Costs</div>
       <div class="stats-row" id="season-stats-row" style="display:none">
         <div class="stat"><div class="lbl">Season Duration</div><div class="val" id="s-season-days">—</div><div class="sub">days (selected dates)</div></div>
@@ -637,6 +645,13 @@ footer{text-align:center;padding:1.5rem;font-size:.72rem;color:var(--muted)}
           <button type="button" class="secondary" id="export-json">Export JSON</button>
           <button type="button" class="ghost" id="export-csv">Export monthly CSV</button>
         </div>
+        <hr style="border:0;border-top:1px solid var(--border);margin:.75rem 0">
+        <div style="font-size:.78rem;font-weight:700;color:var(--blue);margin-bottom:.5rem">💾 Configuration</div>
+        <div class="export-actions">
+          <button type="button" id="save-config">Save config to file</button>
+          <button type="button" class="secondary" id="import-config">Import config from file</button>
+        </div>
+        <p class="mini-note">Settings are automatically saved in your browser between sessions. Use Save / Import to back up or transfer your configuration.</p>
         <p class="mini-note" id="export-status" aria-live="polite">Exports are generated locally in your browser.</p>
       </div>
 
@@ -783,9 +798,9 @@ function opHours(start, end) {
   return e > s ? e - s : 24 - s + e;
 }
 function schedHoursFromInput(inp) {
-  return inp.heatMode === 'offpeak'
-    ? opHours(inp.opStart, inp.opEnd)
-    : Math.max(0, Math.min(24, inp.heatHours));
+  if (inp.heatMode === 'offpeak') return opHours(inp.opStart, inp.opEnd);
+  if (inp.heatMode === 'noheat' || inp.heatMode === 'kettleonly') return 0;
+  return Math.max(0, Math.min(24, inp.heatHours));
 }
 
 function fmt(n, dp=0) { return n.toFixed(dp); }
@@ -1175,6 +1190,46 @@ function simulate7Days(inp, pool, monthState, mi) {
   return {timeArr, tempArr};
 }
 
+// ─── 36-HOUR TEMPERATURE FORECAST ─────────────────────────────────────────────
+function simulate36HourForecast(inp, pool, nowMonth, startTemp) {
+  const now = new Date();
+  const startHourOfDay = now.getHours() + now.getMinutes() / 60;
+  const coverUsage = buildCoverUsageProfile(inp, nowMonth);
+  const totalSteps = 36;
+  const timeLabels = [];
+  const tempArr = [];
+  const dayNames = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+  let T = startTemp;
+  for (let i = 0; i < totalSteps; i++) {
+    const dayIndex = Math.floor(i / 24);
+    const hourOfDay = (startHourOfDay + i) % 24;
+    const fDay = inp.forecast[Math.min(dayIndex, inp.forecast.length - 1)];
+    const dt = new Date(now.getTime() + i * 3600000);
+    timeLabels.push(`${dayNames[dt.getDay()]} ${String(dt.getHours()).padStart(2,'0')}:00`);
+    const covered = coverUsage.isCovered(hourOfDay);
+    const surfFactor = covered ? coverUsage.cover.surfaceLossFactor : 1;
+    const solFactor  = covered ? coverUsage.cover.solarTransmittance  : 1;
+    const UA = pool.UA_s_open * surfFactor + pool.UA_w + pool.UA_b;
+    const baseSolarW = UK_S[nowMonth] * 1000 / 24
+      * (1 - inp.shade / 100)
+      * cloudSolarFactor(fDay.cloud)
+      * pool.A_surf * AABS;
+    const solarW = solarPowerAtHour(baseSolarW, hourOfDay, nowMonth) * solFactor;
+    let heaterPow = 0;
+    if (inp.heatMode === 'offpeak') {
+      heaterPow = isWithinWindow(hourOfDay, parseHHMM(inp.opStart), parseHHMM(inp.opEnd))
+        ? pool.heaterW : 0;
+    } else if (inp.heatMode !== 'noheat' && inp.heatMode !== 'kettleonly') {
+      const hrs = clamp(schedHoursFromInput(inp) + fDay.boost, 0, 24);
+      heaterPow = pool.heaterW * hrs / 24;
+    }
+    const Pnet = heaterPow + solarW - UA * (T - fDay.air);
+    T += Pnet / pool.cap * 3600;
+    tempArr.push(+T.toFixed(2));
+  }
+  return { timeLabels, tempArr };
+}
+
 // ─── HEATING CURVE (analytical) ───────────────────────────────────────────────
 function heatingCurve(pool, monthState, ambT) {
   const T_eq  = ambT + (pool.heaterW + monthState.solarW) / monthState.UA;
@@ -1191,7 +1246,7 @@ function heatingCurve(pool, monthState, ambT) {
 
 // ─── CHART INSTANCES ──────────────────────────────────────────────────────────
 const CHARTS_AVAILABLE = typeof window.Chart !== 'undefined';
-let chartCost, chartHeat, chartLoss, chartSched, chartInverse, chartForecast;
+let chartCost, chartHeat, chartLoss, chartSched, chartInverse, chartForecast, chartForecast36;
 let lastReportData = null;
 
 function makeChart(id, config) {
@@ -1243,7 +1298,7 @@ function initCharts() {
       responsive:true, maintainAspectRatio:false,
       plugins:{legend:{position:'bottom',labels:{boxWidth:12,font:{size:11}}}},
       scales:{
-        x:{title:{display:true,text:'Hours (7 days)'}, ticks:{maxTicksLimit:15}},
+        x:{title:{display:true,text:'Date / Time'}, ticks:{maxTicksLimit:15}},
         y:{title:{display:true,text:'Pool temperature (°C)'}}
       },
       elements:{point:{radius:0}}
@@ -1274,6 +1329,20 @@ function initCharts() {
         x:{title:{display:true,text:'Forecast day'}},
         y:{title:{display:true,text:'Pool temperature (°C)'}}
       }
+    }
+  });
+
+  chartForecast36 = makeChart('forecast36Chart', {
+    type:'line',
+    data:{labels:[], datasets:[]},
+    options:{
+      responsive:true, maintainAspectRatio:false,
+      plugins:{legend:{position:'bottom',labels:{boxWidth:12,font:{size:11}}}},
+      scales:{
+        x:{title:{display:true,text:'Date / Time'}, ticks:{maxTicksLimit:13}},
+        y:{title:{display:true,text:'Pool temperature (°C)'}}
+      },
+      elements:{point:{radius:2}}
     }
   });
 }
@@ -1479,7 +1548,8 @@ function go() {
    boost: clamp(day.boost, 0, 24)
   }));
   normalizeDesiredRange(inp);
-  document.getElementById('heat-hours').disabled = inp.heatMode === 'offpeak';
+  document.getElementById('heat-hours').disabled =
+    inp.heatMode === 'offpeak' || inp.heatMode === 'noheat' || inp.heatMode === 'kettleonly';
 
   const pool = buildPool(inp);
   const monthly = MONTHS.map((_,mi) => monthCalc(inp, pool, mi));
@@ -1581,7 +1651,10 @@ function go() {
   const canOPJul    = julData.canSched;
   const opH         = opHours(inp.opStart, inp.opEnd);
   const schedH      = schedHoursFromInput(inp);
-  const modeLabel   = inp.heatMode === 'offpeak' ? 'Off-peak only' : `${fmt(schedH,1)} h/day schedule`;
+  const modeLabel   = inp.heatMode === 'offpeak'     ? 'Off-peak only'
+                    : inp.heatMode === 'noheat'      ? 'No heating (hot-water tank topups only)'
+                    : inp.heatMode === 'kettleonly'  ? 'No heating (kettle topups only)'
+                    : `${fmt(schedH,1)} h/day schedule`;
   const maxCurrent  = (inp.hpow * 1000 / 230).toFixed(1);
   const cover = getCover(inp);
   const desiredBand = `${fmt(inp.rangeMin,1)}–${fmt(inp.rangeMax,1)}°C`;
@@ -1610,15 +1683,21 @@ function go() {
   }
   html += `<br>`;
 
-  html += `<strong>${modeLabel} (${inp.opStart}–${inp.opEnd} off-peak window):</strong> `;
-  if (canOPJul) {
-    html += `<span class="ok">&#x2714; Selected schedule CAN maintain ${fmt(inp.target,1)}°C</span>`;
-    html += ` (avg eq. ${fmt(julMaxOP,1)}°C). Cost: ${fmt(julData.cost_p,1)}p/day.`;
+  if (inp.heatMode === 'noheat' || inp.heatMode === 'kettleonly') {
+    html += `<strong>${modeLabel}:</strong> No electric heater running. `;
+    html += `Solar gain alone gives an average July equilibrium of about <strong>${fmt(julMaxOP,1)}°C</strong>. `;
+    html += `Use hot-water or kettle top-ups for additional warmth.<br>`;
   } else {
-    html += `<span class="warn">&#x26A0; Selected schedule reaches only ${fmt(julMaxOP,1)}°C</span>`;
-    html += ` &mdash; increase daily heating hours, use continuous heating, or accept a lower target.`;
+    html += `<strong>${modeLabel} (${inp.opStart}–${inp.opEnd} off-peak window):</strong> `;
+    if (canOPJul) {
+      html += `<span class="ok">&#x2714; Selected schedule CAN maintain ${fmt(inp.target,1)}°C</span>`;
+      html += ` (avg eq. ${fmt(julMaxOP,1)}°C). Cost: ${fmt(julData.cost_p,1)}p/day.`;
+    } else {
+      html += `<span class="warn">&#x26A0; Selected schedule reaches only ${fmt(julMaxOP,1)}°C</span>`;
+      html += ` &mdash; increase daily heating hours, use continuous heating, or accept a lower target.`;
+    }
+    html += `<br>`;
   }
-  html += `<br>`;
 
   html += `<strong>Heat-up note:</strong> The ${fmtN(pool.cap/1000)} kJ/°C thermal mass means the pool `;
   html += `changes temperature slowly (${fmt(julData.tau_h,1)} h effective July time constant). `;
@@ -1729,8 +1808,14 @@ function go() {
 
   // ── Chart: 7-day schedule ────────────────────────────────────────────────
   const sim = simulate7Days(inp, pool, julData, JUL);
+  const schedNow = Date.now();
+  const schedDateNames = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+  const schedDateLabels = sim.timeArr.map(h => {
+    const d = new Date(schedNow + h * 3600000);
+    return `${schedDateNames[d.getDay()]} ${String(d.getHours()).padStart(2,'0')}:00`;
+  });
   if (chartSched) {
-    chartSched.data.labels = sim.timeArr;
+    chartSched.data.labels = schedDateLabels;
     chartSched.data.datasets = [
       {label:'Pool temperature (°C)', data:sim.tempArr, borderColor:'#0077b6', borderWidth:1.5, fill:false, tension:.2},
       {label:`Target ${fmt(inp.target,1)}°C`, data:sim.timeArr.map(()=>inp.target),
@@ -1826,6 +1911,27 @@ function go() {
       }
     ];
     chartForecast.update();
+  }
+
+  // ── Chart: 36-hour pool temperature forecast ──────────────────────────────
+  const fc36 = simulate36HourForecast(inp, pool, nowMonth, afterBoostTemp);
+  if (chartForecast36) {
+    chartForecast36.data.labels = fc36.timeLabels;
+    chartForecast36.data.datasets = [{
+      label: 'Pool temperature (°C)',
+      data: fc36.tempArr,
+      borderColor: '#0096c7',
+      backgroundColor: 'rgba(0,150,199,0.10)',
+      borderWidth: 2,
+      fill: true,
+      tension: .3,
+      pointRadius: 2
+    }];
+    chartForecast36.update();
+    const fc36End = fc36.tempArr[fc36.tempArr.length - 1];
+    const el36 = document.getElementById('forecast36-note');
+    if (el36) el36.textContent =
+      `Starting from ${fmt(afterBoostTemp,1)}°C now, the pool is forecast to reach about ${fmt(fc36End,1)}°C in 36 hours, using day-1 and day-2 weather forecast conditions.`;
   }
 
   lastReportData = {
@@ -1929,6 +2035,7 @@ function go() {
   setExportStatus(
     `${CHARTS_AVAILABLE ? 'Ready to export.' : 'Charts unavailable offline, but calculations and exports still work.'} Current annual projection: £${fmt(annualCost, 2)}.${seasonData ? ` Season total: £${fmt(seasonData.totalSeasonCost, 2)}.` : ''}`
   );
+  saveConfigToLS();
 }
 
 function sanitizePostcode(value) {
@@ -2003,6 +2110,100 @@ function initWeatherAutofill() {
   btn.addEventListener('click', fetchForecastFromPostcode);
 }
 
+// ─── CONFIG PERSISTENCE ──────────────────────────────────────────────────────
+const LS_KEY = 'splash_cfg_1';
+
+const CONFIG_FIELDS = [
+  {id:'diam',          lbl:'diam-v',        unit:' m',     dp:2},
+  {id:'depth',         lbl:'depth-v',       unit:' m',     dp:2},
+  {id:'shade',         lbl:'shade-v',       unit:' %',     dp:0},
+  {id:'target',        lbl:'target-v',      unit:' °C',    dp:1},
+  {id:'hpow',          lbl:'hpow-v',        unit:' kW',    dp:1},
+  {id:'heff',          lbl:'heff-v',        unit:' %',     dp:0},
+  {id:'cover-hours',   lbl:'cover-hours-v', unit:' h/day', dp:1},
+  {id:'heat-hours',    lbl:'heat-hours-v',  unit:' h',     dp:1},
+  {id:'ground'},       {id:'cover-type'},   {id:'heat-mode'},
+  {id:'range-min'},    {id:'range-max'},
+  {id:'peak'},         {id:'offpk'},
+  {id:'op-start'},     {id:'op-end'},
+  {id:'cost-target'},
+  {id:'pool-start'},   {id:'pool-end'},
+  {id:'pool-fills'},   {id:'water-rate'},
+  {id:'current-temp'}, {id:'hot-temp'},
+  {id:'hot-litres'},   {id:'kettle-litres'}, {id:'kettle-count'},
+  {id:'forecast-postcode'},
+  {id:'fc1-air'},  {id:'fc1-cloud'},  {id:'fc1-boost'},
+  {id:'fc2-air'},  {id:'fc2-cloud'},  {id:'fc2-boost'},
+  {id:'fc3-air'},  {id:'fc3-cloud'},  {id:'fc3-boost'}
+];
+
+function getConfig() {
+  const cfg = {_v: APP_VERSION};
+  for (const f of CONFIG_FIELDS) {
+    const el = document.getElementById(f.id);
+    if (el) cfg[f.id] = el.value;
+  }
+  return cfg;
+}
+
+function applyConfig(cfg) {
+  if (!cfg || typeof cfg !== 'object') return;
+  for (const f of CONFIG_FIELDS) {
+    const el = document.getElementById(f.id);
+    if (!el || cfg[f.id] == null) continue;
+    el.value = cfg[f.id];
+    if (f.lbl) sv(f.id, f.lbl, f.unit, f.dp);
+  }
+  go();
+}
+
+function saveConfigToLS() {
+  try { localStorage.setItem(LS_KEY, JSON.stringify(getConfig())); } catch {}
+}
+
+function restoreConfigFromLS() {
+  try {
+    const raw = localStorage.getItem(LS_KEY);
+    if (!raw) return false;
+    applyConfig(JSON.parse(raw));
+    return true;
+  } catch { return false; }
+}
+
+function saveConfigToFile() {
+  downloadBlob('splash-config.json', JSON.stringify(getConfig(), null, 2), 'application/json;charset=utf-8');
+  setExportStatus('Configuration saved to file.');
+}
+
+function importConfigFromFile() {
+  const input = document.createElement('input');
+  input.type = 'file';
+  input.accept = '.json,application/json';
+  input.addEventListener('change', e => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = evt => {
+      try {
+        const cfg = JSON.parse(String(evt.target.result));
+        applyConfig(cfg);
+        setExportStatus('Configuration imported successfully.');
+      } catch {
+        setExportStatus('Import failed: file is not a valid splash config.');
+      }
+    };
+    reader.readAsText(file);
+  });
+  input.click();
+}
+
+function initConfigActions() {
+  const btnSave   = document.getElementById('save-config');
+  const btnImport = document.getElementById('import-config');
+  if (btnSave)   btnSave.addEventListener('click', saveConfigToFile);
+  if (btnImport) btnImport.addEventListener('click', importConfigFromFile);
+}
+
 // ─── UI DRAWER + PWA ──────────────────────────────────────────────────────────
 function initControlsDrawer() {
   const panel = document.getElementById('controls-panel');
@@ -2039,7 +2240,8 @@ document.addEventListener('DOMContentLoaded', () => {
   initCharts();
   initExportActions();
   initWeatherAutofill();
-  go();
+  initConfigActions();
+  if (!restoreConfigFromLS()) go();
   registerServiceWorker();
 });
 </script>
