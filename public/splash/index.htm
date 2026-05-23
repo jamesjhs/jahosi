@@ -1,0 +1,934 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#023e8a">
+<meta name="application-name" content="splash!">
+<meta name="description" content="splash! — costing for your playpool. Explore pool heating thermodynamics, energy demand, off-peak strategies, and annual electricity cost with interactive charts.">
+<meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1">
+<meta property="og:type" content="website">
+<meta property="og:title" content="splash! — costing for your playpool">
+<meta property="og:description" content="Interactive playpool thermal and energy-cost calculator with monthly analysis, heat-loss modelling, and off-peak tariff scenarios.">
+<meta property="og:site_name" content="splash!">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="splash! — costing for your playpool">
+<meta name="twitter:description" content="Plan your playpool heating costs with thermodynamic modelling and interactive data visualisation.">
+<link rel="manifest" href="./manifest.webmanifest">
+<title>splash! — costing for your playpool</title>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "splash!",
+  "applicationCategory": "CalculatorApplication",
+  "description": "Interactive playpool thermodynamics and electricity-cost calculator.",
+  "operatingSystem": "Any",
+  "browserRequirements": "Requires JavaScript"
+}
+</script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<style>
+
+:root {
+  --blue:      #0077b6;
+  --blue-mid:  #0096c7;
+  --blue-lt:   #00b4d8;
+  --blue-pale: #caf0f8;
+  --bg:        #eef6fc;
+  --card:      #ffffff;
+  --text:      #1a202c;
+  --muted:     #6b7280;
+  --border:    #cde8f5;
+  --green:     #059669;
+  --amber:     #d97706;
+  --red:       #dc2626;
+  --shadow:    0 2px 8px rgba(0,80,160,0.10);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--text);line-height:1.5;font-size:14px}
+
+header{
+  background:linear-gradient(135deg,#023e8a 0%,#0096c7 100%);
+  color:#fff;padding:1.5rem 2rem;
+}
+header h1{font-size:1.5rem;font-weight:700}
+header p{font-size:.85rem;opacity:.85;margin-top:.25rem}
+
+.wrap{max-width:1380px;margin:0 auto;padding:1rem}
+.layout{display:grid;grid-template-columns:minmax(290px,340px) minmax(0,1fr);gap:1rem;align-items:start}
+.controls-panel{position:sticky;top:1rem;max-height:calc(100vh - 2rem);overflow:auto;background:var(--card);border:1px solid var(--border);border-radius:12px;box-shadow:var(--shadow);padding:1rem}
+.controls-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:.75rem;padding-bottom:.6rem;border-bottom:2px solid var(--blue-pale)}
+.controls-title{font-size:.78rem;font-weight:700;color:var(--blue);text-transform:uppercase;letter-spacing:.06em}
+.controls-close{display:none;border:0;background:transparent;color:var(--blue);font-weight:700;font-size:.8rem;cursor:pointer}
+.controls-grid{display:grid;gap:1rem}
+.results-panel{min-width:0}
+
+.mobile-toolbar{display:none;margin-bottom:1rem}
+.mobile-toolbar button{width:100%;border:0;border-radius:10px;background:var(--blue);color:#fff;padding:.7rem 1rem;font-weight:700;cursor:pointer;box-shadow:var(--shadow)}
+.drawer-backdrop{display:none}
+
+.card{
+  background:var(--card);border-radius:10px;
+  padding:1.25rem;box-shadow:var(--shadow);
+  border:1px solid var(--border);height:100%
+}
+.card-title{
+  font-size:.78rem;font-weight:700;color:var(--blue);
+  text-transform:uppercase;letter-spacing:.06em;
+  margin-bottom:1rem;padding-bottom:.5rem;
+  border-bottom:2px solid var(--blue-pale);
+}
+
+/* form controls */
+.field{margin-bottom:.8rem}
+.field>label{
+  display:flex;justify-content:space-between;align-items:center;
+  font-size:.78rem;color:var(--muted);margin-bottom:.25rem
+}
+.field>label .fval{font-weight:700;color:var(--blue);font-size:.85rem}
+input[type=range]{width:100%;accent-color:var(--blue);cursor:pointer;margin:3px 0}
+.field select,.field input[type=number],.field input[type=time]{
+  width:100%;padding:.38rem .55rem;
+  border:1.5px solid var(--border);border-radius:6px;
+  font-size:.85rem;background:#fff;color:var(--text);outline:none;
+  transition:border-color .15s
+}
+.field select:focus,.field input:focus{border-color:var(--blue)}
+.field-row{display:grid;grid-template-columns:1fr 1fr;gap:.5rem}
+.hint{font-size:.72rem;color:var(--muted);margin-top:-.45rem;margin-bottom:.6rem;line-height:1.4}
+
+/* stat cards */
+.stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;margin-bottom:1rem}
+@media(max-width:1080px){.stats-row{grid-template-columns:1fr 1fr}}
+@media(max-width:560px){.stats-row{grid-template-columns:1fr}}
+.stat{
+  background:var(--card);border-radius:10px;
+  padding:1rem 1.1rem;box-shadow:var(--shadow);
+  border:1px solid var(--border);text-align:center
+}
+.stat .lbl{font-size:.7rem;text-transform:uppercase;letter-spacing:.05em;color:var(--muted)}
+.stat .val{font-size:1.5rem;font-weight:700;color:var(--blue);line-height:1;margin:.3rem 0}
+.stat .sub{font-size:.7rem;color:var(--muted)}
+
+/* alert / analysis box */
+.alert{
+  background:#eff9ff;border-left:4px solid var(--blue-lt);
+  border-radius:0 8px 8px 0;padding:1rem 1.25rem;
+  margin-bottom:1rem;font-size:.84rem;line-height:1.8
+}
+.alert strong{color:var(--blue)}
+.diag-list{list-style:none;display:grid;gap:.4rem;font-size:.8rem}
+.diag-pass{color:var(--green);font-weight:700}
+.diag-warn{color:var(--amber);font-weight:700}
+
+/* table */
+.tbl-wrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:.78rem}
+thead th{
+  background:var(--blue);color:#fff;
+  padding:.5rem .65rem;text-align:center;
+  font-weight:600;white-space:nowrap;font-size:.74rem
+}
+thead th:first-child{text-align:left}
+td{padding:.42rem .65rem;border-bottom:1px solid var(--border);text-align:center;white-space:nowrap}
+td:first-child{text-align:left;font-weight:600}
+tr:nth-child(even) td{background:#f5faff}
+tr.summer td{background:#fffbeb!important}
+tr.summer td:first-child{border-left:3px solid var(--amber)}
+tr.totals td{background:#eef6fc!important;font-weight:700;border-top:2px solid var(--blue)}
+
+.ok  {color:var(--green);font-weight:700}
+.warn{color:var(--amber);font-weight:700}
+.bad {color:var(--red);  font-weight:700}
+
+/* charts */
+.charts-row{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1rem}
+@media(max-width:860px){.charts-row{grid-template-columns:1fr}}
+.chart-box{position:relative;height:265px}
+
+.sec{font-size:1rem;font-weight:700;color:var(--blue);margin:0 0 .75rem;display:flex;align-items:center;gap:.5rem}
+footer{text-align:center;padding:1.5rem;font-size:.72rem;color:var(--muted)}
+
+@media(max-width:980px){
+  .layout{grid-template-columns:1fr}
+  .mobile-toolbar{display:block}
+  .controls-panel{position:fixed;top:0;right:0;z-index:1000;height:100dvh;width:min(92vw,360px);max-height:none;transform:translateX(100%);transition:transform .25s ease;border-radius:0;overflow:auto}
+  .controls-panel.open{transform:translateX(0)}
+  .controls-close{display:inline-block}
+  .drawer-backdrop{display:block;position:fixed;inset:0;background:rgba(2,30,56,.45);opacity:0;pointer-events:none;transition:opacity .25s ease;z-index:999}
+  .drawer-backdrop.open{opacity:1;pointer-events:auto}
+  body.drawer-open{overflow:hidden}
+}
+</style>
+</head>
+<body>
+
+<header>
+  <h1>splash!</h1>
+  <p>costing for your playpool</p>
+</header>
+
+<div class="wrap">
+
+  <noscript>
+    <div class="card" style="margin-bottom:1rem">
+      JavaScript is required for live thermodynamic calculations and charts in splash!.
+    </div>
+  </noscript>
+
+  <section class="card" style="margin-bottom:1rem">
+    <h2 class="sec">Thermal model overview</h2>
+    <p style="font-size:.85rem;color:var(--muted)">
+      This calculator models playpool heating using energy balance:
+      heater input + solar gain − environmental heat loss.
+      Outputs include monthly maintenance demand, target reachability, and annual electricity cost for UK climate assumptions.
+    </p>
+  </section>
+
+  <div class="mobile-toolbar">
+    <button id="open-controls" type="button">⚙️ Adjust Settings</button>
+  </div>
+
+  <div class="layout">
+    <aside class="controls-panel" id="controls-panel" aria-label="Configuration controls">
+      <div class="controls-head">
+        <div class="controls-title">⚙️ Configuration</div>
+        <button class="controls-close" id="close-controls" type="button">Close</button>
+      </div>
+
+      <div class="controls-grid">
+        <div class="card">
+          <div class="card-title">Pool Dimensions &amp; Base</div>
+
+          <div class="field">
+            <label>Pool Diameter <span class="fval" id="diam-v">3.0 m</span></label>
+            <input type="range" id="diam" min="1" max="8" step="0.1" value="3.0"
+                  oninput="sv('diam','diam-v',' m',2);go()">
+          </div>
+
+          <div class="field">
+            <label>Water Depth <span class="fval" id="depth-v">0.70 m</span></label>
+            <input type="range" id="depth" min="0.2" max="1.5" step="0.05" value="0.70"
+                  oninput="sv('depth','depth-v',' m',2);go()">
+          </div>
+
+          <div class="field">
+            <label>Ground / Base Type</label>
+            <select id="ground" onchange="go()">
+              <option value="grass" selected>Grass / Soil (bubblewrap + tarpaulin)</option>
+              <option value="clay">Clay Soil</option>
+              <option value="sand">Sandy Soil</option>
+              <option value="concrete">Concrete / Paving</option>
+              <option value="decking">Timber Decking</option>
+            </select>
+          </div>
+
+          <div class="field">
+            <label>Shade Cover <span class="fval" id="shade-v">60 %</span></label>
+            <input type="range" id="shade" min="0" max="100" step="5" value="60"
+                  oninput="sv('shade','shade-v',' %',0);go()">
+          </div>
+
+          <div class="field">
+            <label>Target Pool Temperature <span class="fval" id="target-v">28.0 °C</span></label>
+            <input type="range" id="target" min="18" max="38" step="0.5" value="28"
+                  oninput="sv('target','target-v',' °C',1);go()">
+          </div>
+        </div>
+
+        <div class="card" style="margin-bottom:1rem">
+          <div class="card-title">Heating System</div>
+
+          <div class="field">
+            <label>Heater Power <span class="fval" id="hpow-v">3.0 kW</span></label>
+            <input type="range" id="hpow" min="0.5" max="6" step="0.1" value="3.0"
+                  oninput="sv('hpow','hpow-v',' kW',1);go()">
+          </div>
+          <p class="hint">💡 13 A × 230 V = 2.99 kW &mdash; maximum safe continuous load on a 13 A supply</p>
+
+          <div class="field">
+            <label>Heater Efficiency <span class="fval" id="heff-v">99 %</span></label>
+            <input type="range" id="heff" min="70" max="400" step="1" value="99"
+                  oninput="sv('heff','heff-v',' %',0);go()">
+          </div>
+          <p class="hint">Resistive element: ~99 %. Heat pump (COP 3.5): 350 %. Enters heat into water as heater_kW × efficiency.</p>
+        </div>
+
+        <div class="card">
+          <div class="card-title">Electricity Tariff</div>
+
+          <div class="field-row">
+            <div class="field">
+              <label>Peak Rate<span class="fval"></span></label>
+              <input type="number" id="peak" min="1" max="200" step="0.1" value="28.6"
+                    oninput="go()"> <span style="font-size:.75rem;color:var(--muted)">p / kWh</span>
+            </div>
+            <div class="field">
+              <label>Off-Peak Rate<span class="fval"></span></label>
+              <input type="number" id="offpk" min="0.1" max="100" step="0.1" value="6.5"
+                    oninput="go()"> <span style="font-size:.75rem;color:var(--muted)">p / kWh</span>
+            </div>
+          </div>
+
+          <div class="field-row" style="margin-top:.4rem">
+            <div class="field">
+              <label>Off-Peak Starts</label>
+              <input type="time" id="op-start" value="00:30" onchange="go()">
+            </div>
+            <div class="field">
+              <label>Off-Peak Ends</label>
+              <input type="time" id="op-end" value="05:30" onchange="go()">
+            </div>
+          </div>
+
+          <div class="field" style="margin-top:.4rem">
+            <label for="heat-mode">Heating Schedule Mode</label>
+            <select id="heat-mode" onchange="go()">
+              <option value="hours" selected>Custom heating hours/day</option>
+              <option value="offpeak">Off-peak only</option>
+            </select>
+          </div>
+
+          <div class="field">
+            <label for="heat-hours">Heating Hours per Day <span class="fval" id="heat-hours-v">24.0 h</span></label>
+            <input type="range" id="heat-hours" min="0" max="24" step="0.5" value="24"
+                  aria-describedby="heat-hours-help"
+                  oninput="sv('heat-hours','heat-hours-v',' h',1);go()">
+          </div>
+
+          <div class="field">
+            <label for="cost-target">Annual Cost Target</label>
+            <input type="number" id="cost-target" min="0" max="50000" step="10" value="500"
+                  aria-label="Annual Cost Target in pounds per year"
+                  aria-describedby="cost-target-help"
+                  oninput="go()"> <span style="font-size:.75rem;color:var(--muted)">£ / year</span>
+          </div>
+          <p class="hint" id="heat-hours-help">Choose custom heating hours/day or enforce off-peak-only running.</p>
+          <p class="hint" id="cost-target-help">The annual cost target is used for the inverse temperature-vs-budget chart.</p>
+        </div>
+      </div>
+    </aside>
+
+    <div class="drawer-backdrop" id="drawer-backdrop"></div>
+
+    <main class="results-panel">
+      <div class="sec">📊 Key Metrics</div>
+      <div class="stats-row" id="stats-row">
+        <div class="stat"><div class="lbl">Pool Volume</div><div class="val" id="s-vol">—</div><div class="sub">litres</div></div>
+        <div class="stat"><div class="lbl">Thermal Capacity</div><div class="val" id="s-cap">—</div><div class="sub">kJ / °C</div></div>
+        <div class="stat"><div class="lbl">Thermal Time Constant</div><div class="val" id="s-tau">—</div><div class="sub">hours (63 % equilibration)</div></div>
+        <div class="stat"><div class="lbl">Max Temp — Continuous</div><div class="val" id="s-tmax">—</div><div class="sub">°C above ambient (July)</div></div>
+        <div class="stat"><div class="lbl">Max Temp — Selected Schedule</div><div class="val" id="s-tmop">—</div><div class="sub">°C above ambient (July)</div></div>
+        <div class="stat"><div class="lbl">Time to Heat Pool</div><div class="val" id="s-time">—</div><div class="sub">hours, ambient → target (July)</div></div>
+        <div class="stat"><div class="lbl">Heat-up Energy (July)</div><div class="val" id="s-egy">—</div><div class="sub">kWh, ambient → target</div></div>
+        <div class="stat"><div class="lbl">Annual Electricity Cost</div><div class="val" id="s-ann">—</div><div class="sub">£ / year (all 12 months)</div></div>
+        <div class="stat"><div class="lbl">Ideal Target @ Cost Target</div><div class="val" id="s-ideal">—</div><div class="sub">°C, based on selected setup</div></div>
+      </div>
+
+      <div class="alert" id="analysis-box">Loading…</div>
+
+      <div class="card" style="margin-bottom:1rem">
+        <div class="card-title">Math Integrity Checks</div>
+        <ul class="diag-list" id="math-checks">
+          <li>Running checks…</li>
+        </ul>
+      </div>
+
+      <div class="sec">📅 Monthly Analysis — Maintaining Target Temperature</div>
+      <div class="card" style="margin-bottom:1rem">
+        <div class="tbl-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Month</th>
+                <th>Avg Air<br>Temp</th>
+                <th>Solar Gain<br>(avg W)</th>
+                <th>Heat Loss<br>at Target (W)</th>
+                <th>Net Heat<br>Needed (W)</th>
+                <th>Daily Energy<br>to Maintain</th>
+                <th>Heating<br>Available</th>
+                <th>Max Temp<br>Continuous</th>
+                <th>Max Temp<br>Selected Schedule</th>
+                <th>Target<br>Reachable?</th>
+                <th>Daily Cost<br>(selected schedule)</th>
+                <th>Monthly Cost<br>(actual days)</th>
+              </tr>
+            </thead>
+            <tbody id="monthly-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="sec">📈 Visualisations</div>
+      <div class="charts-row">
+        <div class="card">
+          <div class="card-title">Monthly Cost to Maintain Target Temperature</div>
+          <div class="chart-box"><canvas id="costChart"></canvas></div>
+        </div>
+        <div class="card">
+          <div class="card-title">Heating Curve — Ambient to Target (continuous heater, July)</div>
+          <div class="chart-box"><canvas id="heatChart"></canvas></div>
+        </div>
+      </div>
+      <div class="charts-row">
+        <div class="card">
+          <div class="card-title">Heat-Loss Breakdown at Target Temp (July)</div>
+          <div class="chart-box"><canvas id="lossChart"></canvas></div>
+        </div>
+        <div class="card">
+          <div class="card-title">7-Day Temperature Simulation — Selected Heating Schedule (July)</div>
+          <div class="chart-box"><canvas id="schedChart"></canvas></div>
+        </div>
+      </div>
+      <div class="charts-row">
+        <div class="card">
+          <div class="card-title">Ideal Target Temperature vs Annual Cost Target (selected variables)</div>
+          <div class="chart-box"><canvas id="inverseChart"></canvas></div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+</div><!-- /wrap -->
+
+<footer>
+  splash! &mdash; costing for your playpool.<br>
+  Physics model: surface losses combine free-convection, evaporation (dominant) and long-wave radiation; parameterised by shade/shelter.
+  UK East Anglia climate data. Costs are indicative estimates only. Not for safety-critical application.
+</footer>
+
+<script>
+'use strict';
+
+// ─── CLIMATE DATA (East Anglia / East UK) ─────────────────────────────────────
+const MONTHS  = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+const DAYSMON = [31,28,31,30,31,30,31,31,30,31,30,31];
+const SUMMER  = new Set([4,5,6,7,8]); // May-Sep (0-based)
+
+// Monthly mean air temperature °C
+const UK_T = [3.8,4.0,6.1,8.9,12.2,15.4,17.8,17.6,14.5,11.0,7.1,4.7];
+
+// Monthly mean daily solar irradiance on horizontal surface, kWh/m²/day
+const UK_S = [0.55,0.96,2.10,3.52,4.62,5.10,4.82,4.10,2.82,1.65,0.82,0.46];
+
+// Ground base thermal transmittance W/(m²·K)
+const GU = {grass:2.5, clay:2.0, sand:1.8, concrete:4.5, decking:1.0};
+
+const CP   = 4186;   // J/(kg·K) water specific heat
+const RHO  = 998;    // kg/m³    water density
+const AABS = 0.87;   // solar absorptivity of water
+
+// ─── UI HELPERS ───────────────────────────────────────────────────────────────
+function sv(id, lblId, unit, dp) {
+  const v = +document.getElementById(id).value;
+  document.getElementById(lblId).textContent = v.toFixed(dp) + unit;
+}
+function gi(id) { return +document.getElementById(id).value; }
+function gs(id) { return  document.getElementById(id).value; }
+
+function parseHHMM(s) { const [h,m] = s.split(':').map(Number); return h + m/60; }
+function opHours(start, end) {
+  const s = parseHHMM(start), e = parseHHMM(end);
+  return e > s ? e - s : 24 - s + e;
+}
+function schedHoursFromInput(inp) {
+  return inp.heatMode === 'offpeak'
+    ? opHours(inp.opStart, inp.opEnd)
+    : Math.max(0, Math.min(24, inp.heatHours));
+}
+
+function fmt(n, dp=0) { return n.toFixed(dp); }
+function fmtN(n) { return Math.round(n).toLocaleString(); }
+
+// ─── POOL PHYSICS ─────────────────────────────────────────────────────────────
+function buildPool(inp) {
+  const r      = inp.diam / 2;
+  const A_surf = Math.PI * r * r;
+  const A_side = Math.PI * inp.diam * inp.depth;
+  const A_bot  = A_surf;
+  const vol    = A_surf * inp.depth;
+  const mass   = vol * RHO;
+  const cap    = mass * CP;              // J/K
+
+  // Surface heat transfer coefficient (W/m²·K):
+  // Combines free convection (~6), evaporation (~15-25) and radiation (~5).
+  // More shelter (shade) → lower wind → lower evaporation rate.
+  const sf     = inp.shade / 100;       // shade fraction
+  const h_surf = 22 + 28 * (1 - sf);   // 50 W/m²K open → 22 W/m²K fully shaded
+
+  // Side walls: thin plastic, outer surface exposed to air
+  const h_side = 8.0;                   // W/(m²·K)
+
+  // Ground
+  const h_bot  = GU[inp.ground];
+
+  const UA_s   = h_surf * A_surf;
+  const UA_w   = h_side * A_side;
+  const UA_b   = h_bot  * A_bot;
+  const UA     = UA_s + UA_w + UA_b;   // W/K  total heat transfer coefficient
+
+  const tau_h  = cap / UA / 3600;      // time constant, hours
+
+  // Effective heater output (W): rated power × efficiency/100
+  // (efficiency > 100 models a heat pump COP)
+  const heaterW = inp.hpow * 1000 * (inp.heff / 100);
+
+  return {r, A_surf, A_side, A_bot, vol, mass, cap,
+          h_surf, h_side, h_bot, UA_s, UA_w, UA_b, UA,
+          tau_h, heaterW};
+}
+
+function monthCalc(inp, pool, mi) {
+  const ambT  = UK_T[mi];
+  const dT    = inp.target - ambT;
+
+  // Heat loss at target (W) — zero if pool already above target
+  const qLoss = pool.UA * Math.max(0, dT);
+
+  // Solar gain averaged over 24 h (W)
+  const solarW = UK_S[mi] * 1000 / 24     // mean irradiance W/m²
+               * (1 - inp.shade / 100)     // shade attenuation
+               * pool.A_surf * AABS;
+
+  // Net continuous heating needed (W) — after solar credit
+  const qNet  = Math.max(0, qLoss - solarW);
+
+  // Daily energy to maintain target (kWh)
+  const dNeed = qNet * 24 / 1000;
+
+  // Off-peak window
+  const opH   = opHours(inp.opStart, inp.opEnd);
+  const schedH = schedHoursFromInput(inp);
+  const opPartH = Math.min(schedH, opH);
+  const peakPartH = Math.max(0, schedH - opPartH);
+  const opAvail = pool.heaterW * opH / 1000;  // kWh available per day at off-peak
+  const schedAvail = pool.heaterW * schedH / 1000;
+  const schedOpAvail = pool.heaterW * opPartH / 1000;
+  const schedPeakAvail = pool.heaterW * peakPartH / 1000;
+
+  // Max achievable pool temp: T_eq = T_amb + (heater + solar) / UA
+  const maxTCont = ambT + (pool.heaterW + solarW) / pool.UA;
+  const maxTOP   = ambT + (pool.heaterW * opH / 24 + solarW) / pool.UA;
+  const maxTSched = ambT + (pool.heaterW * schedH / 24 + solarW) / pool.UA;
+
+  const canCont  = maxTCont >= inp.target - 0.05;
+  const canOP    = maxTOP   >= inp.target - 0.05;
+  const canSched = maxTSched >= inp.target - 0.05;
+
+  // Daily cost (p): selected run schedule, off-peak hours consumed first.
+  const usedEnergy = Math.min(dNeed, schedAvail);
+  const usedOffPeak = Math.min(usedEnergy, schedOpAvail);
+  const usedPeak = Math.min(Math.max(0, usedEnergy - usedOffPeak), schedPeakAvail);
+  const cost_p = usedOffPeak * inp.opRate + usedPeak * inp.peakRate;
+
+  const monCost = cost_p * DAYSMON[mi] / 100; // £
+
+  return {ambT, dT, qLoss, solarW, qNet, dNeed, opH, opAvail, schedH, schedAvail,
+          maxTCont, maxTOP, maxTSched, canCont, canOP, canSched, cost_p, monCost};
+}
+
+// Time to heat pool from ambient to target with continuous heater
+// T(t) = T_eq + (T0 - T_eq) * exp(-t/tau)
+// Solve for t: t = -tau * ln((Ttarget - T_eq)/(T0 - T_eq))
+function heatUpTime(pool, ambT, target, solarW) {
+  const T_eq = ambT + (pool.heaterW + solarW) / pool.UA;
+  if (T_eq < target) return Infinity;                   // cannot reach
+  if (ambT >= target) return 0;
+  return -pool.tau_h * Math.log((target - T_eq) / (ambT - T_eq));
+}
+
+// ─── 7-DAY NUMERICAL SIMULATION ───────────────────────────────────────────────
+function simulate7Days(inp, pool, mi) {
+  const ambT  = UK_T[mi];
+  const solarW = UK_S[mi] * 1000 / 24 * (1 - inp.shade/100) * pool.A_surf * AABS;
+  const dt_h   = 0.25;   // time step 15 min
+  const steps  = Math.round(7 * 24 / dt_h);
+  const s      = parseHHMM(inp.opStart);
+  const e      = parseHHMM(inp.opEnd);
+
+  const timeArr = [], tempArr = [];
+  // Start at equilibrium temperature with no heating so pool begins from a realistic state
+  let T = Math.min(ambT + solarW / pool.UA, inp.target);
+  // Warm up the simulation for 3 days first (burn-in)
+  for (let i = 0; i < Math.round(3 * 24 / dt_h); i++) {
+    const tod = (i * dt_h) % 24;
+    const on  = e > s ? (tod >= s && tod < e) : (tod >= s || tod < e);
+    const Pnet = (on ? pool.heaterW : 0) + solarW - pool.UA * (T - ambT);
+    T += Pnet / pool.cap * dt_h * 3600;
+  }
+  for (let i = 0; i < steps; i++) {
+    const tod  = (i * dt_h) % 24;
+    const on   = e > s ? (tod >= s && tod < e) : (tod >= s || tod < e);
+    const Pnet = (on ? pool.heaterW : 0) + solarW - pool.UA * (T - ambT);
+    T  += Pnet / pool.cap * dt_h * 3600;
+    timeArr.push(i * dt_h);
+    tempArr.push(+T.toFixed(2));
+  }
+  return {timeArr, tempArr};
+}
+
+// ─── HEATING CURVE (analytical) ───────────────────────────────────────────────
+function heatingCurve(pool, ambT, target, solarW) {
+  const T_eq  = ambT + (pool.heaterW + solarW) / pool.UA;
+  const tau   = pool.tau_h;
+  const tMax  = Math.min(tau * 6, 120);          // show up to 6 time-constants or 120 h
+  const dt    = 0.5;
+  const times = [], temps = [];
+  for (let h = 0; h <= tMax; h += dt) {
+    times.push(h);
+    temps.push(+(T_eq + (ambT - T_eq) * Math.exp(-h / tau)).toFixed(2));
+  }
+  return {times, temps, T_eq};
+}
+
+// ─── CHART INSTANCES ──────────────────────────────────────────────────────────
+let chartCost, chartHeat, chartLoss, chartSched, chartInverse;
+
+function makeChart(id, config) {
+  const ctx = document.getElementById(id).getContext('2d');
+  return new Chart(ctx, config);
+}
+
+function initCharts() {
+  chartCost = makeChart('costChart', {
+    type: 'bar',
+    data: {labels: MONTHS, datasets: []},
+    options: {
+      responsive:true, maintainAspectRatio:false,
+      plugins:{legend:{position:'bottom',labels:{boxWidth:12,font:{size:11}}}},
+      scales:{y:{beginAtZero:true, title:{display:true,text:'£ / month'}}}
+    }
+  });
+
+  chartHeat = makeChart('heatChart', {
+    type:'line',
+    data:{labels:[], datasets:[]},
+    options:{
+      responsive:true, maintainAspectRatio:false,
+      plugins:{legend:{position:'bottom',labels:{boxWidth:12,font:{size:11}}}},
+      scales:{
+        x:{title:{display:true,text:'Hours from start'}},
+        y:{title:{display:true,text:'Pool temperature (°C)'}}
+      },
+      elements:{point:{radius:0}}
+    }
+  });
+
+  chartLoss = makeChart('lossChart', {
+    type:'doughnut',
+    data:{labels:['Surface (conv+evap+rad)','Side walls','Ground/base'],datasets:[]},
+    options:{
+      responsive:true, maintainAspectRatio:false,
+      plugins:{legend:{position:'bottom',labels:{boxWidth:12,font:{size:11}}},
+               tooltip:{callbacks:{label:ctx=>`${ctx.label}: ${ctx.parsed.toFixed(0)} W`}}}
+    }
+  });
+
+  chartSched = makeChart('schedChart', {
+    type:'line',
+    data:{labels:[], datasets:[]},
+    options:{
+      responsive:true, maintainAspectRatio:false,
+      plugins:{legend:{position:'bottom',labels:{boxWidth:12,font:{size:11}}}},
+      scales:{
+        x:{title:{display:true,text:'Hours (7 days)'}, ticks:{maxTicksLimit:15}},
+        y:{title:{display:true,text:'Pool temperature (°C)'}}
+      },
+      elements:{point:{radius:0}}
+    }
+  });
+
+  chartInverse = makeChart('inverseChart', {
+    type:'line',
+    data:{datasets:[]},
+    options:{
+      responsive:true, maintainAspectRatio:false,
+      plugins:{legend:{position:'bottom',labels:{boxWidth:12,font:{size:11}}}},
+      scales:{
+        x:{type:'linear', title:{display:true,text:'Annual electricity cost (£ / year)'}},
+        y:{title:{display:true,text:'Target temperature (°C)'}}
+      },
+      elements:{point:{radius:0}}
+    }
+  });
+}
+
+// ─── UPDATE ───────────────────────────────────────────────────────────────────
+function go() {
+  const inp = {
+    diam:    gi('diam'),
+    depth:   gi('depth'),
+    ground:  gs('ground'),
+    shade:   gi('shade'),
+    target:  gi('target'),
+    hpow:    gi('hpow'),
+    heff:    gi('heff'),
+    peakRate:gi('peak'),
+    opRate:  gi('offpk'),
+    opStart: gs('op-start'),
+    opEnd:   gs('op-end'),
+    heatMode:gs('heat-mode'),
+    heatHours:gi('heat-hours'),
+    costTarget:gi('cost-target')
+  };
+  if (!isFinite(inp.costTarget) || inp.costTarget < 0) inp.costTarget = 0;
+  document.getElementById('heat-hours').disabled = inp.heatMode === 'offpeak';
+
+  const pool = buildPool(inp);
+  const monthly = MONTHS.map((_,mi) => monthCalc(inp, pool, mi));
+
+  // July index = 6
+  const JUL    = 6;
+  const julSolar = UK_S[JUL] * 1000/24 * (1-inp.shade/100) * pool.A_surf * AABS;
+  const julData  = monthly[JUL];
+
+  // ── Stat cards ──────────────────────────────────────────────────────────────
+  document.getElementById('s-vol').textContent  = fmtN(pool.vol * 1000);
+  document.getElementById('s-cap').textContent  = fmtN(pool.cap / 1000);
+  document.getElementById('s-tau').textContent  = fmt(pool.tau_h, 1);
+
+  const julMaxCont = julData.maxTCont;
+  const julMaxOP   = julData.maxTSched;
+  document.getElementById('s-tmax').textContent = fmt(julMaxCont, 1) + ' °C';
+  document.getElementById('s-tmop').textContent = fmt(julMaxOP,   1) + ' °C';
+
+  const tHeat = heatUpTime(pool, UK_T[JUL], inp.target, julSolar);
+  if (isFinite(tHeat)) {
+    document.getElementById('s-time').textContent = fmt(tHeat, 1) + ' h';
+    // Approx energy for heat-up (ignoring losses for simplicity — dominated by thermal mass)
+    const egykWh = pool.cap * Math.max(0, inp.target - UK_T[JUL]) / 3.6e6;
+    document.getElementById('s-egy').textContent  = fmt(egykWh, 1) + ' kWh';
+  } else {
+    document.getElementById('s-time').textContent = '∞ (too slow)';
+    document.getElementById('s-egy').textContent  = '—';
+  }
+
+  const annualCost = monthly.reduce((s, m) => s + m.monCost, 0);
+  const annualNeedKWh = monthly.reduce((s, m, mi) => s + m.dNeed * DAYSMON[mi], 0);
+  document.getElementById('s-ann').textContent = '£' + fmt(annualCost, 2);
+
+  // ── Analysis text ────────────────────────────────────────────────────────────
+  const heaterKW    = inp.hpow;
+  const heaterOutW  = pool.heaterW;
+  const canContJul  = julData.canCont;
+  const canOPJul    = julData.canSched;
+  const opH         = opHours(inp.opStart, inp.opEnd);
+  const schedH      = schedHoursFromInput(inp);
+  const modeLabel   = inp.heatMode === 'offpeak' ? 'Off-peak only' : `${fmt(schedH,1)} h/day schedule`;
+  const maxCurrent  = (inp.hpow * 1000 / 230).toFixed(1);
+
+  let html = `<strong>Pool:</strong> ${fmt(pool.vol*1000,0)} L &nbsp;|&nbsp; `;
+  html    += `<strong>Thermal capacity:</strong> ${fmtN(pool.cap/1000)} kJ/°C &nbsp;|&nbsp; `;
+  html    += `<strong>Time constant:</strong> ${fmt(pool.tau_h,1)} h &nbsp;|&nbsp; `;
+  html    += `<strong>Total UA:</strong> ${fmt(pool.UA,0)} W/K<br>`;
+
+  html    += `<strong>Heater output:</strong> ${fmt(heaterOutW/1000,2)} kW `;
+  html    += `(${heaterKW} kW × ${inp.heff}% eff; drawn current: ${maxCurrent} A at 230 V)<br>`;
+
+  // July assessment
+  html += `<strong>July (warmest month, ${UK_T[JUL]}°C avg, solar ${UK_S[JUL]} kWh/m²/day):</strong> `;
+  if (canContJul) {
+    html += `<span class="ok">&#x2714; Continuous heater CAN maintain ${fmt(inp.target,1)}°C</span>`;
+    html += ` (equilibrium ${fmt(julMaxCont,1)}°C, ${fmt(julData.qNet,0)} W net loss). `;
+    const tHeatStr = isFinite(tHeat) ? `Heat-up from ambient takes ${fmt(tHeat,1)} h.` : '';
+    html += tHeatStr;
+  } else {
+    html += `<span class="bad">&#x2716; Continuous heater CANNOT maintain ${fmt(inp.target,1)}°C</span>`;
+    html += ` (max achievable ${fmt(julMaxCont,1)}°C with continuous heating). `;
+  }
+  html += `<br>`;
+
+  html += `<strong>${modeLabel} (${inp.opStart}–${inp.opEnd} off-peak window):</strong> `;
+  if (canOPJul) {
+    html += `<span class="ok">&#x2714; Selected schedule CAN maintain ${fmt(inp.target,1)}°C</span>`;
+    html += ` (avg eq. ${fmt(julMaxOP,1)}°C). Cost: ${fmt(julData.cost_p,1)}p/day.`;
+  } else {
+    html += `<span class="warn">&#x26A0; Selected schedule reaches only ${fmt(julMaxOP,1)}°C</span>`;
+    html += ` &mdash; increase daily heating hours, use continuous heating, or accept a lower target.`;
+  }
+  html += `<br>`;
+
+  html += `<strong>Heat-up note:</strong> The ${fmtN(pool.cap/1000)} kJ/°C thermal mass means the pool `;
+  html += `changes temperature slowly (${fmt(pool.tau_h,1)} h time constant). `;
+  // Rough overnight cooling estimate (8 h, from target, heater off)
+  const overnightDrop = (inp.target - UK_T[JUL]) * (1 - Math.exp(-8/pool.tau_h));
+  html += `Overnight it cools by roughly <strong>${fmt(overnightDrop,1)}°C</strong> over 8 h with no heating.`;
+
+  document.getElementById('analysis-box').innerHTML = html;
+
+  // ── Monthly table ─────────────────────────────────────────────────────────
+  const tbody = document.getElementById('monthly-tbody');
+  let annRow  = {dNeed:0, monCost:0};
+  let rows    = '';
+  monthly.forEach((m, mi) => {
+    const cls = SUMMER.has(mi) ? ' class="summer"' : '';
+    const rc  = m.canSched ? `<span class="ok">&#x2714; Yes</span>`
+              : m.canCont ? `<span class="warn">&#x26A0; No (continuous can, schedule cannot)</span>`
+              :             `<span class="bad">&#x2716; No (${fmt(m.maxTSched,1)}°C max)</span>`;
+    rows += `<tr${cls}>
+      <td>${MONTHS[mi]}</td>
+      <td>${fmt(m.ambT,1)} °C</td>
+      <td>${fmt(m.solarW,0)} W</td>
+      <td>${fmt(m.qLoss,0)} W</td>
+      <td>${fmt(m.qNet,0)} W</td>
+      <td>${fmt(m.dNeed,2)} kWh</td>
+      <td>${fmt(m.schedAvail,2)} kWh</td>
+      <td>${fmt(m.maxTCont,1)} °C</td>
+      <td>${fmt(m.maxTSched,1)} °C</td>
+      <td>${rc}</td>
+      <td>${fmt(m.cost_p,1)} p</td>
+      <td>£${fmt(m.monCost,2)}</td>
+    </tr>`;
+    annRow.dNeed   += m.dNeed * DAYSMON[mi];
+    annRow.monCost += m.monCost;
+  });
+  rows += `<tr class="totals">
+    <td colspan="5">Annual Totals</td>
+    <td>${fmt(annRow.dNeed,1)} kWh/yr total need</td>
+    <td colspan="5"></td>
+    <td>£${fmt(annRow.monCost,2)}</td>
+  </tr>`;
+  tbody.innerHTML = rows;
+
+  const uaResidual = Math.abs(pool.UA - (pool.UA_s + pool.UA_w + pool.UA_b));
+  const qnetResidual = Math.abs(julData.qNet - Math.max(0, julData.qLoss - julData.solarW));
+  let tResidual = null;
+  if (isFinite(tHeat)) {
+    const T_eq = UK_T[JUL] + (pool.heaterW + julSolar) / pool.UA;
+    const tBack = T_eq + (UK_T[JUL] - T_eq) * Math.exp(-tHeat / pool.tau_h);
+    tResidual = Math.abs(tBack - inp.target);
+  }
+  const needResidual = Math.abs(annRow.dNeed - annualNeedKWh);
+  const costResidual = Math.abs(annRow.monCost - annualCost);
+  document.getElementById('math-checks').innerHTML = `
+    <li><span class="${uaResidual < 1e-6 ? 'diag-pass' : 'diag-warn'}">${uaResidual < 1e-6 ? 'PASS' : 'WARN'}</span> UA decomposition residual: ${fmt(uaResidual, 6)} W/K</li>
+    <li><span class="${qnetResidual < 1e-6 ? 'diag-pass' : 'diag-warn'}">${qnetResidual < 1e-6 ? 'PASS' : 'WARN'}</span> July net-heat balance residual: ${fmt(qnetResidual, 6)} W</li>
+    <li><span class="${(tResidual === null || tResidual < 0.05) ? 'diag-pass' : 'diag-warn'}">${(tResidual === null || tResidual < 0.05) ? 'PASS' : 'WARN'}</span> Heat-up inverse check residual: ${tResidual === null ? 'n/a (target unreachable)' : `${fmt(tResidual, 3)} °C`}</li>
+    <li><span class="${needResidual < 1e-6 ? 'diag-pass' : 'diag-warn'}">${needResidual < 1e-6 ? 'PASS' : 'WARN'}</span> Annual energy aggregation residual: ${fmt(needResidual, 6)} kWh</li>
+    <li><span class="${costResidual < 1e-6 ? 'diag-pass' : 'diag-warn'}">${costResidual < 1e-6 ? 'PASS' : 'WARN'}</span> Annual cost aggregation residual: £${fmt(costResidual, 6)}</li>
+  `;
+
+  // ── Chart: monthly costs ──────────────────────────────────────────────────
+  const costVals = monthly.map(m => +m.monCost.toFixed(2));
+  const costColors = MONTHS.map((_,mi) => SUMMER.has(mi) ? 'rgba(0,150,199,0.8)' : 'rgba(180,210,230,0.8)');
+  chartCost.data.datasets = [{
+    label:'Monthly cost (£)', data: costVals,
+    backgroundColor: costColors,
+    borderColor: costColors.map(c=>c.replace('0.8','1')),
+    borderWidth:1
+  }];
+  chartCost.update();
+
+  // ── Chart: heating curve ─────────────────────────────────────────────────
+  const hc = heatingCurve(pool, UK_T[JUL], inp.target, julSolar);
+  chartHeat.data.labels = hc.times;
+  chartHeat.data.datasets = [
+    {label:'Pool temperature (°C)', data:hc.temps, borderColor:'#0077b6', borderWidth:2, fill:false, tension:.3},
+    {label:`Target ${fmt(inp.target,1)}°C`, data:hc.times.map(()=>inp.target),
+     borderColor:'#dc2626', borderWidth:1.5, borderDash:[6,4], fill:false, pointRadius:0},
+    {label:`Equilibrium ${fmt(hc.T_eq,1)}°C`, data:hc.times.map(()=>+hc.T_eq.toFixed(1)),
+     borderColor:'#059669', borderWidth:1.5, borderDash:[4,4], fill:false, pointRadius:0},
+    {label:`Ambient ${UK_T[JUL]}°C`, data:hc.times.map(()=>UK_T[JUL]),
+     borderColor:'#9ca3af', borderWidth:1, borderDash:[2,4], fill:false, pointRadius:0}
+  ];
+  chartHeat.update();
+
+  // ── Chart: heat loss doughnut ─────────────────────────────────────────────
+  const dT_jul = Math.max(0, inp.target - UK_T[JUL]);
+  chartLoss.data.datasets = [{
+    data: [
+      +(pool.UA_s * dT_jul).toFixed(0),
+      +(pool.UA_w * dT_jul).toFixed(0),
+      +(pool.UA_b * dT_jul).toFixed(0)
+    ],
+    backgroundColor:['#0077b6','#00b4d8','#90e0ef'],
+    borderColor:['#005f99','#0096c7','#60c8e8'],
+    borderWidth:2
+  }];
+  chartLoss.update();
+
+  // ── Chart: 7-day schedule ────────────────────────────────────────────────
+  const sim = simulate7Days(inp, pool, JUL);
+  chartSched.data.labels = sim.timeArr;
+  chartSched.data.datasets = [
+    {label:'Pool temperature (°C)', data:sim.tempArr, borderColor:'#0077b6', borderWidth:1.5, fill:false, tension:.2},
+    {label:`Target ${fmt(inp.target,1)}°C`, data:sim.timeArr.map(()=>inp.target),
+     borderColor:'#dc2626', borderWidth:1.2, borderDash:[6,4], fill:false},
+    {label:`Ambient ${UK_T[JUL]}°C`, data:sim.timeArr.map(()=>UK_T[JUL]),
+     borderColor:'#9ca3af', borderWidth:1, borderDash:[2,4], fill:false}
+  ];
+  chartSched.update();
+
+  // ── Chart: inverse target vs annual cost ───────────────────────────────────
+  const tMin = 18, tMax = 38, tStep = 0.5;
+  const tCount = Math.round((tMax - tMin) / tStep);
+  const inversePts = [];
+  const probeInp = {...inp};
+  for (let i = 0; i <= tCount; i++) {
+    const t = tMin + i * tStep;
+    probeInp.target = +t.toFixed(1);
+    const probeAnnual = MONTHS.reduce((sum, _, mi) => sum + monthCalc(probeInp, pool, mi).monCost, 0);
+    inversePts.push({x:+probeAnnual.toFixed(2), y:+t.toFixed(1)});
+  }
+  inversePts.sort((a,b)=>a.x-b.x);
+
+  const validForBudget = inversePts.filter(p => p.x <= inp.costTarget + 1e-9);
+  const idealPoint = validForBudget.length ? validForBudget[validForBudget.length - 1] : inversePts[0];
+  document.getElementById('s-ideal').textContent = `${fmt(idealPoint.y,1)} °C`;
+
+  const minCost = inversePts[0].x;
+  const maxCost = inversePts[inversePts.length - 1].x;
+  chartInverse.data.datasets = [
+    {label:'Target temperature by annual cost', data:inversePts, borderColor:'#0077b6', borderWidth:2, fill:false, tension:.2, pointRadius:0},
+    {label:`Cost target £${fmt(inp.costTarget,0)}/yr`, data:[{x:inp.costTarget, y:tMin}, {x:inp.costTarget, y:tMax}],
+     borderColor:'#dc2626', borderWidth:1.5, borderDash:[6,4], fill:false, pointRadius:0},
+    {label:`Ideal target ${fmt(idealPoint.y,1)}°C`, data:[idealPoint], borderColor:'#059669', backgroundColor:'#059669', showLine:false, pointRadius:5}
+  ];
+  chartInverse.options.scales.x.min = Math.min(minCost, inp.costTarget) * 0.95;
+  chartInverse.options.scales.x.max = Math.max(maxCost, inp.costTarget) * 1.05;
+  chartInverse.options.scales.y.min = tMin;
+  chartInverse.options.scales.y.max = tMax;
+  chartInverse.update();
+}
+
+// ─── UI DRAWER + PWA ──────────────────────────────────────────────────────────
+function initControlsDrawer() {
+  const panel = document.getElementById('controls-panel');
+  const openBtn = document.getElementById('open-controls');
+  const closeBtn = document.getElementById('close-controls');
+  const backdrop = document.getElementById('drawer-backdrop');
+  if (!panel || !openBtn || !closeBtn || !backdrop) return;
+
+  const setOpen = (open) => {
+    panel.classList.toggle('open', open);
+    backdrop.classList.toggle('open', open);
+    document.body.classList.toggle('drawer-open', open);
+  };
+
+  openBtn.addEventListener('click', () => setOpen(true));
+  closeBtn.addEventListener('click', () => setOpen(false));
+  backdrop.addEventListener('click', () => setOpen(false));
+
+  window.matchMedia('(max-width: 980px)').addEventListener('change', e => {
+    if (!e.matches) setOpen(false);
+  });
+}
+
+function registerServiceWorker() {
+  if (!('serviceWorker' in navigator)) return;
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('./sw.js').catch(() => {});
+  });
+}
+
+// ─── INIT ─────────────────────────────────────────────────────────────────────
+document.addEventListener('DOMContentLoaded', () => {
+  initControlsDrawer();
+  initCharts();
+  go();
+  registerServiceWorker();
+});
+</script>
+</body>
+</html>
