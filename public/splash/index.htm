@@ -224,6 +224,7 @@ footer{text-align:center;padding:1.5rem;font-size:.72rem;color:var(--muted)}
         </p>
         <ul class="intro-list">
           <li>Manual forecast entry always stays available, even after postcode auto-fill.</li>
+          <li>Set pool season start and end dates to see a cost breakdown for your actual outdoor season, including water fill costs (UK Anglian Water metered baseline: 0.55 p/L).</li>
           <li>v1.0.0 corrects earlier forecasting shortcuts by limiting solar to daylight, capping impossible extra heater hours, and reporting a truer heat-up energy figure.</li>
           <li>Exports are created locally in your browser and now include version and copyright details.</li>
         </ul>
@@ -232,6 +233,7 @@ footer{text-align:center;padding:1.5rem;font-size:.72rem;color:var(--muted)}
         <div class="card-title">Quick start</div>
         <p class="inline-help">1. Set your pool, heater, tariff, and cover assumptions.</p>
         <p class="inline-help">2. Enter the current pool temperature and either type the next 3 days manually or fetch them from a UK postcode.</p>
+        <p class="inline-help">2b. Optionally set pool-in and pool-away dates plus your water rate to unlock a season cost summary.</p>
         <p class="inline-help">3. Review the forecast, charts, maths checks, and exports.</p>
         <div class="info-actions">
           <a class="link-btn" href="./help.htm">Open help guide</a>
@@ -407,6 +409,34 @@ footer{text-align:center;padding:1.5rem;font-size:.72rem;color:var(--muted)}
         </div>
 
         <div class="card">
+          <div class="card-title">Pool Season (Temporary Use)</div>
+
+          <div class="field-row">
+            <div class="field">
+              <label for="pool-start">Pool In from</label>
+              <input type="date" id="pool-start" onchange="go()">
+            </div>
+            <div class="field">
+              <label for="pool-end">Pool Away by</label>
+              <input type="date" id="pool-end" onchange="go()">
+            </div>
+          </div>
+
+          <div class="field">
+            <label for="pool-fills">Fills per Season</label>
+            <input type="number" id="pool-fills" min="1" max="52" step="1" value="1"
+                  oninput="go()"> <span style="font-size:.75rem;color:var(--muted)">fill(s)</span>
+          </div>
+
+          <div class="field">
+            <label for="water-rate">Water Rate</label>
+            <input type="number" id="water-rate" min="0" max="10" step="0.01" value="0.55"
+                  oninput="go()"> <span style="font-size:.75rem;color:var(--muted)">p / litre</span>
+          </div>
+          <p class="hint">Enter dates to unlock season cost summaries. Baseline: Anglian Water metered rate 0.55 p/L. Leave dates blank to see annual-only projections.</p>
+        </div>
+
+        <div class="card">
           <div class="card-title">Current Temperature &amp; 3-Day Forecast</div>
 
           <div class="field">
@@ -532,6 +562,15 @@ footer{text-align:center;padding:1.5rem;font-size:.72rem;color:var(--muted)}
       </div>
 
       <div class="alert" id="analysis-box">Loading…</div>
+
+      <div class="sec" id="season-sec" style="display:none">🗓️ Temporary Pool Season Costs</div>
+      <div class="stats-row" id="season-stats-row" style="display:none">
+        <div class="stat"><div class="lbl">Season Duration</div><div class="val" id="s-season-days">—</div><div class="sub">days (selected dates)</div></div>
+        <div class="stat"><div class="lbl">Season Electricity</div><div class="val" id="s-season-elec">—</div><div class="sub">£ heating, whole season</div></div>
+        <div class="stat"><div class="lbl">Water Fill Cost</div><div class="val" id="s-water-cost">—</div><div class="sub">£ fills × pool volume</div></div>
+        <div class="stat"><div class="lbl">Total Season Cost</div><div class="val" id="s-season-total">—</div><div class="sub">£ electricity + water</div></div>
+        <div class="stat"><div class="lbl">Cost per Day</div><div class="val" id="s-season-per-day">—</div><div class="sub">£ / day (season average)</div></div>
+      </div>
 
       <div class="sec">🧭 Planning answers people usually ask</div>
       <div class="qa-grid">
@@ -939,6 +978,49 @@ function cloudSolarFactor(cloudPct) {
   return 1 - 0.75 * c;
 }
 
+// ─── SEASON HELPERS ───────────────────────────────────────────────────────────
+function parseDateLocal(str) {
+  if (!str) return null;
+  const [y, m, d] = str.split('-').map(Number);
+  if (!y || !m || !d) return null;
+  return new Date(y, m - 1, d);
+}
+
+function computeSeasonCosts(inp, monthly, poolVolumeL) {
+  const start = parseDateLocal(inp.poolStart);
+  const end   = parseDateLocal(inp.poolEnd);
+  if (!start || !end || start > end) return null;
+
+  const seasonDays = Math.round((end - start) / 86400000) + 1;
+
+  let seasonElecCost = 0;
+  const startYear = start.getFullYear();
+  const endYear   = end.getFullYear();
+  for (let yr = startYear; yr <= endYear; yr++) {
+    for (let mi = 0; mi < 12; mi++) {
+      const mStart = new Date(yr, mi, 1);
+      const mEnd   = new Date(yr, mi + 1, 0); // last day of month
+      const overlapStart = start > mStart ? start : mStart;
+      const overlapEnd   = end   < mEnd   ? end   : mEnd;
+      if (overlapStart > overlapEnd) continue;
+      const overlapDays = Math.round((overlapEnd - overlapStart) / 86400000) + 1;
+      seasonElecCost += monthly[mi].monCost * (overlapDays / DAYSMON[mi]);
+    }
+  }
+
+  const waterCostGBP = poolVolumeL * clamp(inp.poolFills, 1, 52) * inp.waterRatePpL / 100;
+
+  return {
+    start,
+    end,
+    seasonDays,
+    seasonElecCost,
+    waterCostGBP,
+    totalSeasonCost: seasonElecCost + waterCostGBP,
+    costPerDay: (seasonElecCost + waterCostGBP) / seasonDays
+  };
+}
+
 function heatingHoursWithBoost(inp, extraHours) {
   const baseHours = schedHoursFromInput(inp);
   const totalHours = clamp(baseHours + extraHours, 0, 24);
@@ -1251,12 +1333,22 @@ Inputs
 - Tariff: ${r.inputs.offPeakRatePpkWh.toFixed(1)}p off-peak / ${r.inputs.peakRatePpkWh.toFixed(1)}p peak
 - Budget target: £${r.inputs.costTargetGBP.toFixed(0)} / year
 - Passive cover: ${r.inputs.coverTypeLabel}, ${r.inputs.coverHoursPerDay.toFixed(1)} h/day
+- Pool season: ${r.inputs.poolSeasonStart && r.inputs.poolSeasonEnd ? `${r.inputs.poolSeasonStart} to ${r.inputs.poolSeasonEnd} (${r.season ? r.season.seasonDays + ' days' : 'dates set'})` : 'annual projection (no season dates set)'}
+${r.season ? `- Fills per season: ${r.season.fillsPerSeason} × ${r.inputs.waterRatePpL.toFixed(2)} p/L` : ''}
 
 Headline results
 - Pool volume: ${r.summary.poolVolumeL.toLocaleString()} L
 - Thermal capacity: ${r.summary.thermalCapacityKJPerC.toLocaleString()} kJ/°C
 - Annual electricity cost: £${r.summary.annualCostGBP.toFixed(2)}
 - Ideal target at budget: ${r.summary.idealTargetAtBudgetC.toFixed(1)} °C
+${r.season ? `
+Season summary (temporary pool)
+- Season: ${r.season.startDate} to ${r.season.endDate} (${r.season.seasonDays} days)
+- Season electricity cost: £${r.season.seasonElecCostGBP.toFixed(2)}
+- Water fill cost: £${r.season.waterFillCostGBP.toFixed(2)} (${r.season.fillsPerSeason} fill(s) × ${r.inputs.waterRatePpL.toFixed(2)} p/L)
+- Total season cost: £${r.season.totalSeasonCostGBP.toFixed(2)}
+- Cost per day: £${r.season.costPerDayGBP.toFixed(2)}
+` : ''}
 - July overnight drop: ${r.summary.overnightDropJulyC.toFixed(1)} °C
 - Cover saving vs no cover: £${r.summary.coverSavingGBP.toFixed(2)} / year
 - Days reaching desired minimum: ${r.summary.desiredRangeDays}
@@ -1365,6 +1457,10 @@ function go() {
    hotLitres: gi('hot-litres'),
    kettleLitres: gi('kettle-litres'),
    kettleCount: gi('kettle-count'),
+   poolStart: gs('pool-start'),
+   poolEnd:   gs('pool-end'),
+   poolFills: Math.max(1, Math.round(gi('pool-fills') || 1)),
+   waterRatePpL: clamp(gi('water-rate'), 0, 100),
    forecast: [
      {air:gi('fc1-air'), cloud:gi('fc1-cloud'), boost:gi('fc1-boost')},
      {air:gi('fc2-air'), cloud:gi('fc2-cloud'), boost:gi('fc2-boost')},
@@ -1432,6 +1528,23 @@ function go() {
   document.getElementById('s-range-days').textContent = fmtN(desiredMinDays);
 
   const poolVolumeL = pool.vol * 1000;
+
+  // ── Season costs ────────────────────────────────────────────────────────────
+  const seasonData = computeSeasonCosts(inp, monthly, poolVolumeL);
+  const seasonSec = document.getElementById('season-sec');
+  const seasonRow = document.getElementById('season-stats-row');
+  if (seasonData) {
+    if (seasonSec)  seasonSec.style.display  = '';
+    if (seasonRow)  seasonRow.style.display  = '';
+    document.getElementById('s-season-days').textContent    = `${seasonData.seasonDays}`;
+    document.getElementById('s-season-elec').textContent    = `£${fmt(seasonData.seasonElecCost, 2)}`;
+    document.getElementById('s-water-cost').textContent     = `£${fmt(seasonData.waterCostGBP, 2)}`;
+    document.getElementById('s-season-total').textContent   = `£${fmt(seasonData.totalSeasonCost, 2)}`;
+    document.getElementById('s-season-per-day').textContent = `£${fmt(seasonData.costPerDay, 2)}`;
+  } else {
+    if (seasonSec)  seasonSec.style.display  = 'none';
+    if (seasonRow)  seasonRow.style.display  = 'none';
+  }
   const hotWaterNeededL = requiredHotVolumeL(poolVolumeL, inp.currentTemp, inp.target, inp.hotTemp);
   const kettleWaterNeededL = requiredHotVolumeL(poolVolumeL, inp.currentTemp, inp.target, 98);
   const addedKettleLitres = inp.kettleLitres * inp.kettleCount;
@@ -1735,7 +1848,11 @@ function go() {
       costTargetGBP: inp.costTarget,
       coverType: inp.coverType,
       coverTypeLabel: cover.label,
-      coverHoursPerDay: inp.coverHours
+      coverHoursPerDay: inp.coverHours,
+      poolSeasonStart: inp.poolStart || null,
+      poolSeasonEnd: inp.poolEnd || null,
+      fillsPerSeason: inp.poolFills,
+      waterRatePpL: inp.waterRatePpL
     },
     summary: {
       poolVolumeL: Math.round(pool.vol * 1000),
@@ -1764,6 +1881,17 @@ function go() {
     },
     version: APP_VERSION,
     copyright: APP_COPYRIGHT,
+    season: seasonData ? {
+      startDate: seasonData.start.toISOString().slice(0, 10),
+      endDate: seasonData.end.toISOString().slice(0, 10),
+      seasonDays: seasonData.seasonDays,
+      fillsPerSeason: inp.poolFills,
+      waterRatePpL: inp.waterRatePpL,
+      seasonElecCostGBP: +fmt(seasonData.seasonElecCost, 2),
+      waterFillCostGBP: +fmt(seasonData.waterCostGBP, 2),
+      totalSeasonCostGBP: +fmt(seasonData.totalSeasonCost, 2),
+      costPerDayGBP: +fmt(seasonData.costPerDay, 2)
+    } : null,
     heuristics: PUBLIC_HEURISTICS,
     predictive: {
       hotWaterTankTempC: inp.hotTemp,
@@ -1799,7 +1927,7 @@ function go() {
     }))
   };
   setExportStatus(
-    `${CHARTS_AVAILABLE ? 'Ready to export.' : 'Charts unavailable offline, but calculations and exports still work.'} Current annual projection: £${fmt(annualCost, 2)}.`
+    `${CHARTS_AVAILABLE ? 'Ready to export.' : 'Charts unavailable offline, but calculations and exports still work.'} Current annual projection: £${fmt(annualCost, 2)}.${seasonData ? ` Season total: £${fmt(seasonData.totalSeasonCost, 2)}.` : ''}`
   );
 }
 

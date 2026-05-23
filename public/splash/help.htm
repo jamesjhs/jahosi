@@ -76,6 +76,19 @@
   </section>
 
   <section class="card">
+    <h2>Temporary pool season costs</h2>
+    <p>If your pool is set up seasonally (rather than used year-round), you can enter <strong>Pool In from</strong> and <strong>Pool Away by</strong> dates in the Pool Season card in the settings panel. This unlocks a season summary section in the results showing:</p>
+    <ul>
+      <li><strong>Season Duration</strong> — the number of days the pool is in use.</li>
+      <li><strong>Season Electricity Cost</strong> — heating electricity cost for the season, calculated by weighting each calendar month's monthly cost figure by how many days of that month fall within your season.</li>
+      <li><strong>Water Fill Cost</strong> — pool volume × number of fills × water rate. The default rate of <code>0.55 p/L</code> reflects the Anglian Water metered domestic rate. Change it to match your local supplier or your tariff letter.</li>
+      <li><strong>Total Season Cost</strong> — electricity plus water fills combined.</li>
+      <li><strong>Cost per Day</strong> — total season cost divided by season duration.</li>
+    </ul>
+    <div class="note">Water cost uses your full pool volume as the fill volume. If you only top up rather than empty and refill, set fills to 0 or reduce the water rate manually to reflect top-up volume only.</div>
+  </section>
+
+  <section class="card">
     <h2>Understanding exports</h2>
     <p>The text summary, JSON, and CSV exports are generated locally in your browser. They include the current settings, calculated outputs, and version/copyright metadata.</p>
     <p>The forecast boost figure is expressed as a <strong>peak-rate equivalent</strong> for the heat added by top-ups and extra heater runtime. Treat it as a planning comparison metric rather than a guaranteed metered bill for hot-water already stored in a cylinder.</p>
