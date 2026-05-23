@@ -267,9 +267,34 @@ footer{text-align:center;padding:1.5rem;font-size:.72rem;color:var(--muted)}
           <div class="card-title">Pool Dimensions &amp; Base</div>
 
           <div class="field">
-            <label>Pool Diameter <span class="fval" id="diam-v">3.0 m</span></label>
-            <input type="range" id="diam" min="1" max="8" step="0.1" value="3.0"
-                  oninput="sv('diam','diam-v',' m',2);go()">
+            <label for="pool-shape">Area Input Mode</label>
+            <select id="pool-shape" onchange="togglePoolDimensionInputs();go()">
+              <option value="circular" selected>Radius (circular pool)</option>
+              <option value="rectangular">X × Y (rectangular pool)</option>
+            </select>
+          </div>
+
+          <div id="pool-dims-circular">
+            <div class="field">
+              <label>Pool Radius <span class="fval" id="radius-v">1.50 m</span></label>
+              <input type="range" id="radius" min="0.5" max="4" step="0.05" value="1.50"
+                    oninput="sv('radius','radius-v',' m',2);go()">
+            </div>
+          </div>
+
+          <div id="pool-dims-rectangular" style="display:none">
+            <div class="field-row">
+              <div class="field">
+                <label>Pool X <span class="fval" id="pool-x-v">3.00 m</span></label>
+                <input type="range" id="pool-x" min="1" max="12" step="0.1" value="3.0"
+                      oninput="sv('pool-x','pool-x-v',' m',2);go()">
+              </div>
+              <div class="field">
+                <label>Pool Y <span class="fval" id="pool-y-v">3.00 m</span></label>
+                <input type="range" id="pool-y" min="1" max="12" step="0.1" value="3.0"
+                      oninput="sv('pool-y','pool-y-v',' m',2);go()">
+              </div>
+            </div>
           </div>
 
           <div class="field">
@@ -297,9 +322,21 @@ footer{text-align:center;padding:1.5rem;font-size:.72rem;color:var(--muted)}
 
           <div class="field">
             <label>Target Pool Temperature <span class="fval" id="target-v">28.0 °C</span></label>
-            <input type="range" id="target" min="18" max="38" step="0.5" value="28"
-                  oninput="sv('target','target-v',' °C',1);go()">
+            <input type="range" id="target" min="18" max="40" step="0.5" value="28"
+                  oninput="sv('target','target-v',' °C',1);clearTargetPreset();go()">
           </div>
+
+          <div class="field">
+            <label for="target-preset">Target Temperature Presets</label>
+            <select id="target-preset" onchange="applyTargetPreset()">
+              <option value="" selected>Custom (manual target)</option>
+              <option value="public" data-min="26" data-max="28" data-target="27">Public swimming / lane comfort (26–28 °C)</option>
+              <option value="children" data-min="28" data-max="30" data-target="29">Children / learn-to-swim (28–30 °C)</option>
+              <option value="therapy" data-min="31" data-max="34" data-target="32">Therapy / hydro (31–34 °C)</option>
+              <option value="spa" data-min="37" data-max="40" data-target="38.5">Hot tub / spa (37–40 °C)</option>
+            </select>
+          </div>
+          <p class="hint">Preset bands follow common public guidance ranges (DOE leisure baseline, learn-to-swim warmer bands, and spa/hot-tub ranges) and remain editable.</p>
         </div>
 
         <div class="card" style="margin-bottom:1rem">
@@ -326,12 +363,12 @@ footer{text-align:center;padding:1.5rem;font-size:.72rem;color:var(--muted)}
           <div class="field-row">
             <div class="field">
               <label for="range-min">Desired Min Temp</label>
-              <input type="number" id="range-min" min="18" max="38" step="0.5" value="27"
+              <input type="number" id="range-min" min="18" max="40" step="0.5" value="27"
                     oninput="go()"> <span style="font-size:.75rem;color:var(--muted)">°C</span>
             </div>
             <div class="field">
               <label for="range-max">Desired Max Temp</label>
-              <input type="number" id="range-max" min="18" max="38" step="0.5" value="30"
+              <input type="number" id="range-max" min="18" max="40" step="0.5" value="30"
                     oninput="go()"> <span style="font-size:.75rem;color:var(--muted)">°C</span>
             </div>
           </div>
@@ -385,10 +422,11 @@ footer{text-align:center;padding:1.5rem;font-size:.72rem;color:var(--muted)}
           <div class="field" style="margin-top:.4rem">
             <label for="heat-mode">Heating Schedule Mode</label>
             <select id="heat-mode" onchange="go()">
+              <option value="noactive" selected>No active heating</option>
               <option value="hours">Custom heating hours/day</option>
               <option value="offpeak">Off-peak only</option>
-              <option value="noheat" selected>No heating — hot-water tank topups only</option>
-              <option value="kettleonly">No heating — kettle topups only</option>
+              <option value="noheat">No active heating — hot-water tank topups only</option>
+              <option value="kettleonly">No active heating — kettle topups only</option>
             </select>
           </div>
 
@@ -731,6 +769,7 @@ footer{text-align:center;padding:1.5rem;font-size:.72rem;color:var(--muted)}
           <li><a href="https://www.energy.gov/energysaver/heating-your-pool" target="_blank" rel="noopener noreferrer">US Department of Energy — Heating Your Pool</a>: 26&nbsp;°C / 78&nbsp;°F is a common leisure comfort baseline.</li>
           <li><a href="https://www.energy.gov/energysaver/swimming-pool-covers" target="_blank" rel="noopener noreferrer">US Department of Energy — Swimming Pool Covers</a>: covers are commonly cited as reducing heating costs by roughly 50&ndash;70&nbsp;% by suppressing evaporation.</li>
           <li><a href="https://www.swimming.org/" target="_blank" rel="noopener noreferrer">Swim England</a> and <a href="https://www.who.int/publications/i/item/9789241546768" target="_blank" rel="noopener noreferrer">WHO recreational water guidance</a>: children and learn-to-swim sessions are typically planned around about 28&ndash;30&nbsp;°C.</li>
+          <li><a href="https://www.cdc.gov/healthy-swimming/" target="_blank" rel="noopener noreferrer">CDC Healthy Swimming</a>: hot tubs are typically run warmer than pools, commonly in the high-30s&nbsp;°C range.</li>
           <li>Pool-owner forums and community discussions commonly report uncovered overnight drops of about 3&ndash;6&nbsp;°C for small outdoor pools in cool or breezy conditions, with bubble covers sharply reducing that loss.</li>
         </ul>
         <p class="mini-note">These public-query and forum-derived heuristics are used for planning prompts and cover assumptions; always treat them as indicative rather than guaranteed outcomes.</p>
@@ -778,6 +817,8 @@ const COVER_TYPES = {
 
 const APP_VERSION = '1.0.0';
 const APP_COPYRIGHT = 'Copyright © jahosi.co.uk 2026';
+const TARGET_TEMP_MIN = 18;
+const TARGET_TEMP_MAX = 40;
 const WEATHER_AUTOFILL = {
   postcodeLookupUrl: 'https://api.postcodes.io/postcodes/',
   forecastUrl: 'https://api.open-meteo.com/v1/forecast',
@@ -788,6 +829,7 @@ const PUBLIC_HEURISTICS = [
   {source:'US Department of Energy — Heating Your Pool', url:'https://www.energy.gov/energysaver/heating-your-pool', takeaway:'Leisure pools are commonly planned around 26 °C / 78 °F or warmer.'},
   {source:'US Department of Energy — Swimming Pool Covers', url:'https://www.energy.gov/energysaver/swimming-pool-covers', takeaway:'Pool covers are commonly cited as cutting heating costs by about 50–70 % by reducing evaporation.'},
   {source:'Swim England / WHO recreational water guidance', url:'https://www.who.int/publications/i/item/9789241546768', takeaway:'Children and beginner sessions are often planned closer to 28–30 °C.'},
+  {source:'CDC Healthy Swimming', url:'https://www.cdc.gov/healthy-swimming/', takeaway:'Hot tubs are generally maintained at higher temperatures (commonly around 37–40 °C).'},
   {source:'Owner forums and community threads', url:'https://www.troublefreepool.com/', takeaway:'Small uncovered outdoor pools often lose several degrees overnight; bubble covers materially reduce that drop.'}
 ];
 
@@ -811,7 +853,7 @@ function opHours(start, end) {
 }
 function schedHoursFromInput(inp) {
   if (inp.heatMode === 'offpeak') return opHours(inp.opStart, inp.opEnd);
-  if (inp.heatMode === 'noheat' || inp.heatMode === 'kettleonly') return 0;
+  if (inp.heatMode === 'noactive' || inp.heatMode === 'noheat' || inp.heatMode === 'kettleonly') return 0;
   return Math.max(0, Math.min(24, inp.heatHours));
 }
 
@@ -849,8 +891,8 @@ function getCover(inp) {
 }
 
 function normalizeDesiredRange(inp) {
-  inp.rangeMin = clamp(inp.rangeMin, 18, 38);
-  inp.rangeMax = clamp(inp.rangeMax, 18, 38);
+  inp.rangeMin = clamp(inp.rangeMin, TARGET_TEMP_MIN, TARGET_TEMP_MAX);
+  inp.rangeMax = clamp(inp.rangeMax, TARGET_TEMP_MIN, TARGET_TEMP_MAX);
   if (inp.rangeMin > inp.rangeMax) {
     const tmp = inp.rangeMin;
     inp.rangeMin = inp.rangeMax;
@@ -862,11 +904,16 @@ function normalizeDesiredRange(inp) {
 
 // ─── POOL PHYSICS ─────────────────────────────────────────────────────────────
 function buildPool(inp) {
-  const r      = inp.diam / 2;
-  const A_surf = Math.PI * r * r;
-  const A_side = Math.PI * inp.diam * inp.depth;
+  const isRectangular = inp.poolShape === 'rectangular';
+  const radius = clamp(Number.isFinite(inp.radius) ? inp.radius : ((inp.diam || 3) / 2), 0.5, 6);
+  const x = clamp(inp.poolX, 1, 12);
+  const y = clamp(inp.poolY, 1, 12);
+  const A_surf = isRectangular ? (x * y) : (Math.PI * radius * radius);
+  const perimeter = isRectangular ? (2 * (x + y)) : (2 * Math.PI * radius);
+  const A_side = perimeter * inp.depth;
   const A_bot  = A_surf;
   const vol    = A_surf * inp.depth;
+  const r = isRectangular ? Math.sqrt(A_surf / Math.PI) : radius;
   const mass   = vol * RHO;
   const cap    = mass * CP;              // J/K
 
@@ -1186,7 +1233,7 @@ function simulateForecastDay(inp, pool, mi, airTemp, cloudPct, extraHours, start
   };
 }
 
-function buildInversePoints(inp, pool, tMin=18, tMax=38, tStep=0.5) {
+function buildInversePoints(inp, pool, tMin=TARGET_TEMP_MIN, tMax=TARGET_TEMP_MAX, tStep=0.5) {
   const tCount = Math.round((tMax - tMin) / tStep);
   const pts = [];
   for (let i = 0; i <= tCount; i++) {
@@ -1273,7 +1320,7 @@ function simulate36HourForecast(inp, pool, nowMonth, startTemp) {
     if (inp.heatMode === 'offpeak') {
       heaterPow = isWithinWindow(hourOfDay, parseHHMM(inp.opStart), parseHHMM(inp.opEnd))
         ? pool.heaterW : 0;
-    } else if (inp.heatMode !== 'noheat' && inp.heatMode !== 'kettleonly') {
+    } else if (inp.heatMode !== 'noactive' && inp.heatMode !== 'noheat' && inp.heatMode !== 'kettleonly') {
       const hrs = clamp(schedHoursFromInput(inp) + fDay.boost, 0, 24);
       heaterPow = pool.heaterW * hrs / 24;
     }
@@ -1448,7 +1495,8 @@ ${APP_COPYRIGHT}
 Generated: ${r.generatedAt}
 
 Inputs
-- Pool diameter: ${r.inputs.poolDiameterM.toFixed(2)} m
+- Pool shape: ${r.inputs.poolShapeLabel}
+- Pool dimensions: ${r.inputs.poolDimensionLabel}
 - Water depth: ${r.inputs.waterDepthM.toFixed(2)} m
 - Target temperature: ${r.inputs.targetTempC.toFixed(1)} °C
 - Desired range: ${r.inputs.desiredRangeMinC.toFixed(1)}–${r.inputs.desiredRangeMaxC.toFixed(1)} °C
@@ -1557,7 +1605,10 @@ function initExportActions() {
 // ─── UPDATE ───────────────────────────────────────────────────────────────────
 function go() {
   const inp = {
-    diam:    gi('diam'),
+    poolShape: gs('pool-shape'),
+    radius:  gi('radius'),
+    poolX:   gi('pool-x'),
+    poolY:   gi('pool-y'),
     depth:   gi('depth'),
     ground:  gs('ground'),
     shade:   gi('shade'),
@@ -1594,6 +1645,9 @@ function go() {
   };
   if (!isFinite(inp.costTarget) || inp.costTarget < 0) inp.costTarget = 0;
   inp.hotLitres = Math.max(0, inp.hotLitres);
+  inp.radius = clamp(inp.radius, 0.5, 6);
+  inp.poolX = clamp(inp.poolX, 1, 12);
+  inp.poolY = clamp(inp.poolY, 1, 12);
   inp.kettleLitres = clamp(inp.kettleLitres, 0.5, 3);
   inp.kettleCount = Math.max(0, Math.round(inp.kettleCount));
   inp.currentTempManual = clamp(inp.currentTempManual, 0, 45);
@@ -1604,8 +1658,9 @@ function go() {
    boost: clamp(day.boost, 0, 24)
   }));
   normalizeDesiredRange(inp);
+  togglePoolDimensionInputs();
   document.getElementById('heat-hours').disabled =
-    inp.heatMode === 'offpeak' || inp.heatMode === 'noheat' || inp.heatMode === 'kettleonly';
+    inp.heatMode === 'offpeak' || inp.heatMode === 'noactive' || inp.heatMode === 'noheat' || inp.heatMode === 'kettleonly';
 
   const pool = buildPool(inp);
   const monthly = MONTHS.map((_,mi) => monthCalc(inp, pool, mi));
@@ -1719,8 +1774,9 @@ function go() {
   const opH         = opHours(inp.opStart, inp.opEnd);
   const schedH      = schedHoursFromInput(inp);
   const modeLabel   = inp.heatMode === 'offpeak'     ? 'Off-peak only'
-                    : inp.heatMode === 'noheat'      ? 'No heating (hot-water tank topups only)'
-                    : inp.heatMode === 'kettleonly'  ? 'No heating (kettle topups only)'
+                    : inp.heatMode === 'noactive'    ? 'No active heating'
+                    : inp.heatMode === 'noheat'      ? 'No active heating (hot-water tank topups only)'
+                    : inp.heatMode === 'kettleonly'  ? 'No active heating (kettle topups only)'
                     : `${fmt(schedH,1)} h/day schedule`;
   const maxCurrent  = (inp.hpow * 1000 / 230).toFixed(1);
   const cover = getCover(inp);
@@ -1750,7 +1806,7 @@ function go() {
   }
   html += `<br>`;
 
-  if (inp.heatMode === 'noheat' || inp.heatMode === 'kettleonly') {
+  if (inp.heatMode === 'noactive' || inp.heatMode === 'noheat' || inp.heatMode === 'kettleonly') {
     html += `<strong>${modeLabel}:</strong> No electric heater running. `;
     html += `Solar gain alone gives an average July equilibrium of about <strong>${fmt(julMaxOP,1)}°C</strong>. `;
     html += `Use hot-water or kettle top-ups for additional warmth.<br>`;
@@ -2005,7 +2061,14 @@ function go() {
   lastReportData = {
     generatedAt: new Date().toISOString(),
     inputs: {
-      poolDiameterM: inp.diam,
+      poolShape: inp.poolShape,
+      poolShapeLabel: inp.poolShape === 'rectangular' ? 'Rectangular (X × Y)' : 'Circular (radius)',
+      poolRadiusM: inp.radius,
+      poolX_M: inp.poolX,
+      poolY_M: inp.poolY,
+      poolDimensionLabel: inp.poolShape === 'rectangular'
+        ? `${fmt(inp.poolX,2)} m × ${fmt(inp.poolY,2)} m`
+        : `radius ${fmt(inp.radius,2)} m`,
       waterDepthM: inp.depth,
       ground: inp.ground,
       shadePct: inp.shade,
@@ -2186,7 +2249,10 @@ function initWeatherAutofill() {
 const LS_KEY = 'splash_cfg_1';
 
 const CONFIG_FIELDS = [
-  {id:'diam',          lbl:'diam-v',        unit:' m',     dp:2},
+  {id:'pool-shape'},
+  {id:'radius',        lbl:'radius-v',      unit:' m',     dp:2},
+  {id:'pool-x',        lbl:'pool-x-v',      unit:' m',     dp:2},
+  {id:'pool-y',        lbl:'pool-y-v',      unit:' m',     dp:2},
   {id:'depth',         lbl:'depth-v',       unit:' m',     dp:2},
   {id:'shade',         lbl:'shade-v',       unit:' %',     dp:0},
   {id:'target',        lbl:'target-v',      unit:' °C',    dp:1},
@@ -2222,11 +2288,52 @@ function getConfig() {
 
 function applyConfig(cfg) {
   if (!cfg || typeof cfg !== 'object') return;
+  if (cfg.radius == null && cfg.diam != null) {
+    const legacyDiam = Number(cfg.diam);
+    if (Number.isFinite(legacyDiam) && legacyDiam > 0) cfg.radius = (legacyDiam / 2).toFixed(2);
+  }
+  if (cfg['pool-shape'] == null) cfg['pool-shape'] = 'circular';
   for (const f of CONFIG_FIELDS) {
     const el = document.getElementById(f.id);
     if (!el || cfg[f.id] == null) continue;
     el.value = cfg[f.id];
     if (f.lbl) sv(f.id, f.lbl, f.unit, f.dp);
+  }
+  go();
+}
+
+function togglePoolDimensionInputs() {
+  const shape = gs('pool-shape');
+  const circular = document.getElementById('pool-dims-circular');
+  const rectangular = document.getElementById('pool-dims-rectangular');
+  if (circular) circular.style.display = shape === 'rectangular' ? 'none' : 'block';
+  if (rectangular) rectangular.style.display = shape === 'rectangular' ? 'block' : 'none';
+}
+
+function clearTargetPreset() {
+  const preset = document.getElementById('target-preset');
+  if (preset) preset.value = '';
+}
+
+function applyTargetPreset() {
+  const preset = document.getElementById('target-preset');
+  if (!preset) return;
+  const option = preset.options[preset.selectedIndex];
+  const target = Number(option?.dataset?.target);
+  if (!Number.isFinite(target)) {
+    go();
+    return;
+  }
+  const targetInput = document.getElementById('target');
+  targetInput.value = String(clamp(target, TARGET_TEMP_MIN, TARGET_TEMP_MAX));
+  sv('target', 'target-v', ' °C', 1);
+  const min = Number(option.dataset.min);
+  const max = Number(option.dataset.max);
+  if (Number.isFinite(min) && Number.isFinite(max)) {
+    const minInput = document.getElementById('range-min');
+    const maxInput = document.getElementById('range-max');
+    minInput.value = String(clamp(min, TARGET_TEMP_MIN, TARGET_TEMP_MAX));
+    maxInput.value = String(clamp(max, TARGET_TEMP_MIN, TARGET_TEMP_MAX));
   }
   go();
 }
@@ -2315,6 +2422,7 @@ document.addEventListener('DOMContentLoaded', () => {
   initExportActions();
   initWeatherAutofill();
   initConfigActions();
+  togglePoolDimensionInputs();
   if (!restoreConfigFromLS()) go();
   registerServiceWorker();
 });
