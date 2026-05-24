@@ -60,7 +60,7 @@
     <h2>Forecast entry options</h2>
     <ul>
       <li><strong>Manual entry:</strong> type the three daily air temperatures, cloud percentages, and any extra heater hours yourself. This is always available.</li>
-      <li><strong>UK postcode auto-fill:</strong> when online, you can enter a UK postcode and click <em>Use postcode forecast</em>. The page looks up latitude and longitude via <code>api.postcodes.io</code>, then requests a 3-day daily forecast from <code>api.open-meteo.com/v1/forecast</code>.</li>
+      <li><strong>UK postcode auto-fill:</strong> when online, you can enter a UK postcode and click <em>Use postcode forecast</em>. The page looks up latitude and longitude via <code>api.postcodes.io</code>, then requests a 3-day daily forecast plus 36 hourly points from <code>api.open-meteo.com/v1/forecast</code>.</li>
       <li>The fetched values are still editable afterwards, so you can adjust them if your local knowledge differs from the public feed.</li>
       <li>A simple 3-day pool temperature forecast chart updates immediately from either manual values or postcode-filled weather.</li>
     </ul>
@@ -73,6 +73,7 @@
       <li><strong>Heat losses:</strong> losses are represented with an overall <code>UA</code> value split across the surface, side walls, and base. Surface loss is the most important term because it bundles convection, evaporation, and long-wave radiation.</li>
       <li><strong>Solar gain:</strong> monthly public solar baselines are converted into daytime heat input. In v1.2.0, solar is only applied during daylight hours and is reduced by cloud cover and any daylight cover use.</li>
       <li><strong>Forecast stepping:</strong> the 3-day forecast uses stepped simulation over each day rather than a single 24-hour average temperature equation. That reduces a common error where night-time temperatures looked too optimistic because daytime solar had been smeared across the whole day.</li>
+      <li><strong>Hourly near-term weather:</strong> when postcode weather is available, the 36-hour chart uses hourly air temperature and cloud data so overnight cooling responds to changing atmospheric conditions.</li>
       <li><strong>Custom heating hours:</strong> if you choose a custom number of heating hours per day, the planner treats that as equivalent average daily heater duty unless you explicitly choose off-peak-only mode. This is deliberate because the exact timing is unknown.</li>
     </ul>
   </section>
