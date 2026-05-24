@@ -44,3 +44,9 @@ Crawler endpoints served by the app:
 
 - `/sitemap.xml` (XML sitemap for public pages)
 - `/robots.txt` (crawler rules + sitemap reference)
+
+## splash! notes
+
+- `/splash` now supports global location search (country/city/town) for weather auto-fill.
+- It uses Open-Meteo geocoding + forecast APIs and loads a location-aware monthly climate profile from public archive data when available.
+- On splash version changes, the client performs a forced cache refresh/reload while preserving saved pool configuration values in local storage.

@@ -1,7 +1,7 @@
 {
   "name": "splash!",
   "short_name": "splash!",
-  "description": "Interactive playpool thermodynamics and electricity-cost calculator.",
+  "description": "Interactive playpool thermodynamics and electricity-cost calculator with global location weather search.",
   "start_url": "./",
   "display": "standalone",
   "background_color": "#eef6fc",
