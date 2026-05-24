@@ -222,7 +222,7 @@ footer{text-align:center;padding:1.5rem;font-size:.72rem;color:var(--muted)}
         <h2 class="sec">👋 Welcome to splash!</h2>
         <p>
           splash! is a friendly planning tool for estimating how a small outdoor playpool warms up, cools down overnight, and what it may cost to hold a target temperature.
-          You can type your own 3-day forecast manually at any time, or, when you are online in the UK, use a postcode to auto-fill the next three days from free public weather services.
+          You can type your own 3-day forecast manually at any time, or, when you are online in the UK, use a postcode to auto-fill the next three days plus an hourly 36-hour profile from free public weather services.
         </p>
         <p>
           The planner blends pool size, heater output, tariffs, passive cover use, current water temperature, and short-term weather into one place so you can compare likely outcomes before spending money or time.
@@ -537,7 +537,7 @@ footer{text-align:center;padding:1.5rem;font-size:.72rem;color:var(--muted)}
               <button type="button" class="action-btn" id="fetch-weather">Use postcode forecast</button>
             </div>
           </div>
-          <p class="hint">Manual forecast entry stays enabled. When online, postcode auto-fill uses Postcodes.io for UK coordinates and Open-Meteo for the next 3 daily weather values, then you can still edit everything by hand.</p>
+          <p class="hint">Manual forecast entry stays enabled. When online, postcode auto-fill uses Postcodes.io for UK coordinates and Open-Meteo for the next 3 daily weather values plus 36 hourly weather points, then you can still edit everything by hand.</p>
           <p class="status-chip info" id="weather-status" aria-live="polite">Manual entry is active. Postcode weather auto-fill is optional.</p>
 
           <div class="field">
@@ -622,7 +622,7 @@ footer{text-align:center;padding:1.5rem;font-size:.72rem;color:var(--muted)}
       <div class="card" style="margin-bottom:1rem" id="forecast36-card">
         <div class="card-title">🌡️ 36-Hour Pool Temperature Forecast</div>
         <div style="position:relative;height:220px"><canvas id="forecast36Chart"></canvas></div>
-        <p class="mini-note" id="forecast36-note">Forecast from current pool temperature using day-1 and day-2 weather conditions.</p>
+        <p class="mini-note" id="forecast36-note">Forecast from current pool temperature using 36 hourly weather points when available.</p>
       </div>
 
       <div class="sec" id="season-sec" style="display:none">🗓️ Temporary Pool Season Costs</div>
@@ -832,8 +832,10 @@ const TARGET_TEMP_MAX = 40;
 const WEATHER_AUTOFILL = {
   postcodeLookupUrl: 'https://api.postcodes.io/postcodes/',
   forecastUrl: 'https://api.open-meteo.com/v1/forecast',
-  forecastDays: 3
+  forecastDays: 3,
+  forecastHours: 36
 };
+let liveHourlyForecast = null;
 
 const PUBLIC_HEURISTICS = [
   {source:'US Department of Energy — Heating Your Pool', url:'https://www.energy.gov/energysaver/heating-your-pool', takeaway:'Leisure pools are commonly planned around 26 °C / 78 °F or warmer.'},
@@ -1313,17 +1315,26 @@ function simulate36HourForecast(inp, pool, nowMonth, startTemp) {
   let T = startTemp;
   for (let i = 0; i < totalSteps; i++) {
     const dayIndex = Math.floor(i / 24);
-    const hourOfDay = (startHourOfDay + i) % 24;
     const fDay = inp.forecast[Math.min(dayIndex, inp.forecast.length - 1)];
-    const dt = new Date(now.getTime() + i * 3600000);
-    timeLabels.push(`${dayNames[dt.getDay()]} ${String(dt.getHours()).padStart(2,'0')}:00`);
+    const hourlyPoint = inp.hourlyForecast?.[i] || null;
+    const stepAir = isFinite(hourlyPoint?.air) ? hourlyPoint.air : fDay.air;
+    const stepCloud = isFinite(hourlyPoint?.cloud) ? hourlyPoint.cloud : fDay.cloud;
+    let hourOfDay = (startHourOfDay + i) % 24;
+    if (hourlyPoint?.time) {
+      const dt = new Date(hourlyPoint.time);
+      hourOfDay = dt.getHours() + dt.getMinutes() / 60;
+      timeLabels.push(`${dayNames[dt.getDay()]} ${String(dt.getHours()).padStart(2,'0')}:00`);
+    } else {
+      const dt = new Date(now.getTime() + i * 3600000);
+      timeLabels.push(`${dayNames[dt.getDay()]} ${String(dt.getHours()).padStart(2,'0')}:00`);
+    }
     const covered = coverUsage.isCovered(hourOfDay);
     const surfFactor = covered ? coverUsage.cover.surfaceLossFactor : 1;
     const solFactor  = covered ? coverUsage.cover.solarTransmittance  : 1;
     const UA = pool.UA_s_open * surfFactor + pool.UA_w + pool.UA_b;
     const baseSolarW = monthlySolarIrradiance(inp, nowMonth) * 1000 / 24
       * (1 - inp.shade / 100)
-      * cloudSolarFactor(fDay.cloud)
+      * cloudSolarFactor(stepCloud)
       * pool.A_surf * AABS;
     const solarW = solarPowerAtHour(baseSolarW, hourOfDay, nowMonth) * solFactor;
     let heaterPow = 0;
@@ -1334,7 +1345,7 @@ function simulate36HourForecast(inp, pool, nowMonth, startTemp) {
       const hrs = clamp(schedHoursFromInput(inp) + fDay.boost, 0, 24);
       heaterPow = pool.heaterW * hrs / 24;
     }
-    const Pnet = heaterPow + solarW - UA * (T - fDay.air);
+    const Pnet = heaterPow + solarW - UA * (T - stepAir);
     T += Pnet / pool.cap * 3600;
     tempArr.push(+T.toFixed(2));
   }
@@ -1651,7 +1662,14 @@ function go() {
      {air:gi('fc1-air'), cloud:gi('fc1-cloud'), boost:gi('fc1-boost')},
      {air:gi('fc2-air'), cloud:gi('fc2-cloud'), boost:gi('fc2-boost')},
      {air:gi('fc3-air'), cloud:gi('fc3-cloud'), boost:gi('fc3-boost')}
-   ]
+   ],
+   hourlyForecast: Array.isArray(liveHourlyForecast)
+     ? liveHourlyForecast.map((point) => ({
+         time: point.time,
+         air: point.air,
+         cloud: point.cloud
+       }))
+     : null
   };
   if (!isFinite(inp.costTarget) || inp.costTarget < 0) inp.costTarget = 0;
   inp.hotLitres = Math.max(0, inp.hotLitres);
@@ -1667,6 +1685,17 @@ function go() {
    cloud: clamp(day.cloud, 0, 100),
    boost: clamp(day.boost, 0, 24)
   }));
+  if (Array.isArray(inp.hourlyForecast)) {
+    inp.hourlyForecast = inp.hourlyForecast
+      .slice(0, WEATHER_AUTOFILL.forecastHours)
+      .map((point) => ({
+        time: point.time,
+        air: clamp(point.air, -10, 45),
+        cloud: clamp(point.cloud, 0, 100)
+      }));
+  } else {
+    inp.hourlyForecast = null;
+  }
   normalizeDesiredRange(inp);
   togglePoolDimensionInputs();
   document.getElementById('heat-hours').disabled =
@@ -2065,7 +2094,7 @@ function go() {
     const fc36End = fc36.tempArr[fc36.tempArr.length - 1];
     const el36 = document.getElementById('forecast36-note');
     if (el36) el36.textContent =
-      `Starting from ${fmt(afterBoostTemp,1)}°C now, the pool is forecast to reach about ${fmt(fc36End,1)}°C in 36 hours, using day-1 and day-2 weather forecast conditions.`;
+      `Starting from ${fmt(afterBoostTemp,1)}°C now, the pool is forecast to reach about ${fmt(fc36End,1)}°C in 36 hours, using ${inp.hourlyForecast?.length ? 'hourly weather inputs' : 'day-1 and day-2 weather conditions'}.`;
   }
 
   lastReportData = {
@@ -2211,12 +2240,14 @@ async function fetchForecastFromPostcode() {
       throw new Error('postcode_lookup_invalid');
     }
 
-    setWeatherStatus('Fetching 3-day weather…', 'info');
+    setWeatherStatus('Fetching daily + hourly weather…', 'info');
     const params = new URLSearchParams({
       latitude: String(place.latitude),
       longitude: String(place.longitude),
       daily: 'temperature_2m_max,temperature_2m_min,cloud_cover_mean',
+      hourly: 'temperature_2m,cloud_cover',
       forecast_days: String(WEATHER_AUTOFILL.forecastDays),
+      forecast_hours: String(WEATHER_AUTOFILL.forecastHours),
       timezone: 'auto'
     });
     const forecastRes = await fetch(`${WEATHER_AUTOFILL.forecastUrl}?${params.toString()}`);
@@ -2225,8 +2256,14 @@ async function fetchForecastFromPostcode() {
     const maxArr = forecast?.daily?.temperature_2m_max || [];
     const minArr = forecast?.daily?.temperature_2m_min || [];
     const cloudArr = forecast?.daily?.cloud_cover_mean || [];
+    const hourlyTempArr = forecast?.hourly?.temperature_2m || [];
+    const hourlyCloudArr = forecast?.hourly?.cloud_cover || [];
+    const hourlyTimeArr = forecast?.hourly?.time || [];
     if (maxArr.length < WEATHER_AUTOFILL.forecastDays || minArr.length < WEATHER_AUTOFILL.forecastDays || cloudArr.length < WEATHER_AUTOFILL.forecastDays) {
       throw new Error('forecast_incomplete');
+    }
+    if (hourlyTempArr.length < WEATHER_AUTOFILL.forecastHours || hourlyCloudArr.length < WEATHER_AUTOFILL.forecastHours || hourlyTimeArr.length < WEATHER_AUTOFILL.forecastHours) {
+      throw new Error('forecast_hourly_incomplete');
     }
 
     for (let i = 0; i < WEATHER_AUTOFILL.forecastDays; i++) {
@@ -2234,14 +2271,27 @@ async function fetchForecastFromPostcode() {
       document.getElementById(`fc${i + 1}-air`).value = meanAir.toFixed(1);
       document.getElementById(`fc${i + 1}-cloud`).value = String(Math.round(clamp(Number(cloudArr[i]), 0, 100) / 5) * 5);
     }
+    liveHourlyForecast = Array.from({length: WEATHER_AUTOFILL.forecastHours}, (_, i) => {
+      const air = Number(hourlyTempArr[i]);
+      const cloud = Number(hourlyCloudArr[i]);
+      if (!Number.isFinite(air) || !Number.isFinite(cloud) || typeof hourlyTimeArr[i] !== 'string') {
+        throw new Error('forecast_hourly_invalid');
+      }
+      return {
+        time: hourlyTimeArr[i],
+        air,
+        cloud
+      };
+    });
 
     field.value = place.postcode || postcode;
     const latField = document.getElementById('forecast-latitude');
     if (latField) latField.value = String(clamp(Number(place.latitude), 49, 61));
     go();
     const area = place.admin_district || place.region || place.country || 'the selected area';
-    setWeatherStatus(`Forecast filled from ${field.value} (${area}) using Postcodes.io + Open-Meteo. You can still edit every value manually.`, 'ok');
+    setWeatherStatus(`Forecast filled from ${field.value} (${area}) using Postcodes.io + Open-Meteo (3-day daily + 36-hour hourly). You can still edit every value manually.`, 'ok');
   } catch {
+    liveHourlyForecast = null;
     setWeatherStatus('Live weather could not be loaded just now, so manual forecast entry remains in place.', 'warn');
   } finally {
     btn.disabled = false;
