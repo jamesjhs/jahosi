@@ -2,6 +2,12 @@
 
 Interactive playpool thermal and cost planner.
 
+## v1.6.1 highlights
+
+- Saved weather-location context now restores more completely (selected place, hourly forecast, and climate profile state) across sessions.
+- Launch-time weather refresh now reuses saved selection data and falls back to saved coordinates if geocoding from the search text returns no match.
+- Mobile floating options button now toggles between open and close/apply states using `Apply [X]` while the drawer is open.
+
 ## v1.6.0 highlights
 
 - Expert-flow UX order for controls/results (location and environment first, deeper controls later).

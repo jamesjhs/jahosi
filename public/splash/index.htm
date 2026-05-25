@@ -241,7 +241,7 @@ footer{text-align:center;padding:1.5rem;font-size:.72rem;color:var(--muted)}
 
 <header>
   <h1>splash! <em>by Jahosi</em></h1>
-  <p>Cost estimates for your playpool · v1.6.0</p>
+  <p>Cost estimates for your playpool · v1.6.1</p>
 </header>
 
 <div class="wrap">
@@ -266,6 +266,7 @@ footer{text-align:center;padding:1.5rem;font-size:.72rem;color:var(--muted)}
         <ul class="intro-list">
           <li>Manual forecast entry always stays available, even after location-based weather auto-fill.</li>
           <li>Set pool season start and end dates to see a cost breakdown for your actual outdoor season, including water fill costs (UK Anglian Water metered baseline: 0.55 p/L).</li>
+          <li>v1.6.1 hardens saved-location persistence, launch-time forecast refresh, and mobile options toggle behavior.</li>
           <li>v1.6.0 strengthens near-term weather modelling with 2-day hourly forecasting and direct hourly solar-radiation use when available.</li>
           <li>v1.5.0 reorders controls/results to an expert maintenance workflow, adds main-page forecast fetch, and improves mobile options UX.</li>
           <li>v1.5.0 also adds environment-aware rough product quantity guidance (including stabilised vs liquid chlorine and refill estimates) and a new appendices page with formulas/sources.</li>
@@ -749,8 +750,8 @@ footer{text-align:center;padding:1.5rem;font-size:.72rem;color:var(--muted)}
       </div>
 
       <div class="card" style="margin-bottom:1rem" id="model-review-card">
-        <div class="card-title">Model review in v1.6.0</div>
-        <p class="inline-help">Core daylight-solar and forecast-cap safeguards remain in place. v1.6.0 extends near-term simulation to 2 days, removes the coarse 7-day schedule chart, and uses hourly shortwave radiation when available so near-term solar heat gain follows observed forecast conditions more directly. v1.5.0 improved workflow UX ordering, mobile controls, and added environment-aware rough chemistry product quantity guidance plus appendices documentation of formulas/sources. Manual forecasts remain planning estimates, not guarantees.</p>
+        <div class="card-title">Model review in v1.6.1</div>
+        <p class="inline-help">Core daylight-solar and forecast-cap safeguards remain in place. v1.6.1 hardens save/restore behavior for weather-location context and improves launch-time weather refresh resilience while keeping manual entry as fallback. v1.6.0 extends near-term simulation to 2 days, removes the coarse 7-day schedule chart, and uses hourly shortwave radiation when available so near-term solar heat gain follows observed forecast conditions more directly. v1.5.0 improved workflow UX ordering, mobile controls, and added environment-aware rough chemistry product quantity guidance plus appendices documentation of formulas/sources. Manual forecasts remain planning estimates, not guarantees.</p>
       </div>
 
       <div class="card" style="margin-bottom:1rem" id="export-card">
@@ -1102,7 +1103,7 @@ footer{text-align:center;padding:1.5rem;font-size:.72rem;color:var(--muted)}
 </div><!-- /wrap -->
 
 <footer>
-  splash! &mdash; costing for your playpool · v1.6.0.<br>
+  splash! &mdash; costing for your playpool · v1.6.1.<br>
   Physics model: surface losses combine free-convection, evaporation (dominant) and long-wave radiation; parameterised by shade/shelter.
   Location-aware global climate profiling with fallback baselines. Costs are indicative estimates only. Not for safety-critical application.<br>
   Copyright © jahosi.co.uk 2026
@@ -1138,7 +1139,7 @@ const COVER_TYPES = {
   liquid:  {label:'Liquid solar cover',             surfaceLossFactor:0.65, solarTransmittance:0.98, evaporationReduction:0.40}
 };
 
-const APP_VERSION = '1.6.0';
+const APP_VERSION = '1.6.1';
 const APP_COPYRIGHT = 'Copyright © jahosi.co.uk 2026';
 const TARGET_TEMP_MIN = 18;
 const TARGET_TEMP_MAX = 40;
@@ -1152,6 +1153,7 @@ const WEATHER_AUTOFILL = {
 };
 let liveHourlyForecast = null;
 let locationSearchResults = [];
+let lastResolvedPlace = null;
 let activeClimateProfile = {
   source: 'fallback',
   locationLabel: 'East England fallback baseline',
@@ -3194,6 +3196,70 @@ function selectedSearchPlace() {
   return Number.isInteger(idx) && idx >= 0 ? locationSearchResults[idx] : null;
 }
 
+function normalizePlace(place) {
+  const lat = Number(place?.latitude);
+  const lon = Number(place?.longitude);
+  if (!Number.isFinite(lat) || !Number.isFinite(lon)) return null;
+  return {
+    name: sanitizeLocationQuery(place?.name) || 'Saved coordinates',
+    admin1: sanitizeLocationQuery(place?.admin1 || ''),
+    country: sanitizeLocationQuery(place?.country || ''),
+    latitude: clamp(lat, LAT_MIN, LAT_MAX),
+    longitude: clamp(lon, -180, 180)
+  };
+}
+
+function rememberResolvedPlace(place) {
+  lastResolvedPlace = normalizePlace(place);
+}
+
+function optionLabelForPlace(place) {
+  return `${placeLabel(place)} (${fmt(Number(place.latitude), 2)}, ${fmt(Number(place.longitude), 2)})`;
+}
+
+function renderLocationOptions(select, places, emptyText = 'Search above to load matches') {
+  if (!select) return;
+  select.innerHTML = '';
+  if (!Array.isArray(places) || !places.length) {
+    const empty = document.createElement('option');
+    empty.value = '';
+    empty.textContent = emptyText;
+    select.appendChild(empty);
+    return;
+  }
+  places.forEach((place, idx) => {
+    const opt = document.createElement('option');
+    opt.value = String(idx);
+    opt.textContent = optionLabelForPlace(place);
+    select.appendChild(opt);
+  });
+}
+
+function hydrateLocationSelectionFromState() {
+  const select = document.getElementById('forecast-location-results');
+  const queryField = document.getElementById('forecast-location-query');
+  if (!select) return;
+  if (Array.isArray(locationSearchResults) && locationSearchResults.length) {
+    renderLocationOptions(select, locationSearchResults);
+    select.value = '0';
+    return;
+  }
+  const fallback = normalizePlace(lastResolvedPlace) || normalizePlace({
+    name: sanitizeLocationQuery(queryField?.value) || 'Saved coordinates',
+    latitude: document.getElementById('forecast-latitude')?.value,
+    longitude: document.getElementById('forecast-longitude')?.value,
+    country: 'Current model location'
+  });
+  if (!fallback) {
+    renderLocationOptions(select, []);
+    return;
+  }
+  locationSearchResults = [fallback];
+  renderLocationOptions(select, locationSearchResults);
+  select.value = '0';
+  rememberResolvedPlace(fallback);
+}
+
 function applySelectedCoordinates(place) {
   const latField = document.getElementById('forecast-latitude');
   const lonField = document.getElementById('forecast-longitude');
@@ -3231,20 +3297,18 @@ async function searchLocations() {
       Number.isFinite(Number(place?.latitude)) && Number.isFinite(Number(place?.longitude))
     );
     if (!locationSearchResults.length) {
-      select.innerHTML = '<option value="">No matches found</option>';
+      renderLocationOptions(select, [], 'No matches found');
       setWeatherStatus('No matching locations found. Try adding country/region context (for example “York UK” or “York PA”).', 'warn');
       return;
     }
-    select.innerHTML = locationSearchResults.map((place, idx) => {
-      const label = `${placeLabel(place)} (${fmt(Number(place.latitude), 2)}, ${fmt(Number(place.longitude), 2)})`;
-      return `<option value="${idx}">${label}</option>`;
-    }).join('');
+    renderLocationOptions(select, locationSearchResults);
     select.value = '0';
     applySelectedCoordinates(locationSearchResults[0]);
+    rememberResolvedPlace(locationSearchResults[0]);
     setWeatherStatus(`Found ${locationSearchResults.length} matching location${locationSearchResults.length === 1 ? '' : 's'}. Select one and fetch weather.`, 'ok');
   } catch {
     locationSearchResults = [];
-    select.innerHTML = '<option value="">Search above to load matches</option>';
+    renderLocationOptions(select, []);
     setWeatherStatus('Location search could not be completed right now; manual forecast entry remains available.', 'warn');
   } finally {
     btn.disabled = false;
@@ -3316,23 +3380,32 @@ async function fetchAndApplyClimateProfile(place) {
 async function fetchForecastFromSelectedLocation() {
   const btn = document.getElementById('fetch-weather');
   const queryField = document.getElementById('forecast-location-query');
+  const select = document.getElementById('forecast-location-results');
   if (!btn || !queryField) return;
-  let place = selectedSearchPlace();
+  const query = sanitizeLocationQuery(queryField.value);
+  const coordsCandidate = normalizePlace({
+    name: query || 'Saved coordinates',
+    latitude: document.getElementById('forecast-latitude')?.value,
+    longitude: document.getElementById('forecast-longitude')?.value,
+    country: query ? 'Saved selection' : 'Current model location'
+  });
+  let place = selectedSearchPlace() || normalizePlace(lastResolvedPlace);
   if (!place) {
-    const query = sanitizeLocationQuery(queryField.value);
     if (query) {
       await searchLocations();
       place = selectedSearchPlace();
-      if (!place) return;
+      if (!place && coordsCandidate) place = coordsCandidate;
     } else {
-      const lat = Number(document.getElementById('forecast-latitude')?.value);
-      const lon = Number(document.getElementById('forecast-longitude')?.value);
-      if (!Number.isFinite(lat) || !Number.isFinite(lon)) {
+      if (!coordsCandidate) {
         setWeatherStatus('Search for a location first, or keep using manual forecast entry.', 'warn');
         return;
       }
-      place = {name:'Saved coordinates', latitude:lat, longitude:lon, country:'Current model location'};
+      place = coordsCandidate;
     }
+  }
+  if (!place) {
+    setWeatherStatus('Could not resolve a location from the saved query; using manual forecast entry.', 'warn');
+    return;
   }
   const original = btn.textContent;
   btn.disabled = true;
@@ -3342,6 +3415,10 @@ async function fetchForecastFromSelectedLocation() {
   try {
     applySelectedCoordinates(place);
     queryField.value = placeLabel(place);
+    rememberResolvedPlace(place);
+    locationSearchResults = [place];
+    renderLocationOptions(select, locationSearchResults);
+    if (select) select.value = '0';
     const lat = clamp(Number(place.latitude), LAT_MIN, LAT_MAX);
     const lon = clamp(Number(place.longitude), -180, 180);
     const params = new URLSearchParams({
@@ -3406,6 +3483,7 @@ function initWeatherAutofill() {
       const place = selectedSearchPlace();
       if (!place) return;
       applySelectedCoordinates(place);
+      rememberResolvedPlace(place);
       setWeatherStatus(`Selected: ${placeLabel(place)}. Click “Use selected place forecast” to populate weather.`, 'info');
     });
   }
@@ -3457,6 +3535,22 @@ function getConfig() {
     const el = document.getElementById(f.id);
     if (el) cfg[f.id] = el.value;
   }
+  cfg._lastResolvedPlace = normalizePlace(lastResolvedPlace);
+  cfg._hourlyForecast = Array.isArray(liveHourlyForecast) ? liveHourlyForecast.map((point) => ({
+    time: String(point?.time || ''),
+    air: Number(point?.air),
+    cloud: Number(point?.cloud),
+    solar: Number(point?.solar)
+  })) : null;
+  if (activeClimateProfile && Array.isArray(activeClimateProfile.monthlyAir) && Array.isArray(activeClimateProfile.monthlySolar)) {
+    cfg._activeClimateProfile = {
+      source: activeClimateProfile.source === 'archive' ? 'archive' : 'fallback',
+      locationLabel: sanitizeLocationQuery(activeClimateProfile.locationLabel) || 'Saved climate profile',
+      year: Number(activeClimateProfile.year),
+      monthlyAir: activeClimateProfile.monthlyAir.slice(0, 12).map(v => Number(v)),
+      monthlySolar: activeClimateProfile.monthlySolar.slice(0, 12).map(v => Number(v))
+    };
+  }
   return cfg;
 }
 
@@ -3470,12 +3564,50 @@ function applyConfig(cfg) {
     cfg['forecast-location-query'] = cfg['forecast-postcode'];
   }
   if (cfg['pool-shape'] == null) cfg['pool-shape'] = 'circular';
+  lastResolvedPlace = normalizePlace(cfg._lastResolvedPlace) || null;
+  if (Array.isArray(cfg._hourlyForecast)) {
+    liveHourlyForecast = cfg._hourlyForecast
+      .slice(0, WEATHER_AUTOFILL.forecastHours)
+      .map((point) => ({
+        time: String(point?.time || ''),
+        air: Number(point?.air),
+        cloud: Number(point?.cloud),
+        solar: Number(point?.solar)
+      }))
+      .filter((point) =>
+        point.time &&
+        Number.isFinite(point.air) &&
+        Number.isFinite(point.cloud) &&
+        Number.isFinite(point.solar)
+      );
+    if (!liveHourlyForecast.length) liveHourlyForecast = null;
+  } else {
+    liveHourlyForecast = null;
+  }
+  if (cfg._activeClimateProfile && typeof cfg._activeClimateProfile === 'object') {
+    const monthlyAir = Array.isArray(cfg._activeClimateProfile.monthlyAir)
+      ? cfg._activeClimateProfile.monthlyAir.slice(0, 12).map(v => Number(v))
+      : [];
+    const monthlySolar = Array.isArray(cfg._activeClimateProfile.monthlySolar)
+      ? cfg._activeClimateProfile.monthlySolar.slice(0, 12).map(v => Number(v))
+      : [];
+    if (monthlyAir.length === 12 && monthlySolar.length === 12 && monthlyAir.every(Number.isFinite) && monthlySolar.every(Number.isFinite)) {
+      activeClimateProfile = {
+        source: cfg._activeClimateProfile.source === 'archive' ? 'archive' : 'fallback',
+        locationLabel: sanitizeLocationQuery(cfg._activeClimateProfile.locationLabel) || 'Saved climate profile',
+        year: Number(cfg._activeClimateProfile.year),
+        monthlyAir,
+        monthlySolar
+      };
+    }
+  }
   for (const f of CONFIG_FIELDS) {
     const el = document.getElementById(f.id);
     if (!el || cfg[f.id] == null) continue;
     el.value = cfg[f.id];
     if (f.lbl) sv(f.id, f.lbl, f.unit, f.dp);
   }
+  hydrateLocationSelectionFromState();
   go();
 }
 
@@ -3624,14 +3756,21 @@ function initControlsDrawer() {
   const backdrop = document.getElementById('drawer-backdrop');
   if (!panel || !openBtn || !closeBtn || !backdrop) return;
 
+  const CLOSED_FLOAT_LABEL = '⚙️ Options';
+  const OPEN_FLOAT_LABEL = 'Apply [X]';
   const setOpen = (open) => {
     panel.classList.toggle('open', open);
     backdrop.classList.toggle('open', open);
     document.body.classList.toggle('drawer-open', open);
+    if (floatBtn) {
+      floatBtn.textContent = open ? OPEN_FLOAT_LABEL : CLOSED_FLOAT_LABEL;
+      floatBtn.setAttribute('aria-expanded', open ? 'true' : 'false');
+      floatBtn.setAttribute('aria-label', open ? 'Apply and close options' : 'Open options');
+    }
   };
 
   openBtn.addEventListener('click', () => setOpen(true));
-  if (floatBtn) floatBtn.addEventListener('click', () => setOpen(true));
+  if (floatBtn) floatBtn.addEventListener('click', () => setOpen(!panel.classList.contains('open')));
   closeBtn.addEventListener('click', () => setOpen(false));
   if (closeBottomBtn) closeBottomBtn.addEventListener('click', () => setOpen(false));
   backdrop.addEventListener('click', () => setOpen(false));
@@ -3639,6 +3778,22 @@ function initControlsDrawer() {
   window.matchMedia('(max-width: 980px)').addEventListener('change', e => {
     if (!e.matches) setOpen(false);
   });
+  setOpen(false);
+}
+
+function hasSavedLocationCoordinates() {
+  const lat = Number(document.getElementById('forecast-latitude')?.value);
+  const lon = Number(document.getElementById('forecast-longitude')?.value);
+  return Number.isFinite(lat) && Number.isFinite(lon);
+}
+
+async function refreshWeatherOnLaunchFromSavedLocation() {
+  const query = sanitizeLocationQuery(document.getElementById('forecast-location-query')?.value);
+  const savedPlace = normalizePlace(lastResolvedPlace);
+  if (!savedPlace && !query) return;
+  if (!savedPlace && query && !hasSavedLocationCoordinates()) return;
+  setWeatherStatus('Saved location detected. Refreshing weather forecast for this session…', 'info');
+  await fetchForecastFromSelectedLocation();
 }
 
 function registerServiceWorker() {
@@ -3663,7 +3818,12 @@ document.addEventListener('DOMContentLoaded', async () => {
   togglePoolDimensionInputs();
   updateHeatModeDisplay();
   setClimateStatus(`Monthly climate profile: ${activeClimateProfile.locationLabel}.`, 'info');
-  if (!restoreConfigFromLS()) go();
+  const restored = restoreConfigFromLS();
+  if (!restored) {
+    go();
+  } else {
+    await refreshWeatherOnLaunchFromSavedLocation();
+  }
   registerServiceWorker();
 });
 </script>
