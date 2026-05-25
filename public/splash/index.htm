@@ -384,48 +384,55 @@ footer{text-align:center;padding:1.5rem;font-size:.72rem;color:var(--muted)}
             </select>
           </div>
           <p class="hint">Preset bands follow common public guidance ranges (DOE leisure baseline, learn-to-swim warmer bands, and spa/hot-tub ranges) and remain editable.</p>
+          <p class="hint" id="target-range-auto">Desired range is calculated automatically from your target temperature and pool mode.</p>
+          <input type="hidden" id="range-min" value="27">
+          <input type="hidden" id="range-max" value="30">
         </div>
 
         <div class="card" id="card-heating" style="margin-bottom:1rem">
           <div class="card-title">Heating System</div>
 
           <div class="field">
-            <label>Heater Power <span class="fval" id="hpow-v">3.0 kW</span></label>
-            <input type="range" id="hpow" min="0.5" max="6" step="0.1" value="3.0"
-                  oninput="sv('hpow','hpow-v',' kW',1);go()">
+            <label for="heat-mode">Heating Schedule Mode</label>
+            <select id="heat-mode" onchange="updateHeatModeDisplay();go()">
+              <option value="noactive" selected>No active heating</option>
+              <option value="hours">Custom heating hours/day</option>
+              <option value="offpeak">Off-peak only</option>
+              <option value="noheat">No active heating — hot-water tank topups only</option>
+              <option value="kettleonly">No active heating — kettle topups only</option>
+            </select>
           </div>
-          <p class="hint">💡 13 A × 230 V = 2.99 kW &mdash; maximum safe continuous load on a 13 A supply</p>
 
-          <div class="field">
-            <label>Heater Efficiency <span class="fval" id="heff-v">99 %</span></label>
-            <input type="range" id="heff" min="70" max="400" step="1" value="99"
-                  oninput="sv('heff','heff-v',' %',0);go()">
-          </div>
-          <p class="hint">Resistive element: ~99 %. Heat pump (COP 3.5): 350 %. Enters heat into water as heater_kW × efficiency.</p>
-        </div>
-
-        <div class="card" id="card-comfort">
-          <div class="card-title">Comfort Range &amp; Passive Cover</div>
-
-          <div class="field-row">
+          <div id="heating-active-controls">
             <div class="field">
-              <label for="range-min">Desired Min Temp</label>
-              <input type="number" id="range-min" min="18" max="40" step="0.5" value="27" readonly>
-              <span style="font-size:.75rem;color:var(--muted)">°C (auto)</span>
+              <label>Heater Power <span class="fval" id="hpow-v">3.0 kW</span></label>
+              <input type="range" id="hpow" min="0.5" max="6" step="0.1" value="3.0"
+                    oninput="sv('hpow','hpow-v',' kW',1);go()">
             </div>
-            <div class="field">
-              <label for="range-max">Desired Max Temp</label>
-              <input type="number" id="range-max" min="18" max="40" step="0.5" value="30" readonly>
-              <span style="font-size:.75rem;color:var(--muted)">°C (auto)</span>
-            </div>
-          </div>
-          <p class="hint" id="target-range-auto">Desired range is calculated automatically from your target temperature and pool mode.</p>
+            <p class="hint">💡 13 A × 230 V = 2.99 kW &mdash; maximum safe continuous load on a 13 A supply</p>
 
-          <div class="field">
+            <div class="field">
+              <label>Heater Efficiency <span class="fval" id="heff-v">99 %</span></label>
+              <input type="range" id="heff" min="70" max="400" step="1" value="99"
+                    oninput="sv('heff','heff-v',' %',0);go()">
+            </div>
+            <p class="hint">Resistive element: ~99 %. Heat pump (COP 3.5): 350 %. Enters heat into water as heater_kW × efficiency.</p>
+
+            <div class="field" id="heat-hours-field">
+              <label for="heat-hours">Heating Hours per Day <span class="fval" id="heat-hours-v">0.0 h</span></label>
+              <input type="range" id="heat-hours" min="0" max="24" step="0.5" value="0"
+                    aria-describedby="heat-hours-help"
+                    oninput="sv('heat-hours','heat-hours-v',' h',1);go()">
+            </div>
+            <p class="hint" id="heat-hours-help" style="display:none">Choose custom heating hours/day or enforce off-peak-only running.</p>
+          </div>
+
+          <div class="field" style="margin-top:.6rem">
             <label for="cover-type">Passive Thermal Cover</label>
             <select id="cover-type" onchange="go()">
               <option value="none" selected>None</option>
               <option value="bubble">Solar bubble cover</option>
+              <option value="fabric">Non-bubble fabric cover</option>
               <option value="thermal">Thermal blanket / foam cover</option>
               <option value="liquid">Liquid solar cover</option>
             </select>
@@ -467,31 +474,12 @@ footer{text-align:center;padding:1.5rem;font-size:.72rem;color:var(--muted)}
           </div>
 
           <div class="field" style="margin-top:.4rem">
-            <label for="heat-mode">Heating Schedule Mode</label>
-            <select id="heat-mode" onchange="go()">
-              <option value="noactive" selected>No active heating</option>
-              <option value="hours">Custom heating hours/day</option>
-              <option value="offpeak">Off-peak only</option>
-              <option value="noheat">No active heating — hot-water tank topups only</option>
-              <option value="kettleonly">No active heating — kettle topups only</option>
-            </select>
-          </div>
-
-          <div class="field">
-            <label for="heat-hours">Heating Hours per Day <span class="fval" id="heat-hours-v">0.0 h</span></label>
-            <input type="range" id="heat-hours" min="0" max="24" step="0.5" value="0"
-                  aria-describedby="heat-hours-help"
-                  oninput="sv('heat-hours','heat-hours-v',' h',1);go()">
-          </div>
-
-          <div class="field">
             <label for="cost-target">Annual Cost Target</label>
             <input type="number" id="cost-target" min="0" max="50000" step="10" value="500"
                   aria-label="Annual Cost Target in pounds per year"
                   aria-describedby="cost-target-help"
                   oninput="go()"> <span style="font-size:.75rem;color:var(--muted)">£ / year</span>
           </div>
-          <p class="hint" id="heat-hours-help">Choose custom heating hours/day or enforce off-peak-only running.</p>
           <p class="hint" id="cost-target-help">The annual cost target is used for the inverse temperature-vs-budget chart.</p>
         </div>
 
@@ -1148,6 +1136,7 @@ const GU = {grass:2.5, clay:2.0, sand:1.8, concrete:4.5, decking:1.0};
 const COVER_TYPES = {
   none:    {label:'No passive cover',               surfaceLossFactor:1.00, solarTransmittance:1.00, evaporationReduction:0.00},
   bubble:  {label:'Solar bubble cover',             surfaceLossFactor:0.22, solarTransmittance:0.82, evaporationReduction:0.95},
+  fabric:  {label:'Non-bubble fabric cover',        surfaceLossFactor:0.50, solarTransmittance:0.22, evaporationReduction:0.80},
   thermal: {label:'Thermal blanket / foam cover',   surfaceLossFactor:0.12, solarTransmittance:0.18, evaporationReduction:0.98},
   liquid:  {label:'Liquid solar cover',             surfaceLossFactor:0.65, solarTransmittance:0.98, evaporationReduction:0.40}
 };
@@ -2481,7 +2470,6 @@ function reorderControlsByExpertFlow() {
     'card-chem-basic',
     'card-heating',
     'card-tariff',
-    'card-comfort',
     'close-controls-bottom'
   ];
   ids.forEach(id => {
@@ -2749,8 +2737,7 @@ function go() {
   }
   normalizeDesiredRange(inp);
   togglePoolDimensionInputs();
-  document.getElementById('heat-hours').disabled =
-    inp.heatMode === 'offpeak' || inp.heatMode === 'noactive' || inp.heatMode === 'noheat' || inp.heatMode === 'kettleonly';
+  updateHeatModeDisplay();
 
   const pool = buildPool(inp);
   const monthly = MONTHS.map((_,mi) => monthCalc(inp, pool, mi));
@@ -3426,6 +3413,8 @@ async function fetchForecastFromSelectedLocation() {
   btn.disabled = true;
   btn.textContent = 'Fetching…';
   setWeatherStatus('Fetching daily + hourly weather…', 'info');
+  setClimateStatus('Updating monthly climate profile…', 'info');
+  let forecastOk = false;
   try {
     applySelectedCoordinates(place);
     queryField.value = placeLabel(place);
@@ -3468,16 +3457,17 @@ async function fetchForecastFromSelectedLocation() {
       }
       return {time: hourlyTimeArr[i], air, cloud};
     });
-    await fetchAndApplyClimateProfile(place);
-    go();
+    forecastOk = true;
     setWeatherStatus(`Forecast filled from ${placeLabel(place)} via Open-Meteo (3-day daily + 36-hour hourly). You can still edit every value manually.`, 'ok');
   } catch {
     liveHourlyForecast = null;
     setWeatherStatus('Live weather could not be loaded just now, so manual forecast entry remains in place.', 'warn');
-  } finally {
-    btn.disabled = false;
-    btn.textContent = original;
   }
+  // Always refresh climate profile independently of forecast success/failure
+  await fetchAndApplyClimateProfile(place);
+  go();
+  btn.disabled = false;
+  btn.textContent = original;
 }
 
 function initWeatherAutofill() {
@@ -3570,6 +3560,20 @@ function togglePoolDimensionInputs() {
   const rectangular = document.getElementById('pool-dims-rectangular');
   if (circular) circular.style.display = shape === 'rectangular' ? 'none' : 'block';
   if (rectangular) rectangular.style.display = shape === 'rectangular' ? 'block' : 'none';
+}
+
+function updateHeatModeDisplay() {
+  const mode = gs('heat-mode') || 'noactive';
+  const noActive = mode === 'noactive' || mode === 'noheat' || mode === 'kettleonly';
+  const customHours = mode === 'hours';
+  const activeControls = document.getElementById('heating-active-controls');
+  const hoursField = document.getElementById('heat-hours-field');
+  const hoursHelp = document.getElementById('heat-hours-help');
+  const hoursInput = document.getElementById('heat-hours');
+  if (activeControls) activeControls.style.display = noActive ? 'none' : '';
+  if (hoursField) hoursField.style.display = customHours ? '' : 'none';
+  if (hoursHelp) hoursHelp.style.display = customHours ? '' : 'none';
+  if (hoursInput) hoursInput.disabled = !customHours;
 }
 
 function clearTargetPreset() {
@@ -3732,6 +3736,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   initConfigActions();
   initChemistry();
   togglePoolDimensionInputs();
+  updateHeatModeDisplay();
   setClimateStatus(`Monthly climate profile: ${activeClimateProfile.locationLabel}.`, 'info');
   if (!restoreConfigFromLS()) go();
   registerServiceWorker();
