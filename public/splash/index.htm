@@ -1222,7 +1222,8 @@ const CHEM_FC_DEPLETION = [
   {tLo:20,   tHi:25,  fcLo:0.75,fcHi:2.5,  daysCheck:3, label:'20–25 °C'},
   {tLo:25,   tHi:30,  fcLo:1.0, fcHi:3.5,  daysCheck:2, label:'25–30 °C'},
   {tLo:30,   tHi:null,fcLo:1.5, fcHi:5.0,  daysCheck:1, label:'> 30 °C'}
-];   // J/(kg·K) water specific heat
+];
+const CP   = 4186;   // J/(kg·K) water specific heat
 const RHO  = 998;    // kg/m³    water density
 const AABS = 0.87;   // solar absorptivity of water
 
