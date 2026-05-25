@@ -2225,15 +2225,27 @@ footer{margin-top:18pt;font-size:7.5pt;color:#9ca3af;border-top:0.5pt solid #e5e
 </body>
 </html>`;
 
-  const win = window.open('', '_blank', 'width=1000,height=750');
+  const blob = new Blob([htmlContent], {type: 'text/html;charset=utf-8'});
+  const printUrl = URL.createObjectURL(blob);
+  const win = window.open(printUrl, '_blank', 'noopener,noreferrer,width=1000,height=750');
   if (!win) {
+    URL.revokeObjectURL(printUrl);
     alert('Could not open print window. Please allow pop-ups for this site and try again.');
     return;
   }
-  win.document.write(htmlContent);
-  win.document.close();
-  win.focus();
-  setTimeout(() => win.print(), 600);
+  const revokeUrl = () => URL.revokeObjectURL(printUrl);
+  setTimeout(revokeUrl, 60000);
+  const printWindow = () => {
+    win.focus();
+    setTimeout(() => {
+      try { win.print(); } catch {}
+    }, 600);
+  };
+  if (typeof win.addEventListener === 'function') {
+    win.addEventListener('load', printWindow, {once: true});
+  } else {
+    printWindow();
+  }
 }
 
 function initChemistry() {
