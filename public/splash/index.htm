@@ -241,7 +241,7 @@ footer{text-align:center;padding:1.5rem;font-size:.72rem;color:var(--muted)}
 
 <header>
   <h1>splash! <em>by Jahosi</em></h1>
-  <p>Cost estimates for your playpool · v1.5.0</p>
+  <p>Cost estimates for your playpool · v1.6.0</p>
 </header>
 
 <div class="wrap">
@@ -258,7 +258,7 @@ footer{text-align:center;padding:1.5rem;font-size:.72rem;color:var(--muted)}
         <h2 class="sec">👋 Welcome to splash!</h2>
         <p>
           splash! is a friendly planning tool for estimating how a small outdoor playpool warms up, cools down overnight, and what it may cost to hold a target temperature.
-          You can type your own 3-day forecast manually at any time, or, when you are online, search any country / city / town worldwide to auto-fill the next three days plus an hourly 36-hour profile from free public weather services.
+          You can type your own 3-day forecast manually at any time, or, when you are online, search any country / city / town worldwide to auto-fill the next three days plus an hourly 2-day profile from free public weather services.
         </p>
         <p>
           The planner blends pool size, heater output, tariffs, passive cover use, current water temperature, and short-term weather into one place so you can compare likely outcomes before spending money or time.
@@ -266,6 +266,7 @@ footer{text-align:center;padding:1.5rem;font-size:.72rem;color:var(--muted)}
         <ul class="intro-list">
           <li>Manual forecast entry always stays available, even after location-based weather auto-fill.</li>
           <li>Set pool season start and end dates to see a cost breakdown for your actual outdoor season, including water fill costs (UK Anglian Water metered baseline: 0.55 p/L).</li>
+          <li>v1.6.0 strengthens near-term weather modelling with 2-day hourly forecasting and direct hourly solar-radiation use when available.</li>
           <li>v1.5.0 reorders controls/results to an expert maintenance workflow, adds main-page forecast fetch, and improves mobile options UX.</li>
           <li>v1.5.0 also adds environment-aware rough product quantity guidance (including stabilised vs liquid chlorine and refill estimates) and a new appendices page with formulas/sources.</li>
           <li>v1.4.0 added the Pool Chemistry Guide section with target ranges, dosing estimates for dichlor/trichlor, temperature-based checking schedules, and downloadable schedule export.</li>
@@ -536,7 +537,7 @@ footer{text-align:center;padding:1.5rem;font-size:.72rem;color:var(--muted)}
               <button type="button" class="action-btn" id="fetch-weather">Use selected place forecast</button>
             </div>
           </div>
-          <p class="hint">Manual forecast entry stays enabled. When online, search uses Open-Meteo geocoding for global coordinates and Open-Meteo forecast for the next 3 daily weather values plus 36 hourly weather points, then you can still edit everything by hand.</p>
+          <p class="hint">Manual forecast entry stays enabled. When online, search uses Open-Meteo geocoding for global coordinates and Open-Meteo forecast for the next 3 daily weather values plus 48 hourly weather points (2 days), then you can still edit everything by hand.</p>
           <p class="status-chip info" id="weather-status" aria-live="polite">Manual entry is active. Global location weather auto-fill is optional.</p>
           <p class="status-chip info" id="climate-status" aria-live="polite">Monthly climate profile: East England fallback baseline.</p>
 
@@ -681,9 +682,9 @@ footer{text-align:center;padding:1.5rem;font-size:.72rem;color:var(--muted)}
       <div class="alert" id="analysis-box">Loading…</div>
 
       <div class="card" style="margin-bottom:1rem" id="forecast36-card">
-        <div class="card-title">🌡️ 36-Hour Pool Temperature Forecast</div>
+        <div class="card-title">🌡️ 2-Day Pool Temperature Forecast</div>
         <div style="position:relative;height:220px"><canvas id="forecast36Chart"></canvas></div>
-        <p class="mini-note" id="forecast36-note">Forecast from current pool temperature using 36 hourly weather points when available.</p>
+        <p class="mini-note" id="forecast36-note">Forecast trend from current pool temperature using 48 hourly weather points when available.</p>
       </div>
 
       <div class="sec" id="season-sec" style="display:none">🗓️ Temporary Pool Season Costs</div>
@@ -748,8 +749,8 @@ footer{text-align:center;padding:1.5rem;font-size:.72rem;color:var(--muted)}
       </div>
 
       <div class="card" style="margin-bottom:1rem" id="model-review-card">
-        <div class="card-title">Model review in v1.5.0</div>
-        <p class="inline-help">Core daylight-solar and forecast-cap safeguards remain in place. v1.5.0 improves workflow UX ordering, mobile controls, and adds environment-aware rough chemistry product quantity guidance plus appendices documentation of formulas/sources. v1.4.0 added the chemistry guide and schedule export. v1.3.0 added global location search, global weather auto-fill, and location-aware monthly climate profiling. Manual forecasts remain planning estimates, not guarantees.</p>
+        <div class="card-title">Model review in v1.6.0</div>
+        <p class="inline-help">Core daylight-solar and forecast-cap safeguards remain in place. v1.6.0 extends near-term simulation to 2 days, removes the coarse 7-day schedule chart, and uses hourly shortwave radiation when available so near-term solar heat gain follows observed forecast conditions more directly. v1.5.0 improved workflow UX ordering, mobile controls, and added environment-aware rough chemistry product quantity guidance plus appendices documentation of formulas/sources. Manual forecasts remain planning estimates, not guarantees.</p>
       </div>
 
       <div class="card" style="margin-bottom:1rem" id="export-card">
@@ -817,10 +818,6 @@ footer{text-align:center;padding:1.5rem;font-size:.72rem;color:var(--muted)}
         <div class="card">
           <div class="card-title">Heat-Loss Breakdown at Target Temp (reference month)</div>
           <div class="chart-box"><canvas id="lossChart"></canvas></div>
-        </div>
-        <div class="card">
-          <div class="card-title">7-Day Temperature Simulation — Selected Heating Schedule (reference month)</div>
-          <div class="chart-box"><canvas id="schedChart"></canvas></div>
         </div>
       </div>
       <div class="charts-row" id="viz-row-3">
@@ -1105,7 +1102,7 @@ footer{text-align:center;padding:1.5rem;font-size:.72rem;color:var(--muted)}
 </div><!-- /wrap -->
 
 <footer>
-  splash! &mdash; costing for your playpool · v1.5.0.<br>
+  splash! &mdash; costing for your playpool · v1.6.0.<br>
   Physics model: surface losses combine free-convection, evaporation (dominant) and long-wave radiation; parameterised by shade/shelter.
   Location-aware global climate profiling with fallback baselines. Costs are indicative estimates only. Not for safety-critical application.<br>
   Copyright © jahosi.co.uk 2026
@@ -1141,7 +1138,7 @@ const COVER_TYPES = {
   liquid:  {label:'Liquid solar cover',             surfaceLossFactor:0.65, solarTransmittance:0.98, evaporationReduction:0.40}
 };
 
-const APP_VERSION = '1.5.0';
+const APP_VERSION = '1.6.0';
 const APP_COPYRIGHT = 'Copyright © jahosi.co.uk 2026';
 const TARGET_TEMP_MIN = 18;
 const TARGET_TEMP_MAX = 40;
@@ -1150,7 +1147,7 @@ const WEATHER_AUTOFILL = {
   forecastUrl: 'https://api.open-meteo.com/v1/forecast',
   climateUrl: 'https://archive-api.open-meteo.com/v1/archive',
   forecastDays: 3,
-  forecastHours: 36,
+  forecastHours: 48,
   geocodeCount: 8
 };
 let liveHourlyForecast = null;
@@ -1657,62 +1654,18 @@ function buildInversePoints(inp, pool, tMin=TARGET_TEMP_MIN, tMax=TARGET_TEMP_MA
   return pts;
 }
 
-// ─── 7-DAY NUMERICAL SIMULATION ───────────────────────────────────────────────
-function simulate7Days(inp, pool, monthState, mi) {
-  const ambT = currentClimateAir(mi);
-  const dt_h = 0.25;
-  const steps = Math.round(7 * 24 / dt_h);
-  const coverUsage = buildCoverUsageProfile(inp, mi);
-  const baseHours = schedHoursFromInput(inp);
-  const manualDutyPower = inp.heatMode === 'offpeak' ? 0 : pool.heaterW * baseHours / 24;
-  const baseDailySolarW = monthlySolarIrradiance(inp, mi) * 1000 / 24
-    * (1 - inp.shade / 100)
-    * pool.A_surf * AABS;
-
-  const timeArr = [], tempArr = [];
-  let T = Math.min(ambT + (manualDutyPower + monthState.solarW) / monthState.UA, inp.target);
-
-  const heaterPowerAtHour = (hour) => {
-    if (inp.heatMode === 'offpeak') {
-      return isWithinWindow(hour, parseHHMM(inp.opStart), parseHHMM(inp.opEnd)) ? pool.heaterW : 0;
-    }
-    return manualDutyPower;
-  };
-
-  for (let i = 0; i < Math.round(3 * 24 / dt_h); i++) {
-    const tod = (i * dt_h + dt_h / 2) % 24;
-    const covered = coverUsage.isCovered(tod);
-    const surfaceFactor = covered ? coverUsage.cover.surfaceLossFactor : 1;
-    const solarFactor = covered ? coverUsage.cover.solarTransmittance : 1;
-    const UA = pool.UA_s_open * surfaceFactor + pool.UA_w + pool.UA_b;
-    const solarW = solarPowerAtHour(baseDailySolarW, tod, mi) * solarFactor;
-    const Pnet = heaterPowerAtHour(tod) + solarW - UA * (T - ambT);
-    T += Pnet / pool.cap * dt_h * 3600;
-  }
-  for (let i = 0; i < steps; i++) {
-    const tod = (i * dt_h + dt_h / 2) % 24;
-    const covered = coverUsage.isCovered(tod);
-    const surfaceFactor = covered ? coverUsage.cover.surfaceLossFactor : 1;
-    const solarFactor = covered ? coverUsage.cover.solarTransmittance : 1;
-    const UA = pool.UA_s_open * surfaceFactor + pool.UA_w + pool.UA_b;
-    const solarW = solarPowerAtHour(baseDailySolarW, tod, mi) * solarFactor;
-    const Pnet = heaterPowerAtHour(tod) + solarW - UA * (T - ambT);
-    T += Pnet / pool.cap * dt_h * 3600;
-    timeArr.push(i * dt_h);
-    tempArr.push(+T.toFixed(2));
-  }
-  return {timeArr, tempArr};
-}
-
-// ─── 36-HOUR TEMPERATURE FORECAST ─────────────────────────────────────────────
-function simulate36HourForecast(inp, pool, nowMonth, startTemp) {
+// ─── 2-DAY TEMPERATURE FORECAST ───────────────────────────────────────────────
+function simulate2DayForecast(inp, pool, startTemp) {
   const now = new Date();
-  const startHourOfDay = now.getHours() + now.getMinutes() / 60;
-  const coverUsage = buildCoverUsageProfile(inp, nowMonth);
-  const totalSteps = 36;
+  const totalSteps = WEATHER_AUTOFILL.forecastHours;
   const timeLabels = [];
   const tempArr = [];
   const dayNames = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+  const coverUsageByMonth = {};
+  const coverForMonth = (mi) => {
+    if (!coverUsageByMonth[mi]) coverUsageByMonth[mi] = buildCoverUsageProfile(inp, mi);
+    return coverUsageByMonth[mi];
+  };
   let T = startTemp;
   for (let i = 0; i < totalSteps; i++) {
     const dayIndex = Math.floor(i / 24);
@@ -1720,24 +1673,26 @@ function simulate36HourForecast(inp, pool, nowMonth, startTemp) {
     const hourlyPoint = inp.hourlyForecast?.[i] || null;
     const stepAir = isFinite(hourlyPoint?.air) ? hourlyPoint.air : fDay.air;
     const stepCloud = isFinite(hourlyPoint?.cloud) ? hourlyPoint.cloud : fDay.cloud;
-    let hourOfDay = (startHourOfDay + i) % 24;
-    if (hourlyPoint?.time) {
-      const dt = new Date(hourlyPoint.time);
-      hourOfDay = dt.getHours() + dt.getMinutes() / 60;
-      timeLabels.push(`${dayNames[dt.getDay()]} ${String(dt.getHours()).padStart(2,'0')}:00`);
-    } else {
-      const dt = new Date(now.getTime() + i * 3600000);
-      timeLabels.push(`${dayNames[dt.getDay()]} ${String(dt.getHours()).padStart(2,'0')}:00`);
-    }
+    const stepDate = hourlyPoint?.time ? new Date(hourlyPoint.time) : new Date(now.getTime() + i * 3600000);
+    const hourOfDay = stepDate.getHours() + stepDate.getMinutes() / 60;
+    timeLabels.push(`${dayNames[stepDate.getDay()]} ${String(stepDate.getHours()).padStart(2,'0')}:00`);
+    const stepMonth = stepDate.getMonth();
+    const coverUsage = coverForMonth(stepMonth);
     const covered = coverUsage.isCovered(hourOfDay);
     const surfFactor = covered ? coverUsage.cover.surfaceLossFactor : 1;
     const solFactor  = covered ? coverUsage.cover.solarTransmittance  : 1;
     const UA = pool.UA_s_open * surfFactor + pool.UA_w + pool.UA_b;
-    const baseSolarW = monthlySolarIrradiance(inp, nowMonth) * 1000 / 24
-      * (1 - inp.shade / 100)
-      * cloudSolarFactor(stepCloud)
-      * pool.A_surf * AABS;
-    const solarW = solarPowerAtHour(baseSolarW, hourOfDay, nowMonth) * solFactor;
+    const hourlySolarWm2 = Number(hourlyPoint?.solar);
+    const solarW = Number.isFinite(hourlySolarWm2)
+      ? Math.max(0, hourlySolarWm2) * (1 - inp.shade / 100) * pool.A_surf * AABS * solFactor
+      : solarPowerAtHour(
+          monthlySolarIrradiance(inp, stepMonth) * 1000 / 24
+            * (1 - inp.shade / 100)
+            * cloudSolarFactor(stepCloud)
+            * pool.A_surf * AABS,
+          hourOfDay,
+          stepMonth
+        ) * solFactor;
     let heaterPow = 0;
     if (inp.heatMode === 'offpeak') {
       heaterPow = isWithinWindow(hourOfDay, parseHHMM(inp.opStart), parseHHMM(inp.opEnd))
@@ -1750,7 +1705,7 @@ function simulate36HourForecast(inp, pool, nowMonth, startTemp) {
     T += Pnet / pool.cap * 3600;
     tempArr.push(+T.toFixed(2));
   }
-  return { timeLabels, tempArr };
+  return {timeLabels, tempArr};
 }
 
 // ─── HEATING CURVE (analytical) ───────────────────────────────────────────────
@@ -2288,7 +2243,7 @@ function initChemistry() {
 
 // ─── CHART INSTANCES ──────────────────────────────────────────────────────────
 const CHARTS_AVAILABLE = typeof window.Chart !== 'undefined';
-let chartCost, chartHeat, chartLoss, chartSched, chartInverse, chartForecast, chartForecast36;
+let chartCost, chartHeat, chartLoss, chartInverse, chartForecast, chartForecast36;
 let lastReportData = null;
 
 function makeChart(id, config) {
@@ -2333,20 +2288,6 @@ function initCharts() {
     }
   });
 
-  chartSched = makeChart('schedChart', {
-    type:'line',
-    data:{labels:[], datasets:[]},
-    options:{
-      responsive:true, maintainAspectRatio:false,
-      plugins:{legend:{position:'bottom',labels:{boxWidth:12,font:{size:11}}}},
-      scales:{
-        x:{title:{display:true,text:'Date / Time'}, ticks:{maxTicksLimit:15}},
-        y:{title:{display:true,text:'Pool temperature (°C)'}}
-      },
-      elements:{point:{radius:0}}
-    }
-  });
-
   chartInverse = makeChart('inverseChart', {
     type:'line',
     data:{datasets:[]},
@@ -2381,7 +2322,7 @@ function initCharts() {
       responsive:true, maintainAspectRatio:false,
       plugins:{legend:{position:'bottom',labels:{boxWidth:12,font:{size:11}}}},
       scales:{
-        x:{title:{display:true,text:'Date / Time'}, ticks:{maxTicksLimit:13}},
+        x:{title:{display:true,text:'Date / Time'}, ticks:{maxTicksLimit:17}},
         y:{title:{display:true,text:'Pool temperature (°C)'}}
       },
       elements:{point:{radius:2}}
@@ -2707,7 +2648,8 @@ function go() {
      ? liveHourlyForecast.map((point) => ({
          time: point.time,
          air: point.air,
-         cloud: point.cloud
+         cloud: point.cloud,
+         solar: point.solar
        }))
      : null
   };
@@ -2731,7 +2673,8 @@ function go() {
       .map((point) => ({
         time: point.time,
         air: clamp(point.air, -10, 45),
-        cloud: clamp(point.cloud, 0, 100)
+        cloud: clamp(point.cloud, 0, 100),
+        solar: Math.max(0, Number(point.solar) || 0)
       }));
   } else {
     inp.hourlyForecast = null;
@@ -3012,26 +2955,6 @@ function go() {
     chartLoss.update();
   }
 
-  // ── Chart: 7-day schedule ────────────────────────────────────────────────
-  const sim = simulate7Days(inp, pool, refMonthData, refMonth);
-  const schedNow = Date.now();
-  const schedDateNames = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
-  const schedDateLabels = sim.timeArr.map(h => {
-    const d = new Date(schedNow + h * 3600000);
-    return `${schedDateNames[d.getDay()]} ${String(d.getHours()).padStart(2,'0')}:00`;
-  });
-  if (chartSched) {
-    chartSched.data.labels = schedDateLabels;
-    chartSched.data.datasets = [
-      {label:'Pool temperature (°C)', data:sim.tempArr, borderColor:'#0077b6', borderWidth:1.5, fill:false, tension:.2},
-      {label:`Target ${fmt(inp.target,1)}°C`, data:sim.timeArr.map(()=>inp.target),
-       borderColor:'#dc2626', borderWidth:1.2, borderDash:[6,4], fill:false},
-      {label:`Ambient ${fmt(refAmbient,1)}°C`, data:sim.timeArr.map(()=>refAmbient),
-       borderColor:'#9ca3af', borderWidth:1, borderDash:[2,4], fill:false}
-    ];
-    chartSched.update();
-  }
-
   // ── Chart: inverse target vs annual cost ───────────────────────────────────
   const tMin = 18, tMax = 38;
   const inversePts = buildInversePoints(inp, pool, tMin, tMax, 0.5);
@@ -3119,8 +3042,8 @@ function go() {
     chartForecast.update();
   }
 
-  // ── Chart: 36-hour pool temperature forecast ──────────────────────────────
-  const fc36 = simulate36HourForecast(inp, pool, nowMonth, afterBoostTemp);
+  // ── Chart: 2-day pool temperature forecast ────────────────────────────────
+  const fc36 = simulate2DayForecast(inp, pool, afterBoostTemp);
   if (chartForecast36) {
     chartForecast36.data.labels = fc36.timeLabels;
     chartForecast36.data.datasets = [{
@@ -3134,10 +3057,11 @@ function go() {
       pointRadius: 2
     }];
     chartForecast36.update();
-    const fc36End = fc36.tempArr[fc36.tempArr.length - 1];
+    const fc36Min = Math.min(...fc36.tempArr);
+    const fc36Max = Math.max(...fc36.tempArr);
     const el36 = document.getElementById('forecast36-note');
     if (el36) el36.textContent =
-      `Starting from ${fmt(afterBoostTemp,1)}°C now, the pool is forecast to reach about ${fmt(fc36End,1)}°C in 36 hours, using ${inp.hourlyForecast?.length ? 'hourly weather inputs' : 'day-1 and day-2 weather conditions'}.`;
+      `Starting from ${fmt(afterBoostTemp,1)}°C now, this 2-day trend projects a likely range of about ${fmt(fc36Min,1)}–${fmt(fc36Max,1)}°C, using ${inp.hourlyForecast?.length ? 'hourly weather inputs (including shortwave solar radiation when available)' : 'day-1 and day-2 weather conditions'}.`;
   }
 
   lastReportData = {
@@ -3413,9 +3337,8 @@ async function fetchForecastFromSelectedLocation() {
   const original = btn.textContent;
   btn.disabled = true;
   btn.textContent = 'Fetching…';
-  setWeatherStatus('Fetching daily + hourly weather…', 'info');
+  setWeatherStatus('Fetching daily + hourly weather (including solar radiation when available)…', 'info');
   setClimateStatus('Updating monthly climate profile…', 'info');
-  let forecastOk = false;
   try {
     applySelectedCoordinates(place);
     queryField.value = placeLabel(place);
@@ -3425,7 +3348,7 @@ async function fetchForecastFromSelectedLocation() {
       latitude: String(lat),
       longitude: String(lon),
       daily: 'temperature_2m_max,temperature_2m_min,cloud_cover_mean',
-      hourly: 'temperature_2m,cloud_cover',
+      hourly: 'temperature_2m,cloud_cover,shortwave_radiation',
       forecast_days: String(WEATHER_AUTOFILL.forecastDays),
       forecast_hours: String(WEATHER_AUTOFILL.forecastHours),
       timezone: 'auto'
@@ -3438,11 +3361,12 @@ async function fetchForecastFromSelectedLocation() {
     const cloudArr = forecast?.daily?.cloud_cover_mean || [];
     const hourlyTempArr = forecast?.hourly?.temperature_2m || [];
     const hourlyCloudArr = forecast?.hourly?.cloud_cover || [];
+    const hourlySolarArr = forecast?.hourly?.shortwave_radiation || [];
     const hourlyTimeArr = forecast?.hourly?.time || [];
     if (maxArr.length < WEATHER_AUTOFILL.forecastDays || minArr.length < WEATHER_AUTOFILL.forecastDays || cloudArr.length < WEATHER_AUTOFILL.forecastDays) {
       throw new Error('forecast_incomplete');
     }
-    if (hourlyTempArr.length < WEATHER_AUTOFILL.forecastHours || hourlyCloudArr.length < WEATHER_AUTOFILL.forecastHours || hourlyTimeArr.length < WEATHER_AUTOFILL.forecastHours) {
+    if (hourlyTempArr.length < WEATHER_AUTOFILL.forecastHours || hourlyCloudArr.length < WEATHER_AUTOFILL.forecastHours || hourlySolarArr.length < WEATHER_AUTOFILL.forecastHours || hourlyTimeArr.length < WEATHER_AUTOFILL.forecastHours) {
       throw new Error('forecast_hourly_incomplete');
     }
     for (let i = 0; i < WEATHER_AUTOFILL.forecastDays; i++) {
@@ -3453,13 +3377,13 @@ async function fetchForecastFromSelectedLocation() {
     liveHourlyForecast = Array.from({length: WEATHER_AUTOFILL.forecastHours}, (_, i) => {
       const air = Number(hourlyTempArr[i]);
       const cloud = Number(hourlyCloudArr[i]);
-      if (!Number.isFinite(air) || !Number.isFinite(cloud) || typeof hourlyTimeArr[i] !== 'string') {
+      const solar = Number(hourlySolarArr[i]);
+      if (!Number.isFinite(air) || !Number.isFinite(cloud) || !Number.isFinite(solar) || typeof hourlyTimeArr[i] !== 'string') {
         throw new Error('forecast_hourly_invalid');
       }
-      return {time: hourlyTimeArr[i], air, cloud};
+      return {time: hourlyTimeArr[i], air, cloud, solar};
     });
-    forecastOk = true;
-    setWeatherStatus(`Forecast filled from ${placeLabel(place)} via Open-Meteo (3-day daily + 36-hour hourly). You can still edit every value manually.`, 'ok');
+    setWeatherStatus(`Forecast filled from ${placeLabel(place)} via Open-Meteo (3-day daily + 48-hour hourly). You can still edit every value manually.`, 'ok');
   } catch {
     liveHourlyForecast = null;
     setWeatherStatus('Live weather could not be loaded just now, so manual forecast entry remains in place.', 'warn');
