@@ -1,10 +1,11 @@
 'use strict';
 
-const CACHE_NAME = 'pool-calculator-shell-v1-4-0';
+const CACHE_NAME = 'pool-calculator-shell-v1-5-0';
 const APP_SHELL = [
   './',
   './index.htm',
   './help.htm',
+  './appendices.htm',
   './manifest.webmanifest',
   './icons/pool-icon-192.svg',
   './icons/pool-icon-512.svg'

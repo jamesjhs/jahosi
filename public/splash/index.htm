@@ -72,6 +72,15 @@ header p{font-size:.85rem;opacity:.85;margin-top:.25rem}
 
 .mobile-toolbar{display:none;margin-bottom:1rem}
 .mobile-toolbar button{width:100%;border:0;border-radius:10px;background:var(--blue);color:#fff;padding:.7rem 1rem;font-weight:700;cursor:pointer;box-shadow:var(--shadow)}
+.floating-options-btn{
+  display:none;position:fixed;right:1rem;bottom:1rem;z-index:1200;
+  border:0;border-radius:999px;background:var(--blue);color:#fff;
+  padding:.75rem 1rem;font-weight:700;cursor:pointer;box-shadow:var(--shadow)
+}
+.controls-close-bottom{
+  display:none;width:100%;margin-top:.5rem;border:0;border-radius:10px;
+  background:#334155;color:#fff;padding:.7rem 1rem;font-weight:700;cursor:pointer
+}
 .drawer-backdrop{display:none}
 
 .card{
@@ -223,6 +232,8 @@ footer{text-align:center;padding:1.5rem;font-size:.72rem;color:var(--muted)}
   .drawer-backdrop.open{opacity:1;pointer-events:auto}
   body.drawer-open{overflow:hidden}
   .intro-grid{grid-template-columns:1fr}
+  .floating-options-btn{display:inline-flex;align-items:center;justify-content:center}
+  .controls-close-bottom{display:block}
 }
 </style>
 </head>
@@ -230,7 +241,7 @@ footer{text-align:center;padding:1.5rem;font-size:.72rem;color:var(--muted)}
 
 <header>
   <h1>splash! <em>by Jahosi</em></h1>
-  <p>Cost estimates for your playpool · v1.4.0</p>
+  <p>Cost estimates for your playpool · v1.5.0</p>
 </header>
 
 <div class="wrap">
@@ -255,8 +266,9 @@ footer{text-align:center;padding:1.5rem;font-size:.72rem;color:var(--muted)}
         <ul class="intro-list">
           <li>Manual forecast entry always stays available, even after location-based weather auto-fill.</li>
           <li>Set pool season start and end dates to see a cost breakdown for your actual outdoor season, including water fill costs (UK Anglian Water metered baseline: 0.55 p/L).</li>
-          <li>v1.4.0 adds a Pool Chemistry Guide section with target ranges, dosing estimates for dichlor/trichlor, temperature-based checking schedules, and a downloadable personalised chemistry schedule.</li>
-          <li>v1.3.0 adds global location search, global 3-day + 36-hour weather auto-fill, and location-aware monthly climate profiling with fallback support.</li>
+          <li>v1.5.0 reorders controls/results to an expert maintenance workflow, adds main-page forecast fetch, and improves mobile options UX.</li>
+          <li>v1.5.0 also adds environment-aware rough product quantity guidance (including stabilised vs liquid chlorine and refill estimates) and a new appendices page with formulas/sources.</li>
+          <li>v1.4.0 added the Pool Chemistry Guide section with target ranges, dosing estimates for dichlor/trichlor, temperature-based checking schedules, and downloadable schedule export.</li>
           <li>Exports are created locally in your browser and now include version and copyright details.</li>
         </ul>
       </div>
@@ -269,6 +281,8 @@ footer{text-align:center;padding:1.5rem;font-size:.72rem;color:var(--muted)}
         <p class="inline-help">3. Review the forecast, charts, maths checks, and exports.</p>
         <div class="info-actions">
           <a class="link-btn" href="./help.htm">Open help guide</a>
+          <a class="link-btn" href="./appendices.htm" style="background:#475569">Open appendices</a>
+          <button type="button" class="action-btn" id="fetch-weather-main">Fetch current forecast</button>
         </div>
       </div>
     </div>
@@ -286,6 +300,7 @@ footer{text-align:center;padding:1.5rem;font-size:.72rem;color:var(--muted)}
   <div class="mobile-toolbar">
     <button id="open-controls" type="button">⚙️ Adjust Settings</button>
   </div>
+  <button id="floating-options" class="floating-options-btn" type="button">⚙️ Options</button>
 
   <div class="layout">
     <aside class="controls-panel" id="controls-panel" aria-label="Configuration controls">
@@ -295,7 +310,7 @@ footer{text-align:center;padding:1.5rem;font-size:.72rem;color:var(--muted)}
       </div>
 
       <div class="controls-grid">
-        <div class="card">
+        <div class="card" id="card-dimensions">
           <div class="card-title">Pool Dimensions &amp; Base</div>
 
           <div class="field">
@@ -371,7 +386,7 @@ footer{text-align:center;padding:1.5rem;font-size:.72rem;color:var(--muted)}
           <p class="hint">Preset bands follow common public guidance ranges (DOE leisure baseline, learn-to-swim warmer bands, and spa/hot-tub ranges) and remain editable.</p>
         </div>
 
-        <div class="card" style="margin-bottom:1rem">
+        <div class="card" id="card-heating" style="margin-bottom:1rem">
           <div class="card-title">Heating System</div>
 
           <div class="field">
@@ -389,22 +404,22 @@ footer{text-align:center;padding:1.5rem;font-size:.72rem;color:var(--muted)}
           <p class="hint">Resistive element: ~99 %. Heat pump (COP 3.5): 350 %. Enters heat into water as heater_kW × efficiency.</p>
         </div>
 
-        <div class="card">
+        <div class="card" id="card-comfort">
           <div class="card-title">Comfort Range &amp; Passive Cover</div>
 
           <div class="field-row">
             <div class="field">
               <label for="range-min">Desired Min Temp</label>
-              <input type="number" id="range-min" min="18" max="40" step="0.5" value="27"
-                    oninput="go()"> <span style="font-size:.75rem;color:var(--muted)">°C</span>
+              <input type="number" id="range-min" min="18" max="40" step="0.5" value="27" readonly>
+              <span style="font-size:.75rem;color:var(--muted)">°C (auto)</span>
             </div>
             <div class="field">
               <label for="range-max">Desired Max Temp</label>
-              <input type="number" id="range-max" min="18" max="40" step="0.5" value="30"
-                    oninput="go()"> <span style="font-size:.75rem;color:var(--muted)">°C</span>
+              <input type="number" id="range-max" min="18" max="40" step="0.5" value="30" readonly>
+              <span style="font-size:.75rem;color:var(--muted)">°C (auto)</span>
             </div>
           </div>
-          <p class="hint">Use a preferred temperature band to answer the “is it warm enough?” questions that owners commonly ask.</p>
+          <p class="hint" id="target-range-auto">Desired range is calculated automatically from your target temperature and pool mode.</p>
 
           <div class="field">
             <label for="cover-type">Passive Thermal Cover</label>
@@ -424,7 +439,7 @@ footer{text-align:center;padding:1.5rem;font-size:.72rem;color:var(--muted)}
           <p class="hint">Cover hours are applied to the coolest hours first, then to daylight hours. More cover lowers evaporation but may slightly reduce passive solar gain.</p>
         </div>
 
-        <div class="card">
+        <div class="card" id="card-tariff">
           <div class="card-title">Electricity Tariff</div>
 
           <div class="field-row">
@@ -480,7 +495,7 @@ footer{text-align:center;padding:1.5rem;font-size:.72rem;color:var(--muted)}
           <p class="hint" id="cost-target-help">The annual cost target is used for the inverse temperature-vs-budget chart.</p>
         </div>
 
-        <div class="card">
+        <div class="card" id="card-season">
           <div class="card-title">Pool Season (Temporary Use)</div>
 
           <div class="field-row">
@@ -508,8 +523,34 @@ footer{text-align:center;padding:1.5rem;font-size:.72rem;color:var(--muted)}
           <p class="hint">Enter dates to unlock season cost summaries. Baseline: Anglian Water metered rate 0.55 p/L. Leave dates blank to see annual-only projections.</p>
         </div>
 
-        <div class="card">
-          <div class="card-title">Current Temperature &amp; 3-Day Forecast</div>
+        <div class="card" id="card-forecast">
+          <div class="card-title">Location, Current Temperature &amp; 3-Day Forecast</div>
+
+          <div class="field-row">
+            <div class="field">
+              <label for="forecast-location-query">Search location (country / city / town)</label>
+              <input type="text" id="forecast-location-query" inputmode="search" autocomplete="off" placeholder="e.g. Tokyo, Nairobi, São Paulo, Dublin">
+              <input type="hidden" id="forecast-latitude" value="52.6">
+              <input type="hidden" id="forecast-longitude" value="1.3">
+            </div>
+            <div class="field" style="align-self:end">
+              <button type="button" class="action-btn" id="search-location">Search places</button>
+            </div>
+          </div>
+          <div class="field-row">
+            <div class="field">
+              <label for="forecast-location-results">Select matched place</label>
+              <select id="forecast-location-results">
+                <option value="">Search above to load matches</option>
+              </select>
+            </div>
+            <div class="field" style="align-self:end">
+              <button type="button" class="action-btn" id="fetch-weather">Use selected place forecast</button>
+            </div>
+          </div>
+          <p class="hint">Manual forecast entry stays enabled. When online, search uses Open-Meteo geocoding for global coordinates and Open-Meteo forecast for the next 3 daily weather values plus 36 hourly weather points, then you can still edit everything by hand.</p>
+          <p class="status-chip info" id="weather-status" aria-live="polite">Manual entry is active. Global location weather auto-fill is optional.</p>
+          <p class="status-chip info" id="climate-status" aria-live="polite">Monthly climate profile: East England fallback baseline.</p>
 
           <div class="field">
             <label for="current-temp-source">Current Temperature Source</label>
@@ -552,32 +593,6 @@ footer{text-align:center;padding:1.5rem;font-size:.72rem;color:var(--muted)}
             </div>
           </div>
           <p class="hint">Hot-water and kettle additions are treated as instant mixing boosts before the forecast starts.</p>
-
-          <div class="field-row">
-            <div class="field">
-              <label for="forecast-location-query">Search location (country / city / town)</label>
-              <input type="text" id="forecast-location-query" inputmode="search" autocomplete="off" placeholder="e.g. Tokyo, Nairobi, São Paulo, Dublin">
-              <input type="hidden" id="forecast-latitude" value="52.6">
-              <input type="hidden" id="forecast-longitude" value="1.3">
-            </div>
-            <div class="field" style="align-self:end">
-              <button type="button" class="action-btn" id="search-location">Search places</button>
-            </div>
-          </div>
-          <div class="field-row">
-            <div class="field">
-              <label for="forecast-location-results">Select matched place</label>
-              <select id="forecast-location-results">
-                <option value="">Search above to load matches</option>
-              </select>
-            </div>
-            <div class="field" style="align-self:end">
-              <button type="button" class="action-btn" id="fetch-weather">Use selected place forecast</button>
-            </div>
-          </div>
-          <p class="hint">Manual forecast entry stays enabled. When online, search uses Open-Meteo geocoding for global coordinates and Open-Meteo forecast for the next 3 daily weather values plus 36 hourly weather points, then you can still edit everything by hand.</p>
-          <p class="status-chip info" id="weather-status" aria-live="polite">Manual entry is active. Global location weather auto-fill is optional.</p>
-          <p class="status-chip info" id="climate-status" aria-live="polite">Monthly climate profile: East England fallback baseline.</p>
 
           <div class="field">
             <label>Forecast Day 1</label>
@@ -634,13 +649,32 @@ footer{text-align:center;padding:1.5rem;font-size:.72rem;color:var(--muted)}
           </div>
           <p class="hint">Forecast days use current-month daylight and location-aware solar baselines, scaled by your cloud-cover input.</p>
         </div>
+        <div class="card" id="card-chem-basic">
+          <div class="card-title">Basic Pool Chemistry Choice</div>
+          <div class="field">
+            <label for="aquatic-mode">Use Case</label>
+            <select id="aquatic-mode" onchange="go()">
+              <option value="pool" selected>Pool / playpool</option>
+              <option value="hottub">Hot tub / spa</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="chem-chlorine-type-basic">Primary Chlorine Product</label>
+            <select id="chem-chlorine-type-basic" onchange="syncChlorineTypeSelectors('chem-chlorine-type-basic');go()">
+              <option value="dichlor" selected>Dichlor (stabilised granular chlorine)</option>
+              <option value="trichlor">Trichlor (stabilised tablets/sticks)</option>
+            </select>
+          </div>
+          <p class="hint">This basic chemistry selection is used to estimate routine product quantities and CYA accumulation rates. Water chemistry (hard vs soft water) and usage patterns can significantly change outcomes — treat all figures as rough guides only.</p>
+        </div>
+        <button class="controls-close-bottom" id="close-controls-bottom" type="button">Close options</button>
       </div>
     </aside>
 
     <div class="drawer-backdrop" id="drawer-backdrop"></div>
 
     <main class="results-panel">
-      <div class="sec">📊 Key Metrics</div>
+      <div class="sec" id="sec-key-metrics">📊 Key Metrics</div>
       <div class="stats-row" id="stats-row">
         <div class="stat"><div class="lbl">Pool Volume</div><div class="val" id="s-vol">—</div><div class="sub">litres</div></div>
         <div class="stat"><div class="lbl">Thermal Capacity</div><div class="val" id="s-cap">—</div><div class="sub">kJ / °C</div></div>
@@ -673,8 +707,8 @@ footer{text-align:center;padding:1.5rem;font-size:.72rem;color:var(--muted)}
         <div class="stat"><div class="lbl">Cost per Day</div><div class="val" id="s-season-per-day">—</div><div class="sub">£ / day (season average)</div></div>
       </div>
 
-      <div class="sec">🧭 Planning answers people usually ask</div>
-      <div class="qa-grid">
+      <div class="sec" id="sec-planning">🧭 Planning answers people usually ask</div>
+      <div class="qa-grid" id="planning-qa-grid">
         <article class="qa-card">
           <h3>Can I stay in my desired range?</h3>
           <p id="qa-range">Loading…</p>
@@ -693,7 +727,7 @@ footer{text-align:center;padding:1.5rem;font-size:.72rem;color:var(--muted)}
         </article>
       </div>
 
-      <div class="sec">🔮 Boost model &amp; 3-day prediction</div>
+      <div class="sec" id="sec-boost">🔮 Boost model &amp; 3-day prediction</div>
       <div class="stats-row" id="forecast-stats-row">
         <div class="stat"><div class="lbl">Temp After Top-Ups</div><div class="val" id="s-afterboost">—</div><div class="sub">°C after hot water + kettles</div></div>
         <div class="stat"><div class="lbl">Hot Water Needed</div><div class="val" id="s-hotreq">—</div><div class="sub">L from tank to hit target now</div></div>
@@ -702,7 +736,7 @@ footer{text-align:center;padding:1.5rem;font-size:.72rem;color:var(--muted)}
         <div class="stat"><div class="lbl">3-Day Boost Eq.</div><div class="val" id="s-boostcost">—</div><div class="sub">£ peak-rate equivalent for top-ups + extra heater</div></div>
       </div>
 
-      <div class="card" style="margin-bottom:1rem">
+      <div class="card" style="margin-bottom:1rem" id="forecast-sim-card">
         <div class="card-title">3-Day Forecast Simulation</div>
         <div class="tbl-wrap">
           <table>
@@ -725,12 +759,12 @@ footer{text-align:center;padding:1.5rem;font-size:.72rem;color:var(--muted)}
         <p class="mini-note" id="forecast-note">Forecast results use a stepped day/night energy-balance model, begin from the current pool temperature after optional hot-water and kettle boosts, and cap total heater runtime at 24 hours per day.</p>
       </div>
 
-      <div class="card" style="margin-bottom:1rem">
-        <div class="card-title">Model review in v1.4.0</div>
-        <p class="inline-help">Core daylight-solar and forecast-cap safeguards remain in place. v1.4.0 adds a Pool Chemistry Guide section (pool chemistry target ranges, dosing estimates, temperature-based checking schedule, and downloadable personalised PDF schedule). v1.3.0 added global location search, global weather auto-fill, and location-aware monthly climate profiling (with fallback baseline support) while keeping manual forecast entry fully available. Manual forecasts are still planning estimates, not guarantees.</p>
+      <div class="card" style="margin-bottom:1rem" id="model-review-card">
+        <div class="card-title">Model review in v1.5.0</div>
+        <p class="inline-help">Core daylight-solar and forecast-cap safeguards remain in place. v1.5.0 improves workflow UX ordering, mobile controls, and adds environment-aware rough chemistry product quantity guidance plus appendices documentation of formulas/sources. v1.4.0 added the chemistry guide and schedule export. v1.3.0 added global location search, global weather auto-fill, and location-aware monthly climate profiling. Manual forecasts remain planning estimates, not guarantees.</p>
       </div>
 
-      <div class="card" style="margin-bottom:1rem">
+      <div class="card" style="margin-bottom:1rem" id="export-card">
         <div class="card-title">Export Reports</div>
         <p class="hint" style="margin-top:0">Download a shareable summary or raw monthly data including pool statistics, budget, target range, and cover assumptions.</p>
         <div class="export-actions">
@@ -748,15 +782,15 @@ footer{text-align:center;padding:1.5rem;font-size:.72rem;color:var(--muted)}
         <p class="mini-note" id="export-status" aria-live="polite">Exports are generated locally in your browser.</p>
       </div>
 
-      <div class="card" style="margin-bottom:1rem">
+      <div class="card" style="margin-bottom:1rem" id="math-checks-card">
         <div class="card-title">Math Integrity Checks</div>
         <ul class="diag-list" id="math-checks">
           <li>Running checks…</li>
         </ul>
       </div>
 
-      <div class="sec">📅 Monthly Analysis — Maintaining Target Temperature</div>
-      <div class="card" style="margin-bottom:1rem">
+      <div class="sec" id="monthly-sec">📅 Monthly Analysis — Maintaining Target Temperature</div>
+      <div class="card" style="margin-bottom:1rem" id="monthly-card">
         <div class="tbl-wrap">
           <table>
             <thead>
@@ -780,8 +814,8 @@ footer{text-align:center;padding:1.5rem;font-size:.72rem;color:var(--muted)}
         </div>
       </div>
 
-      <div class="sec">📈 Visualisations</div>
-      <div class="charts-row">
+      <div class="sec" id="viz-sec">📈 Visualisations</div>
+      <div class="charts-row" id="viz-row-1">
         <div class="card">
           <div class="card-title">Monthly Cost to Maintain Target Temperature</div>
           <div class="chart-box"><canvas id="costChart"></canvas></div>
@@ -791,7 +825,7 @@ footer{text-align:center;padding:1.5rem;font-size:.72rem;color:var(--muted)}
           <div class="chart-box"><canvas id="heatChart"></canvas></div>
         </div>
       </div>
-      <div class="charts-row">
+      <div class="charts-row" id="viz-row-2">
         <div class="card">
           <div class="card-title">Heat-Loss Breakdown at Target Temp (reference month)</div>
           <div class="chart-box"><canvas id="lossChart"></canvas></div>
@@ -801,14 +835,14 @@ footer{text-align:center;padding:1.5rem;font-size:.72rem;color:var(--muted)}
           <div class="chart-box"><canvas id="schedChart"></canvas></div>
         </div>
       </div>
-      <div class="charts-row">
+      <div class="charts-row" id="viz-row-3">
         <div class="card">
           <div class="card-title">Ideal Target Temperature vs Annual Cost Target (selected variables)</div>
           <div class="chart-box"><canvas id="inverseChart"></canvas></div>
         </div>
       </div>
 
-      <div class="card" style="margin-bottom:1rem">
+      <div class="card" style="margin-bottom:1rem" id="heuristics-card">
         <div class="card-title">Public Heuristics Behind This Planner</div>
         <ul class="source-list">
           <li><a href="https://www.energy.gov/energysaver/heating-your-pool" target="_blank" rel="noopener noreferrer">US Department of Energy — Heating Your Pool</a>: 26&nbsp;°C / 78&nbsp;°F is a common leisure comfort baseline.</li>
@@ -819,7 +853,7 @@ footer{text-align:center;padding:1.5rem;font-size:.72rem;color:var(--muted)}
         </ul>
         <p class="mini-note">These public-query and forum-derived heuristics are used for planning prompts and cover assumptions; always treat them as indicative rather than guaranteed outcomes.</p>
       </div>
-      <div class="card" style="margin-bottom:1rem">
+      <div class="card" style="margin-bottom:1rem" id="limitations-card">
         <div class="card-title">Why buried/permanent pools are not modelled yet</div>
         <p class="inline-help">splash! currently targets temporary or lightly installed outdoor playpools and uses a simplified, single-body water model with public climate inputs. Fully buried or permanent pools need extra site-specific physics the app does not yet collect reliably, including layered wall/base construction, insulation thickness and type, soil moisture and drainage, ground-temperature lag, and nearby building effects on wind shelter, sky-view radiation, and shading. Without those inputs, one-size-fits-all buried-pool outputs would look precise but often be wrong, so this version keeps buried/permanent pool modelling out of scope and treats results as planning estimates, not guarantees.</p>
       </div>
@@ -847,7 +881,7 @@ footer{text-align:center;padding:1.5rem;font-size:.72rem;color:var(--muted)}
     <div class="field-row">
       <div class="field">
         <label for="chem-chlorine-type">Chlorine Type</label>
-        <select id="chem-chlorine-type" onchange="chemGo()">
+        <select id="chem-chlorine-type" onchange="syncChlorineTypeSelectors('chem-chlorine-type');chemGo()">
           <option value="dichlor" selected>Dichlor (sodium dichloroisocyanurate, ~56 % available Cl)</option>
           <option value="trichlor">Trichlor (trichloroisocyanuric acid, ~90 % available Cl)</option>
         </select>
@@ -1040,6 +1074,31 @@ footer{text-align:center;padding:1.5rem;font-size:.72rem;color:var(--muted)}
     </p>
   </div>
 
+  <div class="card" style="margin-bottom:1rem">
+    <div class="card-title">🧴 Rough Product Quantity Guide (Environment &amp; Location Aware)</div>
+    <p class="hint" style="margin-top:0">
+      Approximate routine usage based on your selected location climate profile, current temperature band, and pool volume.
+      These are rough guides only and assume typical residential usage.
+      <strong>Hard vs soft water can materially change pH/alkalinity/hardness demand.</strong>
+    </p>
+    <div class="tbl-wrap">
+      <table class="chem-ref-table">
+        <thead>
+          <tr>
+            <th>Maintenance Product</th>
+            <th>Estimated Quantity</th>
+            <th>Cadence</th>
+            <th>Why this may be needed</th>
+          </tr>
+        </thead>
+        <tbody id="chem-product-qty-tbody">
+          <tr><td colspan="4">Set your location and chemistry type to calculate rough product quantities.</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="mini-note" id="chem-water-profile-note">Water chemistry profile guidance will appear here (soft/neutral/hard scenarios).</p>
+  </div>
+
   <!-- Export card -->
   <div class="card" style="margin-bottom:1rem">
     <div class="card-title">📥 Download Chemistry Schedule</div>
@@ -1058,7 +1117,7 @@ footer{text-align:center;padding:1.5rem;font-size:.72rem;color:var(--muted)}
 </div><!-- /wrap -->
 
 <footer>
-  splash! &mdash; costing for your playpool · v1.4.0.<br>
+  splash! &mdash; costing for your playpool · v1.5.0.<br>
   Physics model: surface losses combine free-convection, evaporation (dominant) and long-wave radiation; parameterised by shade/shelter.
   Location-aware global climate profiling with fallback baselines. Costs are indicative estimates only. Not for safety-critical application.<br>
   Copyright © jahosi.co.uk 2026
@@ -1093,7 +1152,7 @@ const COVER_TYPES = {
   liquid:  {label:'Liquid solar cover',             surfaceLossFactor:0.65, solarTransmittance:0.98, evaporationReduction:0.40}
 };
 
-const APP_VERSION = '1.4.0';
+const APP_VERSION = '1.5.0';
 const APP_COPYRIGHT = 'Copyright © jahosi.co.uk 2026';
 const TARGET_TEMP_MIN = 18;
 const TARGET_TEMP_MAX = 40;
@@ -1996,6 +2055,48 @@ function chemGo() {
     html += `<em>Rough estimate only — actual accumulation depends on measured FC loss, not theoretical averages.</em>`;
     cyaAccEl.innerHTML = html;
   }
+
+  const qtyBody = document.getElementById('chem-product-qty-tbody');
+  const waterProfileNote = document.getElementById('chem-water-profile-note');
+  if (qtyBody) {
+    const kL = volL / 1000;
+    const avgFcPerDay = (band.fcLo + band.fcHi) / 2;
+    const dosK = chlorineType === 'trichlor' ? CHEM_DOSING.trichlor_g_per_1000L_ppm : CHEM_DOSING.dichlor_g_per_1000L_ppm;
+    const chlorLabel = chlorineType === 'trichlor' ? 'Trichlor (stabilised)' : 'Dichlor (stabilised)';
+    const stabilizedPerWeekG = avgFcPerDay * 7 * kL * dosK;
+    const availClPerWeekG = avgFcPerDay * 7 * kL; // 1 ppm in 1000L = 1 g available chlorine
+    const liquid12pctL = availClPerWeekG / 120;   // ~120 g available chlorine per litre
+    const cyaPerMonth = avgFcPerDay * 30 * (chlorineType === 'trichlor'
+      ? CHEM_DOSING.trichlor_cya_per_fc_ppm : CHEM_DOSING.dichlor_cya_per_fc_ppm);
+
+    const hardSoftScenarios = [
+      {name:'Soft-water scenario', taPpm:12, chPpm:20, note:'Soft source water often needs more TA and CH support.'},
+      {name:'Neutral-water scenario', taPpm:6, chPpm:8, note:'Typical balanced mains-water estimate.'},
+      {name:'Hard-water scenario', taPpm:2, chPpm:0, note:'Hard source water may need little/no CH addition; watch scaling and pH rise.'}
+    ];
+
+    const scenarioRows = hardSoftScenarios.map(s => {
+      const taG = s.taPpm * kL * CHEM_DOSING.nabicarbonate_g_per_1000L_ppm;
+      const chG = s.chPpm * kL * CHEM_DOSING.cacl2_g_per_1000L_ppm;
+      return `<tr><td><strong>${s.name}</strong><br><span style="font-size:.72rem;color:var(--muted)">${s.note}</span></td><td>TA support ~${taG.toFixed(0)} g NaHCO₃ / month<br>CH support ~${chG.toFixed(0)} g CaCl₂ / month</td><td>Monthly review</td><td>Assumes location-climate-driven use and ordinary bather load; test-strip readings should override these guides.</td></tr>`;
+    }).join('');
+
+    const projectedCya = (rCYA ?? 40) + cyaPerMonth;
+    const refillLitres = projectedCya > CHEM_TARGETS.cya.max
+      ? Math.round(volL * Math.min(0.6, (projectedCya - CHEM_TARGETS.cya.hi) / projectedCya))
+      : 0;
+    qtyBody.innerHTML = `
+      <tr><td><strong>${chlorLabel} chlorine</strong></td><td>~${stabilizedPerWeekG.toFixed(0)} g</td><td>Per week (split over ${Math.max(2, Math.round(7 / band.daysCheck))} doses)</td><td>Based on ${band.label} temperature band and selected location climate profile.</td></tr>
+      <tr><td><strong>Liquid chlorine alternative (12% NaOCl)</strong></td><td>~${liquid12pctL.toFixed(2)} L</td><td>Per week</td><td>Use this to maintain FC without adding extra CYA.</td></tr>
+      <tr><td><strong>Cyanuric acid increase from stabilised chlorine</strong></td><td>~${cyaPerMonth.toFixed(0)} ppm CYA</td><td>Per 30 days</td><td>Monitor CYA and switch to liquid chlorine when CYA trends high.</td></tr>
+      <tr><td><strong>Partial refill guidance</strong></td><td>${refillLitres > 0 ? `${refillLitres.toLocaleString()} L estimated` : 'None projected this month'}</td><td>${refillLitres > 0 ? 'If CYA remains above 90 ppm' : 'Monitor monthly'}</td><td>${refillLitres > 0 ? 'Estimated dilution to bring CYA back toward 70–80 ppm.' : 'If CYA exceeds 90 ppm, estimate refill from measured CYA and retest.'}</td></tr>
+      ${scenarioRows}
+    `;
+
+    if (waterProfileNote) {
+      waterProfileNote.innerHTML = `Water profile sensitivity: these quantities can move substantially with hard/soft source water, rainfall dilution, and bather load. Treat them as <strong>rough guides only</strong> and tune using your own measured TA/pH/CH/CYA results.`;
+    }
+  }
 }
 
 function downloadChemSchedule() {
@@ -2191,6 +2292,7 @@ footer{margin-top:18pt;font-size:7.5pt;color:#9ca3af;border-top:0.5pt solid #e5e
 function initChemistry() {
   const btn = document.getElementById('export-chem-schedule');
   if (btn) btn.addEventListener('click', downloadChemSchedule);
+  syncChlorineTypeSelectors('chem-chlorine-type');
   chemGo();
 }
 
@@ -2319,6 +2421,108 @@ function setClimateStatus(message, tone = 'info') {
   el.className = `status-chip ${tone}`;
 }
 
+function syncChlorineTypeSelectors(sourceId) {
+  const main = document.getElementById('chem-chlorine-type');
+  const side = document.getElementById('chem-chlorine-type-basic');
+  if (!main || !side) return;
+  if (sourceId === 'chem-chlorine-type-basic') {
+    main.value = side.value;
+  } else {
+    side.value = main.value;
+  }
+}
+
+function sensibleRangeForTarget(target, mode) {
+  const delta = mode === 'hottub' ? 1.0 : 1.5;
+  return {
+    min: clamp(target - delta, TARGET_TEMP_MIN, TARGET_TEMP_MAX),
+    max: clamp(target + delta, TARGET_TEMP_MIN, TARGET_TEMP_MAX)
+  };
+}
+
+function syncDesiredRangeFromTarget() {
+  const target = gi('target');
+  const mode = gs('aquatic-mode') || 'pool';
+  const range = sensibleRangeForTarget(target, mode);
+  const minInput = document.getElementById('range-min');
+  const maxInput = document.getElementById('range-max');
+  if (minInput) minInput.value = range.min.toFixed(1);
+  if (maxInput) maxInput.value = range.max.toFixed(1);
+  const note = document.getElementById('target-range-auto');
+  if (note) {
+    note.textContent = mode === 'hottub'
+      ? `Auto range: ${range.min.toFixed(1)}–${range.max.toFixed(1)} °C (±1.0 °C around target for hot tub/spa planning).`
+      : `Auto range: ${range.min.toFixed(1)}–${range.max.toFixed(1)} °C (±1.5 °C around target for pool planning).`;
+  }
+}
+
+function initMainForecastButton() {
+  const btn = document.getElementById('fetch-weather-main');
+  if (!btn) return;
+  btn.addEventListener('click', async () => {
+    const panel = document.getElementById('controls-panel');
+    const backdrop = document.getElementById('drawer-backdrop');
+    if (panel && backdrop && window.matchMedia('(max-width: 980px)').matches) {
+      panel.classList.add('open');
+      backdrop.classList.add('open');
+      document.body.classList.add('drawer-open');
+    }
+    await fetchForecastFromSelectedLocation();
+  });
+}
+
+function reorderControlsByExpertFlow() {
+  const grid = document.querySelector('.controls-grid');
+  if (!grid) return;
+  const ids = [
+    'card-forecast',
+    'card-dimensions',
+    'card-season',
+    'card-chem-basic',
+    'card-heating',
+    'card-tariff',
+    'card-comfort',
+    'close-controls-bottom'
+  ];
+  ids.forEach(id => {
+    const el = document.getElementById(id);
+    if (el) grid.appendChild(el);
+  });
+}
+
+function reorderResultsByExpertFlow() {
+  const panel = document.querySelector('.results-panel');
+  if (!panel) return;
+  const ids = [
+    'sec-key-metrics',
+    'stats-row',
+    'analysis-box',
+    'sec-planning',
+    'planning-qa-grid',
+    'forecast36-card',
+    'sec-boost',
+    'forecast-stats-row',
+    'forecast-sim-card',
+    'season-sec',
+    'season-stats-row',
+    'monthly-sec',
+    'monthly-card',
+    'viz-sec',
+    'viz-row-1',
+    'viz-row-2',
+    'viz-row-3',
+    'export-card',
+    'math-checks-card',
+    'model-review-card',
+    'heuristics-card',
+    'limitations-card'
+  ];
+  ids.forEach(id => {
+    const el = document.getElementById(id);
+    if (el) panel.appendChild(el);
+  });
+}
+
 function placeLabel(place) {
   const parts = [place?.name, place?.admin1, place?.country].filter(Boolean);
   return parts.join(', ') || 'selected location';
@@ -2365,6 +2569,8 @@ Inputs
 - Tariff: ${r.inputs.offPeakRatePpkWh.toFixed(1)}p off-peak / ${r.inputs.peakRatePpkWh.toFixed(1)}p peak
 - Budget target: £${r.inputs.costTargetGBP.toFixed(0)} / year
 - Passive cover: ${r.inputs.coverTypeLabel}, ${r.inputs.coverHoursPerDay.toFixed(1)} h/day
+- Pool mode: ${r.inputs.aquaticMode === 'hottub' ? 'Hot tub / spa' : 'Pool / playpool'}
+- Primary chlorine product: ${r.inputs.chlorineType === 'trichlor' ? 'Trichlor (stabilised)' : 'Dichlor (stabilised)'}
 - Latitude in model: ${r.inputs.latitude.toFixed(2)}°
 - Climate profile: ${r.summary.climateProfileLabel} (${r.summary.climateProfileSource})
 - Pool season: ${r.inputs.poolSeasonStart && r.inputs.poolSeasonEnd ? `${r.inputs.poolSeasonStart} to ${r.inputs.poolSeasonEnd} (${r.season ? r.season.seasonDays + ' days' : 'dates set'})` : 'annual projection (no season dates set)'}
@@ -2467,6 +2673,8 @@ function initExportActions() {
 
 // ─── UPDATE ───────────────────────────────────────────────────────────────────
 function go() {
+  syncDesiredRangeFromTarget();
+  syncChlorineTypeSelectors('chem-chlorine-type');
   const inp = {
     poolShape: gs('pool-shape'),
     radius:  gi('radius'),
@@ -2490,6 +2698,7 @@ function go() {
    coverType: gs('cover-type'),
    coverHours: gi('cover-hours'),
    currentTempSource: gs('current-temp-source'),
+   aquaticMode: gs('aquatic-mode') || 'pool',
    currentTempManual: gi('current-temp'),
    hotTemp: gi('hot-temp'),
    hotLitres: gi('hot-litres'),
@@ -2971,6 +3180,8 @@ function go() {
       coverType: inp.coverType,
       coverTypeLabel: cover.label,
       coverHoursPerDay: inp.coverHours,
+      aquaticMode: inp.aquaticMode,
+      chlorineType: gs('chem-chlorine-type'),
       poolSeasonStart: inp.poolStart || null,
       poolSeasonEnd: inp.poolEnd || null,
       fillsPerSeason: inp.poolFills,
@@ -3196,9 +3407,20 @@ async function fetchForecastFromSelectedLocation() {
   if (!btn || !queryField) return;
   let place = selectedSearchPlace();
   if (!place) {
-    await searchLocations();
-    place = selectedSearchPlace();
-    if (!place) return;
+    const query = sanitizeLocationQuery(queryField.value);
+    if (query) {
+      await searchLocations();
+      place = selectedSearchPlace();
+      if (!place) return;
+    } else {
+      const lat = Number(document.getElementById('forecast-latitude')?.value);
+      const lon = Number(document.getElementById('forecast-longitude')?.value);
+      if (!Number.isFinite(lat) || !Number.isFinite(lon)) {
+        setWeatherStatus('Search for a location first, or keep using manual forecast entry.', 'warn');
+        return;
+      }
+      place = {name:'Saved coordinates', latitude:lat, longitude:lon, country:'Current model location'};
+    }
   }
   const original = btn.textContent;
   btn.disabled = true;
@@ -3307,6 +3529,8 @@ const CONFIG_FIELDS = [
   {id:'fc2-air'},  {id:'fc2-cloud'},  {id:'fc2-boost'},
   {id:'fc3-air'},  {id:'fc3-cloud'},  {id:'fc3-boost'},
   // Chemistry section
+  {id:'aquatic-mode'},
+  {id:'chem-chlorine-type-basic'},
   {id:'chem-chlorine-type'},
   {id:'chem-ta'},  {id:'chem-ph'},  {id:'chem-fc'},
   {id:'chem-th'},  {id:'chem-cya'}, {id:'chem-tc'}
@@ -3365,14 +3589,7 @@ function applyTargetPreset() {
   const targetInput = document.getElementById('target');
   targetInput.value = String(clamp(target, TARGET_TEMP_MIN, TARGET_TEMP_MAX));
   sv('target', 'target-v', ' °C', 1);
-  const min = Number(option.dataset.min);
-  const max = Number(option.dataset.max);
-  if (Number.isFinite(min) && Number.isFinite(max)) {
-    const minInput = document.getElementById('range-min');
-    const maxInput = document.getElementById('range-max');
-    minInput.value = String(clamp(min, TARGET_TEMP_MIN, TARGET_TEMP_MAX));
-    maxInput.value = String(clamp(max, TARGET_TEMP_MIN, TARGET_TEMP_MAX));
-  }
+  syncDesiredRangeFromTarget();
   go();
 }
 
@@ -3472,7 +3689,9 @@ function initConfigActions() {
 function initControlsDrawer() {
   const panel = document.getElementById('controls-panel');
   const openBtn = document.getElementById('open-controls');
+  const floatBtn = document.getElementById('floating-options');
   const closeBtn = document.getElementById('close-controls');
+  const closeBottomBtn = document.getElementById('close-controls-bottom');
   const backdrop = document.getElementById('drawer-backdrop');
   if (!panel || !openBtn || !closeBtn || !backdrop) return;
 
@@ -3483,7 +3702,9 @@ function initControlsDrawer() {
   };
 
   openBtn.addEventListener('click', () => setOpen(true));
+  if (floatBtn) floatBtn.addEventListener('click', () => setOpen(true));
   closeBtn.addEventListener('click', () => setOpen(false));
+  if (closeBottomBtn) closeBottomBtn.addEventListener('click', () => setOpen(false));
   backdrop.addEventListener('click', () => setOpen(false));
 
   window.matchMedia('(max-width: 980px)').addEventListener('change', e => {
@@ -3501,7 +3722,10 @@ function registerServiceWorker() {
 // ─── INIT ─────────────────────────────────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', async () => {
   if (await forceReloadOnVersionChange()) return;
+  reorderControlsByExpertFlow();
+  reorderResultsByExpertFlow();
   initControlsDrawer();
+  initMainForecastButton();
   initCharts();
   initExportActions();
   initWeatherAutofill();
