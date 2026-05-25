@@ -2,10 +2,11 @@
 
 Interactive playpool thermal and cost planner.
 
-## v1.3.0 highlights
+## v1.5.0 highlights
 
-- Global location search (country/city/town) for weather auto-fill.
-- 3-day daily + 36-hour hourly weather from Open-Meteo.
-- Location-aware monthly climate profile loading from public archive data (with fallback baseline support).
-- Reference-month wording for key cards/charts (not fixed UK July assumptions).
-- Version-based forced client cache refresh with saved local pool configuration preserved.
+- Expert-flow UX order for controls/results (location and environment first, deeper controls later).
+- Main-page “Fetch current forecast” action, mobile floating options button, and bottom close button in sidebar.
+- Target temperature kept as a single value with auto-calculated sensible ± range for pool/hot-tub mode.
+- Rough environment/location-aware chemistry product quantity guidance, including hard/soft water caveats.
+- New appendices page (`/splash/appendices.htm`) listing formulas and robust/official calculation sources.
+- Includes prior global location search, 3-day + 36-hour weather, climate profile loading, and version-based cache refresh behavior.

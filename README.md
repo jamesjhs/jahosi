@@ -50,3 +50,6 @@ Crawler endpoints served by the app:
 - `/splash` now supports global location search (country/city/town) for weather auto-fill.
 - It uses Open-Meteo geocoding + forecast APIs and loads a location-aware monthly climate profile from public archive data when available.
 - On splash version changes, the client performs a forced cache refresh/reload while preserving saved pool configuration values in local storage.
+- Current splash release is v1.5.0 with maintenance-first UX ordering, mobile floating options/close controls, and a main-page forecast fetch action.
+- Chemistry guidance now includes rough product quantity estimates (location/environment aware) with explicit hard/soft water caveats.
+- Splash appendices are published at `/splash/appendices.htm` with formulas and validated reference sources.
