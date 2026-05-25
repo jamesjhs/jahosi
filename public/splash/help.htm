@@ -47,10 +47,11 @@
 <body>
 <header>
   <h1>splash! help guide</h1>
-  <p>Friendly guidance for the planner, forecast inputs, exports, and model assumptions.</p>
+  <p>Friendly guidance for the planner, forecast inputs, chemistry guidance, exports, and model assumptions.</p>
 </header>
 <main>
   <a class="back" href="./index.htm">← Back to splash!</a>
+  <a class="back" href="./appendices.htm">📚 Open appendices (formulas & references)</a>
 
   <section class="card">
     <h2>What splash! does</h2>
@@ -73,7 +74,7 @@
     <ul>
       <li><strong>Thermal storage:</strong> the water is treated as one well-mixed thermal mass with heat capacity <code>mass × specific heat</code>. That is usually reasonable for small playpools after circulation or normal mixing.</li>
       <li><strong>Heat losses:</strong> losses are represented with an overall <code>UA</code> value split across the surface, side walls, and base. Surface loss is the most important term because it bundles convection, evaporation, and long-wave radiation.</li>
-      <li><strong>Solar gain:</strong> monthly solar baselines are converted into daytime heat input. In v1.3.0, monthly climate can be loaded from public global daily archive data for your selected location, with fallback baselines if archive data is unavailable.</li>
+      <li><strong>Solar gain:</strong> monthly solar baselines are converted into daytime heat input. Monthly climate can be loaded from public global daily archive data for your selected location, with fallback baselines if archive data is unavailable.</li>
       <li><strong>Forecast stepping:</strong> the 3-day forecast uses stepped simulation over each day rather than a single 24-hour average temperature equation. That reduces a common error where night-time temperatures looked too optimistic because daytime solar had been smeared across the whole day.</li>
       <li><strong>Hourly near-term weather:</strong> when location weather is available, the 36-hour chart uses hourly air temperature and cloud data so overnight cooling responds to changing atmospheric conditions.</li>
       <li><strong>Custom heating hours:</strong> if you choose a custom number of heating hours per day, the planner treats that as equivalent average daily heater duty unless you explicitly choose off-peak-only mode. This is deliberate because the exact timing is unknown.</li>
@@ -91,12 +92,24 @@
   </section>
 
   <section class="card">
-    <h2>What’s new in v1.3.0</h2>
+    <h2>What’s new in v1.5.0</h2>
     <ul>
-      <li><strong>Global location search:</strong> weather auto-fill is no longer UK-postcode-only; you can now search and use locations worldwide.</li>
-      <li><strong>Location-aware climate profiling:</strong> monthly ambient/solar inputs can be derived from public global archive data for the selected location, with fallback behavior when unavailable.</li>
-      <li><strong>Reference-month UX:</strong> key model outputs now describe a location-aware reference month, avoiding fixed July wording in non-UK contexts.</li>
-      <li><strong>Versioned cache refresh:</strong> on app version change, splash forces a local cache refresh and page reload to reduce stale assets while preserving saved pool configuration values in local storage.</li>
+      <li><strong>Expert-flow UX order:</strong> controls now follow practical maintenance workflow: location first, then dimensions/environment, season/water costs, basic chemistry choice, then deeper thermal/tariff/cover controls.</li>
+      <li><strong>Target as a single value:</strong> desired range is now auto-calculated around the target temperature for pool vs hot-tub modes.</li>
+      <li><strong>Main-page weather action:</strong> a new <em>Fetch current forecast</em> button is available from the top page actions.</li>
+      <li><strong>Mobile UX improvements:</strong> floating options button and a bottom close button in the sidebar for easier one-handed use.</li>
+      <li><strong>Chemistry quantity guidance:</strong> location-aware rough product quantity table now estimates stabilised chlorine, liquid chlorine alternatives, and refill guidance, with hard/soft water caveats.</li>
+      <li><strong>Appendices page:</strong> new <code>/splash/appendices.htm</code> documents formulas, assumptions, and source references used in calculations.</li>
+    </ul>
+  </section>
+
+  <section class="card">
+    <h2>What’s new in v1.4.0</h2>
+    <ul>
+      <li><strong>Pool chemistry guide:</strong> introduced chemistry targets, FC:CYA logic, dosing estimates, and chemistry schedule exports.</li>
+      <li><strong>Global location search and weather auto-fill:</strong> search/use locations worldwide with 3-day and 36-hour weather support.</li>
+      <li><strong>Location-aware climate profiling:</strong> monthly ambient/solar inputs can be derived from public global archive data with fallback behavior.</li>
+      <li><strong>Versioned cache refresh:</strong> on app version change, splash forces a local cache refresh while preserving saved configuration values.</li>
     </ul>
   </section>
 
@@ -120,7 +133,7 @@
   </section>
 </main>
 <footer>
-  splash! v1.3.0 · Copyright © jahosi.co.uk 2026
+  splash! v1.5.0 · Copyright © jahosi.co.uk 2026
 </footer>
 </body>
 </html>

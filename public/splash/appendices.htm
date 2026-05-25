@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="splash! appendices: formulas, references, assumptions, and validated sources used by thermal and chemistry calculations.">
+<meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1">
+<link rel="canonical" href="https://jahosi.co.uk/splash/appendices.htm">
+<meta property="og:type" content="article">
+<meta property="og:title" content="splash! Appendices | Jahosi App Portfolio">
+<meta property="og:description" content="Validated sources, formulas, and assumptions used in splash! thermal and chemistry calculations.">
+<meta property="og:url" content="https://jahosi.co.uk/splash/appendices.htm">
+<meta property="og:site_name" content="splash!">
+<meta property="og:image" content="https://jahosi.co.uk/me.jpg">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="splash! Appendices | Jahosi App Portfolio">
+<meta name="twitter:description" content="Validated sources, formulas, and assumptions used in splash! thermal and chemistry calculations.">
+<meta name="twitter:image" content="https://jahosi.co.uk/me.jpg">
+<link rel="icon" type="image/svg+xml" href="./icons/pool-icon-192.svg">
+<title>splash! Appendices | Jahosi App Portfolio</title>
+<style>
+  :root{--blue:#0077b6;--blue-lt:#e0f2fe;--bg:#eef6fc;--card:#ffffff;--text:#1a202c;--muted:#64748b;--border:#cde8f5;--shadow:0 2px 10px rgba(0,80,160,0.1)}
+  *{box-sizing:border-box}
+  body{margin:0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--text);line-height:1.6}
+  header{background:linear-gradient(135deg,#023e8a 0%,#0096c7 100%);color:#fff;padding:1.5rem 2rem}
+  main{max-width:1080px;margin:0 auto;padding:1rem}
+  .card{background:var(--card);border:1px solid var(--border);border-radius:14px;box-shadow:var(--shadow);padding:1.25rem 1.4rem;margin-bottom:1rem}
+  h1{margin:0;font-size:1.7rem}
+  h2{font-size:1rem;color:var(--blue);text-transform:uppercase;letter-spacing:.04em;margin:0 0 .75rem}
+  p,li{font-size:.95rem}
+  ul,ol{padding-left:1.2rem}
+  .back{display:inline-flex;align-items:center;gap:.45rem;margin-bottom:1rem;color:var(--blue);font-weight:700;text-decoration:none}
+  .note{background:var(--blue-lt);border-left:4px solid var(--blue);padding:.9rem 1rem;border-radius:0 10px 10px 0}
+  table{width:100%;border-collapse:collapse;font-size:.86rem}
+  th{background:var(--blue);color:#fff;padding:.45rem .6rem;text-align:left}
+  td{padding:.4rem .6rem;border-bottom:1px solid var(--border);vertical-align:top}
+  tr:nth-child(even) td{background:#f6fbff}
+  code{background:#f1f5f9;padding:.1rem .35rem;border-radius:6px}
+  footer{text-align:center;padding:1.5rem;color:var(--muted);font-size:.8rem}
+</style>
+</head>
+<body>
+<header>
+  <h1>splash! appendices</h1>
+  <p>Formulas, assumptions, source references, and scientific basis used across thermal and chemistry outputs.</p>
+</header>
+<main>
+  <a class="back" href="./index.htm">← Back to splash!</a>
+
+  <section class="card">
+    <h2>Evidence quality and scope</h2>
+    <p>splash! combines first-principles heat-balance equations with published pool-water treatment guidance from WHO, PWTAG, CDC MAHC, ANSI/APSP/ICC standards, and established water-treatment references.</p>
+    <div class="note">
+      All outputs are <strong>planning estimates</strong>. Site-specific weather exposure, bather load, water source chemistry, local regulations, and equipment differences can materially shift real outcomes.
+      Always verify with measured data (thermometer + test kit/strips) before making operational decisions.
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>Thermal model formulas</h2>
+    <ul>
+      <li><strong>Pool volume:</strong> circular <code>V = πr²d</code>; rectangular <code>V = xyd</code>.</li>
+      <li><strong>Water thermal capacity:</strong> <code>C = m × c_p</code>, where <code>m = ρV</code>.</li>
+      <li><strong>Heat balance:</strong> <code>dT/dt = (P_heater + P_solar − UA(T−T_air)) / C</code>.</li>
+      <li><strong>Equilibrium temperature:</strong> <code>T_eq = T_air + (P_heater + P_solar)/UA</code>.</li>
+      <li><strong>Time constant:</strong> <code>τ = C / UA</code>.</li>
+      <li><strong>Analytical warm-up:</strong> <code>T(t)=T_eq + (T0−T_eq)e^(−t/τ)</code>.</li>
+      <li><strong>Solar baseline scaling:</strong> monthly baseline irradiance scaled using extraterrestrial horizontal irradiance ratio at selected latitude.</li>
+    </ul>
+  </section>
+
+  <section class="card">
+    <h2>Chemistry formulas and dosing derivations</h2>
+    <table>
+      <thead>
+        <tr><th>Quantity</th><th>Formula / Derivation</th><th>Notes</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>FC dosing from available chlorine</td><td><code>g product per 1000 L per 1 ppm FC = 1 / available_cl_fraction</code></td><td>Dichlor 56% → 1.79 g; Trichlor 90% → 1.11 g.</td></tr>
+        <tr><td>CYA side-load from stabilised chlorine</td><td><code>ppm CYA per ppm FC = (MW cyanurate ring / MW product) / available_cl_fraction_adjustment</code></td><td>Dichlor ≈ 1.05; Trichlor ≈ 0.62.</td></tr>
+        <tr><td>TA raise (NaHCO₃)</td><td>Theoretical <code>84/50 = 1.68</code> g/1000L/ppm; practical guide 1.8</td><td>Industry guide value used.</td></tr>
+        <tr><td>CH raise (CaCl₂ ~77%)</td><td>Practical guide 1.5 g/1000L/ppm</td><td>Depends on product purity.</td></tr>
+        <tr><td>CYA raise</td><td><code>1 ppm = 1 mg/L</code> ⇒ 1 g per 1000 L per ppm</td><td>Direct mass-balance.</td></tr>
+        <tr><td>FC minimum with CYA</td><td><code>FC_min = max(1.0, 0.075 × CYA)</code></td><td>CDC MAHC FC:CYA ratio rule.</td></tr>
+        <tr><td>Combined chlorine</td><td><code>CC = TC − FC</code>; breakpoint shock rough guide <code>10 × CC</code></td><td>Operational rule-of-thumb, then retest.</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section class="card">
+    <h2>Environmental assumptions used in quantity guides</h2>
+    <ul>
+      <li>Temperature-driven FC depletion bands are used to estimate routine chlorine demand by season/location.</li>
+      <li>Location-aware monthly climate profile (archive when available; fallback baseline otherwise) is used for monthly scheduling context.</li>
+      <li>Hard/soft water scenario ranges are intentionally broad and marked as rough guides because local supply chemistry can vary significantly, even within the same region.</li>
+      <li>Product quantity tables are planning aids only and should always be corrected using measured TA/pH/CH/CYA/FC/TC readings.</li>
+    </ul>
+  </section>
+
+  <section class="card">
+    <h2>Primary references (official and validated)</h2>
+    <ol>
+      <li>WHO (2006). <em>Guidelines for Safe Recreational Water Environments, Vol 2: Swimming Pools and Similar Environments</em>. ISBN 9789241546768.</li>
+      <li>PWTAG (2017). <em>Swimming Pool Water: Treatment and Quality Standards for Pools and Spas</em>.</li>
+      <li>CDC (2023). <em>Model Aquatic Health Code (MAHC), 5th Edition</em>. cdc.gov/mahc.</li>
+      <li>ANSI/APSP/ICC 11-2019. <em>Water Quality in Public Pools and Spas</em>.</li>
+      <li>DOE Energy Saver guidance for pool heating and covers (energy.gov/energysaver).</li>
+      <li>White, G.C. (1999). <em>Handbook of Chlorination and Alternative Disinfectants</em>, 4th ed., Wiley.</li>
+      <li>Wojtowicz, J.C. (2001). Effect of temperature on chemical equilibria in swimming pools. <em>Journal of the Swimming Pool and Spa Industry</em>.</li>
+      <li>Taylor Technologies. <em>Pool &amp; Spa Water Chemistry</em> professional reference materials.</li>
+      <li>Open-Meteo API documentation and datasets for geocoding, forecast, and archive climate inputs.</li>
+    </ol>
+  </section>
+</main>
+<footer>
+  splash! appendices · v1.5.0 · Copyright © jahosi.co.uk 2026
+</footer>
+</body>
+</html>

@@ -72,6 +72,15 @@ header p{font-size:.85rem;opacity:.85;margin-top:.25rem}
 
 .mobile-toolbar{display:none;margin-bottom:1rem}
 .mobile-toolbar button{width:100%;border:0;border-radius:10px;background:var(--blue);color:#fff;padding:.7rem 1rem;font-weight:700;cursor:pointer;box-shadow:var(--shadow)}
+.floating-options-btn{
+  display:none;position:fixed;right:1rem;bottom:1rem;z-index:1200;
+  border:0;border-radius:999px;background:var(--blue);color:#fff;
+  padding:.75rem 1rem;font-weight:700;cursor:pointer;box-shadow:var(--shadow)
+}
+.controls-close-bottom{
+  display:none;width:100%;margin-top:.5rem;border:0;border-radius:10px;
+  background:#334155;color:#fff;padding:.7rem 1rem;font-weight:700;cursor:pointer
+}
 .drawer-backdrop{display:none}
 
 .card{
@@ -190,6 +199,29 @@ tr.totals td{background:#eef6fc!important;font-weight:700;border-top:2px solid v
 .inline-help{font-size:.75rem;color:var(--muted);line-height:1.5}
 footer{text-align:center;padding:1.5rem;font-size:.72rem;color:var(--muted)}
 
+/* ─── POOL CHEMISTRY ───────────────────────────────────────────────────────── */
+.chem-params-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:1rem;margin-bottom:1rem}
+.chem-card{background:var(--card);border-radius:10px;padding:1.1rem 1.2rem;box-shadow:var(--shadow);border:2px solid var(--border);transition:border-color .2s}
+.chem-card.chem-ok  {border-color:var(--green)}
+.chem-card.chem-low {border-color:var(--amber)}
+.chem-card.chem-high{border-color:var(--red)}
+.chem-card.chem-na  {border-color:var(--border);opacity:.88}
+.chem-name{font-size:.78rem;font-weight:700;color:var(--blue);text-transform:uppercase;letter-spacing:.05em;margin-bottom:.2rem}
+.chem-range{font-size:.7rem;color:var(--muted);margin-bottom:.4rem;line-height:1.45}
+.chem-badge{display:inline-block;padding:.18rem .5rem;border-radius:999px;font-size:.7rem;font-weight:700;margin-bottom:.4rem}
+.chem-badge.ok  {background:#dcfce7;color:#166534}
+.chem-badge.low {background:#fef3c7;color:#92400e}
+.chem-badge.high{background:#fee2e2;color:#991b1b}
+.chem-badge.na  {background:#f3f4f6;color:#6b7280}
+.chem-action{font-size:.78rem;color:var(--text);line-height:1.55}
+.chem-disclaimer{background:#fffbeb;border-left:4px solid var(--amber);border-radius:0 8px 8px 0;padding:1rem 1.25rem;margin-bottom:1rem;font-size:.82rem;line-height:1.75}
+.chem-source-note{font-size:.7rem;color:var(--muted);margin-top:.5rem;line-height:1.5}
+.chem-ref-table{width:100%;border-collapse:collapse;font-size:.76rem}
+.chem-ref-table th{background:var(--blue);color:#fff;padding:.4rem .6rem;text-align:left;font-size:.73rem;font-weight:600}
+.chem-ref-table td{padding:.35rem .6rem;border-bottom:1px solid var(--border);vertical-align:top}
+.chem-ref-table tr:nth-child(even) td{background:#f5faff}
+.chem-active-band td{background:#e0f2fe!important;font-weight:700}
+
 @media(max-width:980px){
   .layout{grid-template-columns:1fr}
   .mobile-toolbar{display:block}
@@ -200,6 +232,8 @@ footer{text-align:center;padding:1.5rem;font-size:.72rem;color:var(--muted)}
   .drawer-backdrop.open{opacity:1;pointer-events:auto}
   body.drawer-open{overflow:hidden}
   .intro-grid{grid-template-columns:1fr}
+  .floating-options-btn{display:inline-flex;align-items:center;justify-content:center}
+  .controls-close-bottom{display:block}
 }
 </style>
 </head>
@@ -207,7 +241,7 @@ footer{text-align:center;padding:1.5rem;font-size:.72rem;color:var(--muted)}
 
 <header>
   <h1>splash! <em>by Jahosi</em></h1>
-  <p>Cost estimates for your playpool · v1.3.0</p>
+  <p>Cost estimates for your playpool · v1.5.0</p>
 </header>
 
 <div class="wrap">
@@ -232,7 +266,9 @@ footer{text-align:center;padding:1.5rem;font-size:.72rem;color:var(--muted)}
         <ul class="intro-list">
           <li>Manual forecast entry always stays available, even after location-based weather auto-fill.</li>
           <li>Set pool season start and end dates to see a cost breakdown for your actual outdoor season, including water fill costs (UK Anglian Water metered baseline: 0.55 p/L).</li>
-          <li>v1.3.0 adds global location search, global 3-day + 36-hour weather auto-fill, and location-aware monthly climate profiling with fallback support.</li>
+          <li>v1.5.0 reorders controls/results to an expert maintenance workflow, adds main-page forecast fetch, and improves mobile options UX.</li>
+          <li>v1.5.0 also adds environment-aware rough product quantity guidance (including stabilised vs liquid chlorine and refill estimates) and a new appendices page with formulas/sources.</li>
+          <li>v1.4.0 added the Pool Chemistry Guide section with target ranges, dosing estimates for dichlor/trichlor, temperature-based checking schedules, and downloadable schedule export.</li>
           <li>Exports are created locally in your browser and now include version and copyright details.</li>
         </ul>
       </div>
@@ -245,6 +281,8 @@ footer{text-align:center;padding:1.5rem;font-size:.72rem;color:var(--muted)}
         <p class="inline-help">3. Review the forecast, charts, maths checks, and exports.</p>
         <div class="info-actions">
           <a class="link-btn" href="./help.htm">Open help guide</a>
+          <a class="link-btn" href="./appendices.htm" style="background:#475569">Open appendices</a>
+          <button type="button" class="action-btn" id="fetch-weather-main">Fetch current forecast</button>
         </div>
       </div>
     </div>
@@ -262,6 +300,7 @@ footer{text-align:center;padding:1.5rem;font-size:.72rem;color:var(--muted)}
   <div class="mobile-toolbar">
     <button id="open-controls" type="button">⚙️ Adjust Settings</button>
   </div>
+  <button id="floating-options" class="floating-options-btn" type="button">⚙️ Options</button>
 
   <div class="layout">
     <aside class="controls-panel" id="controls-panel" aria-label="Configuration controls">
@@ -271,7 +310,7 @@ footer{text-align:center;padding:1.5rem;font-size:.72rem;color:var(--muted)}
       </div>
 
       <div class="controls-grid">
-        <div class="card">
+        <div class="card" id="card-dimensions">
           <div class="card-title">Pool Dimensions &amp; Base</div>
 
           <div class="field">
@@ -347,7 +386,7 @@ footer{text-align:center;padding:1.5rem;font-size:.72rem;color:var(--muted)}
           <p class="hint">Preset bands follow common public guidance ranges (DOE leisure baseline, learn-to-swim warmer bands, and spa/hot-tub ranges) and remain editable.</p>
         </div>
 
-        <div class="card" style="margin-bottom:1rem">
+        <div class="card" id="card-heating" style="margin-bottom:1rem">
           <div class="card-title">Heating System</div>
 
           <div class="field">
@@ -365,22 +404,22 @@ footer{text-align:center;padding:1.5rem;font-size:.72rem;color:var(--muted)}
           <p class="hint">Resistive element: ~99 %. Heat pump (COP 3.5): 350 %. Enters heat into water as heater_kW × efficiency.</p>
         </div>
 
-        <div class="card">
+        <div class="card" id="card-comfort">
           <div class="card-title">Comfort Range &amp; Passive Cover</div>
 
           <div class="field-row">
             <div class="field">
               <label for="range-min">Desired Min Temp</label>
-              <input type="number" id="range-min" min="18" max="40" step="0.5" value="27"
-                    oninput="go()"> <span style="font-size:.75rem;color:var(--muted)">°C</span>
+              <input type="number" id="range-min" min="18" max="40" step="0.5" value="27" readonly>
+              <span style="font-size:.75rem;color:var(--muted)">°C (auto)</span>
             </div>
             <div class="field">
               <label for="range-max">Desired Max Temp</label>
-              <input type="number" id="range-max" min="18" max="40" step="0.5" value="30"
-                    oninput="go()"> <span style="font-size:.75rem;color:var(--muted)">°C</span>
+              <input type="number" id="range-max" min="18" max="40" step="0.5" value="30" readonly>
+              <span style="font-size:.75rem;color:var(--muted)">°C (auto)</span>
             </div>
           </div>
-          <p class="hint">Use a preferred temperature band to answer the “is it warm enough?” questions that owners commonly ask.</p>
+          <p class="hint" id="target-range-auto">Desired range is calculated automatically from your target temperature and pool mode.</p>
 
           <div class="field">
             <label for="cover-type">Passive Thermal Cover</label>
@@ -400,7 +439,7 @@ footer{text-align:center;padding:1.5rem;font-size:.72rem;color:var(--muted)}
           <p class="hint">Cover hours are applied to the coolest hours first, then to daylight hours. More cover lowers evaporation but may slightly reduce passive solar gain.</p>
         </div>
 
-        <div class="card">
+        <div class="card" id="card-tariff">
           <div class="card-title">Electricity Tariff</div>
 
           <div class="field-row">
@@ -456,7 +495,7 @@ footer{text-align:center;padding:1.5rem;font-size:.72rem;color:var(--muted)}
           <p class="hint" id="cost-target-help">The annual cost target is used for the inverse temperature-vs-budget chart.</p>
         </div>
 
-        <div class="card">
+        <div class="card" id="card-season">
           <div class="card-title">Pool Season (Temporary Use)</div>
 
           <div class="field-row">
@@ -484,8 +523,34 @@ footer{text-align:center;padding:1.5rem;font-size:.72rem;color:var(--muted)}
           <p class="hint">Enter dates to unlock season cost summaries. Baseline: Anglian Water metered rate 0.55 p/L. Leave dates blank to see annual-only projections.</p>
         </div>
 
-        <div class="card">
-          <div class="card-title">Current Temperature &amp; 3-Day Forecast</div>
+        <div class="card" id="card-forecast">
+          <div class="card-title">Location, Current Temperature &amp; 3-Day Forecast</div>
+
+          <div class="field-row">
+            <div class="field">
+              <label for="forecast-location-query">Search location (country / city / town)</label>
+              <input type="text" id="forecast-location-query" inputmode="search" autocomplete="off" placeholder="e.g. Tokyo, Nairobi, São Paulo, Dublin">
+              <input type="hidden" id="forecast-latitude" value="52.6">
+              <input type="hidden" id="forecast-longitude" value="1.3">
+            </div>
+            <div class="field" style="align-self:end">
+              <button type="button" class="action-btn" id="search-location">Search places</button>
+            </div>
+          </div>
+          <div class="field-row">
+            <div class="field">
+              <label for="forecast-location-results">Select matched place</label>
+              <select id="forecast-location-results">
+                <option value="">Search above to load matches</option>
+              </select>
+            </div>
+            <div class="field" style="align-self:end">
+              <button type="button" class="action-btn" id="fetch-weather">Use selected place forecast</button>
+            </div>
+          </div>
+          <p class="hint">Manual forecast entry stays enabled. When online, search uses Open-Meteo geocoding for global coordinates and Open-Meteo forecast for the next 3 daily weather values plus 36 hourly weather points, then you can still edit everything by hand.</p>
+          <p class="status-chip info" id="weather-status" aria-live="polite">Manual entry is active. Global location weather auto-fill is optional.</p>
+          <p class="status-chip info" id="climate-status" aria-live="polite">Monthly climate profile: East England fallback baseline.</p>
 
           <div class="field">
             <label for="current-temp-source">Current Temperature Source</label>
@@ -528,32 +593,6 @@ footer{text-align:center;padding:1.5rem;font-size:.72rem;color:var(--muted)}
             </div>
           </div>
           <p class="hint">Hot-water and kettle additions are treated as instant mixing boosts before the forecast starts.</p>
-
-          <div class="field-row">
-            <div class="field">
-              <label for="forecast-location-query">Search location (country / city / town)</label>
-              <input type="text" id="forecast-location-query" inputmode="search" autocomplete="off" placeholder="e.g. Tokyo, Nairobi, São Paulo, Dublin">
-              <input type="hidden" id="forecast-latitude" value="52.6">
-              <input type="hidden" id="forecast-longitude" value="1.3">
-            </div>
-            <div class="field" style="align-self:end">
-              <button type="button" class="action-btn" id="search-location">Search places</button>
-            </div>
-          </div>
-          <div class="field-row">
-            <div class="field">
-              <label for="forecast-location-results">Select matched place</label>
-              <select id="forecast-location-results">
-                <option value="">Search above to load matches</option>
-              </select>
-            </div>
-            <div class="field" style="align-self:end">
-              <button type="button" class="action-btn" id="fetch-weather">Use selected place forecast</button>
-            </div>
-          </div>
-          <p class="hint">Manual forecast entry stays enabled. When online, search uses Open-Meteo geocoding for global coordinates and Open-Meteo forecast for the next 3 daily weather values plus 36 hourly weather points, then you can still edit everything by hand.</p>
-          <p class="status-chip info" id="weather-status" aria-live="polite">Manual entry is active. Global location weather auto-fill is optional.</p>
-          <p class="status-chip info" id="climate-status" aria-live="polite">Monthly climate profile: East England fallback baseline.</p>
 
           <div class="field">
             <label>Forecast Day 1</label>
@@ -610,13 +649,32 @@ footer{text-align:center;padding:1.5rem;font-size:.72rem;color:var(--muted)}
           </div>
           <p class="hint">Forecast days use current-month daylight and location-aware solar baselines, scaled by your cloud-cover input.</p>
         </div>
+        <div class="card" id="card-chem-basic">
+          <div class="card-title">Basic Pool Chemistry Choice</div>
+          <div class="field">
+            <label for="aquatic-mode">Use Case</label>
+            <select id="aquatic-mode" onchange="go()">
+              <option value="pool" selected>Pool / playpool</option>
+              <option value="hottub">Hot tub / spa</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="chem-chlorine-type-basic">Primary Chlorine Product</label>
+            <select id="chem-chlorine-type-basic" onchange="syncChlorineTypeSelectors('chem-chlorine-type-basic');go()">
+              <option value="dichlor" selected>Dichlor (stabilised granular chlorine)</option>
+              <option value="trichlor">Trichlor (stabilised tablets/sticks)</option>
+            </select>
+          </div>
+          <p class="hint">This basic chemistry selection is used to estimate routine product quantities and CYA accumulation rates. Water chemistry (hard vs soft water) and usage patterns can significantly change outcomes — treat all figures as rough guides only.</p>
+        </div>
+        <button class="controls-close-bottom" id="close-controls-bottom" type="button">Close options</button>
       </div>
     </aside>
 
     <div class="drawer-backdrop" id="drawer-backdrop"></div>
 
     <main class="results-panel">
-      <div class="sec">📊 Key Metrics</div>
+      <div class="sec" id="sec-key-metrics">📊 Key Metrics</div>
       <div class="stats-row" id="stats-row">
         <div class="stat"><div class="lbl">Pool Volume</div><div class="val" id="s-vol">—</div><div class="sub">litres</div></div>
         <div class="stat"><div class="lbl">Thermal Capacity</div><div class="val" id="s-cap">—</div><div class="sub">kJ / °C</div></div>
@@ -649,8 +707,8 @@ footer{text-align:center;padding:1.5rem;font-size:.72rem;color:var(--muted)}
         <div class="stat"><div class="lbl">Cost per Day</div><div class="val" id="s-season-per-day">—</div><div class="sub">£ / day (season average)</div></div>
       </div>
 
-      <div class="sec">🧭 Planning answers people usually ask</div>
-      <div class="qa-grid">
+      <div class="sec" id="sec-planning">🧭 Planning answers people usually ask</div>
+      <div class="qa-grid" id="planning-qa-grid">
         <article class="qa-card">
           <h3>Can I stay in my desired range?</h3>
           <p id="qa-range">Loading…</p>
@@ -669,7 +727,7 @@ footer{text-align:center;padding:1.5rem;font-size:.72rem;color:var(--muted)}
         </article>
       </div>
 
-      <div class="sec">🔮 Boost model &amp; 3-day prediction</div>
+      <div class="sec" id="sec-boost">🔮 Boost model &amp; 3-day prediction</div>
       <div class="stats-row" id="forecast-stats-row">
         <div class="stat"><div class="lbl">Temp After Top-Ups</div><div class="val" id="s-afterboost">—</div><div class="sub">°C after hot water + kettles</div></div>
         <div class="stat"><div class="lbl">Hot Water Needed</div><div class="val" id="s-hotreq">—</div><div class="sub">L from tank to hit target now</div></div>
@@ -678,7 +736,7 @@ footer{text-align:center;padding:1.5rem;font-size:.72rem;color:var(--muted)}
         <div class="stat"><div class="lbl">3-Day Boost Eq.</div><div class="val" id="s-boostcost">—</div><div class="sub">£ peak-rate equivalent for top-ups + extra heater</div></div>
       </div>
 
-      <div class="card" style="margin-bottom:1rem">
+      <div class="card" style="margin-bottom:1rem" id="forecast-sim-card">
         <div class="card-title">3-Day Forecast Simulation</div>
         <div class="tbl-wrap">
           <table>
@@ -701,12 +759,12 @@ footer{text-align:center;padding:1.5rem;font-size:.72rem;color:var(--muted)}
         <p class="mini-note" id="forecast-note">Forecast results use a stepped day/night energy-balance model, begin from the current pool temperature after optional hot-water and kettle boosts, and cap total heater runtime at 24 hours per day.</p>
       </div>
 
-      <div class="card" style="margin-bottom:1rem">
-        <div class="card-title">Model review in v1.3.0</div>
-        <p class="inline-help">Core daylight-solar and forecast-cap safeguards remain in place. v1.3.0 adds global location search, global weather auto-fill, and location-aware monthly climate profiling (with fallback baseline support) while keeping manual forecast entry fully available. Manual forecasts are still planning estimates, not guarantees.</p>
+      <div class="card" style="margin-bottom:1rem" id="model-review-card">
+        <div class="card-title">Model review in v1.5.0</div>
+        <p class="inline-help">Core daylight-solar and forecast-cap safeguards remain in place. v1.5.0 improves workflow UX ordering, mobile controls, and adds environment-aware rough chemistry product quantity guidance plus appendices documentation of formulas/sources. v1.4.0 added the chemistry guide and schedule export. v1.3.0 added global location search, global weather auto-fill, and location-aware monthly climate profiling. Manual forecasts remain planning estimates, not guarantees.</p>
       </div>
 
-      <div class="card" style="margin-bottom:1rem">
+      <div class="card" style="margin-bottom:1rem" id="export-card">
         <div class="card-title">Export Reports</div>
         <p class="hint" style="margin-top:0">Download a shareable summary or raw monthly data including pool statistics, budget, target range, and cover assumptions.</p>
         <div class="export-actions">
@@ -724,15 +782,15 @@ footer{text-align:center;padding:1.5rem;font-size:.72rem;color:var(--muted)}
         <p class="mini-note" id="export-status" aria-live="polite">Exports are generated locally in your browser.</p>
       </div>
 
-      <div class="card" style="margin-bottom:1rem">
+      <div class="card" style="margin-bottom:1rem" id="math-checks-card">
         <div class="card-title">Math Integrity Checks</div>
         <ul class="diag-list" id="math-checks">
           <li>Running checks…</li>
         </ul>
       </div>
 
-      <div class="sec">📅 Monthly Analysis — Maintaining Target Temperature</div>
-      <div class="card" style="margin-bottom:1rem">
+      <div class="sec" id="monthly-sec">📅 Monthly Analysis — Maintaining Target Temperature</div>
+      <div class="card" style="margin-bottom:1rem" id="monthly-card">
         <div class="tbl-wrap">
           <table>
             <thead>
@@ -756,8 +814,8 @@ footer{text-align:center;padding:1.5rem;font-size:.72rem;color:var(--muted)}
         </div>
       </div>
 
-      <div class="sec">📈 Visualisations</div>
-      <div class="charts-row">
+      <div class="sec" id="viz-sec">📈 Visualisations</div>
+      <div class="charts-row" id="viz-row-1">
         <div class="card">
           <div class="card-title">Monthly Cost to Maintain Target Temperature</div>
           <div class="chart-box"><canvas id="costChart"></canvas></div>
@@ -767,7 +825,7 @@ footer{text-align:center;padding:1.5rem;font-size:.72rem;color:var(--muted)}
           <div class="chart-box"><canvas id="heatChart"></canvas></div>
         </div>
       </div>
-      <div class="charts-row">
+      <div class="charts-row" id="viz-row-2">
         <div class="card">
           <div class="card-title">Heat-Loss Breakdown at Target Temp (reference month)</div>
           <div class="chart-box"><canvas id="lossChart"></canvas></div>
@@ -777,14 +835,14 @@ footer{text-align:center;padding:1.5rem;font-size:.72rem;color:var(--muted)}
           <div class="chart-box"><canvas id="schedChart"></canvas></div>
         </div>
       </div>
-      <div class="charts-row">
+      <div class="charts-row" id="viz-row-3">
         <div class="card">
           <div class="card-title">Ideal Target Temperature vs Annual Cost Target (selected variables)</div>
           <div class="chart-box"><canvas id="inverseChart"></canvas></div>
         </div>
       </div>
 
-      <div class="card" style="margin-bottom:1rem">
+      <div class="card" style="margin-bottom:1rem" id="heuristics-card">
         <div class="card-title">Public Heuristics Behind This Planner</div>
         <ul class="source-list">
           <li><a href="https://www.energy.gov/energysaver/heating-your-pool" target="_blank" rel="noopener noreferrer">US Department of Energy — Heating Your Pool</a>: 26&nbsp;°C / 78&nbsp;°F is a common leisure comfort baseline.</li>
@@ -795,17 +853,271 @@ footer{text-align:center;padding:1.5rem;font-size:.72rem;color:var(--muted)}
         </ul>
         <p class="mini-note">These public-query and forum-derived heuristics are used for planning prompts and cover assumptions; always treat them as indicative rather than guaranteed outcomes.</p>
       </div>
-      <div class="card" style="margin-bottom:1rem">
+      <div class="card" style="margin-bottom:1rem" id="limitations-card">
         <div class="card-title">Why buried/permanent pools are not modelled yet</div>
         <p class="inline-help">splash! currently targets temporary or lightly installed outdoor playpools and uses a simplified, single-body water model with public climate inputs. Fully buried or permanent pools need extra site-specific physics the app does not yet collect reliably, including layered wall/base construction, insulation thickness and type, soil moisture and drainage, ground-temperature lag, and nearby building effects on wind shelter, sky-view radiation, and shading. Without those inputs, one-size-fits-all buried-pool outputs would look precise but often be wrong, so this version keeps buried/permanent pool modelling out of scope and treats results as planning estimates, not guarantees.</p>
       </div>
     </main>
   </div>
 
+  <!-- ─── POOL CHEMISTRY ──────────────────────────────────────────────────── -->
+  <hr style="border:0;border-top:1px solid var(--border);margin:1.5rem 0">
+
+  <div class="sec" id="chemistry-sec">🧪 Pool Chemistry Guide (Chlorine Pools)</div>
+
+  <div class="chem-disclaimer">
+    <strong>⚠ Rough guide — estimates only. Always test with test strips or a drop-test kit first.</strong><br>
+    Dosing figures here are indicative starting points derived from industry-standard formulas and published reference data
+    (WHO, PWTAG, ANSI/APSP, Taylor Technologies). Actual outcomes depend on your specific water source,
+    temperature, bather load, UV exposure, organic load, and local water chemistry.
+    <strong>Never add any chemical to your pool without first testing the water.</strong>
+    Test before and after every chemical addition, and allow mixing time before re-testing.
+    These values are not a substitute for professional water analysis or the advice of a qualified pool technician.
+    Overdosing is hazardous — when in doubt, add less and retest.
+  </div>
+
+  <div class="card" style="margin-bottom:1rem">
+    <div class="card-title">⚗️ Chemistry Configuration</div>
+    <div class="field-row">
+      <div class="field">
+        <label for="chem-chlorine-type">Chlorine Type</label>
+        <select id="chem-chlorine-type" onchange="syncChlorineTypeSelectors('chem-chlorine-type');chemGo()">
+          <option value="dichlor" selected>Dichlor (sodium dichloroisocyanurate, ~56 % available Cl)</option>
+          <option value="trichlor">Trichlor (trichloroisocyanuric acid, ~90 % available Cl)</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Pool Volume (from main config)</label>
+        <div id="chem-pool-volume" style="font-size:.9rem;color:var(--blue);font-weight:700;padding:.38rem .55rem;border:1.5px solid var(--border);border-radius:6px;background:#f5faff">—</div>
+      </div>
+    </div>
+    <p class="hint">
+      Both dichlor and trichlor are <strong>stabilised</strong> chlorines — they contain cyanuric acid (CYA / stabiliser)
+      and will raise CYA levels over time with every dose.
+      <strong>Dichlor</strong> is typically granular and quick-dissolving; good for regular dosing.
+      <strong>Trichlor</strong> is typically slow-dissolving tablets or sticks used in a floating feeder.
+      Monitor CYA regularly and carry out a partial water change if CYA exceeds 90 ppm.
+    </p>
+
+    <div style="font-size:.78rem;font-weight:700;color:var(--blue);margin:.75rem 0 .4rem;text-transform:uppercase;letter-spacing:.05em">Enter your current test results (all fields optional)</div>
+    <p class="hint" style="margin-top:0">Fill in your most recent test-strip or drop-test readings to receive personalised rough dosing estimates.
+      Readings update instantly as you type. Leave fields blank to hide recommendations for that parameter.</p>
+
+    <div class="field-row">
+      <div class="field">
+        <label for="chem-ta">Total Alkalinity (TA)</label>
+        <input type="number" id="chem-ta" min="0" max="400" step="1" placeholder="e.g. 100" oninput="chemGo()">
+        <span style="font-size:.75rem;color:var(--muted)">ppm as CaCO₃</span>
+      </div>
+      <div class="field">
+        <label for="chem-ph">pH</label>
+        <input type="number" id="chem-ph" min="5.0" max="10.0" step="0.1" placeholder="e.g. 7.4" oninput="chemGo()">
+        <span style="font-size:.75rem;color:var(--muted)">(dimensionless)</span>
+      </div>
+      <div class="field">
+        <label for="chem-fc">Free Chlorine (FC)</label>
+        <input type="number" id="chem-fc" min="0" max="20" step="0.1" placeholder="e.g. 2.5" oninput="chemGo()">
+        <span style="font-size:.75rem;color:var(--muted)">ppm</span>
+      </div>
+    </div>
+    <div class="field-row">
+      <div class="field">
+        <label for="chem-th">Total Hardness (Calcium Hardness, CH)</label>
+        <input type="number" id="chem-th" min="0" max="2000" step="10" placeholder="e.g. 300" oninput="chemGo()">
+        <span style="font-size:.75rem;color:var(--muted)">ppm as CaCO₃</span>
+      </div>
+      <div class="field">
+        <label for="chem-cya">Cyanuric Acid (Stabiliser)</label>
+        <input type="number" id="chem-cya" min="0" max="300" step="5" placeholder="e.g. 50" oninput="chemGo()">
+        <span style="font-size:.75rem;color:var(--muted)">ppm</span>
+      </div>
+      <div class="field">
+        <label for="chem-tc">Total Chlorine (TC)</label>
+        <input type="number" id="chem-tc" min="0" max="20" step="0.1" placeholder="e.g. 2.5" oninput="chemGo()">
+        <span style="font-size:.75rem;color:var(--muted)">ppm</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Chemistry parameter status cards -->
+  <div class="chem-params-grid">
+    <div class="chem-card chem-na" id="chem-card-ta">
+      <div class="chem-name">Total Alkalinity (TA)</div>
+      <div class="chem-range">Ideal: 80–120 ppm &middot; Acceptable: 80–140 ppm (as CaCO₃)</div>
+      <span class="chem-badge na" id="chem-badge-ta">No reading</span>
+      <div class="chem-action" id="chem-action-ta">Enter a reading above to see dosing recommendations.</div>
+    </div>
+    <div class="chem-card chem-na" id="chem-card-ph">
+      <div class="chem-name">pH</div>
+      <div class="chem-range">Ideal: 7.4–7.6 &middot; Acceptable: 7.2–7.8</div>
+      <span class="chem-badge na" id="chem-badge-ph">No reading</span>
+      <div class="chem-action" id="chem-action-ph">Enter a reading above to see dosing recommendations.</div>
+    </div>
+    <div class="chem-card chem-na" id="chem-card-fc">
+      <div class="chem-name">Free Chlorine (FC)</div>
+      <div class="chem-range">Ideal: 2–4 ppm &middot; Minimum: 1 ppm* &middot; Maximum safe: 5 ppm<br>*With CYA: minimum = 7.5% &times; CYA (CDC MAHC 2023)</div>
+      <span class="chem-badge na" id="chem-badge-fc">No reading</span>
+      <div class="chem-action" id="chem-action-fc">Enter a reading above to see dosing recommendations.</div>
+    </div>
+    <div class="chem-card chem-na" id="chem-card-th">
+      <div class="chem-name">Total Hardness (Calcium Hardness, CH)</div>
+      <div class="chem-range">Ideal: 250–350 ppm &middot; Acceptable: 200–500 ppm (as CaCO₃)</div>
+      <span class="chem-badge na" id="chem-badge-th">No reading</span>
+      <div class="chem-action" id="chem-action-th">Enter a reading above to see dosing recommendations.</div>
+    </div>
+    <div class="chem-card chem-na" id="chem-card-cya">
+      <div class="chem-name">Cyanuric Acid (CYA / Stabiliser)</div>
+      <div class="chem-range">Ideal: 40–80 ppm &middot; Min outdoor: 30 ppm &middot; Max: 90 ppm</div>
+      <span class="chem-badge na" id="chem-badge-cya">No reading</span>
+      <div class="chem-action" id="chem-action-cya">Enter a reading above to see dosing recommendations.</div>
+    </div>
+    <div class="chem-card chem-na" id="chem-card-tc">
+      <div class="chem-name">Total Chlorine (TC) &amp; Combined Chlorine (CC)</div>
+      <div class="chem-range">TC = FC + CC. Combined Chlorine (CC) should be &lt; 0.5 ppm.</div>
+      <span class="chem-badge na" id="chem-badge-tc">No reading</span>
+      <div class="chem-action" id="chem-action-tc">Enter both TC and FC readings above to calculate Combined Chlorine (CC = TC &minus; FC).</div>
+    </div>
+  </div>
+
+  <!-- Reference ranges table -->
+  <div class="card" style="margin-bottom:1rem">
+    <div class="card-title">📋 Target Ranges &amp; Scientific Basis</div>
+    <div class="tbl-wrap">
+      <table class="chem-ref-table">
+        <thead>
+          <tr>
+            <th>Parameter</th>
+            <th>Minimum</th>
+            <th>Ideal Range</th>
+            <th>Maximum</th>
+            <th>Units</th>
+            <th>Notes &amp; Rationale</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Total Alkalinity (TA)</strong></td>
+            <td>80</td><td>80–120</td><td>140</td><td>ppm as CaCO₃</td>
+            <td>Acts as a pH buffer. Low TA causes rapid pH "bounce"; high TA makes pH correction difficult. (PWTAG 2017; ANSI/APSP/ICC 11-2019)</td>
+          </tr>
+          <tr>
+            <td><strong>pH</strong></td>
+            <td>7.2</td><td>7.4–7.6</td><td>7.8</td><td>—</td>
+            <td>Below 7.2: eye/skin irritation, equipment corrosion. Above 7.8: HOCl fraction drops sharply (from ~66 % at 7.2 to ~33 % at 7.6), greatly reducing sanitiser effectiveness. (WHO Vol 2, 2006; CDC MAHC 2023)</td>
+          </tr>
+          <tr>
+            <td><strong>Free Chlorine (FC)</strong></td>
+            <td>1.0*</td><td>2–4</td><td>5.0</td><td>ppm</td>
+            <td>*With CYA stabiliser, minimum FC = max(1.0, 0.075 &times; CYA) per CDC MAHC 2023 (FC:CYA ratio). E.g., at CYA 50 ppm, min FC = 3.75 ppm. Below minimum: inadequate disinfection. Above 5 ppm: eye irritation, bleaching. (CDC MAHC 2023; WHO Vol 2, 2006)</td>
+          </tr>
+          <tr>
+            <td><strong>Total Hardness (Calcium Hardness, CH)</strong></td>
+            <td>200</td><td>250–350</td><td>500</td><td>ppm as CaCO₃</td>
+            <td>Below 200: corrosive, "hungry" water attacks pool surfaces, liner, fittings, and pump seals. Above 500: calcium scale deposits; cloudy water. (ANSI/APSP/ICC 11-2019; Taylor Technologies Professional Reference)</td>
+          </tr>
+          <tr>
+            <td><strong>Cyanuric Acid (CYA / Stabiliser)</strong></td>
+            <td>30</td><td>40–80</td><td>90</td><td>ppm</td>
+            <td>Protects FC from UV photolysis in outdoor pools. Below 30: rapid FC loss in sunlight. Above 90: "chlorine lock" — chlorine present but ineffective; requires water dilution. (CDC MAHC 2023; PWTAG 2017)</td>
+          </tr>
+          <tr>
+            <td><strong>Combined Chlorine (CC)</strong></td>
+            <td>0</td><td>0–0.2</td><td>0.5</td><td>ppm</td>
+            <td>CC = TC − FC. Chloramines cause the classic "chlorine smell" and eye/respiratory irritation. CC ≥ 0.5 ppm indicates a need for breakpoint chlorination: shock at ~10 × CC (use non-stabilised chlorine for shock to avoid further CYA rise). (WHO Vol 2, 2006; CDC MAHC 2023)</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="chem-source-note">
+      Sources:
+      <a href="https://www.who.int/publications/i/item/9789241546768" target="_blank" rel="noopener noreferrer">WHO Guidelines for Safe Recreational Water Environments Vol 2 (2006)</a> ·
+      <a href="https://www.pwtag.org/" target="_blank" rel="noopener noreferrer">PWTAG Pool Water Treatment Advisory Group Technical Notes (2017)</a> ·
+      ANSI/APSP/ICC 11-2019 Standard for Residential Pools &amp; Spas ·
+      <a href="https://www.cdc.gov/healthy-swimming/professionals/mahc/index.html" target="_blank" rel="noopener noreferrer">CDC Model Aquatic Health Code (MAHC) 2023</a> ·
+      Taylor Technologies <em>Pool &amp; Spa Water Chemistry</em> Professional Reference.
+    </p>
+    <p class="mini-note">These ranges are for typical residential outdoor chlorine pools at ambient pH and temperatures. Hot tubs, indoor pools, and high-bather-load facilities may have different requirements. Always treat these as rough guides — test your own water regularly with calibrated test equipment.</p>
+  </div>
+
+  <!-- Rate of change table -->
+  <div class="card" style="margin-bottom:1rem">
+    <div class="card-title">🌡️ Estimated Rates of Change by Temperature</div>
+    <p class="hint" style="margin-top:0">
+      These are rough indicative estimates only. Actual rates depend heavily on bather load, direct sunlight, organic load, and local water chemistry.
+      Current pool temperature (from main config): <strong id="chem-current-temp">—</strong> — active band: <strong id="chem-temp-band">—</strong>.
+    </p>
+    <div class="tbl-wrap" style="margin-bottom:.75rem">
+      <table class="chem-ref-table">
+        <thead>
+          <tr>
+            <th>Water Temperature</th>
+            <th>Typical FC Loss / Day</th>
+            <th>Recommended Check Interval</th>
+            <th>Notes</th>
+          </tr>
+        </thead>
+        <tbody id="chem-schedule-tbody"></tbody>
+      </table>
+    </div>
+    <div style="margin-top:.75rem">
+      <div style="font-size:.75rem;font-weight:700;color:var(--blue);margin-bottom:.35rem;text-transform:uppercase;letter-spacing:.05em">CYA Accumulation with Stabilised Chlorines</div>
+      <div id="chem-cya-accumulation-note" class="inline-help">Configure chlorine type and pool volume (above) to see a CYA accumulation estimate.</div>
+    </div>
+    <p class="chem-source-note">
+      FC depletion rates based on:
+      <a href="https://www.cdc.gov/healthy-swimming/" target="_blank" rel="noopener noreferrer">CDC Healthy Swimming</a> ·
+      <a href="https://www.who.int/publications/i/item/9789241546768" target="_blank" rel="noopener noreferrer">WHO Recreational Water Guidelines Vol 2 (2006)</a> ·
+      <a href="https://www.pwtag.org/" target="_blank" rel="noopener noreferrer">PWTAG Technical Guidance</a> ·
+      Wojtowicz J.C. (2001) "Effect of temperature on chemical equilibria in swimming pools", <em>Journal of the Swimming Pool and Spa Industry</em>;
+      White G.C. (1999) <em>Handbook of Chlorination and Alternative Disinfectants</em>, 4th ed., Wiley.
+      Rates assume CYA-stabilised chlorine at 40–80 ppm, low-to-moderate bather load, outdoor daytime use.
+    </p>
+  </div>
+
+  <div class="card" style="margin-bottom:1rem">
+    <div class="card-title">🧴 Rough Product Quantity Guide (Environment &amp; Location Aware)</div>
+    <p class="hint" style="margin-top:0">
+      Approximate routine usage based on your selected location climate profile, current temperature band, and pool volume.
+      These are rough guides only and assume typical residential usage.
+      <strong>Hard vs soft water can materially change pH/alkalinity/hardness demand.</strong>
+    </p>
+    <div class="tbl-wrap">
+      <table class="chem-ref-table">
+        <thead>
+          <tr>
+            <th>Maintenance Product</th>
+            <th>Estimated Quantity</th>
+            <th>Cadence</th>
+            <th>Why this may be needed</th>
+          </tr>
+        </thead>
+        <tbody id="chem-product-qty-tbody">
+          <tr><td colspan="4">Set your location and chemistry type to calculate rough product quantities.</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="mini-note" id="chem-water-profile-note">Water chemistry profile guidance will appear here (soft/neutral/hard scenarios).</p>
+  </div>
+
+  <!-- Export card -->
+  <div class="card" style="margin-bottom:1rem">
+    <div class="card-title">📥 Download Chemistry Schedule</div>
+    <p class="hint" style="margin-top:0">
+      Generate a personalised pool chemistry schedule based on your pool's volume and chlorine type.
+      The schedule includes dosing reference amounts for your specific pool, temperature-based checking intervals,
+      a month-by-month planner using your location's climate data, and CYA accumulation guidance.
+    </p>
+    <div class="export-actions">
+      <button type="button" id="export-chem-schedule">⬇ Download Chemistry Schedule (opens print / Save as PDF)</button>
+    </div>
+    <p class="mini-note">Opens a print-ready page in a new tab. Use your browser's Print → Save as PDF to save a PDF copy.</p>
+    <p class="mini-note">⚠ All dosing values are rough estimates. Always test your pool water first. These are planning guides, not prescriptions.</p>
+  </div>
+
 </div><!-- /wrap -->
 
 <footer>
-  splash! &mdash; costing for your playpool · v1.3.0.<br>
+  splash! &mdash; costing for your playpool · v1.5.0.<br>
   Physics model: surface losses combine free-convection, evaporation (dominant) and long-wave radiation; parameterised by shade/shelter.
   Location-aware global climate profiling with fallback baselines. Costs are indicative estimates only. Not for safety-critical application.<br>
   Copyright © jahosi.co.uk 2026
@@ -840,7 +1152,7 @@ const COVER_TYPES = {
   liquid:  {label:'Liquid solar cover',             surfaceLossFactor:0.65, solarTransmittance:0.98, evaporationReduction:0.40}
 };
 
-const APP_VERSION = '1.3.0';
+const APP_VERSION = '1.5.0';
 const APP_COPYRIGHT = 'Copyright © jahosi.co.uk 2026';
 const TARGET_TEMP_MIN = 18;
 const TARGET_TEMP_MAX = 40;
@@ -869,7 +1181,59 @@ const PUBLIC_HEURISTICS = [
   {source:'Owner forums and community threads', url:'https://www.troublefreepool.com/', takeaway:'Small uncovered outdoor pools often lose several degrees overnight; bubble covers materially reduce that drop.'}
 ];
 
-const CP   = 4186;   // J/(kg·K) water specific heat
+// ─── POOL CHEMISTRY CONSTANTS ────────────────────────────────────────────────
+// Target ranges validated against:
+//   WHO Guidelines for Safe Recreational Water Environments Vol 2 (2006)
+//   PWTAG Pool Water Treatment Advisory Group Technical Notes (2017)
+//   ANSI/APSP/ICC 11-2019 Standard for Residential Pools & Spas
+//   CDC Model Aquatic Health Code (MAHC) 2023
+//   Taylor Technologies Pool & Spa Water Chemistry Professional Reference
+const CHEM_TARGETS = {
+  ta:  {name:'Total Alkalinity (TA)', unit:'ppm', min:80,  lo:80,  hi:120, max:140},
+  ph:  {name:'pH',                    unit:'',    min:7.2, lo:7.4, hi:7.6, max:7.8},
+  fc:  {name:'Free Chlorine (FC)',    unit:'ppm', min:1.0, lo:2.0, hi:4.0, max:5.0},
+  th:  {name:'Total Hardness (CH)',   unit:'ppm', min:200, lo:250, hi:350, max:500},
+  cya: {name:'Cyanuric Acid (CYA)',   unit:'ppm', min:30,  lo:40,  hi:80,  max:90}
+};
+
+// Dosing constants: grams of chemical per 1000 L per 1 ppm (or per 0.2 pH unit) target change.
+// Derivation notes:
+//   NaHCO3 to raise TA: MW 84 g/mol / (CaCO3 equiv 50 g/mol) = 1.68 theoretical;
+//     industry standard 1.8 g (APSP typical, accounting for real-world dissolution).
+//   CaCl2 (~77% pool grade) to raise CH: MW 111/(0.77×100) = 1.44 g theoretical;
+//     industry standard ~1.5 g (APSP typical).
+//   Cyanuric acid (>98% pure): 1.0 g/1000L/ppm (direct mass: 1 ppm = 1 mg/L in 1000L = 1 g).
+//   Soda ash (Na2CO3) for pH raise / dry acid (NaHSO4·H2O) for pH lower:
+//     approximate at TA ~100 ppm; HIGHLY variable — present as rough guide only.
+//   Dichlor (NaDCC, 56% available Cl): 1000 mg Cl / (0.56 × 1000 mg/g) = 1.786 g/1000L/ppm.
+//   Trichlor (TCCA, 90% available Cl): 1000 mg Cl / (0.90 × 1000 mg/g) = 1.111 g/1000L/ppm.
+//   CYA per FC (Dichlor): NaDCC MW=219.95; CYA ring (C3H3N3O3) MW=129.07;
+//     per 1.786 g NaDCC: 1.786×(129.07/219.95)=1.05 ppm CYA per 1 ppm FC.
+//   CYA per FC (Trichlor): TCCA MW=232.41; per 1.111 g: 1.111×(129.07/232.41)=0.617 ≈ 0.62 ppm.
+const CHEM_DOSING = {
+  nabicarbonate_g_per_1000L_ppm:     1.8,   // NaHCO3 to raise TA 1 ppm
+  cacl2_g_per_1000L_ppm:             1.5,   // CaCl2 ~77% pool grade to raise CH 1 ppm
+  cya_g_per_1000L_ppm:               1.0,   // Cyanuric acid >98% to raise CYA 1 ppm
+  sodaash_g_per_1000L_per_0p2pH:     5.0,   // Na2CO3 to raise pH ~0.2 (TA~100 ppm, rough guide)
+  dryacid_g_per_1000L_per_0p2pH:     8.0,   // NaHSO4·H2O to lower pH ~0.2 (TA~100 ppm, rough guide)
+  dichlor_g_per_1000L_ppm:           1.79,  // NaDCC 56% to raise FC 1 ppm
+  trichlor_g_per_1000L_ppm:          1.11,  // TCCA 90% to raise FC 1 ppm
+  dichlor_cya_per_fc_ppm:            1.05,  // ppm CYA added per ppm FC via dichlor
+  trichlor_cya_per_fc_ppm:           0.62   // ppm CYA added per ppm FC via trichlor
+};
+
+// FC depletion estimates by water temperature with CYA-stabilised chlorine (CYA 40–80 ppm).
+// Assumes low-to-moderate bather load, outdoor daytime use.
+// Sources: CDC MAHC 2023; WHO Vol 2 (2006); PWTAG; Wojtowicz (2001); White (1999).
+// NOTE: These are rough estimates. Actual depletion depends on bather load,
+//       sunlight exposure, organic load, and local water chemistry.
+const CHEM_FC_DEPLETION = [
+  {tLo:null, tHi:15,  fcLo:0.3, fcHi:0.8,  daysCheck:7, label:'< 15 °C'},
+  {tLo:15,   tHi:20,  fcLo:0.5, fcHi:1.5,  daysCheck:4, label:'15–20 °C'},
+  {tLo:20,   tHi:25,  fcLo:0.75,fcHi:2.5,  daysCheck:3, label:'20–25 °C'},
+  {tLo:25,   tHi:30,  fcLo:1.0, fcHi:3.5,  daysCheck:2, label:'25–30 °C'},
+  {tLo:30,   tHi:null,fcLo:1.5, fcHi:5.0,  daysCheck:1, label:'> 30 °C'}
+];   // J/(kg·K) water specific heat
 const RHO  = 998;    // kg/m³    water density
 const AABS = 0.87;   // solar absorptivity of water
 
@@ -1413,6 +1777,525 @@ function heatingCurve(pool, monthState, ambT) {
   return {times, temps, T_eq};
 }
 
+// ─── POOL CHEMISTRY FUNCTIONS ────────────────────────────────────────────────
+function chemPoolVolL() {
+  const shape = gs('pool-shape');
+  const depth = gi('depth');
+  let vol;
+  if (shape === 'rectangular') {
+    vol = gi('pool-x') * gi('pool-y') * depth;
+  } else {
+    const r = gi('radius');
+    vol = Math.PI * r * r * depth;
+  }
+  return Math.max(100, vol * 1000);
+}
+
+function chemCurrentTempC() {
+  if (lastReportData) return lastReportData.summary.currentTempC;
+  return gs('current-temp-source') === 'estimate' ? 22 : gi('current-temp');
+}
+
+function chemTempBand(tempC) {
+  return CHEM_FC_DEPLETION.find(b =>
+    (b.tLo === null || tempC >= b.tLo) &&
+    (b.tHi === null || tempC < b.tHi)
+  ) || CHEM_FC_DEPLETION[CHEM_FC_DEPLETION.length - 1];
+}
+
+// Minimum FC per CDC MAHC 2023: FC ≥ max(1.0, 0.075 × CYA)
+function chemFcMin(cyaPpm) {
+  if (!cyaPpm || cyaPpm <= 0) return 1.0;
+  return Math.max(1.0, 0.075 * cyaPpm);
+}
+
+function chemRaiseAction(key, delta, current, kL, chlorineType, cyaReading) {
+  switch (key) {
+    case 'ta': {
+      const g = (delta * kL * CHEM_DOSING.nabicarbonate_g_per_1000L_ppm).toFixed(0);
+      return `To raise TA by ~${delta.toFixed(0)} ppm: add approx. <strong>${g} g sodium bicarbonate (NaHCO₃ / baking soda)</strong>. `
+        + `Pre-dissolve in water; add gradually with pump running; retest after 24 h. `
+        + `<em>Rough estimate — actual dose varies with water temperature and product purity.</em>`;
+    }
+    case 'ph': {
+      const steps = Math.max(1, Math.ceil(delta / 0.2));
+      const g = (steps * kL * CHEM_DOSING.sodaash_g_per_1000L_per_0p2pH).toFixed(0);
+      return `To raise pH by ~${delta.toFixed(1)} units: add approx. <strong>${g} g sodium carbonate (soda ash, Na₂CO₃)</strong>. `
+        + `<span style="color:var(--amber);font-weight:600">pH adjustment varies significantly with Total Alkalinity — add in small increments and retest after 4 h. This estimate assumes TA~100 ppm only.</span>`;
+    }
+    case 'fc': {
+      const dosK  = chlorineType === 'trichlor' ? CHEM_DOSING.trichlor_g_per_1000L_ppm  : CHEM_DOSING.dichlor_g_per_1000L_ppm;
+      const cyaK  = chlorineType === 'trichlor' ? CHEM_DOSING.trichlor_cya_per_fc_ppm   : CHEM_DOSING.dichlor_cya_per_fc_ppm;
+      const cLbl  = chlorineType === 'trichlor' ? 'trichlor granules (~90 % Cl)' : 'dichlor granules (~56 % Cl)';
+      const g     = (delta * kL * dosK).toFixed(0);
+      const cyaAdd = (delta * cyaK).toFixed(1);
+      let html = `To raise FC by ~${delta.toFixed(1)} ppm: add approx. <strong>${g} g ${cLbl}</strong>. `
+        + `Broadcast with pump running; retest after 30 min. `
+        + `<span style="color:var(--amber)">This also adds approx. <strong>${cyaAdd} ppm CYA</strong> — monitor CYA level.</span>`;
+      if (cyaReading !== null && !isNaN(cyaReading) && cyaReading >= 0) {
+        const newCya = cyaReading + delta * cyaK;
+        html += ` Estimated CYA after dosing: ${newCya.toFixed(1)} ppm.`;
+        if (newCya > CHEM_TARGETS.cya.max) {
+          html += ` <span style="color:var(--red);font-weight:700">⚠ Estimated CYA would exceed 90 ppm — consider a partial water change before dosing further.</span>`;
+        }
+      }
+      return html;
+    }
+    case 'th': {
+      const g = (delta * kL * CHEM_DOSING.cacl2_g_per_1000L_ppm).toFixed(0);
+      return `To raise calcium hardness by ~${delta.toFixed(0)} ppm: add approx. <strong>${g} g calcium chloride (CaCl₂ pool-grade flakes, ~77 %)</strong>. `
+        + `Pre-dissolve in a bucket of water before adding to the pool; add with pump running. Retest after 4 h.`;
+    }
+    case 'cya': {
+      const g = (delta * kL * CHEM_DOSING.cya_g_per_1000L_ppm).toFixed(0);
+      return `To raise CYA by ~${delta.toFixed(0)} ppm: add approx. <strong>${g} g cyanuric acid (stabiliser)</strong>. `
+        + `Dissolve in warm water before adding; distribute around pool with pump running. `
+        + `Retest after 24–48 h (cyanuric acid dissolves slowly).`;
+    }
+    default: return '';
+  }
+}
+
+function chemLowerAction(key, delta, current, volL, kL, chlorineType) {
+  switch (key) {
+    case 'ta':
+      return `<span style="color:var(--amber);font-weight:600">TA is above the ideal range. To lower TA: add dry acid (sodium bisulfate) to depress pH to ~7.0, then aerate vigorously to drive off CO₂ and raise pH without raising TA. This process requires multiple steps — consult PWTAG guidance or a pool professional.</span>`;
+    case 'ph': {
+      const steps = Math.max(1, Math.ceil(delta / 0.2));
+      const g = (steps * kL * CHEM_DOSING.dryacid_g_per_1000L_per_0p2pH).toFixed(0);
+      return `To lower pH by ~${delta.toFixed(1)} units: add approx. <strong>${g} g sodium bisulfate (dry acid, NaHSO₄·H₂O)</strong>. `
+        + `<span style="color:var(--amber);font-weight:600">pH adjustment varies significantly with Total Alkalinity — add in small increments with pump running; retest after 4 h. Rough estimate at TA~100 ppm only.</span>`;
+    }
+    case 'fc':
+      return `FC is above the ideal range. Allow natural depletion (sunlight, chemistry) or increased bather use. Do not add more chlorine until FC drops below ${CHEM_TARGETS.fc.hi} ppm. Above 5 ppm may cause eye and skin irritation.`;
+    case 'th': {
+      const replaceL = Math.round(Math.min(delta / current, 0.8) * volL);
+      return `<span style="color:var(--amber);font-weight:600">No chemical can lower calcium hardness. Dilute by partial water replacement: drain and refill approx. <strong>${replaceL.toLocaleString()} L</strong> with fresh tap water, then retest. Repeat if needed.</span>`;
+    }
+    case 'cya': {
+      const replaceL = Math.round(Math.min(delta / current, 0.9) * volL);
+      return `<span style="color:var(--amber);font-weight:600">No chemical can remove CYA. The only solution is partial water replacement: drain and refill approx. <strong>${replaceL.toLocaleString()} L</strong> (fresh tap water contains 0 ppm CYA). Retest and repeat if needed. If CYA exceeds 90 ppm, a 30–50 % water change is typically recommended.</span>`;
+    }
+    default: return '';
+  }
+}
+
+function chemCardUpdate(key, reading, volL, chlorineType, fcReading, cyaReading) {
+  const cardEl  = document.getElementById(`chem-card-${key}`);
+  const badgeEl = document.getElementById(`chem-badge-${key}`);
+  const actEl   = document.getElementById(`chem-action-${key}`);
+  if (!cardEl || !badgeEl || !actEl) return;
+
+  const kL = volL / 1000;
+
+  if (reading === null || isNaN(reading) || reading < 0) {
+    cardEl.className    = 'chem-card chem-na';
+    badgeEl.textContent = 'No reading';
+    badgeEl.className   = 'chem-badge na';
+    actEl.innerHTML     = 'Enter a reading above to see dosing recommendations.';
+    return;
+  }
+
+  // TC card: compute Combined Chlorine
+  if (key === 'tc') {
+    if (fcReading === null || isNaN(fcReading) || fcReading < 0) {
+      cardEl.className    = 'chem-card chem-na';
+      badgeEl.textContent = `TC = ${reading.toFixed(1)} ppm`;
+      badgeEl.className   = 'chem-badge na';
+      actEl.innerHTML     = 'Also enter a Free Chlorine reading above to calculate Combined Chlorine (CC = TC − FC).';
+      return;
+    }
+    const cc = reading - fcReading;
+    if (cc < -0.1) {
+      cardEl.className    = 'chem-card chem-high';
+      badgeEl.textContent = 'TC < FC — check readings';
+      badgeEl.className   = 'chem-badge high';
+      actEl.innerHTML     = '<span style="color:var(--red);font-weight:700">⚠ Total Chlorine cannot be lower than Free Chlorine. Please re-test and re-enter your readings.</span>';
+    } else if (cc >= 0.5) {
+      const shockTarget = (Math.ceil(cc * 10 * 10) / 10).toFixed(1);
+      cardEl.className    = 'chem-card chem-high';
+      badgeEl.textContent = `CC = ${cc.toFixed(1)} ppm — HIGH`;
+      badgeEl.className   = 'chem-badge high';
+      actEl.innerHTML     = `Combined Chlorine (CC) = <strong>${cc.toFixed(1)} ppm</strong> — exceeds 0.5 ppm limit (chloramines). `
+        + `<span style="color:var(--red);font-weight:700">Shock dose required: raise FC to ${shockTarget} ppm (breakpoint = 10 × CC).</span> `
+        + `Use unscented liquid sodium hypochlorite or calcium hypochlorite (cal-hypo) for shock — `
+        + `<em>do not use trichlor or dichlor for shock as this raises CYA further</em>. Retest after 24 h.`;
+    } else {
+      cardEl.className    = 'chem-card chem-ok';
+      badgeEl.textContent = `CC = ${cc.toFixed(2)} ppm ✓`;
+      badgeEl.className   = 'chem-badge ok';
+      actEl.innerHTML     = `Combined Chlorine (CC) = <strong>${cc.toFixed(2)} ppm</strong> — within acceptable range (< 0.5 ppm). ✓ No action needed.`;
+    }
+    return;
+  }
+
+  const tgt = CHEM_TARGETS[key];
+  // For FC, adjust the ideal-low and minimum thresholds based on current CYA
+  let loActual  = tgt.lo;
+  let minActual = tgt.min;
+  if (key === 'fc' && cyaReading !== null && !isNaN(cyaReading) && cyaReading > 0) {
+    const fcMinCya = chemFcMin(cyaReading);
+    loActual  = Math.max(tgt.lo,  fcMinCya);
+    minActual = Math.max(tgt.min, fcMinCya);
+  }
+
+  const dp = key === 'ph' ? 1 : 0;
+  let statusClass, badgeCls, badgeText;
+  if (reading < minActual) {
+    statusClass = 'chem-high'; badgeCls = 'high';
+    badgeText = `⚠ Dangerously Low: ${reading.toFixed(dp)} ${tgt.unit}`;
+  } else if (reading > tgt.max) {
+    statusClass = 'chem-high'; badgeCls = 'high';
+    badgeText = `⚠ Too High: ${reading.toFixed(dp)} ${tgt.unit}`;
+  } else if (reading < loActual) {
+    statusClass = 'chem-low'; badgeCls = 'low';
+    badgeText = `Below ideal: ${reading.toFixed(dp)} ${tgt.unit}`;
+  } else if (reading > tgt.hi) {
+    statusClass = 'chem-low'; badgeCls = 'low';
+    badgeText = `Above ideal: ${reading.toFixed(dp)} ${tgt.unit}`;
+  } else {
+    statusClass = 'chem-ok'; badgeCls = 'ok';
+    badgeText = `OK: ${reading.toFixed(dp)} ${tgt.unit}`;
+  }
+
+  cardEl.className    = `chem-card ${statusClass}`;
+  badgeEl.textContent = badgeText;
+  badgeEl.className   = `chem-badge ${badgeCls}`;
+
+  let actionHtml = '';
+  if (statusClass === 'chem-ok') {
+    actionHtml = `✓ Within ideal range.`;
+    if (key === 'fc' && cyaReading !== null && !isNaN(cyaReading) && cyaReading > 0) {
+      actionHtml += ` FC:CYA ratio = ${((reading / cyaReading) * 100).toFixed(1)} % (MAHC 2023 minimum = 7.5 %).`;
+    }
+  } else if (reading < loActual) {
+    const raiseBy = loActual - reading;
+    actionHtml = chemRaiseAction(key, raiseBy, reading, kL, chlorineType, cyaReading);
+  } else if (reading > tgt.hi) {
+    const lowerBy = reading - tgt.hi;
+    actionHtml = chemLowerAction(key, lowerBy, reading, volL, kL, chlorineType);
+  }
+
+  actEl.innerHTML = actionHtml;
+}
+
+function chemGo() {
+  const volL         = chemPoolVolL();
+  const tempC        = chemCurrentTempC();
+  const chlorineType = gs('chem-chlorine-type');
+
+  const readVal = id => {
+    const v = parseFloat(document.getElementById(id)?.value);
+    return (isNaN(v) || String(document.getElementById(id)?.value).trim() === '') ? null : v;
+  };
+  const rTA  = readVal('chem-ta');
+  const rPH  = readVal('chem-ph');
+  const rFC  = readVal('chem-fc');
+  const rTH  = readVal('chem-th');
+  const rCYA = readVal('chem-cya');
+  const rTC  = readVal('chem-tc');
+
+  // Update pool volume display
+  const volEl = document.getElementById('chem-pool-volume');
+  if (volEl) volEl.textContent = `${Math.round(volL).toLocaleString()} L`;
+
+  // Update parameter cards
+  chemCardUpdate('ta',  rTA,  volL, chlorineType, rFC, rCYA);
+  chemCardUpdate('ph',  rPH,  volL, chlorineType, rFC, rCYA);
+  chemCardUpdate('fc',  rFC,  volL, chlorineType, rFC, rCYA);
+  chemCardUpdate('th',  rTH,  volL, chlorineType, rFC, rCYA);
+  chemCardUpdate('cya', rCYA, volL, chlorineType, rFC, rCYA);
+  chemCardUpdate('tc',  rTC,  volL, chlorineType, rFC, rCYA);
+
+  // Temperature display
+  const tempEl = document.getElementById('chem-current-temp');
+  if (tempEl) tempEl.textContent = `${tempC.toFixed(1)} °C`;
+
+  const band   = chemTempBand(tempC);
+  const bandEl = document.getElementById('chem-temp-band');
+  if (bandEl) bandEl.textContent = `${band.label} — check every ${band.daysCheck} day${band.daysCheck > 1 ? 's' : ''}`;
+
+  // Depletion rate table
+  const tbody = document.getElementById('chem-schedule-tbody');
+  if (tbody) {
+    tbody.innerHTML = CHEM_FC_DEPLETION.map(b => {
+      const isActive = b === band;
+      const cls = isActive ? ' class="chem-active-band"' : '';
+      const note = b.tHi === null
+        ? 'Very high demand — check and dose daily. Consider switching to liquid chlorine for shock top-ups.'
+        : b.tLo === null
+          ? 'Minimal demand in cool water — weekly check usually sufficient.'
+          : `Moderate demand. ${b.daysCheck <= 2 ? 'Regular daily or every-other-day dosing likely needed.' : 'Regular checking recommended.'}`;
+      return `<tr${cls}><td>${b.label}${isActive ? ' ◀ current' : ''}</td><td>${b.fcLo}–${b.fcHi} ppm/day</td><td>Every ${b.daysCheck} day${b.daysCheck > 1 ? 's' : ''}</td><td>${note}</td></tr>`;
+    }).join('');
+  }
+
+  // CYA accumulation note
+  const cyaAccEl = document.getElementById('chem-cya-accumulation-note');
+  if (cyaAccEl) {
+    const kL           = volL / 1000;
+    const avgFcPerDay  = (band.fcLo + band.fcHi) / 2;
+    const cyaK         = chlorineType === 'trichlor' ? CHEM_DOSING.trichlor_cya_per_fc_ppm : CHEM_DOSING.dichlor_cya_per_fc_ppm;
+    const cyaPerDay    = avgFcPerDay * cyaK;
+    const cyaPerMonth  = cyaPerDay * 30;
+    const chlorLabel   = chlorineType === 'trichlor' ? 'Trichlor' : 'Dichlor';
+    let html = `${chlorLabel} adds approx. <strong>${cyaK.toFixed(2)} ppm CYA per 1 ppm FC dosed</strong>. `
+      + `At the current temperature band (${band.label}), replacing an average ${avgFcPerDay.toFixed(1)} ppm FC/day, `
+      + `CYA may accumulate by approx. <strong>${cyaPerDay.toFixed(1)} ppm/day or ~${cyaPerMonth.toFixed(0)} ppm over 30 days</strong>. `;
+    if (rCYA !== null && !isNaN(rCYA)) {
+      const daysToMax = rCYA < CHEM_TARGETS.cya.max
+        ? Math.floor((CHEM_TARGETS.cya.max - rCYA) / cyaPerDay)
+        : 0;
+      if (daysToMax > 0) {
+        html += `From your current reading of ${rCYA.toFixed(0)} ppm, the 90 ppm limit would be reached in approx. <strong>${daysToMax} days</strong> at this rate. `;
+      } else if (rCYA >= CHEM_TARGETS.cya.max) {
+        html += `<span style="color:var(--red);font-weight:700">Current CYA ≥ 90 ppm — partial water replacement recommended now.</span> `;
+      }
+    }
+    html += `<em>Rough estimate only — actual accumulation depends on measured FC loss, not theoretical averages.</em>`;
+    cyaAccEl.innerHTML = html;
+  }
+
+  const qtyBody = document.getElementById('chem-product-qty-tbody');
+  const waterProfileNote = document.getElementById('chem-water-profile-note');
+  if (qtyBody) {
+    const kL = volL / 1000;
+    const avgFcPerDay = (band.fcLo + band.fcHi) / 2;
+    const dosK = chlorineType === 'trichlor' ? CHEM_DOSING.trichlor_g_per_1000L_ppm : CHEM_DOSING.dichlor_g_per_1000L_ppm;
+    const chlorLabel = chlorineType === 'trichlor' ? 'Trichlor (stabilised)' : 'Dichlor (stabilised)';
+    const stabilizedPerWeekG = avgFcPerDay * 7 * kL * dosK;
+    const availClPerWeekG = avgFcPerDay * 7 * kL; // 1 ppm in 1000L = 1 g available chlorine
+    const liquid12pctL = availClPerWeekG / 120;   // ~120 g available chlorine per litre
+    const cyaPerMonth = avgFcPerDay * 30 * (chlorineType === 'trichlor'
+      ? CHEM_DOSING.trichlor_cya_per_fc_ppm : CHEM_DOSING.dichlor_cya_per_fc_ppm);
+
+    const hardSoftScenarios = [
+      {name:'Soft-water scenario', taPpm:12, chPpm:20, note:'Soft source water often needs more TA and CH support.'},
+      {name:'Neutral-water scenario', taPpm:6, chPpm:8, note:'Typical balanced mains-water estimate.'},
+      {name:'Hard-water scenario', taPpm:2, chPpm:0, note:'Hard source water may need little/no CH addition; watch scaling and pH rise.'}
+    ];
+
+    const scenarioRows = hardSoftScenarios.map(s => {
+      const taG = s.taPpm * kL * CHEM_DOSING.nabicarbonate_g_per_1000L_ppm;
+      const chG = s.chPpm * kL * CHEM_DOSING.cacl2_g_per_1000L_ppm;
+      return `<tr><td><strong>${s.name}</strong><br><span style="font-size:.72rem;color:var(--muted)">${s.note}</span></td><td>TA support ~${taG.toFixed(0)} g NaHCO₃ / month<br>CH support ~${chG.toFixed(0)} g CaCl₂ / month</td><td>Monthly review</td><td>Assumes location-climate-driven use and ordinary bather load; test-strip readings should override these guides.</td></tr>`;
+    }).join('');
+
+    const projectedCya = (rCYA ?? 40) + cyaPerMonth;
+    const refillLitres = projectedCya > CHEM_TARGETS.cya.max
+      ? Math.round(volL * Math.min(0.6, (projectedCya - CHEM_TARGETS.cya.hi) / projectedCya))
+      : 0;
+    qtyBody.innerHTML = `
+      <tr><td><strong>${chlorLabel} chlorine</strong></td><td>~${stabilizedPerWeekG.toFixed(0)} g</td><td>Per week (split over ${Math.max(2, Math.round(7 / band.daysCheck))} doses)</td><td>Based on ${band.label} temperature band and selected location climate profile.</td></tr>
+      <tr><td><strong>Liquid chlorine alternative (12% NaOCl)</strong></td><td>~${liquid12pctL.toFixed(2)} L</td><td>Per week</td><td>Use this to maintain FC without adding extra CYA.</td></tr>
+      <tr><td><strong>Cyanuric acid increase from stabilised chlorine</strong></td><td>~${cyaPerMonth.toFixed(0)} ppm CYA</td><td>Per 30 days</td><td>Monitor CYA and switch to liquid chlorine when CYA trends high.</td></tr>
+      <tr><td><strong>Partial refill guidance</strong></td><td>${refillLitres > 0 ? `${refillLitres.toLocaleString()} L estimated` : 'None projected this month'}</td><td>${refillLitres > 0 ? 'If CYA remains above 90 ppm' : 'Monitor monthly'}</td><td>${refillLitres > 0 ? 'Estimated dilution to bring CYA back toward 70–80 ppm.' : 'If CYA exceeds 90 ppm, estimate refill from measured CYA and retest.'}</td></tr>
+      ${scenarioRows}
+    `;
+
+    if (waterProfileNote) {
+      waterProfileNote.innerHTML = `Water profile sensitivity: these quantities can move substantially with hard/soft source water, rainfall dilution, and bather load. Treat them as <strong>rough guides only</strong> and tune using your own measured TA/pH/CH/CYA results.`;
+    }
+  }
+}
+
+function downloadChemSchedule() {
+  const volL         = chemPoolVolL();
+  const kL           = volL / 1000;
+  const chlorineType = gs('chem-chlorine-type');
+  const chlorLabel   = chlorineType === 'trichlor'
+    ? 'Trichlor (trichloroisocyanuric acid, ~90 % available Cl)'
+    : 'Dichlor (sodium dichloroisocyanurate, ~56 % available Cl)';
+  const chlorShort   = chlorineType === 'trichlor' ? 'Trichlor' : 'Dichlor';
+  const dosGperPpm   = chlorineType === 'trichlor' ? CHEM_DOSING.trichlor_g_per_1000L_ppm : CHEM_DOSING.dichlor_g_per_1000L_ppm;
+  const cyaK         = chlorineType === 'trichlor' ? CHEM_DOSING.trichlor_cya_per_fc_ppm  : CHEM_DOSING.dichlor_cya_per_fc_ppm;
+
+  // Build dosing table rows
+  const dosingRows = [
+    {param:'Free Chlorine (FC)',      chemical:`${chlorShort} granules`,             unitNote: 'per 1 ppm FC',  gPerUnit: dosGperPpm * kL,   extra:`Also adds ${cyaK.toFixed(2)} ppm CYA per 1 ppm FC`},
+    {param:'Total Alkalinity (TA)',   chemical:'Sodium bicarbonate (NaHCO₃)',         unitNote:'per 1 ppm TA',   gPerUnit: CHEM_DOSING.nabicarbonate_g_per_1000L_ppm * kL, extra:'Retest after 24 h'},
+    {param:'Calcium Hardness (CH)',   chemical:'Calcium chloride (CaCl₂, ~77 %)',     unitNote:'per 1 ppm CH',   gPerUnit: CHEM_DOSING.cacl2_g_per_1000L_ppm * kL, extra:'Retest after 4 h'},
+    {param:'Cyanuric Acid (CYA)',     chemical:'Cyanuric acid / stabiliser (>98 %)', unitNote:'per 1 ppm CYA',  gPerUnit: CHEM_DOSING.cya_g_per_1000L_ppm * kL, extra:'Dissolves slowly — retest after 24–48 h'},
+    {param:'pH (raise)',              chemical:'Sodium carbonate (soda ash, Na₂CO₃)', unitNote:'per +0.2 pH',    gPerUnit: CHEM_DOSING.sodaash_g_per_1000L_per_0p2pH * kL, extra:'Rough guide at TA~100 ppm — verify with testing'},
+    {param:'pH (lower)',              chemical:'Sodium bisulfate (dry acid, NaHSO₄)', unitNote:'per −0.2 pH',    gPerUnit: CHEM_DOSING.dryacid_g_per_1000L_per_0p2pH * kL, extra:'Rough guide at TA~100 ppm — verify with testing'}
+  ];
+
+  // Build monthly planner using climate data
+  const monthRows = MONTHS.map((m, mi) => {
+    const airT = currentClimateAir(mi);
+    const band = chemTempBand(airT);
+    const avgFc = (band.fcLo + band.fcHi) / 2;
+    const cyaMonth = (avgFc * cyaK * DAYSMON[mi]).toFixed(0);
+    const isActive = mi === new Date().getMonth();
+    return {month:m, airT, band, avgFc, cyaMonth, isActive};
+  });
+
+  const dateStr = new Date().toLocaleDateString('en-GB', {day:'2-digit', month:'long', year:'numeric'});
+  const locationLabel = activeClimateProfile.locationLabel;
+
+  const htmlContent = `<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Pool Chemistry Schedule — splash!</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-size:11pt;color:#1a202c;background:#fff;padding:1.5cm}
+h1{font-size:16pt;color:#023e8a;margin-bottom:4pt}
+h2{font-size:12pt;color:#0077b6;margin:16pt 0 6pt;border-bottom:1.5pt solid #cde8f5;padding-bottom:3pt}
+h3{font-size:10pt;color:#0077b6;margin:10pt 0 4pt}
+p,li{font-size:9.5pt;line-height:1.55;margin-bottom:4pt}
+ul{padding-left:1.4em;margin-bottom:6pt}
+table{width:100%;border-collapse:collapse;font-size:8.5pt;margin-bottom:10pt}
+th{background:#023e8a;color:#fff;padding:4pt 6pt;text-align:left;font-size:8pt}
+td{padding:3.5pt 6pt;border-bottom:0.5pt solid #cde8f5;vertical-align:top}
+tr:nth-child(even) td{background:#f0f8ff}
+tr.active td{background:#e0f2fe;font-weight:700}
+.warn-box{background:#fffbeb;border-left:3pt solid #d97706;padding:8pt 10pt;margin-bottom:10pt;font-size:9pt;line-height:1.6}
+.warn-box strong{color:#92400e}
+.header-row{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10pt}
+.meta{font-size:8.5pt;color:#6b7280;text-align:right;line-height:1.7}
+.source-note{font-size:7.5pt;color:#9ca3af;margin-top:6pt;line-height:1.5}
+.badge-ok  {background:#dcfce7;color:#166534;padding:1pt 5pt;border-radius:3pt;font-weight:700;font-size:8pt}
+.badge-warn{background:#fef3c7;color:#92400e;padding:1pt 5pt;border-radius:3pt;font-weight:700;font-size:8pt}
+.badge-high{background:#fee2e2;color:#991b1b;padding:1pt 5pt;border-radius:3pt;font-weight:700;font-size:8pt}
+footer{margin-top:18pt;font-size:7.5pt;color:#9ca3af;border-top:0.5pt solid #e5e7eb;padding-top:6pt}
+@media print{body{padding:1cm}.no-print{display:none}}
+</style>
+</head>
+<body>
+<div class="header-row">
+  <div>
+    <h1>🧪 Pool Chemistry Schedule</h1>
+    <p style="color:#0077b6;font-weight:600">Generated by splash! v${APP_VERSION} — jahosi.co.uk</p>
+  </div>
+  <div class="meta">
+    Generated: ${dateStr}<br>
+    Pool volume: <strong>${Math.round(volL).toLocaleString()} L</strong><br>
+    Chlorine type: <strong>${chlorShort}</strong><br>
+    Climate data: ${locationLabel}
+  </div>
+</div>
+
+<div class="warn-box">
+  <strong>⚠ ROUGH GUIDE — ESTIMATES ONLY. ALWAYS TEST FIRST.</strong><br>
+  Dosing quantities on this schedule are indicative starting points based on published industry formulas
+  (WHO, PWTAG, ANSI/APSP, Taylor Technologies). Actual results vary with your water source, temperature,
+  bather load, UV exposure, and local water chemistry. <strong>Always test with calibrated test strips or
+  a drop-test kit before and after every chemical addition.</strong> Never add chemicals without testing first.
+  These figures are not a substitute for professional water analysis or the advice of a qualified pool technician.
+  Overdosing can be hazardous. When in doubt, add less and retest.
+</div>
+
+<h2>1. Target Ranges Reference</h2>
+<table>
+  <thead><tr><th>Parameter</th><th>Minimum</th><th>Ideal Range</th><th>Maximum</th><th>Units</th><th>Key Notes</th></tr></thead>
+  <tbody>
+    <tr><td><strong>Total Alkalinity (TA)</strong></td><td>80</td><td>80–120</td><td>140</td><td>ppm as CaCO₃</td><td>pH buffer. Low TA = pH bounce; high TA = pH hard to move.</td></tr>
+    <tr><td><strong>pH</strong></td><td>7.2</td><td>7.4–7.6</td><td>7.8</td><td>—</td><td>Below 7.2: corrosive, irritating. Above 7.8: chlorine much less effective.</td></tr>
+    <tr><td><strong>Free Chlorine (FC)</strong></td><td>1.0*</td><td>2–4</td><td>5.0</td><td>ppm</td><td>*Minimum = max(1.0, 7.5% × CYA) per CDC MAHC 2023. e.g. at CYA 50 ppm → min FC = 3.75 ppm.</td></tr>
+    <tr><td><strong>Total Hardness (CH)</strong></td><td>200</td><td>250–350</td><td>500</td><td>ppm as CaCO₃</td><td>Below 200: corrosive to surfaces. Above 500: scale &amp; cloudy water.</td></tr>
+    <tr><td><strong>Cyanuric Acid (CYA)</strong></td><td>30</td><td>40–80</td><td>90</td><td>ppm</td><td>UV protection for FC outdoors. Above 90 ppm: chlorine lock — partial water change required.</td></tr>
+    <tr><td><strong>Combined Chlorine (CC = TC − FC)</strong></td><td>0</td><td>0–0.2</td><td>0.5</td><td>ppm</td><td>Above 0.5 ppm: chloramine smell/irritation. Shock at 10 × CC using liquid chlorine or cal-hypo.</td></tr>
+  </tbody>
+</table>
+
+<h2>2. Dosing Reference (personalised for ${Math.round(volL).toLocaleString()} L pool)</h2>
+<p style="font-size:8pt;color:#6b7280;margin-bottom:6pt">All quantities are rough estimates. Add incrementally, test, and repeat rather than adding the full amount at once.</p>
+<table>
+  <thead><tr><th>Parameter</th><th>Chemical to Use</th><th>Amount to Add</th><th>Per Unit Change</th><th>Notes</th></tr></thead>
+  <tbody>
+    ${dosingRows.map(r => `<tr><td><strong>${r.param}</strong></td><td>${r.chemical}</td><td><strong>${r.gPerUnit.toFixed(0) < 1 ? '< 1' : r.gPerUnit.toFixed(0)} g</strong></td><td>${r.unitNote}</td><td>${r.extra}</td></tr>`).join('')}
+  </tbody>
+</table>
+<p style="font-size:8pt;color:#6b7280">
+  Dosing ratios: NaHCO₃ to raise TA — MW 84/50 = 1.68 theoretical, industry std 1.8 g/1000 L/ppm (APSP).
+  CaCl₂ to raise CH — 1.5 g/1000 L/ppm (APSP, ~77 % grade). CYA — 1.0 g/1000 L/ppm (direct mass).
+  ${chlorShort} to raise FC — ${dosGperPpm.toFixed(2)} g/1000 L/ppm (1/available-Cl-fraction, MW ratio). pH: rough guide at TA~100 ppm only.
+</p>
+
+<h2>3. Temperature-Based Checking Schedule</h2>
+<p style="font-size:8pt;color:#6b7280;margin-bottom:6pt">FC depletion rates assume CYA-stabilised chlorine (40–80 ppm), low-to-moderate bather load, outdoor daytime use.</p>
+<table>
+  <thead><tr><th>Water Temperature</th><th>Typical FC Loss / Day</th><th>Check Interval</th><th>Chlorine to Add per Check (rough guide)</th></tr></thead>
+  <tbody>
+    ${CHEM_FC_DEPLETION.map(b => {
+      const avgFc = (b.fcLo + b.fcHi) / 2;
+      const gPerCheck = (avgFc * b.daysCheck * kL * dosGperPpm).toFixed(0);
+      return `<tr><td>${b.label}</td><td>${b.fcLo}–${b.fcHi} ppm/day</td><td>Every ${b.daysCheck} day${b.daysCheck>1?'s':''}</td><td>~${gPerCheck} g ${chlorShort} (rough guide — test first)</td></tr>`;
+    }).join('')}
+  </tbody>
+</table>
+
+<h2>4. Monthly Planner — ${locationLabel}</h2>
+<p style="font-size:8pt;color:#6b7280;margin-bottom:6pt">Based on ${activeClimateProfile.source === 'archive' ? `archived weather data for ${activeClimateProfile.year}` : 'fallback baseline climate data'}. Temperatures are monthly averages — actual pool water will lag air temperature.</p>
+<table>
+  <thead><tr><th>Month</th><th>Avg Air Temp</th><th>Approx. Check Interval</th><th>Typical FC Loss / Day</th><th>Est. CYA Rise (whole month)</th><th>Action Notes</th></tr></thead>
+  <tbody>
+    ${monthRows.map(r => {
+      const cls = r.isActive ? ' class="active"' : '';
+      const action = r.band.daysCheck === 1 ? 'Test and dose daily' :
+                     r.band.daysCheck <= 3 ? `Test every ${r.band.daysCheck} days; add ${chlorShort} as needed` :
+                     `Test every ${r.band.daysCheck} days; low demand`;
+      return `<tr${cls}><td><strong>${r.month}${r.isActive?' ◀ now':''}</strong></td><td>${r.airT.toFixed(1)} °C</td><td>Every ${r.band.daysCheck} day${r.band.daysCheck>1?'s':''}</td><td>${r.band.fcLo}–${r.band.fcHi} ppm/day</td><td>~${r.cyaMonth} ppm</td><td>${action}</td></tr>`;
+    }).join('')}
+  </tbody>
+</table>
+
+<h2>5. CYA Accumulation Guidance (${chlorShort})</h2>
+<ul>
+  <li>${chlorShort} adds <strong>${cyaK.toFixed(2)} ppm CYA per 1 ppm FC added</strong> (derived from molecular weight ratio of cyanurate ring to active-Cl fraction).</li>
+  <li>CYA does not degrade or deplete significantly on its own — it accumulates over the entire pool season.</li>
+  <li>When CYA reaches <strong>90 ppm</strong>: perform a 30–50 % water change (drain and refill with fresh tap water). Do not dose further stabilised chlorine until CYA is back below 80 ppm.</li>
+  <li>Consider switching to liquid sodium hypochlorite (bleach, ~10–15 % NaOCl) for routine dosing if CYA is already above 60 ppm — liquid chlorine does not add CYA.</li>
+  <li>Never use trichlor or dichlor for shock dosing — use cal-hypo or liquid chlorine to avoid uncontrolled CYA spikes.</li>
+</ul>
+<p style="font-size:8pt;color:#6b7280">Estimated total CYA added over the full year at average depletion rates: ~${(monthRows.reduce((s,r) => s + parseFloat(r.cyaMonth), 0)).toFixed(0)} ppm (rough estimate — actual usage varies greatly).</p>
+
+<h2>6. When to Perform a Partial Water Change</h2>
+<ul>
+  <li><strong>CYA > 90 ppm</strong> — no chemical will reduce it; water dilution is the only option.</li>
+  <li><strong>Calcium Hardness > 500 ppm</strong> — scale risk; dilute with fresh water.</li>
+  <li><strong>Total Dissolved Solids (TDS) very high</strong> — water feels "tired" and chemicals become less effective; typically recommend a water change every 1–3 seasons.</li>
+  <li><strong>Persistent Combined Chlorine (CC ≥ 0.5 ppm)</strong> that does not clear after repeated shocking — partial water change often helps reset the water chemistry.</li>
+</ul>
+
+<h2>7. References &amp; Sources</h2>
+<ul style="font-size:8.5pt">
+  <li>WHO (2006). <em>Guidelines for Safe Recreational Water Environments, Vol. 2: Swimming Pools and Similar Environments.</em> Geneva: World Health Organization. ISBN 978-924-154-680-2.</li>
+  <li>PWTAG (2017). <em>Swimming Pool Water: Treatment and Quality Standards for Pools and Spas</em>, 2nd ed. Pool Water Treatment Advisory Group.</li>
+  <li>ANSI/APSP/ICC 11-2019. <em>American National Standard for Water Quality in Public Pools and Spas.</em> Association of Pool &amp; Spa Professionals.</li>
+  <li>CDC (2023). <em>Model Aquatic Health Code (MAHC), 5th Edition.</em> Centers for Disease Control &amp; Prevention. Available at cdc.gov/mahc.</li>
+  <li>Taylor Technologies (current edition). <em>Pool &amp; Spa Water Chemistry: A Testing and Treatment Guide.</em> Taylor Technologies Inc., Sparks MD.</li>
+  <li>White, G.C. (1999). <em>Handbook of Chlorination and Alternative Disinfectants</em>, 4th ed. New York: Wiley-Interscience.</li>
+  <li>Wojtowicz, J.C. (2001). Effect of temperature on chemical equilibria in swimming pools. <em>Journal of the Swimming Pool and Spa Industry</em>, 4(1), 15–25.</li>
+</ul>
+
+<footer>
+  splash! Pool Chemistry Schedule · ${APP_COPYRIGHT} · v${APP_VERSION} · Generated ${dateStr}<br>
+  ⚠ All dosing values are rough estimates. Always test your pool water first. This schedule is a planning guide, not a prescription. Not for safety-critical use.
+</footer>
+</body>
+</html>`;
+
+  const win = window.open('', '_blank', 'width=1000,height=750');
+  if (!win) {
+    alert('Could not open print window. Please allow pop-ups for this site and try again.');
+    return;
+  }
+  win.document.write(htmlContent);
+  win.document.close();
+  win.focus();
+  setTimeout(() => win.print(), 600);
+}
+
+function initChemistry() {
+  const btn = document.getElementById('export-chem-schedule');
+  if (btn) btn.addEventListener('click', downloadChemSchedule);
+  syncChlorineTypeSelectors('chem-chlorine-type');
+  chemGo();
+}
+
 // ─── CHART INSTANCES ──────────────────────────────────────────────────────────
 const CHARTS_AVAILABLE = typeof window.Chart !== 'undefined';
 let chartCost, chartHeat, chartLoss, chartSched, chartInverse, chartForecast, chartForecast36;
@@ -1538,6 +2421,108 @@ function setClimateStatus(message, tone = 'info') {
   el.className = `status-chip ${tone}`;
 }
 
+function syncChlorineTypeSelectors(sourceId) {
+  const main = document.getElementById('chem-chlorine-type');
+  const side = document.getElementById('chem-chlorine-type-basic');
+  if (!main || !side) return;
+  if (sourceId === 'chem-chlorine-type-basic') {
+    main.value = side.value;
+  } else {
+    side.value = main.value;
+  }
+}
+
+function sensibleRangeForTarget(target, mode) {
+  const delta = mode === 'hottub' ? 1.0 : 1.5;
+  return {
+    min: clamp(target - delta, TARGET_TEMP_MIN, TARGET_TEMP_MAX),
+    max: clamp(target + delta, TARGET_TEMP_MIN, TARGET_TEMP_MAX)
+  };
+}
+
+function syncDesiredRangeFromTarget() {
+  const target = gi('target');
+  const mode = gs('aquatic-mode') || 'pool';
+  const range = sensibleRangeForTarget(target, mode);
+  const minInput = document.getElementById('range-min');
+  const maxInput = document.getElementById('range-max');
+  if (minInput) minInput.value = range.min.toFixed(1);
+  if (maxInput) maxInput.value = range.max.toFixed(1);
+  const note = document.getElementById('target-range-auto');
+  if (note) {
+    note.textContent = mode === 'hottub'
+      ? `Auto range: ${range.min.toFixed(1)}–${range.max.toFixed(1)} °C (±1.0 °C around target for hot tub/spa planning).`
+      : `Auto range: ${range.min.toFixed(1)}–${range.max.toFixed(1)} °C (±1.5 °C around target for pool planning).`;
+  }
+}
+
+function initMainForecastButton() {
+  const btn = document.getElementById('fetch-weather-main');
+  if (!btn) return;
+  btn.addEventListener('click', async () => {
+    const panel = document.getElementById('controls-panel');
+    const backdrop = document.getElementById('drawer-backdrop');
+    if (panel && backdrop && window.matchMedia('(max-width: 980px)').matches) {
+      panel.classList.add('open');
+      backdrop.classList.add('open');
+      document.body.classList.add('drawer-open');
+    }
+    await fetchForecastFromSelectedLocation();
+  });
+}
+
+function reorderControlsByExpertFlow() {
+  const grid = document.querySelector('.controls-grid');
+  if (!grid) return;
+  const ids = [
+    'card-forecast',
+    'card-dimensions',
+    'card-season',
+    'card-chem-basic',
+    'card-heating',
+    'card-tariff',
+    'card-comfort',
+    'close-controls-bottom'
+  ];
+  ids.forEach(id => {
+    const el = document.getElementById(id);
+    if (el) grid.appendChild(el);
+  });
+}
+
+function reorderResultsByExpertFlow() {
+  const panel = document.querySelector('.results-panel');
+  if (!panel) return;
+  const ids = [
+    'sec-key-metrics',
+    'stats-row',
+    'analysis-box',
+    'sec-planning',
+    'planning-qa-grid',
+    'forecast36-card',
+    'sec-boost',
+    'forecast-stats-row',
+    'forecast-sim-card',
+    'season-sec',
+    'season-stats-row',
+    'monthly-sec',
+    'monthly-card',
+    'viz-sec',
+    'viz-row-1',
+    'viz-row-2',
+    'viz-row-3',
+    'export-card',
+    'math-checks-card',
+    'model-review-card',
+    'heuristics-card',
+    'limitations-card'
+  ];
+  ids.forEach(id => {
+    const el = document.getElementById(id);
+    if (el) panel.appendChild(el);
+  });
+}
+
 function placeLabel(place) {
   const parts = [place?.name, place?.admin1, place?.country].filter(Boolean);
   return parts.join(', ') || 'selected location';
@@ -1584,6 +2569,8 @@ Inputs
 - Tariff: ${r.inputs.offPeakRatePpkWh.toFixed(1)}p off-peak / ${r.inputs.peakRatePpkWh.toFixed(1)}p peak
 - Budget target: £${r.inputs.costTargetGBP.toFixed(0)} / year
 - Passive cover: ${r.inputs.coverTypeLabel}, ${r.inputs.coverHoursPerDay.toFixed(1)} h/day
+- Pool mode: ${r.inputs.aquaticMode === 'hottub' ? 'Hot tub / spa' : 'Pool / playpool'}
+- Primary chlorine product: ${r.inputs.chlorineType === 'trichlor' ? 'Trichlor (stabilised)' : 'Dichlor (stabilised)'}
 - Latitude in model: ${r.inputs.latitude.toFixed(2)}°
 - Climate profile: ${r.summary.climateProfileLabel} (${r.summary.climateProfileSource})
 - Pool season: ${r.inputs.poolSeasonStart && r.inputs.poolSeasonEnd ? `${r.inputs.poolSeasonStart} to ${r.inputs.poolSeasonEnd} (${r.season ? r.season.seasonDays + ' days' : 'dates set'})` : 'annual projection (no season dates set)'}
@@ -1686,6 +2673,8 @@ function initExportActions() {
 
 // ─── UPDATE ───────────────────────────────────────────────────────────────────
 function go() {
+  syncDesiredRangeFromTarget();
+  syncChlorineTypeSelectors('chem-chlorine-type');
   const inp = {
     poolShape: gs('pool-shape'),
     radius:  gi('radius'),
@@ -1709,6 +2698,7 @@ function go() {
    coverType: gs('cover-type'),
    coverHours: gi('cover-hours'),
    currentTempSource: gs('current-temp-source'),
+   aquaticMode: gs('aquatic-mode') || 'pool',
    currentTempManual: gi('current-temp'),
    hotTemp: gi('hot-temp'),
    hotLitres: gi('hot-litres'),
@@ -2190,6 +3180,8 @@ function go() {
       coverType: inp.coverType,
       coverTypeLabel: cover.label,
       coverHoursPerDay: inp.coverHours,
+      aquaticMode: inp.aquaticMode,
+      chlorineType: gs('chem-chlorine-type'),
       poolSeasonStart: inp.poolStart || null,
       poolSeasonEnd: inp.poolEnd || null,
       fillsPerSeason: inp.poolFills,
@@ -2277,6 +3269,7 @@ function go() {
     `${CHARTS_AVAILABLE ? 'Ready to export.' : 'Charts unavailable offline, but calculations and exports still work.'} Current annual projection: £${fmt(annualCost, 2)}.${seasonData ? ` Season total: £${fmt(seasonData.totalSeasonCost, 2)}.` : ''}`
   );
   saveConfigToLS();
+  if (document.getElementById('chem-pool-volume')) chemGo();
 }
 
 function sanitizeLocationQuery(value) {
@@ -2414,9 +3407,20 @@ async function fetchForecastFromSelectedLocation() {
   if (!btn || !queryField) return;
   let place = selectedSearchPlace();
   if (!place) {
-    await searchLocations();
-    place = selectedSearchPlace();
-    if (!place) return;
+    const query = sanitizeLocationQuery(queryField.value);
+    if (query) {
+      await searchLocations();
+      place = selectedSearchPlace();
+      if (!place) return;
+    } else {
+      const lat = Number(document.getElementById('forecast-latitude')?.value);
+      const lon = Number(document.getElementById('forecast-longitude')?.value);
+      if (!Number.isFinite(lat) || !Number.isFinite(lon)) {
+        setWeatherStatus('Search for a location first, or keep using manual forecast entry.', 'warn');
+        return;
+      }
+      place = {name:'Saved coordinates', latitude:lat, longitude:lon, country:'Current model location'};
+    }
   }
   const original = btn.textContent;
   btn.disabled = true;
@@ -2523,7 +3527,13 @@ const CONFIG_FIELDS = [
   {id:'forecast-longitude'},
   {id:'fc1-air'},  {id:'fc1-cloud'},  {id:'fc1-boost'},
   {id:'fc2-air'},  {id:'fc2-cloud'},  {id:'fc2-boost'},
-  {id:'fc3-air'},  {id:'fc3-cloud'},  {id:'fc3-boost'}
+  {id:'fc3-air'},  {id:'fc3-cloud'},  {id:'fc3-boost'},
+  // Chemistry section
+  {id:'aquatic-mode'},
+  {id:'chem-chlorine-type-basic'},
+  {id:'chem-chlorine-type'},
+  {id:'chem-ta'},  {id:'chem-ph'},  {id:'chem-fc'},
+  {id:'chem-th'},  {id:'chem-cya'}, {id:'chem-tc'}
 ];
 
 function getConfig() {
@@ -2579,14 +3589,7 @@ function applyTargetPreset() {
   const targetInput = document.getElementById('target');
   targetInput.value = String(clamp(target, TARGET_TEMP_MIN, TARGET_TEMP_MAX));
   sv('target', 'target-v', ' °C', 1);
-  const min = Number(option.dataset.min);
-  const max = Number(option.dataset.max);
-  if (Number.isFinite(min) && Number.isFinite(max)) {
-    const minInput = document.getElementById('range-min');
-    const maxInput = document.getElementById('range-max');
-    minInput.value = String(clamp(min, TARGET_TEMP_MIN, TARGET_TEMP_MAX));
-    maxInput.value = String(clamp(max, TARGET_TEMP_MIN, TARGET_TEMP_MAX));
-  }
+  syncDesiredRangeFromTarget();
   go();
 }
 
@@ -2686,7 +3689,9 @@ function initConfigActions() {
 function initControlsDrawer() {
   const panel = document.getElementById('controls-panel');
   const openBtn = document.getElementById('open-controls');
+  const floatBtn = document.getElementById('floating-options');
   const closeBtn = document.getElementById('close-controls');
+  const closeBottomBtn = document.getElementById('close-controls-bottom');
   const backdrop = document.getElementById('drawer-backdrop');
   if (!panel || !openBtn || !closeBtn || !backdrop) return;
 
@@ -2697,7 +3702,9 @@ function initControlsDrawer() {
   };
 
   openBtn.addEventListener('click', () => setOpen(true));
+  if (floatBtn) floatBtn.addEventListener('click', () => setOpen(true));
   closeBtn.addEventListener('click', () => setOpen(false));
+  if (closeBottomBtn) closeBottomBtn.addEventListener('click', () => setOpen(false));
   backdrop.addEventListener('click', () => setOpen(false));
 
   window.matchMedia('(max-width: 980px)').addEventListener('change', e => {
@@ -2715,11 +3722,15 @@ function registerServiceWorker() {
 // ─── INIT ─────────────────────────────────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', async () => {
   if (await forceReloadOnVersionChange()) return;
+  reorderControlsByExpertFlow();
+  reorderResultsByExpertFlow();
   initControlsDrawer();
+  initMainForecastButton();
   initCharts();
   initExportActions();
   initWeatherAutofill();
   initConfigActions();
+  initChemistry();
   togglePoolDimensionInputs();
   setClimateStatus(`Monthly climate profile: ${activeClimateProfile.locationLabel}.`, 'info');
   if (!restoreConfigFromLS()) go();

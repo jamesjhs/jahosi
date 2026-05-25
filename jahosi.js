@@ -46,6 +46,7 @@ const SITEMAP_PATHS = [
   "/portfolio/splash.html",
   "/splash/",
   "/splash/help.htm",
+  "/splash/appendices.htm",
 ];
 
 const MAX_REQUESTS_PER_WINDOW = 5;
