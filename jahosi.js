@@ -71,9 +71,12 @@ const SITEMAP_PATHS = [
 
 const MAX_REQUESTS_PER_WINDOW = 5;
 const RATE_LIMIT_WINDOW_MS = 15 * 60 * 1000;
+const CHAT_MAX_REQUESTS_PER_WINDOW = 20;
+const CHAT_RATE_LIMIT_WINDOW_MS = 15 * 60 * 1000;
 const MIN_FORM_FILL_MS = 3000;
 const MATH_CHALLENGE_WINDOW_MS = 60 * 60 * 1000;
 const RATE_LIMIT_BUCKETS = new Map();
+const CHAT_RATE_LIMIT_BUCKETS = new Map();
 const SPLASH_CHAT_GUIDELINES = [
   "You are a pool chemistry assistant for splash!",
   "Never invent dosing quantities. Use only the dosing amounts calculated by the app and explain them conversationally.",
@@ -176,6 +179,21 @@ function isRateLimited(ip) {
 
   recent.push(now);
   RATE_LIMIT_BUCKETS.set(ip, recent);
+  return false;
+}
+
+function isChatRateLimited(ip) {
+  const now = Date.now();
+  const existing = CHAT_RATE_LIMIT_BUCKETS.get(ip) || [];
+  const recent = existing.filter((ts) => now - ts < CHAT_RATE_LIMIT_WINDOW_MS);
+
+  if (recent.length >= CHAT_MAX_REQUESTS_PER_WINDOW) {
+    CHAT_RATE_LIMIT_BUCKETS.set(ip, recent);
+    return true;
+  }
+
+  recent.push(now);
+  CHAT_RATE_LIMIT_BUCKETS.set(ip, recent);
   return false;
 }
 
@@ -492,6 +510,10 @@ app.post("/splash/chat", express.json({ limit: "50kb" }), async (req, res) => {
   const chatSessionToken = typeof body.chatSessionToken === "string" ? body.chatSessionToken.trim() : "";
   const turnstileToken = typeof body.turnstileToken === "string" ? body.turnstileToken.trim() : "";
   const remoteip = req.ip || req.socket.remoteAddress || undefined;
+
+  if (isChatRateLimited(remoteip || "unknown")) {
+    return res.status(429).json({ error: "rate_limited" });
+  }
 
   if (!message || message.length > 2000) {
     return res.status(400).json({ error: "invalid_message" });
