@@ -73,7 +73,6 @@ const SITEMAP_PATHS = [
 const MAX_REQUESTS_PER_WINDOW = 5;
 const RATE_LIMIT_WINDOW_MS = 15 * 60 * 1000;
 const MIN_FORM_FILL_MS = 3000;
-const RATE_LIMIT_BUCKETS = new Map();
 const splashChatRateLimit = rateLimit({
   windowMs: 15 * 60 * 1000,
   limit: 20,
@@ -81,6 +80,15 @@ const splashChatRateLimit = rateLimit({
   legacyHeaders: false,
   handler: (_req, res) => {
     res.status(429).json({ error: "rate_limited" });
+  },
+});
+const contactSubmitRateLimit = rateLimit({
+  windowMs: RATE_LIMIT_WINDOW_MS,
+  limit: MAX_REQUESTS_PER_WINDOW,
+  standardHeaders: false,
+  legacyHeaders: false,
+  handler: (_req, res) => {
+    res.redirect(`${CONTACT_PAGE_PATH}?error=blocked`);
   },
 });
 const SPLASH_CHAT_GUIDELINES = [
@@ -171,21 +179,6 @@ function escapeHtml(value) {
     .replace(/>/g, "&gt;")
     .replace(/"/g, "&quot;")
     .replace(/'/g, "&#39;");
-}
-
-function isRateLimited(ip) {
-  const now = Date.now();
-  const existing = RATE_LIMIT_BUCKETS.get(ip) || [];
-  const recent = existing.filter((ts) => now - ts < RATE_LIMIT_WINDOW_MS);
-
-  if (recent.length >= MAX_REQUESTS_PER_WINDOW) {
-    RATE_LIMIT_BUCKETS.set(ip, recent);
-    return true;
-  }
-
-  recent.push(now);
-  RATE_LIMIT_BUCKETS.set(ip, recent);
-  return false;
 }
 
 function isValidEmail(email) {
@@ -368,7 +361,7 @@ app.get(CONTACT_PAGE_PATH, (req, res) => {
   );
 });
 
-app.post("/api/contact/submit", async (req, res) => {
+app.post("/api/contact/submit", contactSubmitRateLimit, async (req, res) => {
   const ip = req.ip || req.socket.remoteAddress || "unknown";
   const redirectWithError = (code, debugReason) => {
     const params = new URLSearchParams({ error: code });
@@ -377,10 +370,6 @@ app.post("/api/contact/submit", async (req, res) => {
   };
   const redirectWithStatus = (code) =>
     res.redirect(`${CONTACT_PAGE_PATH}?status=${encodeURIComponent(code)}`);
-
-  if (isRateLimited(ip)) {
-    return redirectWithError("blocked");
-  }
 
   const { name, email, message, website, submittedAt } = req.body;
   const filledAt = Number(submittedAt);
