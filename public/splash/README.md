@@ -2,11 +2,11 @@
 
 Interactive playpool thermal and cost planner.
 
-## v1.6.1 highlights
+## v1.6.2 highlights
 
+- The chemistry bot now requires a Turnstile check before the first chat message when configured, while keeping history temporary and in-memory only.
 - Saved weather-location context now restores more completely (selected place, hourly forecast, and climate profile state) across sessions.
 - Launch-time weather refresh now reuses saved selection data and falls back to saved coordinates if geocoding from the search text returns no match.
-- Mobile floating options button now toggles between open and close/apply states using `Apply [X]` while the drawer is open.
 
 ## v1.6.0 highlights
 
