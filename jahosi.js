@@ -32,9 +32,24 @@ const SPLASH_OPENAI_BASE_URL = (process.env.SPLASH_OPENAI_BASE_URL || "https://a
   /\/+$/,
   ""
 );
+const TURNSTILE_SITE_KEY = process.env.TURNSTILE_SITE_KEY || "";
+const TURNSTILE_SECRET_KEY = process.env.TURNSTILE_SECRET_KEY || "";
+const CF_ACCESS_CLIENT_ID = process.env["CF-Access-Client-Id"] || "";
+const CF_ACCESS_CLIENT_SECRET = process.env["CF-Access-Client-Secret"] || "";
 const SITE_URL = (process.env.SITE_URL || "https://jahosi.co.uk").replace(/\/+$/, "");
 const SERVICE_NAME = process.env.SERVICE_NAME || "jahosi";
 const SERVICE_VERSION = process.env.APP_VERSION || packageJson.version;
+const SPLASH_OPENAI_HOST = (() => {
+  try {
+    return new URL(SPLASH_OPENAI_BASE_URL).hostname;
+  } catch {
+    return "";
+  }
+})();
+const USE_CF_ACCESS_HEADERS =
+  Boolean(CF_ACCESS_CLIENT_ID && CF_ACCESS_CLIENT_SECRET) && SPLASH_OPENAI_HOST && SPLASH_OPENAI_HOST !== "api.openai.com";
+const CHEM_CHAT_SESSION_TTL_MS = 6 * 60 * 60 * 1000;
+const CHEM_CHAT_SESSIONS = new Map();
 const SITEMAP_PATHS = [
   "/",
   "/portfolio/hovercraft.html",
@@ -61,8 +76,13 @@ const MATH_CHALLENGE_WINDOW_MS = 60 * 60 * 1000;
 const RATE_LIMIT_BUCKETS = new Map();
 const SPLASH_CHAT_GUIDELINES = [
   "You are a pool chemistry assistant for splash!",
-  "Never override or recalculate dosing amounts provided in the chemistry results.",
+  "Never invent dosing quantities. Use only the dosing amounts calculated by the app and explain them conversationally.",
   "Always treat chemistry card values as the authoritative recommendation source.",
+  "Never recommend mixing chemicals directly.",
+  "Never recommend unsafe chlorine levels.",
+  "If unsure, advise consulting the product manufacturer guidance.",
+  "Each browser tab has its own temporary session and conversation history.",
+  "Do not suggest saving chats permanently; keep the discussion temporary and in-memory only.",
   "Always include this exact sentence at the end of every answer: Test before and after every addition.",
   "Prefix every answer with: 🤖 Rough guide — always test first.",
   "If user asks for safety-critical medical or emergency advice, recommend contacting a qualified pool technician.",
@@ -121,11 +141,19 @@ app.get("/robots.txt", (req, res) => {
 
 app.use(express.static(path.join(__dirname, "public")));
 
-app.use("/splash", express.static(path.join(__dirname, "public", "splash"), { index: "index.htm" }));
-
 app.get("/splash", (req, res) => {
   res.redirect("/splash/");
 });
+
+app.get("/splash/", (req, res) => {
+  res.send(renderSplashIndexHtml());
+});
+
+app.get("/splash/index.htm", (req, res) => {
+  res.send(renderSplashIndexHtml());
+});
+
+app.use("/splash", express.static(path.join(__dirname, "public", "splash"), { index: false }));
 
 function escapeHtml(value) {
   return String(value || "")
@@ -187,6 +215,97 @@ function verifyMathAnswer(userAnswer, hmac) {
     }
   }
   return false;
+}
+
+function isTurnstileEnabled() {
+  return Boolean(TURNSTILE_SITE_KEY && TURNSTILE_SECRET_KEY);
+}
+
+function verifyTurnstileToken(token, remoteip) {
+  if (!isTurnstileEnabled()) return Promise.resolve(true);
+  if (!token) return Promise.resolve(false);
+
+  const params = new URLSearchParams({
+    secret: TURNSTILE_SECRET_KEY,
+    response: token,
+  });
+  if (remoteip) params.append("remoteip", remoteip);
+  const body = params.toString();
+
+  return new Promise((resolve) => {
+    const req = require("https").request(
+      {
+        hostname: "challenges.cloudflare.com",
+        path: "/turnstile/v0/siteverify",
+        method: "POST",
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded",
+          "Content-Length": Buffer.byteLength(body),
+        },
+        timeout: 5000,
+      },
+      (res) => {
+        let data = "";
+        res.on("data", (chunk) => {
+          data += chunk;
+        });
+        res.on("end", () => {
+          try {
+            const json = JSON.parse(data);
+            resolve(json.success === true);
+          } catch {
+            resolve(false);
+          }
+        });
+      }
+    );
+    req.on("error", () => resolve(false));
+    req.on("timeout", () => {
+      req.destroy();
+      resolve(false);
+    });
+    req.write(body);
+    req.end();
+  });
+}
+
+function pruneChemChatSessions() {
+  const now = Date.now();
+  for (const [token, entry] of CHEM_CHAT_SESSIONS) {
+    if (!entry || now - entry.createdAt > CHEM_CHAT_SESSION_TTL_MS) {
+      CHEM_CHAT_SESSIONS.delete(token);
+    }
+  }
+}
+
+function mintChemChatSession() {
+  pruneChemChatSessions();
+  const token = crypto.randomUUID ? crypto.randomUUID() : crypto.randomBytes(16).toString("hex");
+  CHEM_CHAT_SESSIONS.set(token, { createdAt: Date.now() });
+  return token;
+}
+
+function validateChemChatSession(token) {
+  if (typeof token !== "string" || !token.trim()) return false;
+  pruneChemChatSessions();
+  return CHEM_CHAT_SESSIONS.has(token);
+}
+
+function chatCompletionHeaders() {
+  const headers = {
+    "Content-Type": "application/json",
+    Authorization: "Bearer " + SPLASH_OPENAI_API_KEY,
+  };
+  if (USE_CF_ACCESS_HEADERS) {
+    headers["CF-Access-Client-Id"] = CF_ACCESS_CLIENT_ID;
+    headers["CF-Access-Client-Secret"] = CF_ACCESS_CLIENT_SECRET;
+  }
+  return headers;
+}
+
+const SPLASH_INDEX_HTML_TEMPLATE = fs.readFileSync(path.join(__dirname, "public", "splash", "index.htm"), "utf8");
+function renderSplashIndexHtml() {
+  return SPLASH_INDEX_HTML_TEMPLATE.replace("__TURNSTILE_SITE_KEY__", JSON.stringify(TURNSTILE_SITE_KEY));
 }
 
 function renderContactPage({ status, error, debug, mathChallenge }) {
@@ -370,12 +489,29 @@ app.post("/splash/chat", express.json({ limit: "50kb" }), async (req, res) => {
   const history = Array.isArray(body.history) ? body.history : [];
   const poolState = body.poolState && typeof body.poolState === "object" ? body.poolState : {};
   const chemResults = typeof body.chemResults === "string" ? body.chemResults.trim() : "";
+  const chatSessionToken = typeof body.chatSessionToken === "string" ? body.chatSessionToken.trim() : "";
+  const turnstileToken = typeof body.turnstileToken === "string" ? body.turnstileToken.trim() : "";
+  const remoteip = req.ip || req.socket.remoteAddress || undefined;
 
   if (!message || message.length > 2000) {
     return res.status(400).json({ error: "invalid_message" });
   }
   if (chemResults.length > 12000) {
     return res.status(400).json({ error: "invalid_chem_results" });
+  }
+
+  let resolvedChatSessionToken = chatSessionToken;
+  if (isTurnstileEnabled()) {
+    if (!validateChemChatSession(resolvedChatSessionToken)) {
+      if (!turnstileToken) {
+        return res.status(403).json({ error: "turnstile_required" });
+      }
+      const turnstileOk = await verifyTurnstileToken(turnstileToken, remoteip);
+      if (!turnstileOk) {
+        return res.status(403).json({ error: "turnstile_failed" });
+      }
+      resolvedChatSessionToken = mintChemChatSession();
+    }
   }
 
   const allowedStateFields = ["volL", "tempC", "chlorineType", "ta", "ph", "fc", "th", "cya", "tc"];
@@ -399,9 +535,12 @@ app.post("/splash/chat", express.json({ limit: "50kb" }), async (req, res) => {
   const payloadMessages = [
     {
       role: "system",
-      content: `${SPLASH_CHAT_GUIDELINES}\n\nCurrent pool state:\n${poolStateLines.join(
-        "\n"
-      )}\n\nAuthoritative chemistry card outputs (do not override):\n${chemResults || "(none provided)"}`,
+      content:
+        SPLASH_CHAT_GUIDELINES +
+        "\\n\\nCurrent pool state:\\n" +
+        poolStateLines.join("\\n") +
+        "\\n\\nAuthoritative chemistry card outputs (do not override):\\n" +
+        (chemResults || "(none provided)"),
     },
     ...safeHistory,
     { role: "user", content: message },
@@ -410,10 +549,7 @@ app.post("/splash/chat", express.json({ limit: "50kb" }), async (req, res) => {
   try {
     const llmRes = await fetch(`${SPLASH_OPENAI_BASE_URL}/chat/completions`, {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${SPLASH_OPENAI_API_KEY}`,
-      },
+      headers: chatCompletionHeaders(),
       body: JSON.stringify({
         model: "gpt-4o-mini",
         temperature: 0.2,
@@ -430,7 +566,11 @@ app.post("/splash/chat", express.json({ limit: "50kb" }), async (req, res) => {
     if (typeof reply !== "string" || !reply.trim()) {
       return res.status(502).json({ error: "upstream_empty" });
     }
-    return res.json({ reply: reply.trim() });
+    const response = { reply: reply.trim() };
+    if (resolvedChatSessionToken) {
+      response.chatSessionToken = resolvedChatSessionToken;
+    }
+    return res.json(response);
   } catch {
     return res.status(502).json({ error: "upstream_unreachable" });
   }

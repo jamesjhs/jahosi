@@ -49,7 +49,9 @@ Crawler endpoints served by the app:
 
 - `/splash` now supports global location search (country/city/town) for weather auto-fill.
 - It uses Open-Meteo geocoding + forecast APIs and loads a location-aware monthly climate profile from public archive data when available.
+- The chemistry bot keeps conversation state per browser tab, stores only temporary in-memory history, and now requires a Turnstile check before the first chat message when configured.
 - On splash version changes, the client performs a forced cache refresh/reload while preserving saved pool configuration values in local storage.
-- Current splash release is v1.5.0 with maintenance-first UX ordering, mobile floating options/close controls, and a main-page forecast fetch action.
+- Current splash release is v1.6.2 with Turnstile-gated first-chat flow, temporary per-tab bot sessions, and the existing forecast / UX improvements.
 - Chemistry guidance now includes rough product quantity estimates (location/environment aware) with explicit hard/soft water caveats.
 - Splash appendices are published at `/splash/appendices.htm` with formulas and validated reference sources.
+- Set `SPLASH_OPENAI_API_KEY` in the server `.env`; optional Turnstile and Cloudflare Access values can also live there for the chatbot.

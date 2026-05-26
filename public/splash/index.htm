@@ -34,6 +34,7 @@
 }
 </script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit" async defer></script>
 <style>
 
 :root {
@@ -232,6 +233,11 @@ footer{text-align:center;padding:1.5rem;font-size:.72rem;color:var(--muted)}
   border-radius:12px;box-shadow:var(--shadow);display:none;overflow:hidden
 }
 .chem-chat-panel.open{display:block}
+.chem-chat-gate{padding:.7rem .75rem;border-bottom:1px solid var(--border);background:#f8fbff;display:grid;gap:.5rem}
+.chem-chat-gate[hidden]{display:none}
+.chem-chat-gate-copy{font-size:.78rem;font-weight:700;color:var(--blue)}
+.chem-chat-gate-note{font-size:.72rem;color:var(--muted);line-height:1.45}
+.chem-chat-turnstile{display:flex;justify-content:center;overflow:hidden}
 .chem-chat-head{display:flex;align-items:center;justify-content:space-between;gap:.75rem;background:#e0f2fe;border-bottom:1px solid var(--border);padding:.65rem .75rem}
 .chem-chat-title{font-size:.82rem;font-weight:700;color:var(--blue)}
 .chem-chat-close{border:0;background:transparent;color:#475569;font-size:1.05rem;cursor:pointer}
@@ -265,7 +271,7 @@ footer{text-align:center;padding:1.5rem;font-size:.72rem;color:var(--muted)}
 
 <header>
   <h1>splash! <em>by Jahosi</em></h1>
-  <p>Cost estimates for your playpool · v1.6.1</p>
+  <p>Cost estimates for your playpool · v1.6.2</p>
 </header>
 
 <div class="wrap">
@@ -290,7 +296,7 @@ footer{text-align:center;padding:1.5rem;font-size:.72rem;color:var(--muted)}
         <ul class="intro-list">
           <li>Manual forecast entry always stays available, even after location-based weather auto-fill.</li>
           <li>Set pool season start and end dates to see a cost breakdown for your actual outdoor season, including water fill costs (UK Anglian Water metered baseline: 0.55 p/L).</li>
-          <li>v1.6.1 hardens saved-location persistence, launch-time forecast refresh, and mobile options toggle behavior.</li>
+          <li>v1.6.2 hardens saved-location persistence, launch-time forecast refresh, and mobile options toggle behavior.</li>
           <li>v1.6.0 strengthens near-term weather modelling with 2-day hourly forecasting and direct hourly solar-radiation use when available.</li>
           <li>v1.5.0 reorders controls/results to an expert maintenance workflow, adds main-page forecast fetch, and improves mobile options UX.</li>
           <li>v1.5.0 also adds environment-aware rough product quantity guidance (including stabilised vs liquid chlorine and refill estimates) and a new appendices page with formulas/sources.</li>
@@ -338,6 +344,11 @@ footer{text-align:center;padding:1.5rem;font-size:.72rem;color:var(--muted)}
     <div id="chem-chat-thread" class="chem-chat-thread">
       <div class="chem-chat-msg bot">🤖 Rough guide — always test first.
 Ask about your current chemistry readings and dosing cards.</div>
+    </div>
+    <div id="chem-chat-gate" class="chem-chat-gate" hidden>
+      <div class="chem-chat-gate-copy">Complete the Turnstile check to start chatting.</div>
+      <div id="chem-chat-turnstile" class="chem-chat-turnstile"></div>
+      <p id="chem-chat-gate-note" class="chem-chat-gate-note">Your chat session stays temporary and in-memory only.</p>
     </div>
     <form id="chem-chat-form" class="chem-chat-form">
       <input id="chem-chat-input" class="chem-chat-input" type="text" maxlength="500" placeholder="Ask about current readings…" autocomplete="off">
@@ -791,8 +802,8 @@ Ask about your current chemistry readings and dosing cards.</div>
       </div>
 
       <div class="card" style="margin-bottom:1rem" id="model-review-card">
-        <div class="card-title">Model review in v1.6.1</div>
-        <p class="inline-help">Core daylight-solar and forecast-cap safeguards remain in place. v1.6.1 hardens save/restore behavior for weather-location context and improves launch-time weather refresh resilience while keeping manual entry as fallback. v1.6.0 extends near-term simulation to 2 days, removes the coarse 7-day schedule chart, and uses hourly shortwave radiation when available so near-term solar heat gain follows observed forecast conditions more directly. v1.5.0 improved workflow UX ordering, mobile controls, and added environment-aware rough chemistry product quantity guidance plus appendices documentation of formulas/sources. Manual forecasts remain planning estimates, not guarantees.</p>
+        <div class="card-title">Model review in v1.6.2</div>
+        <p class="inline-help">Core daylight-solar and forecast-cap safeguards remain in place. v1.6.2 hardens save/restore behavior for weather-location context and improves launch-time weather refresh resilience while keeping manual entry as fallback. v1.6.0 extends near-term simulation to 2 days, removes the coarse 7-day schedule chart, and uses hourly shortwave radiation when available so near-term solar heat gain follows observed forecast conditions more directly. v1.5.0 improved workflow UX ordering, mobile controls, and added environment-aware rough chemistry product quantity guidance plus appendices documentation of formulas/sources. Manual forecasts remain planning estimates, not guarantees.</p>
       </div>
 
       <div class="card" style="margin-bottom:1rem" id="export-card">
@@ -1159,7 +1170,7 @@ Ask about your current chemistry readings and dosing cards.</div>
 </div><!-- /wrap -->
 
 <footer>
-  splash! &mdash; costing for your playpool · v1.6.1.<br>
+  splash! &mdash; costing for your playpool · v1.6.2.<br>
   Physics model: surface losses combine free-convection, evaporation (dominant) and long-wave radiation; parameterised by shade/shelter.
   Location-aware global climate profiling with fallback baselines. Costs are indicative estimates only. Not for safety-critical application.<br>
   Copyright © jahosi.co.uk 2026
@@ -1195,7 +1206,7 @@ const COVER_TYPES = {
   liquid:  {label:'Liquid solar cover',             surfaceLossFactor:0.65, solarTransmittance:0.98, evaporationReduction:0.40}
 };
 
-const APP_VERSION = '1.6.1';
+const APP_VERSION = '1.6.2';
 const APP_COPYRIGHT = 'Copyright © jahosi.co.uk 2026';
 const TARGET_TEMP_MIN = 18;
 const TARGET_TEMP_MAX = 40;
@@ -2313,13 +2324,39 @@ function initChemistry() {
 
 // ─── CHEMISTRY CHAT ─────────────────────────────────────────────────────────────
 const CHEM_CHAT_MAX_PAIRS = 6;
+const CHEM_CHAT_TURNSTILE_SITE_KEY = "__TURNSTILE_SITE_KEY__";
+const CHEM_CHAT_SESSION_STORAGE_KEY = "splash_chem_chat_session_1";
 const chemChatHistory = [];
+let chemChatTurnstileWidgetId = null;
+let chemChatTurnstileToken = "";
 
 function chemChatReadValue(id) {
   const raw = document.getElementById(id)?.value;
   if (raw == null || String(raw).trim() === '') return null;
   const num = Number(raw);
   return Number.isFinite(num) ? num : String(raw).trim();
+}
+
+function chemChatHasSession() {
+  try {
+    return Boolean(sessionStorage.getItem(CHEM_CHAT_SESSION_STORAGE_KEY));
+  } catch {
+    return false;
+  }
+}
+
+function chemChatStoreSession(token) {
+  try {
+    if (token) {
+      sessionStorage.setItem(CHEM_CHAT_SESSION_STORAGE_KEY, token);
+    } else {
+      sessionStorage.removeItem(CHEM_CHAT_SESSION_STORAGE_KEY);
+    }
+  } catch {}
+}
+
+function chemChatIsTurnstileEnabled() {
+  return Boolean(CHEM_CHAT_TURNSTILE_SITE_KEY && CHEM_CHAT_TURNSTILE_SITE_KEY !== '__TURNSTILE_SITE_KEY__');
 }
 
 function chemChatSnapshot() {
@@ -2364,25 +2401,112 @@ function chemChatTrimHistory() {
   }
 }
 
+function chemChatSyncGate() {
+  const gate = document.getElementById('chem-chat-gate');
+  const input = document.getElementById('chem-chat-input');
+  const sendBtn = document.getElementById('chem-chat-send');
+  const locked = chemChatIsTurnstileEnabled() && !chemChatHasSession();
+  if (gate) gate.hidden = !locked;
+  if (input) input.disabled = locked;
+  if (sendBtn) sendBtn.disabled = locked;
+}
+
+function chemChatSetGateMessage(message) {
+  const note = document.getElementById('chem-chat-gate-note');
+  if (note) note.textContent = message;
+}
+
+function chemChatResetTurnstileWidget() {
+  chemChatTurnstileToken = '';
+  chemChatStoreSession('');
+  chemChatSyncGate();
+  chemChatSetGateMessage('Complete the Turnstile check to start chatting.');
+  if (chemChatTurnstileWidgetId !== null && window.turnstile && typeof window.turnstile.reset === 'function') {
+    try {
+      window.turnstile.reset(chemChatTurnstileWidgetId);
+    } catch {}
+  }
+}
+
+function chemChatEnsureTurnstileWidget() {
+  if (!chemChatIsTurnstileEnabled()) return;
+  const container = document.getElementById('chem-chat-turnstile');
+  if (!container || container.dataset.rendered === 'true') return;
+  if (!window.turnstile || typeof window.turnstile.render !== 'function') return;
+  container.dataset.rendered = 'true';
+  chemChatTurnstileWidgetId = window.turnstile.render(container, {
+    sitekey: CHEM_CHAT_TURNSTILE_SITE_KEY,
+    theme: 'light',
+    callback(token) {
+      chemChatTurnstileToken = token;
+      chemChatSetGateMessage('Verification complete. You can chat in this browser session.');
+      chemChatSyncGate();
+    },
+    'expired-callback'() {
+      chemChatResetTurnstileWidget();
+    },
+    'error-callback'() {
+      chemChatResetTurnstileWidget();
+    }
+  });
+  chemChatSetGateMessage('Complete the Turnstile check to start chatting.');
+}
+
+function chemChatScheduleTurnstileRender() {
+  if (!chemChatIsTurnstileEnabled()) return;
+  if (window.turnstile && typeof window.turnstile.ready === 'function') {
+    window.turnstile.ready(() => chemChatEnsureTurnstileWidget());
+  } else {
+    window.addEventListener('load', () => chemChatEnsureTurnstileWidget(), { once: true });
+  }
+}
+
 async function chemChatSend(message) {
   const sendBtn = document.getElementById('chem-chat-send');
+  const sessionToken = chemChatHasSession() ? sessionStorage.getItem(CHEM_CHAT_SESSION_STORAGE_KEY) || '' : '';
+  const needsTurnstile = chemChatIsTurnstileEnabled() && !sessionToken;
+  if (needsTurnstile && !chemChatTurnstileToken) {
+    chemChatSyncGate();
+    chemChatSetGateMessage('Complete the Turnstile check to start chatting.');
+    return;
+  }
   if (sendBtn) sendBtn.disabled = true;
   const { poolState, chemResults } = chemChatSnapshot();
   try {
+    const payload = {
+      message,
+      poolState,
+      chemResults,
+      history: chemChatHistory,
+      chatSessionToken: sessionToken
+    };
+    if (needsTurnstile && chemChatTurnstileToken) {
+      payload.turnstileToken = chemChatTurnstileToken;
+    }
     const res = await fetch('/splash/chat', {
       method: 'POST',
       headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify({
-        message,
-        poolState,
-        chemResults,
-        history: chemChatHistory
-      })
+      body: JSON.stringify(payload)
     });
-    if (!res.ok) throw new Error('chat_failed');
-    const data = await res.json();
+    const data = await res.json().catch(() => ({}));
+    if (res.status === 403 && data?.error === 'turnstile_required') {
+      chemChatResetTurnstileWidget();
+      chemChatSetGateMessage('Complete the Turnstile check to start chatting.');
+      return;
+    }
+    if (res.status === 403 && data?.error === 'turnstile_failed') {
+      chemChatResetTurnstileWidget();
+      chemChatSetGateMessage('Verification failed. Please try again.');
+      return;
+    }
+    if (!res.ok) throw new Error(data?.error || 'chat_failed');
     const reply = typeof data?.reply === 'string' ? data.reply.trim() : '';
     if (!reply) throw new Error('chat_empty');
+    if (typeof data?.chatSessionToken === 'string' && data.chatSessionToken) {
+      chemChatStoreSession(data.chatSessionToken);
+      chemChatTurnstileToken = '';
+      chemChatSyncGate();
+    }
     chemChatAppend('bot', reply);
     chemChatHistory.push({ role: 'assistant', content: reply });
     chemChatTrimHistory();
@@ -2393,6 +2517,7 @@ async function chemChatSend(message) {
     chemChatTrimHistory();
   } finally {
     if (sendBtn) sendBtn.disabled = false;
+    chemChatSyncGate();
   }
 }
 
@@ -2407,7 +2532,14 @@ function initChemChat() {
   const setOpen = (open) => {
     panel.classList.toggle('open', open);
     toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
-    if (open) input.focus();
+    if (open) {
+      chemChatSyncGate();
+      if (chemChatIsTurnstileEnabled()) {
+        chemChatEnsureTurnstileWidget();
+        chemChatScheduleTurnstileRender();
+      }
+      if (!input.disabled) input.focus();
+    }
   };
 
   toggle.addEventListener('click', () => setOpen(!panel.classList.contains('open')));
@@ -2422,6 +2554,10 @@ function initChemChat() {
     input.value = '';
     await chemChatSend(message);
   });
+  chemChatSyncGate();
+  if (chemChatIsTurnstileEnabled()) {
+    chemChatScheduleTurnstileRender();
+  }
 }
 
 // ─── CHART INSTANCES ──────────────────────────────────────────────────────────
