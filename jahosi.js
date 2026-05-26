@@ -80,7 +80,6 @@ const splashChatRateLimit = rateLimit({
   limit: 20,
   standardHeaders: false,
   legacyHeaders: false,
-  keyGenerator: (req) => req.ip || req.socket.remoteAddress || "unknown",
   handler: (_req, res) => {
     res.status(429).json({ error: "rate_limited" });
   },
