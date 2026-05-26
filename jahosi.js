@@ -158,7 +158,7 @@ app.get("/robots.txt", (req, res) => {
 
 app.use(express.static(path.join(__dirname, "public")));
 
-app.get("/splash", (req, res) => {
+app.get(/^\/splash$/, (req, res) => {
   res.redirect("/splash/");
 });
 
@@ -292,11 +292,27 @@ function renderContactPage({ status, error, debug }) {
       : "";
 
   const captchaUi = isTurnstileEnabled()
-    ? `<div class="mt-2">
-        <span class="mb-1 block text-sm font-semibold">Human check</span>
-        <div class="cf-turnstile" data-sitekey="${escapeHtml(TURNSTILE_SITE_KEY)}"></div>
-      </div>`
+    ? '<div id="contact-turnstile" class="mt-2 min-h-[65px]"></div>'
     : '<p class="mt-2 text-sm text-rose-700">Contact form anti-spam is not configured. Please refresh the page and try again.</p>';
+  const turnstileInitScript = isTurnstileEnabled()
+    ? `<script>
+  (function () {
+    const siteKey = ${JSON.stringify(TURNSTILE_SITE_KEY)};
+    const renderTurnstile = () => {
+      const container = document.getElementById("contact-turnstile");
+      if (!container || container.dataset.rendered === "1") return;
+      if (!window.turnstile || typeof window.turnstile.render !== "function") return;
+      window.turnstile.render(container, { sitekey: siteKey });
+      container.dataset.rendered = "1";
+    };
+    if (window.turnstile && typeof window.turnstile.ready === "function") {
+      window.turnstile.ready(renderTurnstile);
+    } else {
+      window.addEventListener("load", renderTurnstile, { once: true });
+    }
+  })();
+</script>`
+    : "";
 
   return `<!DOCTYPE html>
 <html lang="en">
@@ -306,7 +322,7 @@ function renderContactPage({ status, error, debug }) {
   <meta name="robots" content="noindex,nofollow,noarchive">
   <title>Contact Me</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+  <script src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit" async defer></script>
   <style>
     body {
       font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
@@ -346,6 +362,7 @@ function renderContactPage({ status, error, debug }) {
       </form>
     </section>
   </main>
+  ${turnstileInitScript}
 </body>
 </html>`;
 }
