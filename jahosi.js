@@ -1,6 +1,7 @@
 require("dotenv").config();
 const crypto = require("crypto");
 const express = require("express");
+const rateLimit = require("express-rate-limit");
 const nodemailer = require("nodemailer");
 const path = require("path");
 const packageJson = require("./package.json");
@@ -71,12 +72,19 @@ const SITEMAP_PATHS = [
 
 const MAX_REQUESTS_PER_WINDOW = 5;
 const RATE_LIMIT_WINDOW_MS = 15 * 60 * 1000;
-const CHAT_MAX_REQUESTS_PER_WINDOW = 20;
-const CHAT_RATE_LIMIT_WINDOW_MS = 15 * 60 * 1000;
 const MIN_FORM_FILL_MS = 3000;
 const MATH_CHALLENGE_WINDOW_MS = 60 * 60 * 1000;
 const RATE_LIMIT_BUCKETS = new Map();
-const CHAT_RATE_LIMIT_BUCKETS = new Map();
+const splashChatRateLimit = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  limit: 20,
+  standardHeaders: false,
+  legacyHeaders: false,
+  keyGenerator: (req) => req.ip || req.socket.remoteAddress || "unknown",
+  handler: (_req, res) => {
+    res.status(429).json({ error: "rate_limited" });
+  },
+});
 const SPLASH_CHAT_GUIDELINES = [
   "You are a pool chemistry assistant for splash!",
   "Never invent dosing quantities. Use only the dosing amounts calculated by the app and explain them conversationally.",
@@ -180,29 +188,6 @@ function isRateLimited(ip) {
   recent.push(now);
   RATE_LIMIT_BUCKETS.set(ip, recent);
   return false;
-}
-
-function isChatRateLimited(ip) {
-  const now = Date.now();
-  const existing = CHAT_RATE_LIMIT_BUCKETS.get(ip) || [];
-  const recent = existing.filter((ts) => now - ts < CHAT_RATE_LIMIT_WINDOW_MS);
-
-  if (recent.length >= CHAT_MAX_REQUESTS_PER_WINDOW) {
-    CHAT_RATE_LIMIT_BUCKETS.set(ip, recent);
-    return true;
-  }
-
-  recent.push(now);
-  CHAT_RATE_LIMIT_BUCKETS.set(ip, recent);
-  return false;
-}
-
-function chatRateLimit(req, res, next) {
-  const ip = req.ip || req.socket.remoteAddress || "unknown";
-  if (isChatRateLimited(ip)) {
-    return res.status(429).json({ error: "rate_limited" });
-  }
-  return next();
 }
 
 function isValidEmail(email) {
@@ -505,7 +490,7 @@ app.post("/api/contact/submit", async (req, res) => {
   }
 });
 
-app.post("/splash/chat", chatRateLimit, express.json({ limit: "50kb" }), async (req, res) => {
+app.post("/splash/chat", splashChatRateLimit, express.json({ limit: "50kb" }), async (req, res) => {
   if (!SPLASH_OPENAI_API_KEY) {
     return res.status(404).json({ error: "disabled" });
   }
