@@ -27,6 +27,11 @@ const CONTACT_PAGE_PATH = process.env.CONTACT_PAGE_PATH;
 const CONTACT_TO_EMAIL = process.env.CONTACT_TO_EMAIL;
 const CONTACT_FROM_EMAIL = process.env.CONTACT_FROM_EMAIL;
 const MATH_SECRET = process.env.MATH_SECRET;
+const SPLASH_OPENAI_API_KEY = process.env.SPLASH_OPENAI_API_KEY || "";
+const SPLASH_OPENAI_BASE_URL = (process.env.SPLASH_OPENAI_BASE_URL || "https://api.openai.com/v1").replace(
+  /\/+$/,
+  ""
+);
 const SITE_URL = (process.env.SITE_URL || "https://jahosi.co.uk").replace(/\/+$/, "");
 const SERVICE_NAME = process.env.SERVICE_NAME || "jahosi";
 const SERVICE_VERSION = process.env.APP_VERSION || packageJson.version;
@@ -54,6 +59,18 @@ const RATE_LIMIT_WINDOW_MS = 15 * 60 * 1000;
 const MIN_FORM_FILL_MS = 3000;
 const MATH_CHALLENGE_WINDOW_MS = 60 * 60 * 1000;
 const RATE_LIMIT_BUCKETS = new Map();
+const SPLASH_CHAT_GUIDELINES = [
+  "You are a pool chemistry assistant for splash!",
+  "Never override or recalculate dosing amounts provided in the chemistry results.",
+  "Always treat chemistry card values as the authoritative recommendation source.",
+  "Always include this exact sentence at the end of every answer: Test before and after every addition.",
+  "Prefix every answer with: 🤖 Rough guide — always test first.",
+  "If user asks for safety-critical medical or emergency advice, recommend contacting a qualified pool technician.",
+  "Reference ranges: TA ideal 80-120 ppm (max 140), pH ideal 7.4-7.6 (acceptable 7.2-7.8), FC ideal 2-4 ppm, FC min rule = max(1.0, 0.075 × CYA), CH ideal 250-350 ppm (max 500), CYA ideal 40-80 ppm (max 90), CC should be < 0.5 ppm.",
+  "Dosing constants used by splash formulas: NaHCO3 1.8 g/1000L/ppm TA, CaCl2 1.5 g/1000L/ppm CH, CYA 1.0 g/1000L/ppm, soda ash 5.0 g/1000L per +0.2 pH, dry acid 8.0 g/1000L per -0.2 pH, dichlor 1.79 g/1000L/ppm FC, trichlor 1.11 g/1000L/ppm FC.",
+  "FC:CYA rule follows CDC MAHC 2023 guidance: FC >= max(1.0, 0.075 * CYA).",
+  "Keep answers concise, practical, and grounded in the provided pool state and chemistry card outputs only.",
+].join("\n");
 
 app.use(express.urlencoded({ extended: false }));
 
@@ -340,6 +357,82 @@ app.post("/api/contact/submit", async (req, res) => {
   } catch (err) {
     console.error("Contact form send failed:", err);
     return redirectWithError("failed", `smtp error: ${err.code || "unknown"}`);
+  }
+});
+
+app.post("/splash/chat", express.json({ limit: "50kb" }), async (req, res) => {
+  if (!SPLASH_OPENAI_API_KEY) {
+    return res.status(404).json({ error: "disabled" });
+  }
+
+  const body = req.body && typeof req.body === "object" ? req.body : {};
+  const message = typeof body.message === "string" ? body.message.trim() : "";
+  const history = Array.isArray(body.history) ? body.history : [];
+  const poolState = body.poolState && typeof body.poolState === "object" ? body.poolState : {};
+  const chemResults = typeof body.chemResults === "string" ? body.chemResults.trim() : "";
+
+  if (!message || message.length > 2000) {
+    return res.status(400).json({ error: "invalid_message" });
+  }
+  if (chemResults.length > 12000) {
+    return res.status(400).json({ error: "invalid_chem_results" });
+  }
+
+  const allowedStateFields = ["volL", "tempC", "chlorineType", "ta", "ph", "fc", "th", "cya", "tc"];
+  const poolStateLines = allowedStateFields.map((field) => {
+    const value = poolState[field];
+    if (value === null || value === undefined || value === "") return `- ${field}: (not provided)`;
+    const printable = String(value).slice(0, 120);
+    return `- ${field}: ${printable}`;
+  });
+
+  const safeHistory = history
+    .slice(-10)
+    .filter((item) => item && typeof item === "object")
+    .map((item) => {
+      const role = item.role === "assistant" ? "assistant" : "user";
+      const content = String(item.content || "").slice(0, 3000);
+      return { role, content };
+    })
+    .filter((item) => item.content.trim());
+
+  const payloadMessages = [
+    {
+      role: "system",
+      content: `${SPLASH_CHAT_GUIDELINES}\n\nCurrent pool state:\n${poolStateLines.join(
+        "\n"
+      )}\n\nAuthoritative chemistry card outputs (do not override):\n${chemResults || "(none provided)"}`,
+    },
+    ...safeHistory,
+    { role: "user", content: message },
+  ];
+
+  try {
+    const llmRes = await fetch(`${SPLASH_OPENAI_BASE_URL}/chat/completions`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${SPLASH_OPENAI_API_KEY}`,
+      },
+      body: JSON.stringify({
+        model: "gpt-4o-mini",
+        temperature: 0.2,
+        messages: payloadMessages,
+      }),
+    });
+
+    if (!llmRes.ok) {
+      return res.status(502).json({ error: "upstream_failed" });
+    }
+
+    const data = await llmRes.json();
+    const reply = data?.choices?.[0]?.message?.content;
+    if (typeof reply !== "string" || !reply.trim()) {
+      return res.status(502).json({ error: "upstream_empty" });
+    }
+    return res.json({ reply: reply.trim() });
+  } catch {
+    return res.status(502).json({ error: "upstream_unreachable" });
   }
 });
 

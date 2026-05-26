@@ -221,6 +221,28 @@ footer{text-align:center;padding:1.5rem;font-size:.72rem;color:var(--muted)}
 .chem-ref-table td{padding:.35rem .6rem;border-bottom:1px solid var(--border);vertical-align:top}
 .chem-ref-table tr:nth-child(even) td{background:#f5faff}
 .chem-active-band td{background:#e0f2fe!important;font-weight:700}
+.chem-chat-toggle{
+  position:fixed;right:1rem;bottom:1rem;z-index:1200;
+  border:0;border-radius:999px;background:#0f766e;color:#fff;
+  padding:.72rem .95rem;font-weight:700;cursor:pointer;box-shadow:var(--shadow)
+}
+.chem-chat-panel{
+  position:fixed;right:1rem;bottom:4.2rem;z-index:1201;
+  width:min(92vw,370px);background:var(--card);border:2px solid var(--border);
+  border-radius:12px;box-shadow:var(--shadow);display:none;overflow:hidden
+}
+.chem-chat-panel.open{display:block}
+.chem-chat-head{display:flex;align-items:center;justify-content:space-between;gap:.75rem;background:#e0f2fe;border-bottom:1px solid var(--border);padding:.65rem .75rem}
+.chem-chat-title{font-size:.82rem;font-weight:700;color:var(--blue)}
+.chem-chat-close{border:0;background:transparent;color:#475569;font-size:1.05rem;cursor:pointer}
+.chem-chat-thread{max-height:290px;overflow:auto;padding:.65rem;display:grid;gap:.55rem;background:#f8fbff}
+.chem-chat-msg{font-size:.78rem;line-height:1.5;padding:.55rem .62rem;border-radius:10px;white-space:pre-wrap}
+.chem-chat-msg.user{background:#dbeafe;color:#1e3a8a}
+.chem-chat-msg.bot{background:#ecfeff;color:#155e75}
+.chem-chat-form{display:grid;grid-template-columns:1fr auto;gap:.5rem;padding:.65rem;border-top:1px solid var(--border);background:#fff}
+.chem-chat-input{border:1.5px solid var(--border);border-radius:8px;padding:.55rem .6rem;font-size:.8rem}
+.chem-chat-send{border:0;border-radius:8px;background:var(--blue);color:#fff;padding:.55rem .8rem;font-weight:700;cursor:pointer}
+.chem-chat-send:disabled{opacity:.65;cursor:wait}
 
 @media(max-width:980px){
   .layout{grid-template-columns:1fr}
@@ -234,6 +256,8 @@ footer{text-align:center;padding:1.5rem;font-size:.72rem;color:var(--muted)}
   .intro-grid{grid-template-columns:1fr}
   .floating-options-btn{display:inline-flex;align-items:center;justify-content:center}
   .controls-close-bottom{display:block}
+  .chem-chat-toggle{bottom:4.6rem}
+  .chem-chat-panel{right:.6rem;left:.6rem;width:auto;bottom:8.1rem}
 }
 </style>
 </head>
@@ -304,6 +328,22 @@ footer{text-align:center;padding:1.5rem;font-size:.72rem;color:var(--muted)}
     <button id="open-controls" type="button">⚙️ Adjust Settings</button>
   </div>
   <button id="floating-options" class="floating-options-btn" type="button">⚙️ Options</button>
+  <button id="chem-chat-toggle" class="chem-chat-toggle" type="button" aria-expanded="false" aria-controls="chem-chat-panel">🤖 Chemistry bot</button>
+
+  <section id="chem-chat-panel" class="chem-chat-panel" aria-label="Chemistry assistant">
+    <div class="chem-chat-head">
+      <div class="chem-chat-title">Chemistry bot</div>
+      <button id="chem-chat-close" class="chem-chat-close" type="button" aria-label="Close chemistry bot">×</button>
+    </div>
+    <div id="chem-chat-thread" class="chem-chat-thread">
+      <div class="chem-chat-msg bot">🤖 Rough guide — always test first.
+Ask about your current chemistry readings and dosing cards.</div>
+    </div>
+    <form id="chem-chat-form" class="chem-chat-form">
+      <input id="chem-chat-input" class="chem-chat-input" type="text" maxlength="500" placeholder="Ask about current readings…" autocomplete="off">
+      <button id="chem-chat-send" class="chem-chat-send" type="submit">Send</button>
+    </form>
+  </section>
 
   <div class="layout">
     <aside class="controls-panel" id="controls-panel" aria-label="Configuration controls">
@@ -2271,6 +2311,119 @@ function initChemistry() {
   chemGo();
 }
 
+// ─── CHEMISTRY CHAT ─────────────────────────────────────────────────────────────
+const CHEM_CHAT_MAX_PAIRS = 6;
+const chemChatHistory = [];
+
+function chemChatReadValue(id) {
+  const raw = document.getElementById(id)?.value;
+  if (raw == null || String(raw).trim() === '') return null;
+  const num = Number(raw);
+  return Number.isFinite(num) ? num : String(raw).trim();
+}
+
+function chemChatSnapshot() {
+  const chemResults = ['ta', 'ph', 'fc', 'th', 'cya', 'tc']
+    .map((key) => {
+      const badge = document.getElementById(`chem-badge-${key}`)?.textContent?.trim() || 'No reading';
+      const action = document.getElementById(`chem-action-${key}`)?.textContent?.trim() || 'No recommendation';
+      const cardName = document.querySelector(`#chem-card-${key} .chem-name`)?.textContent?.trim() || key.toUpperCase();
+      return `${cardName}: ${badge}. ${action}`;
+    })
+    .join('\n');
+  return {
+    poolState: {
+      volL: Math.round(chemPoolVolL()),
+      tempC: chemCurrentTempC(),
+      chlorineType: gs('chem-chlorine-type'),
+      ta: chemChatReadValue('chem-ta'),
+      ph: chemChatReadValue('chem-ph'),
+      fc: chemChatReadValue('chem-fc'),
+      th: chemChatReadValue('chem-th'),
+      cya: chemChatReadValue('chem-cya'),
+      tc: chemChatReadValue('chem-tc')
+    },
+    chemResults
+  };
+}
+
+function chemChatAppend(role, text) {
+  const thread = document.getElementById('chem-chat-thread');
+  if (!thread) return;
+  const msg = document.createElement('div');
+  msg.className = `chem-chat-msg ${role === 'user' ? 'user' : 'bot'}`;
+  msg.textContent = String(text || '').trim();
+  thread.appendChild(msg);
+  thread.scrollTop = thread.scrollHeight;
+}
+
+function chemChatTrimHistory() {
+  const maxMessages = CHEM_CHAT_MAX_PAIRS * 2;
+  if (chemChatHistory.length > maxMessages) {
+    chemChatHistory.splice(0, chemChatHistory.length - maxMessages);
+  }
+}
+
+async function chemChatSend(message) {
+  const sendBtn = document.getElementById('chem-chat-send');
+  if (sendBtn) sendBtn.disabled = true;
+  const { poolState, chemResults } = chemChatSnapshot();
+  try {
+    const res = await fetch('/splash/chat', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({
+        message,
+        poolState,
+        chemResults,
+        history: chemChatHistory
+      })
+    });
+    if (!res.ok) throw new Error('chat_failed');
+    const data = await res.json();
+    const reply = typeof data?.reply === 'string' ? data.reply.trim() : '';
+    if (!reply) throw new Error('chat_empty');
+    chemChatAppend('bot', reply);
+    chemChatHistory.push({ role: 'assistant', content: reply });
+    chemChatTrimHistory();
+  } catch {
+    const fallback = '🤖 Rough guide — always test first.\nBot unavailable — see the dosing cards above.\nTest before and after every addition.';
+    chemChatAppend('bot', fallback);
+    chemChatHistory.push({ role: 'assistant', content: fallback });
+    chemChatTrimHistory();
+  } finally {
+    if (sendBtn) sendBtn.disabled = false;
+  }
+}
+
+function initChemChat() {
+  const panel = document.getElementById('chem-chat-panel');
+  const toggle = document.getElementById('chem-chat-toggle');
+  const closeBtn = document.getElementById('chem-chat-close');
+  const form = document.getElementById('chem-chat-form');
+  const input = document.getElementById('chem-chat-input');
+  if (!panel || !toggle || !closeBtn || !form || !input) return;
+
+  const setOpen = (open) => {
+    panel.classList.toggle('open', open);
+    toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+    if (open) input.focus();
+  };
+
+  toggle.addEventListener('click', () => setOpen(!panel.classList.contains('open')));
+  closeBtn.addEventListener('click', () => setOpen(false));
+  form.addEventListener('submit', async (event) => {
+    event.preventDefault();
+    const message = input.value.trim();
+    if (!message) return;
+    chemChatAppend('user', message);
+    chemChatHistory.push({ role: 'user', content: message });
+    chemChatTrimHistory();
+    input.value = '';
+    await chemChatSend(message);
+  });
+}
+
 // ─── CHART INSTANCES ──────────────────────────────────────────────────────────
 const CHARTS_AVAILABLE = typeof window.Chart !== 'undefined';
 let chartCost, chartHeat, chartLoss, chartInverse, chartForecast, chartForecast36;
@@ -3868,6 +4021,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   initWeatherAutofill();
   initConfigActions();
   initChemistry();
+  initChemChat();
   togglePoolDimensionInputs();
   updateHeatModeDisplay();
   setClimateStatus(`Monthly climate profile: ${activeClimateProfile.locationLabel}.`, 'info');
