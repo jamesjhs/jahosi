@@ -15,7 +15,8 @@ const REQUIRED_ENV = [
   "CONTACT_PAGE_PATH",
   "CONTACT_TO_EMAIL",
   "CONTACT_FROM_EMAIL",
-  "MATH_SECRET",
+  "TURNSTILE_SITE_KEY",
+  "TURNSTILE_SECRET_KEY",
 ];
 const missingEnv = REQUIRED_ENV.filter((k) => !process.env[k]);
 if (missingEnv.length) {
@@ -27,7 +28,6 @@ if (missingEnv.length) {
 const CONTACT_PAGE_PATH = process.env.CONTACT_PAGE_PATH;
 const CONTACT_TO_EMAIL = process.env.CONTACT_TO_EMAIL;
 const CONTACT_FROM_EMAIL = process.env.CONTACT_FROM_EMAIL;
-const MATH_SECRET = process.env.MATH_SECRET;
 const SPLASH_OPENAI_API_KEY = process.env.SPLASH_OPENAI_API_KEY || "";
 const SPLASH_OPENAI_BASE_URL = (process.env.SPLASH_OPENAI_BASE_URL || "https://api.openai.com/v1").replace(
   /\/+$/,
@@ -73,7 +73,6 @@ const SITEMAP_PATHS = [
 const MAX_REQUESTS_PER_WINDOW = 5;
 const RATE_LIMIT_WINDOW_MS = 15 * 60 * 1000;
 const MIN_FORM_FILL_MS = 3000;
-const MATH_CHALLENGE_WINDOW_MS = 60 * 60 * 1000;
 const RATE_LIMIT_BUCKETS = new Map();
 const splashChatRateLimit = rateLimit({
   windowMs: 15 * 60 * 1000,
@@ -193,40 +192,6 @@ function isValidEmail(email) {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email || "");
 }
 
-function generateMathChallenge() {
-  const a = Math.floor(Math.random() * 9) + 1;
-  const b = Math.floor(Math.random() * 9) + 1;
-  const answer = a + b;
-  const windowSlot = Math.floor(Date.now() / MATH_CHALLENGE_WINDOW_MS);
-  const hmac = crypto
-    .createHmac("sha256", MATH_SECRET)
-    .update(`${answer}:${windowSlot}`)
-    .digest("hex");
-  return { a, b, hmac };
-}
-
-function verifyMathAnswer(userAnswer, hmac) {
-  if (typeof hmac !== "string" || hmac.length !== 64) return false;
-  const now = Date.now();
-  const windowSlot = Math.floor(now / MATH_CHALLENGE_WINDOW_MS);
-  const value = parseInt(userAnswer, 10);
-  if (!Number.isFinite(value)) return false;
-  for (const w of [windowSlot, windowSlot - 1]) {
-    const expected = crypto
-      .createHmac("sha256", MATH_SECRET)
-      .update(`${value}:${w}`)
-      .digest("hex");
-    try {
-      if (crypto.timingSafeEqual(Buffer.from(expected, "hex"), Buffer.from(hmac, "hex"))) {
-        return true;
-      }
-    } catch {
-      // length mismatch — ignore
-    }
-  }
-  return false;
-}
-
 function isTurnstileEnabled() {
   return Boolean(TURNSTILE_SITE_KEY && TURNSTILE_SECRET_KEY);
 }
@@ -318,7 +283,7 @@ function renderSplashIndexHtml() {
   return SPLASH_INDEX_HTML_TEMPLATE.replace("__TURNSTILE_SITE_KEY__", JSON.stringify(TURNSTILE_SITE_KEY));
 }
 
-function renderContactPage({ status, error, debug, mathChallenge }) {
+function renderContactPage({ status, error, debug }) {
   const statusMessage =
     status === "sent"
       ? '<div class="rounded-lg border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-800">Thanks. Your message has been sent.</div>'
@@ -333,15 +298,12 @@ function renderContactPage({ status, error, debug, mathChallenge }) {
       ? `<div class="rounded-lg border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-900">There was a problem sending your message. Please try again.${debugSuffix}</div>`
       : "";
 
-  const captchaUi = mathChallenge
+  const captchaUi = isTurnstileEnabled()
     ? `<div class="mt-2">
-        <label class="block">
-          <span class="mb-1 block text-sm font-semibold">Human check: what is ${escapeHtml(String(mathChallenge.a))} + ${escapeHtml(String(mathChallenge.b))}?</span>
-          <input class="w-32 rounded-lg border border-slate-300 px-3 py-2" type="number" name="mathAnswer" min="1" max="18" required>
-          <input type="hidden" name="mathHmac" value="${escapeHtml(mathChallenge.hmac)}">
-        </label>
+        <span class="mb-1 block text-sm font-semibold">Human check</span>
+        <div class="cf-turnstile" data-sitekey="${escapeHtml(TURNSTILE_SITE_KEY)}"></div>
       </div>`
-    : '<p class="mt-2 text-sm text-rose-700">Contact form is not configured. Please refresh the page and try again.</p>';
+    : '<p class="mt-2 text-sm text-rose-700">Contact form anti-spam is not configured. Please refresh the page and try again.</p>';
 
   return `<!DOCTYPE html>
 <html lang="en">
@@ -351,6 +313,7 @@ function renderContactPage({ status, error, debug, mathChallenge }) {
   <meta name="robots" content="noindex,nofollow,noarchive">
   <title>Contact Me</title>
   <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
   <style>
     body {
       font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
@@ -396,13 +359,11 @@ function renderContactPage({ status, error, debug, mathChallenge }) {
 
 app.get(CONTACT_PAGE_PATH, (req, res) => {
   res.set("X-Robots-Tag", "noindex, nofollow, noarchive");
-  const mathChallenge = generateMathChallenge();
   res.send(
     renderContactPage({
       status: req.query.status,
       error: req.query.error,
       debug: req.query.debug,
-      mathChallenge,
     })
   );
 });
@@ -444,8 +405,9 @@ app.post("/api/contact/submit", async (req, res) => {
     return redirectWithError("blocked");
   }
 
-  const captchaOk = verifyMathAnswer(req.body["mathAnswer"], req.body["mathHmac"]);
-  if (!captchaOk) {
+  const turnstileToken = String(req.body["cf-turnstile-response"] || "").trim();
+  const turnstileOk = await verifyTurnstileToken(turnstileToken, ip);
+  if (!turnstileOk) {
     return redirectWithError("blocked");
   }
 

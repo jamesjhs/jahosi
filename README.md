@@ -23,6 +23,8 @@ Required environment variables for contact form delivery:
 - `SMTP_SECURE` (`false` for STARTTLS/port 587, `true` for SSL/TLS/port 465)
 - `SMTP_USER`
 - `SMTP_PASS`
+- `TURNSTILE_SITE_KEY`
+- `TURNSTILE_SECRET_KEY`
 
 Optional:
 
