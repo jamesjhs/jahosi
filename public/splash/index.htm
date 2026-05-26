@@ -284,6 +284,7 @@ footer{text-align:center;padding:1.5rem;font-size:.72rem;color:var(--muted)}
         <div class="info-actions">
           <a class="link-btn" href="./help.htm">Open help guide</a>
           <a class="link-btn" href="./appendices.htm" style="background:#475569">Open appendices</a>
+          <a class="link-btn" href="#chemistry-sec">Jump to chemistry</a>
           <button type="button" class="action-btn" id="fetch-weather-main">Fetch current forecast</button>
         </div>
       </div>
@@ -544,7 +545,7 @@ footer{text-align:center;padding:1.5rem;font-size:.72rem;color:var(--muted)}
 
           <div class="field">
             <label for="current-temp-source">Current Temperature Source</label>
-            <select id="current-temp-source" onchange="go()">
+            <select id="current-temp-source" onchange="syncCurrentTempControls('current-temp-source');go()">
               <option value="manual" selected>Use measured temperature</option>
               <option value="estimate">Use current estimate</option>
             </select>
@@ -553,7 +554,7 @@ footer{text-align:center;padding:1.5rem;font-size:.72rem;color:var(--muted)}
           <div class="field">
             <label for="current-temp">Current Pool Temperature</label>
             <input type="number" id="current-temp" min="0" max="45" step="0.1" value="22"
-                  oninput="go()"> <span style="font-size:.75rem;color:var(--muted)">°C</span>
+                  oninput="syncCurrentTempControls('current-temp');go()"> <span style="font-size:.75rem;color:var(--muted)">°C</span>
           </div>
           <p class="hint" id="current-temp-estimate">Estimated current temperature: —</p>
 
@@ -877,6 +878,21 @@ footer{text-align:center;padding:1.5rem;font-size:.72rem;color:var(--muted)}
         <div id="chem-pool-volume" style="font-size:.9rem;color:var(--blue);font-weight:700;padding:.38rem .55rem;border:1.5px solid var(--border);border-radius:6px;background:#f5faff">—</div>
       </div>
     </div>
+    <div class="field-row">
+      <div class="field">
+        <label for="chem-current-temp-source">Current Temperature Source</label>
+        <select id="chem-current-temp-source" onchange="syncCurrentTempControls('chem-current-temp-source');go()">
+          <option value="manual" selected>Use measured temperature</option>
+          <option value="estimate">Use current estimate</option>
+        </select>
+      </div>
+      <div class="field">
+        <label for="chem-current-temp">Current Pool Temperature</label>
+        <input type="number" id="chem-current-temp" min="0" max="45" step="0.1" value="22"
+              oninput="syncCurrentTempControls('chem-current-temp');go()"> <span style="font-size:.75rem;color:var(--muted)">°C</span>
+      </div>
+    </div>
+    <p class="hint" id="chem-current-temp-estimate">Estimated current temperature: —</p>
     <p class="hint">
       Both dichlor and trichlor are <strong>stabilised</strong> chlorines — they contain cyanuric acid (CYA / stabiliser)
       and will raise CYA levels over time with every dose.
@@ -2377,6 +2393,22 @@ function syncChlorineTypeSelectors(sourceId) {
   }
 }
 
+function syncCurrentTempControls(sourceId) {
+  const mainSource = document.getElementById('current-temp-source');
+  const mainTemp = document.getElementById('current-temp');
+  const chemSource = document.getElementById('chem-current-temp-source');
+  const chemTemp = document.getElementById('chem-current-temp');
+  if (!mainSource || !mainTemp || !chemSource || !chemTemp) return;
+  const fromChem = sourceId && sourceId.startsWith('chem-');
+  if (fromChem) {
+    mainSource.value = chemSource.value;
+    mainTemp.value = chemTemp.value;
+  } else {
+    chemSource.value = mainSource.value;
+    chemTemp.value = mainTemp.value;
+  }
+}
+
 function sensibleRangeForTarget(target, mode) {
   const delta = mode === 'hottub' ? 1.0 : 1.5;
   return {
@@ -2619,6 +2651,7 @@ function initExportActions() {
 function go() {
   syncDesiredRangeFromTarget();
   syncChlorineTypeSelectors('chem-chlorine-type');
+  syncCurrentTempControls('current-temp-source');
   const inp = {
     poolShape: gs('pool-shape'),
     radius:  gi('radius'),
@@ -2707,9 +2740,17 @@ function go() {
   inp.currentTemp = useEstimatedCurrentTemp ? estimatedCurrentTemp : inp.currentTempManual;
   const currentTempInput = document.getElementById('current-temp');
   if (currentTempInput) currentTempInput.disabled = useEstimatedCurrentTemp;
+  const chemTempInput = document.getElementById('chem-current-temp');
+  if (chemTempInput) chemTempInput.disabled = useEstimatedCurrentTemp;
   const estimateHint = document.getElementById('current-temp-estimate');
   if (estimateHint) {
     estimateHint.textContent = useEstimatedCurrentTemp
+      ? `Estimated current temperature in use: ${fmt(estimatedCurrentTemp, 1)} °C`
+      : `Estimated current temperature: ${fmt(estimatedCurrentTemp, 1)} °C`;
+  }
+  const chemEstimateHint = document.getElementById('chem-current-temp-estimate');
+  if (chemEstimateHint) {
+    chemEstimateHint.textContent = useEstimatedCurrentTemp
       ? `Estimated current temperature in use: ${fmt(estimatedCurrentTemp, 1)} °C`
       : `Estimated current temperature: ${fmt(estimatedCurrentTemp, 1)} °C`;
   }
