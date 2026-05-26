@@ -197,6 +197,14 @@ function isChatRateLimited(ip) {
   return false;
 }
 
+function chatRateLimit(req, res, next) {
+  const ip = req.ip || req.socket.remoteAddress || "unknown";
+  if (isChatRateLimited(ip)) {
+    return res.status(429).json({ error: "rate_limited" });
+  }
+  return next();
+}
+
 function isValidEmail(email) {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email || "");
 }
@@ -497,7 +505,7 @@ app.post("/api/contact/submit", async (req, res) => {
   }
 });
 
-app.post("/splash/chat", express.json({ limit: "50kb" }), async (req, res) => {
+app.post("/splash/chat", chatRateLimit, express.json({ limit: "50kb" }), async (req, res) => {
   if (!SPLASH_OPENAI_API_KEY) {
     return res.status(404).json({ error: "disabled" });
   }
@@ -510,10 +518,6 @@ app.post("/splash/chat", express.json({ limit: "50kb" }), async (req, res) => {
   const chatSessionToken = typeof body.chatSessionToken === "string" ? body.chatSessionToken.trim() : "";
   const turnstileToken = typeof body.turnstileToken === "string" ? body.turnstileToken.trim() : "";
   const remoteip = req.ip || req.socket.remoteAddress || undefined;
-
-  if (isChatRateLimited(remoteip || "unknown")) {
-    return res.status(429).json({ error: "rate_limited" });
-  }
 
   if (!message || message.length > 2000) {
     return res.status(400).json({ error: "invalid_message" });
