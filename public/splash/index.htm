@@ -343,6 +343,7 @@ footer{text-align:center;padding:1.5rem;font-size:.72rem;color:var(--muted)}
     </div>
     <div id="chem-chat-thread" class="chem-chat-thread">
       <div class="chem-chat-msg bot">🤖 Rough guide — always test first.
+Before chatting, confirm your pool geometry and latest chemistry readings are filled in correctly.
 Ask about your current chemistry readings and dosing cards.</div>
     </div>
     <div id="chem-chat-gate" class="chem-chat-gate" hidden>
@@ -2359,6 +2360,11 @@ function chemChatIsTurnstileEnabled() {
   return Boolean(CHEM_CHAT_TURNSTILE_SITE_KEY && CHEM_CHAT_TURNSTILE_SITE_KEY !== '__TURNSTILE_SITE_KEY__');
 }
 
+function chemChatCanChat() {
+  if (!chemChatIsTurnstileEnabled()) return true;
+  return chemChatHasSession() || Boolean(chemChatTurnstileToken);
+}
+
 function chemChatSnapshot() {
   const chemResults = ['ta', 'ph', 'fc', 'th', 'cya', 'tc']
     .map((key) => {
@@ -2405,7 +2411,7 @@ function chemChatSyncGate() {
   const gate = document.getElementById('chem-chat-gate');
   const input = document.getElementById('chem-chat-input');
   const sendBtn = document.getElementById('chem-chat-send');
-  const locked = chemChatIsTurnstileEnabled() && !chemChatHasSession();
+  const locked = !chemChatCanChat();
   if (gate) gate.hidden = !locked;
   if (input) input.disabled = locked;
   if (sendBtn) sendBtn.disabled = locked;
