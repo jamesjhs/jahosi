@@ -310,6 +310,9 @@ function renderContactPage({ status, error, debug }) {
     ? `<script>
   (function () {
     const siteKey = ${JSON.stringify(TURNSTILE_SITE_KEY)};
+    let renderAttempts = 0;
+    const maxRenderAttempts = 40;
+    const renderRetryDelayMs = 250;
     const renderTurnstile = () => {
       const container = document.getElementById("contact-turnstile");
       if (!container || container.dataset.rendered === "1") return;
@@ -317,11 +320,20 @@ function renderContactPage({ status, error, debug }) {
       window.turnstile.render(container, { sitekey: siteKey });
       container.dataset.rendered = "1";
     };
-    if (window.turnstile && typeof window.turnstile.ready === "function") {
-      window.turnstile.ready(renderTurnstile);
+    const renderWithRetry = () => {
+      renderTurnstile();
+      const container = document.getElementById("contact-turnstile");
+      if (!container || container.dataset.rendered === "1") return;
+      if (renderAttempts >= maxRenderAttempts) return;
+      renderAttempts += 1;
+      window.setTimeout(renderWithRetry, renderRetryDelayMs);
+    };
+    if (document.readyState === "complete") {
+      renderWithRetry();
     } else {
-      window.addEventListener("load", renderTurnstile, { once: true });
+      window.addEventListener("load", renderWithRetry, { once: true });
     }
+    renderWithRetry();
   })();
 </script>`
     : "";
