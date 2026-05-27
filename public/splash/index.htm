@@ -2416,12 +2416,17 @@ function chemChatSetGateMessage(message) {
   if (note) note.textContent = message;
 }
 
-function chemChatResetTurnstileWidget() {
+function chemChatResetTurnstileWidget(shouldResetWidget = true) {
   chemChatTurnstileToken = '';
   chemChatStoreSession('');
   chemChatSyncGate();
   chemChatSetGateMessage('Complete the Turnstile check to start chatting.');
-  if (chemChatTurnstileWidgetId !== null && window.turnstile && typeof window.turnstile.reset === 'function') {
+  if (
+    shouldResetWidget &&
+    chemChatTurnstileWidgetId !== null &&
+    window.turnstile &&
+    typeof window.turnstile.reset === 'function'
+  ) {
     try {
       window.turnstile.reset(chemChatTurnstileWidgetId);
     } catch {}
@@ -2446,7 +2451,8 @@ function chemChatEnsureTurnstileWidget() {
       chemChatResetTurnstileWidget();
     },
     'error-callback'() {
-      chemChatResetTurnstileWidget();
+      chemChatResetTurnstileWidget(false);
+      chemChatSetGateMessage('Verification is temporarily unavailable. Refresh and try again later.');
     }
   });
   chemChatSetGateMessage('Complete the Turnstile check to start chatting.');
