@@ -11,6 +11,18 @@ const fs = require("fs");
 const app = express();
 const port = process.env.PORT || 3000;
 
+function normalizeEnvString(value) {
+  if (typeof value !== "string") return "";
+  let cleaned = value.trim();
+  if (
+    cleaned.length >= 2 &&
+    ((cleaned.startsWith('"') && cleaned.endsWith('"')) || (cleaned.startsWith("'") && cleaned.endsWith("'")))
+  ) {
+    cleaned = cleaned.slice(1, -1).trim();
+  }
+  return cleaned;
+}
+
 const REQUIRED_ENV = [
   "CONTACT_PAGE_PATH",
   "CONTACT_TO_EMAIL",
@@ -33,8 +45,8 @@ const SPLASH_OPENAI_BASE_URL = (process.env.SPLASH_OPENAI_BASE_URL || "https://a
   /\/+$/,
   ""
 );
-const TURNSTILE_SITE_KEY = process.env.TURNSTILE_SITE_KEY || "";
-const TURNSTILE_SECRET_KEY = process.env.TURNSTILE_SECRET_KEY || "";
+const TURNSTILE_SITE_KEY = normalizeEnvString(process.env.TURNSTILE_SITE_KEY);
+const TURNSTILE_SECRET_KEY = normalizeEnvString(process.env.TURNSTILE_SECRET_KEY);
 const CF_ACCESS_CLIENT_ID = process.env["CF-Access-Client-Id"] || "";
 const CF_ACCESS_CLIENT_SECRET = process.env["CF-Access-Client-Secret"] || "";
 const SITE_URL = (process.env.SITE_URL || "https://jahosi.co.uk").replace(/\/+$/, "");
@@ -273,7 +285,7 @@ function chatCompletionHeaders() {
 
 const SPLASH_INDEX_HTML_TEMPLATE = fs.readFileSync(path.join(__dirname, "public", "splash", "index.htm"), "utf8");
 function renderSplashIndexHtml() {
-  return SPLASH_INDEX_HTML_TEMPLATE.replace("__TURNSTILE_SITE_KEY__", JSON.stringify(TURNSTILE_SITE_KEY));
+  return SPLASH_INDEX_HTML_TEMPLATE.replace('"__TURNSTILE_SITE_KEY__"', JSON.stringify(TURNSTILE_SITE_KEY));
 }
 
 function renderContactPage({ status, error, debug }) {
