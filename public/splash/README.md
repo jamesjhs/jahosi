@@ -2,11 +2,11 @@
 
 Interactive playpool thermal and cost planner.
 
-## v1.6.2 highlights
+## v1.6.3 highlights
 
-- The chemistry bot now requires a Turnstile check before the first chat message when configured, while keeping history temporary and in-memory only.
-- Saved weather-location context now restores more completely (selected place, hourly forecast, and climate profile state) across sessions.
-- Launch-time weather refresh now reuses saved selection data and falls back to saved coordinates if geocoding from the search text returns no match.
+- The chemistry guide now makes clear that its bands are standard residential outdoor chlorine-pool targets rather than strip-brand-specific normals.
+- The default CYA ideal band is now a more conservative 40–60 ppm while keeping 30 ppm as the outdoor minimum and 90 ppm as the high-end limit.
+- Hardness messaging now uses a broader default guide and calls out surface-dependent variation between vinyl/liner and plaster/concrete pools.
 
 ## v1.6.0 highlights
 

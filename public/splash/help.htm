@@ -18,6 +18,14 @@
   <meta name="twitter:image" content="https://jahosi.co.uk/me.jpg">
 <link rel="icon" type="image/svg+xml" href="./icons/pool-icon-192.svg">
 <title>splash! Help Guide | Jahosi App Portfolio</title>
+<script
+  src="/version-refresh.js"
+  data-page-version="1.6.4"
+  data-version-url="/splash/version.json"
+  data-storage-key="splash_app_version"
+  data-cache-prefix="pool-calculator-shell-"
+  data-unregister-scope="/splash/"
+></script>
 <style>
   :root {
     --blue:#0077b6;
@@ -92,12 +100,19 @@
   </section>
 
   <section class="card">
-    <h2>What’s new in v1.6.2</h2>
+    <h2>What’s new in v1.6.4</h2>
     <ul>
-      <li><strong>Chatbot Turnstile gate:</strong> the chemistry bot now requires a Turnstile check before the first chat message when configured, and keeps the session temporary in browser memory.</li>
-      <li><strong>Save/restore hardening:</strong> saved weather-location context now restores selected place details, hourly forecast points, and active climate profile state more reliably across sessions.</li>
-      <li><strong>Launch refresh resilience:</strong> if a saved search string does not geocode cleanly on a later launch, splash now falls back to saved coordinates so weather re-poll can still succeed.</li>
-      <li><strong>Mobile options toggle polish:</strong> the floating options control now toggles and switches label to <em>Apply [X]</em> while the settings drawer is open.</li>
+      <li><strong>Forced HTML refresh:</strong> splash now checks a live version manifest and reloads stale HTML shells so browser and PWA users pick up new releases more reliably.</li>
+      <li><strong>Fresh HTML caching strategy:</strong> the service worker now prefers live network responses for HTML and the version manifest while still falling back to cached pages offline.</li>
+    </ul>
+  </section>
+
+  <section class="card">
+    <h2>What’s new in v1.6.3</h2>
+    <ul>
+      <li><strong>Standard chemistry targets clarified:</strong> the chemistry guide now explains that its bands are standard reference targets for a typical residential outdoor chlorine pool, not dip-stick-brand-specific normals.</li>
+      <li><strong>Default CYA target tightened:</strong> the standard ideal stabiliser band is now shown as 40–60 ppm, while still keeping 30 ppm as the outdoor minimum and 90 ppm as the practical upper limit.</li>
+      <li><strong>Hardness guidance broadened:</strong> hardness now uses a wider default band with an explicit note that vinyl/liner pools often run lower and plaster/concrete pools often run higher.</li>
     </ul>
   </section>
 
@@ -152,7 +167,7 @@
   </section>
 </main>
 <footer>
-  splash! v1.6.2 · Copyright © jahosi.co.uk 2026
+  splash! v1.6.4 · Copyright © jahosi.co.uk 2026
 </footer>
 </body>
 </html>

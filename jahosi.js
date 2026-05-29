@@ -123,7 +123,7 @@ const SPLASH_CHAT_GUIDELINES = [
   "Always include this exact sentence at the end of every answer: Test before and after every addition.",
   "Prefix every answer with: 🤖 Rough guide — always test first.",
   "If user asks for safety-critical medical or emergency advice, recommend contacting a qualified pool technician.",
-  "Reference ranges: TA ideal 80-120 ppm (max 140), pH ideal 7.4-7.6 (acceptable 7.2-7.8), FC ideal 2-4 ppm, FC min rule = max(1.0, 0.075 × CYA), CH ideal 250-350 ppm (max 500), CYA ideal 40-80 ppm (max 90), CC should be < 0.5 ppm.",
+  "Reference ranges: TA ideal 80-120 ppm (max 140), pH ideal 7.4-7.6 (acceptable 7.2-7.8), FC ideal 2-4 ppm, FC min rule = max(1.0, 0.075 × CYA), hardness default guide 200-400 ppm (surface dependent; vinyl often lower, plaster/concrete often higher), CYA ideal 40-60 ppm (outdoor minimum 30, max 90), CC should be < 0.5 ppm.",
   "Dosing constants used by splash formulas: NaHCO3 1.8 g/1000L/ppm TA, CaCl2 1.5 g/1000L/ppm CH, CYA 1.0 g/1000L/ppm, soda ash 5.0 g/1000L per +0.2 pH, dry acid 8.0 g/1000L per -0.2 pH, dichlor 1.79 g/1000L/ppm FC, trichlor 1.11 g/1000L/ppm FC.",
   "FC:CYA rule follows CDC MAHC 2023 guidance: FC >= max(1.0, 0.075 * CYA).",
   "Keep answers concise, practical, and grounded in the provided pool state and chemistry card outputs only.",
@@ -136,6 +136,7 @@ const INDEX_HTML = INDEX_HTML_TEMPLATE.replace("__CONTACT_PAGE_PATH__", CONTACT_
 
 // index.html is served dynamically so the contact link reflects CONTACT_PAGE_PATH at runtime.
 app.get("/", (req, res) => {
+  setNoCacheHeaders(res);
   res.send(INDEX_HTML);
 });
 
@@ -160,6 +161,23 @@ function normalizeHostHeader(value) {
     .trim()
     .toLowerCase()
     .replace(/:\d+$/, "");
+}
+
+function setNoCacheHeaders(res) {
+  res.set("Cache-Control", "no-store, no-cache, must-revalidate");
+  res.set("Pragma", "no-cache");
+  res.set("Expires", "0");
+}
+
+function setPublicFileHeaders(res, filePath) {
+  const normalizedPath = String(filePath || "").toLowerCase();
+  if (
+    normalizedPath.endsWith(".html") ||
+    normalizedPath.endsWith(".htm") ||
+    normalizedPath.endsWith(`${path.sep}splash${path.sep}version.json`)
+  ) {
+    setNoCacheHeaders(res);
+  }
 }
 
 app.use((req, res, next) => {
@@ -192,21 +210,23 @@ app.get("/robots.txt", (req, res) => {
   res.type("text/plain").send(`${robotsTxt}\n`);
 });
 
-app.use(express.static(path.join(__dirname, "public")));
+app.use(express.static(path.join(__dirname, "public"), { setHeaders: setPublicFileHeaders }));
 
 app.get(/^\/splash$/, (req, res) => {
   res.redirect("/splash/");
 });
 
 app.get("/splash/", (req, res) => {
+  setNoCacheHeaders(res);
   res.send(renderSplashIndexHtml());
 });
 
 app.get("/splash/index.htm", (req, res) => {
+  setNoCacheHeaders(res);
   res.send(renderSplashIndexHtml());
 });
 
-app.use("/splash", express.static(path.join(__dirname, "public", "splash"), { index: false }));
+app.use("/splash", express.static(path.join(__dirname, "public", "splash"), { index: false, setHeaders: setPublicFileHeaders }));
 
 function escapeHtml(value) {
   return String(value || "")
