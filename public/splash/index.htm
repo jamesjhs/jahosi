@@ -1904,6 +1904,11 @@ function chemLowerAction(key, delta, current, volL, kL, chlorineType) {
   }
 }
 
+function chemRatingPrefix(level, summary) {
+  const label = level === 'green' ? 'Green' : level === 'amber' ? 'Amber' : 'Red';
+  return `<strong>${label} rating:</strong> ${summary}`;
+}
+
 function chemCardUpdate(key, reading, volL, chlorineType, fcReading, cyaReading) {
   const cardEl  = document.getElementById(`chem-card-${key}`);
   const badgeEl = document.getElementById(`chem-badge-${key}`);
@@ -1932,23 +1937,23 @@ function chemCardUpdate(key, reading, volL, chlorineType, fcReading, cyaReading)
     const cc = reading - fcReading;
     if (cc < -0.1) {
       cardEl.className    = 'chem-card chem-high';
-      badgeEl.textContent = 'TC < FC — check readings';
+      badgeEl.textContent = 'Red · readings need checking';
       badgeEl.className   = 'chem-badge high';
-      actEl.innerHTML     = '<span style="color:var(--red);font-weight:700">⚠ Total Chlorine cannot be lower than Free Chlorine. Please re-test and re-enter your readings.</span>';
+      actEl.innerHTML     = `<span style="color:var(--red);font-weight:700">${chemRatingPrefix('red', 'Total Chlorine cannot be lower than Free Chlorine. Please re-test and re-enter your readings.')}</span>`;
     } else if (cc >= 0.5) {
       const shockTarget = (Math.ceil(cc * 10 * 10) / 10).toFixed(1);
       cardEl.className    = 'chem-card chem-high';
-      badgeEl.textContent = `CC = ${cc.toFixed(1)} ppm — HIGH`;
+      badgeEl.textContent = `Red · CC elevated: ${cc.toFixed(1)} ppm`;
       badgeEl.className   = 'chem-badge high';
-      actEl.innerHTML     = `Combined Chlorine (CC) = <strong>${cc.toFixed(1)} ppm</strong> — exceeds 0.5 ppm limit (chloramines). `
+      actEl.innerHTML     = `${chemRatingPrefix('red', `Combined Chlorine (CC) is ${cc.toFixed(1)} ppm, above the 0.5 ppm limit.`)} `
         + `<span style="color:var(--red);font-weight:700">Shock dose required: raise FC to ${shockTarget} ppm (breakpoint = 10 × CC).</span> `
         + `Use unscented liquid sodium hypochlorite or calcium hypochlorite (cal-hypo) for shock — `
         + `<em>do not use trichlor or dichlor for shock as this raises CYA further</em>. Retest after 24 h.`;
     } else {
       cardEl.className    = 'chem-card chem-ok';
-      badgeEl.textContent = `CC = ${cc.toFixed(2)} ppm ✓`;
+      badgeEl.textContent = `Green · CC on target: ${cc.toFixed(2)} ppm`;
       badgeEl.className   = 'chem-badge ok';
-      actEl.innerHTML     = `Combined Chlorine (CC) = <strong>${cc.toFixed(2)} ppm</strong> — within acceptable range (< 0.5 ppm). ✓ No action needed.`;
+      actEl.innerHTML     = `${chemRatingPrefix('green', `Combined Chlorine (CC) is ${cc.toFixed(2)} ppm, within the acceptable range.`)} ✓ No action needed.`;
     }
     return;
   }
@@ -1964,22 +1969,32 @@ function chemCardUpdate(key, reading, volL, chlorineType, fcReading, cyaReading)
   }
 
   const dp = key === 'ph' ? 1 : 0;
-  let statusClass, badgeCls, badgeText;
+  let statusClass, badgeCls, badgeText, ratingLevel, ratingSummary;
   if (reading < minActual) {
     statusClass = 'chem-high'; badgeCls = 'high';
-    badgeText = `⚠ Dangerously Low: ${reading.toFixed(dp)} ${tgt.unit}`;
+    ratingLevel = 'red';
+    ratingSummary = 'well below the recommended range';
+    badgeText = `Red · low: ${reading.toFixed(dp)} ${tgt.unit}`;
   } else if (reading > tgt.max) {
     statusClass = 'chem-high'; badgeCls = 'high';
-    badgeText = `⚠ Too High: ${reading.toFixed(dp)} ${tgt.unit}`;
+    ratingLevel = 'red';
+    ratingSummary = 'well above the recommended range';
+    badgeText = `Red · high: ${reading.toFixed(dp)} ${tgt.unit}`;
   } else if (reading < loActual) {
     statusClass = 'chem-low'; badgeCls = 'low';
-    badgeText = `Below ideal: ${reading.toFixed(dp)} ${tgt.unit}`;
+    ratingLevel = 'amber';
+    ratingSummary = 'a little below the target band';
+    badgeText = `Amber · slightly low: ${reading.toFixed(dp)} ${tgt.unit}`;
   } else if (reading > tgt.hi) {
     statusClass = 'chem-low'; badgeCls = 'low';
-    badgeText = `Above ideal: ${reading.toFixed(dp)} ${tgt.unit}`;
+    ratingLevel = 'amber';
+    ratingSummary = 'a little above the target band';
+    badgeText = `Amber · slightly high: ${reading.toFixed(dp)} ${tgt.unit}`;
   } else {
     statusClass = 'chem-ok'; badgeCls = 'ok';
-    badgeText = `OK: ${reading.toFixed(dp)} ${tgt.unit}`;
+    ratingLevel = 'green';
+    ratingSummary = 'within the target band';
+    badgeText = `Green · on target: ${reading.toFixed(dp)} ${tgt.unit}`;
   }
 
   cardEl.className    = `chem-card ${statusClass}`;
@@ -1988,16 +2003,16 @@ function chemCardUpdate(key, reading, volL, chlorineType, fcReading, cyaReading)
 
   let actionHtml = '';
   if (statusClass === 'chem-ok') {
-    actionHtml = `✓ Within ideal range.`;
+    actionHtml = `${chemRatingPrefix(ratingLevel, ratingSummary)} ✓`;
     if (key === 'fc' && cyaReading !== null && !isNaN(cyaReading) && cyaReading > 0) {
       actionHtml += ` FC:CYA ratio = ${((reading / cyaReading) * 100).toFixed(1)} % (MAHC 2023 minimum = 7.5 %).`;
     }
   } else if (reading < loActual) {
     const raiseBy = loActual - reading;
-    actionHtml = chemRaiseAction(key, raiseBy, reading, kL, chlorineType, cyaReading);
+    actionHtml = `${chemRatingPrefix(ratingLevel, ratingSummary)} ${chemRaiseAction(key, raiseBy, reading, kL, chlorineType, cyaReading)}`;
   } else if (reading > tgt.hi) {
     const lowerBy = reading - tgt.hi;
-    actionHtml = chemLowerAction(key, lowerBy, reading, volL, kL, chlorineType);
+    actionHtml = `${chemRatingPrefix(ratingLevel, ratingSummary)} ${chemLowerAction(key, lowerBy, reading, volL, kL, chlorineType)}`;
   }
 
   actEl.innerHTML = actionHtml;
