@@ -1,6 +1,6 @@
 'use strict';
 
-const CACHE_NAME = 'pool-calculator-shell-v1-6-3';
+const CACHE_NAME = 'pool-calculator-shell-v1-6-4';
 const APP_SHELL = [
   './',
   './index.htm',
@@ -30,6 +30,29 @@ self.addEventListener('fetch', (event) => {
   if (event.request.method !== 'GET') return;
   const url = new URL(event.request.url);
   if (url.origin !== self.location.origin) return;
+
+  const acceptHeader = event.request.headers.get('accept') || '';
+  const isHtmlRequest =
+    event.request.mode === 'navigate' ||
+    event.request.destination === 'document' ||
+    acceptHeader.includes('text/html');
+  const isVersionRequest = url.pathname.endsWith('/splash/version.json');
+
+  if (isHtmlRequest || isVersionRequest) {
+    event.respondWith(
+      fetch(event.request, { cache: 'no-store' })
+        .then((response) => {
+          if (!response || !response.ok) return response;
+          const copy = response.clone();
+          event.waitUntil(
+            caches.open(CACHE_NAME).then((cache) => cache.put(event.request, copy))
+          );
+          return response;
+        })
+        .catch(() => caches.match(event.request))
+    );
+    return;
+  }
 
   event.respondWith(
     caches.match(event.request).then((cached) => {

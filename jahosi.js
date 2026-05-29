@@ -136,6 +136,7 @@ const INDEX_HTML = INDEX_HTML_TEMPLATE.replace("__CONTACT_PAGE_PATH__", CONTACT_
 
 // index.html is served dynamically so the contact link reflects CONTACT_PAGE_PATH at runtime.
 app.get("/", (req, res) => {
+  setNoCacheHeaders(res);
   res.send(INDEX_HTML);
 });
 
@@ -160,6 +161,23 @@ function normalizeHostHeader(value) {
     .trim()
     .toLowerCase()
     .replace(/:\d+$/, "");
+}
+
+function setNoCacheHeaders(res) {
+  res.set("Cache-Control", "no-store, no-cache, must-revalidate");
+  res.set("Pragma", "no-cache");
+  res.set("Expires", "0");
+}
+
+function setPublicFileHeaders(res, filePath) {
+  const normalizedPath = String(filePath || "").toLowerCase();
+  if (
+    normalizedPath.endsWith(".html") ||
+    normalizedPath.endsWith(".htm") ||
+    normalizedPath.endsWith(`${path.sep}splash${path.sep}version.json`)
+  ) {
+    setNoCacheHeaders(res);
+  }
 }
 
 app.use((req, res, next) => {
@@ -192,21 +210,23 @@ app.get("/robots.txt", (req, res) => {
   res.type("text/plain").send(`${robotsTxt}\n`);
 });
 
-app.use(express.static(path.join(__dirname, "public")));
+app.use(express.static(path.join(__dirname, "public"), { setHeaders: setPublicFileHeaders }));
 
 app.get(/^\/splash$/, (req, res) => {
   res.redirect("/splash/");
 });
 
 app.get("/splash/", (req, res) => {
+  setNoCacheHeaders(res);
   res.send(renderSplashIndexHtml());
 });
 
 app.get("/splash/index.htm", (req, res) => {
+  setNoCacheHeaders(res);
   res.send(renderSplashIndexHtml());
 });
 
-app.use("/splash", express.static(path.join(__dirname, "public", "splash"), { index: false }));
+app.use("/splash", express.static(path.join(__dirname, "public", "splash"), { index: false, setHeaders: setPublicFileHeaders }));
 
 function escapeHtml(value) {
   return String(value || "")

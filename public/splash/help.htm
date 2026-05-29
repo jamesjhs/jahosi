@@ -18,6 +18,14 @@
   <meta name="twitter:image" content="https://jahosi.co.uk/me.jpg">
 <link rel="icon" type="image/svg+xml" href="./icons/pool-icon-192.svg">
 <title>splash! Help Guide | Jahosi App Portfolio</title>
+<script
+  src="/version-refresh.js"
+  data-page-version="1.6.4"
+  data-version-url="/splash/version.json"
+  data-storage-key="splash_app_version"
+  data-cache-prefix="pool-calculator-shell-"
+  data-unregister-scope="/splash/"
+></script>
 <style>
   :root {
     --blue:#0077b6;
@@ -92,6 +100,14 @@
   </section>
 
   <section class="card">
+    <h2>What’s new in v1.6.4</h2>
+    <ul>
+      <li><strong>Forced HTML refresh:</strong> splash now checks a live version manifest and reloads stale HTML shells so browser and PWA users pick up new releases more reliably.</li>
+      <li><strong>Fresh HTML caching strategy:</strong> the service worker now prefers live network responses for HTML and the version manifest while still falling back to cached pages offline.</li>
+    </ul>
+  </section>
+
+  <section class="card">
     <h2>What’s new in v1.6.3</h2>
     <ul>
       <li><strong>Standard chemistry targets clarified:</strong> the chemistry guide now explains that its bands are standard reference targets for a typical residential outdoor chlorine pool, not dip-stick-brand-specific normals.</li>
@@ -151,7 +167,7 @@
   </section>
 </main>
 <footer>
-  splash! v1.6.3 · Copyright © jahosi.co.uk 2026
+  splash! v1.6.4 · Copyright © jahosi.co.uk 2026
 </footer>
 </body>
 </html>

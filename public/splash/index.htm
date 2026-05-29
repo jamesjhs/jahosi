@@ -22,6 +22,15 @@
 <link rel="apple-touch-icon" href="./icons/pool-icon-192.svg">
 <link rel="manifest" href="./manifest.webmanifest">
 <title>splash! | Jahosi App Portfolio</title>
+<script
+  src="/version-refresh.js"
+  data-page-version="1.6.4"
+  data-version-url="/splash/version.json"
+  data-storage-key="splash_app_version"
+  data-cache-prefix="pool-calculator-shell-"
+  data-unregister-scope="/splash/"
+  data-preserve-keys="splash_cfg_1"
+></script>
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -271,7 +280,7 @@ footer{text-align:center;padding:1.5rem;font-size:.72rem;color:var(--muted)}
 
 <header>
   <h1>splash! <em>by Jahosi</em></h1>
-  <p>Cost estimates for your playpool · v1.6.3</p>
+  <p>Cost estimates for your playpool · v1.6.4</p>
 </header>
 
 <div class="wrap">
@@ -296,6 +305,7 @@ footer{text-align:center;padding:1.5rem;font-size:.72rem;color:var(--muted)}
         <ul class="intro-list">
           <li>Manual forecast entry always stays available, even after location-based weather auto-fill.</li>
           <li>Set pool season start and end dates to see a cost breakdown for your actual outdoor season, including water fill costs (UK Anglian Water metered baseline: 0.55 p/L).</li>
+          <li>v1.6.4 forces a fresh HTML reload when the live splash version changes, helping PWA and browser users pick up the latest features sooner.</li>
           <li>v1.6.3 clarifies chemistry target bands as standard guideline ranges, tightens the default CYA target band, and adds clearer hardness caveats for different pool surfaces.</li>
           <li>v1.6.2 hardens saved-location persistence, launch-time forecast refresh, and mobile options toggle behavior.</li>
           <li>v1.6.0 strengthens near-term weather modelling with 2-day hourly forecasting and direct hourly solar-radiation use when available.</li>
@@ -804,8 +814,8 @@ Ask about your current chemistry readings and dosing cards.</div>
       </div>
 
       <div class="card" style="margin-bottom:1rem" id="model-review-card">
-        <div class="card-title">Model review in v1.6.3</div>
-        <p class="inline-help">Core daylight-solar and forecast-cap safeguards remain in place. v1.6.3 keeps the existing weather model intact while clarifying that chemistry targets are standard residential guideline bands rather than strip-brand-specific normals, with tighter default CYA guidance and clearer hardness caveats. v1.6.2 hardens save/restore behavior for weather-location context and improves launch-time weather refresh resilience while keeping manual entry as fallback. v1.6.0 extends near-term simulation to 2 days, removes the coarse 7-day schedule chart, and uses hourly shortwave radiation when available so near-term solar heat gain follows observed forecast conditions more directly. Manual forecasts remain planning estimates, not guarantees.</p>
+        <div class="card-title">Model review in v1.6.4</div>
+        <p class="inline-help">Core daylight-solar and forecast-cap safeguards remain in place. v1.6.4 adds a version-manifest-driven HTML refresh path so browser and PWA users are pushed onto the latest shell sooner when a new release lands. v1.6.3 keeps the existing weather model intact while clarifying that chemistry targets are standard residential guideline bands rather than strip-brand-specific normals, with tighter default CYA guidance and clearer hardness caveats. v1.6.2 hardens save/restore behavior for weather-location context and improves launch-time weather refresh resilience while keeping manual entry as fallback. v1.6.0 extends near-term simulation to 2 days, removes the coarse 7-day schedule chart, and uses hourly shortwave radiation when available so near-term solar heat gain follows observed forecast conditions more directly. Manual forecasts remain planning estimates, not guarantees.</p>
       </div>
 
       <div class="card" style="margin-bottom:1rem" id="export-card">
@@ -1180,7 +1190,7 @@ Ask about your current chemistry readings and dosing cards.</div>
 </div><!-- /wrap -->
 
 <footer>
-  splash! &mdash; costing for your playpool · v1.6.3.<br>
+  splash! &mdash; costing for your playpool · v1.6.4.<br>
   Physics model: surface losses combine free-convection, evaporation (dominant) and long-wave radiation; parameterised by shade/shelter.
   Location-aware global climate profiling with fallback baselines. Costs are indicative estimates only. Not for safety-critical application.<br>
   Copyright © jahosi.co.uk 2026
@@ -1216,7 +1226,7 @@ const COVER_TYPES = {
   liquid:  {label:'Liquid solar cover',             surfaceLossFactor:0.65, solarTransmittance:0.98, evaporationReduction:0.40}
 };
 
-const APP_VERSION = '1.6.3';
+const APP_VERSION = '1.6.4';
 const APP_COPYRIGHT = 'Copyright © jahosi.co.uk 2026';
 const TARGET_TEMP_MIN = 18;
 const TARGET_TEMP_MAX = 40;
@@ -4049,48 +4059,6 @@ function restoreConfigFromLS() {
   } catch { return false; }
 }
 
-async function forceReloadOnVersionChange() {
-  let storedVersion = null;
-  let storedConfig = null;
-  try {
-    storedVersion = localStorage.getItem(LS_APP_VERSION_KEY);
-    storedConfig = localStorage.getItem(LS_KEY);
-  } catch {
-    return false;
-  }
-  if (!storedVersion) {
-    try { localStorage.setItem(LS_APP_VERSION_KEY, APP_VERSION); } catch {}
-    return false;
-  }
-  if (storedVersion === APP_VERSION) return false;
-  try {
-    if ('serviceWorker' in navigator) {
-      const regs = await navigator.serviceWorker.getRegistrations();
-      await Promise.all(
-        regs
-          .filter(reg => typeof reg.scope === 'string' && reg.scope.includes('/splash/'))
-          .map(reg => reg.unregister().catch(() => false))
-      );
-    }
-    if ('caches' in window) {
-      const keys = await caches.keys();
-      await Promise.all(
-        keys
-          .filter(key => key.startsWith('pool-calculator-shell-'))
-          .map(key => caches.delete(key))
-      );
-    }
-  } catch {}
-  try {
-    localStorage.setItem(LS_APP_VERSION_KEY, APP_VERSION);
-    if (storedConfig) localStorage.setItem(LS_KEY, storedConfig);
-  } catch {}
-  const next = new URL(window.location.href);
-  next.searchParams.set('appv', APP_VERSION);
-  window.location.replace(next.toString());
-  return true;
-}
-
 function saveConfigToFile() {
   downloadBlob('splash-config.json', JSON.stringify(getConfig(), null, 2), 'application/json;charset=utf-8');
   setExportStatus('Configuration saved to file.');
@@ -4184,7 +4152,7 @@ function registerServiceWorker() {
 
 // ─── INIT ─────────────────────────────────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', async () => {
-  if (await forceReloadOnVersionChange()) return;
+  if (await (window.__versionRefreshPromise || Promise.resolve(false))) return;
   reorderControlsByExpertFlow();
   reorderResultsByExpertFlow();
   initControlsDrawer();
