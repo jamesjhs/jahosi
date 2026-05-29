@@ -959,36 +959,43 @@ Ask about your current chemistry readings and dosing cards.</div>
 
     <div class="field-row">
       <div class="field">
-        <label for="chem-ta">Total Alkalinity (TA)</label>
-        <input type="number" id="chem-ta" min="0" max="400" step="1" placeholder="e.g. 100" oninput="chemGo()">
+        <label for="chem-th">Total Hardness (Calcium Hardness, CH)</label>
+        <input type="number" id="chem-th" min="0" max="2000" step="10" placeholder="250-500ppm" oninput="chemGo()">
         <span style="font-size:.75rem;color:var(--muted)">ppm as CaCO₃</span>
       </div>
       <div class="field">
-        <label for="chem-ph">pH</label>
-        <input type="number" id="chem-ph" min="5.0" max="10.0" step="0.1" placeholder="e.g. 7.4" oninput="chemGo()">
-        <span style="font-size:.75rem;color:var(--muted)">(dimensionless)</span>
+        <label for="chem-fc">Free Chlorine (FC)</label>
+        <input type="number" id="chem-fc" min="0" max="20" step="0.1" placeholder="1-3ppm" oninput="chemGo()">
+        <span style="font-size:.75rem;color:var(--muted)">ppm</span>
       </div>
       <div class="field">
-        <label for="chem-fc">Free Chlorine (FC)</label>
-        <input type="number" id="chem-fc" min="0" max="20" step="0.1" placeholder="e.g. 2.5" oninput="chemGo()">
+        <label for="chem-br">Bromine</label>
+        <input type="number" id="chem-br" min="0" max="20" step="0.1" placeholder="2-6ppm" oninput="chemGo()">
         <span style="font-size:.75rem;color:var(--muted)">ppm</span>
       </div>
     </div>
     <div class="field-row">
       <div class="field">
-        <label for="chem-th">Total Hardness (Calcium Hardness, CH)</label>
-        <input type="number" id="chem-th" min="0" max="2000" step="10" placeholder="e.g. 300" oninput="chemGo()">
-        <span style="font-size:.75rem;color:var(--muted)">ppm as CaCO₃</span>
+        <label for="chem-tc">Total Chlorine (TC)</label>
+        <input type="number" id="chem-tc" min="0" max="20" step="0.1" placeholder="2-3ppm" oninput="chemGo()">
+        <span style="font-size:.75rem;color:var(--muted)">ppm</span>
       </div>
       <div class="field">
         <label for="chem-cya">Cyanuric Acid (Stabiliser)</label>
-        <input type="number" id="chem-cya" min="0" max="300" step="5" placeholder="e.g. 50" oninput="chemGo()">
+        <input type="number" id="chem-cya" min="0" max="300" step="5" placeholder="30-100ppm" oninput="chemGo()">
         <span style="font-size:.75rem;color:var(--muted)">ppm</span>
       </div>
       <div class="field">
-        <label for="chem-tc">Total Chlorine (TC)</label>
-        <input type="number" id="chem-tc" min="0" max="20" step="0.1" placeholder="e.g. 2.5" oninput="chemGo()">
-        <span style="font-size:.75rem;color:var(--muted)">ppm</span>
+        <label for="chem-ta">Total Alkalinity (TA)</label>
+        <input type="number" id="chem-ta" min="0" max="400" step="1" placeholder="80-120ppm" oninput="chemGo()">
+        <span style="font-size:.75rem;color:var(--muted)">ppm as CaCO₃</span>
+      </div>
+    </div>
+    <div class="field-row">
+      <div class="field">
+        <label for="chem-ph">pH</label>
+        <input type="number" id="chem-ph" min="5.0" max="10.0" step="0.1" placeholder="7.2-7.8" oninput="chemGo()">
+        <span style="font-size:.75rem;color:var(--muted)">(dimensionless)</span>
       </div>
     </div>
   </div>
@@ -2382,6 +2389,7 @@ function chemChatSnapshot() {
       ta: chemChatReadValue('chem-ta'),
       ph: chemChatReadValue('chem-ph'),
       fc: chemChatReadValue('chem-fc'),
+      br: chemChatReadValue('chem-br'),
       th: chemChatReadValue('chem-th'),
       cya: chemChatReadValue('chem-cya'),
       tc: chemChatReadValue('chem-tc')
@@ -3880,7 +3888,7 @@ const CONFIG_FIELDS = [
   {id:'chem-chlorine-type-basic'},
   {id:'chem-chlorine-type'},
   {id:'chem-ta'},  {id:'chem-ph'},  {id:'chem-fc'},
-  {id:'chem-th'},  {id:'chem-cya'}, {id:'chem-tc'}
+  {id:'chem-br'},  {id:'chem-th'},  {id:'chem-cya'}, {id:'chem-tc'}
 ];
 
 function getConfig() {
