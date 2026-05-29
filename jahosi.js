@@ -556,7 +556,7 @@ app.post("/splash/chat", splashChatRateLimit, express.json({ limit: "50kb" }), a
     }
   }
 
-  const allowedStateFields = ["volL", "tempC", "chlorineType", "ta", "ph", "fc", "th", "cya", "tc"];
+  const allowedStateFields = ["volL", "tempC", "chlorineType", "ta", "ph", "fc", "br", "th", "cya", "tc"];
   const poolStateLines = allowedStateFields.map((field) => {
     const value = poolState[field];
     if (value === null || value === undefined || value === "") return `- ${field}: (not provided)`;
