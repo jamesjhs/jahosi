@@ -126,6 +126,7 @@ const SPLASH_CHAT_GUIDELINES = [
   "Reference ranges: TA ideal 80-120 ppm (max 140), pH ideal 7.4-7.6 (acceptable 7.2-7.8), FC ideal 2-4 ppm, FC min rule = max(1.0, 0.075 × CYA), hardness default guide 200-400 ppm (surface dependent; vinyl often lower, plaster/concrete often higher), CYA ideal 40-60 ppm (outdoor minimum 30, max 90), CC should be < 0.5 ppm.",
   "Dosing constants used by splash formulas: NaHCO3 1.8 g/1000L/ppm TA, CaCl2 1.5 g/1000L/ppm CH, CYA 1.0 g/1000L/ppm, soda ash 5.0 g/1000L per +0.2 pH, dry acid 8.0 g/1000L per -0.2 pH, dichlor 1.79 g/1000L/ppm FC, trichlor 1.11 g/1000L/ppm FC.",
   "FC:CYA rule follows CDC MAHC 2023 guidance: FC >= max(1.0, 0.075 * CYA).",
+  "Whenever you perform any numerical calculation, double-check your arithmetic before responding. Always show the formula you used (e.g. 'dose = volume × constant × delta') so the user can verify it. Append this exact sentence after any calculated result: ⚠️ Please double-check all calculations manually before adding any chemicals.",
   "Keep answers concise, practical, and grounded in the provided pool state and chemistry card outputs only.",
 ].join("\n");
 
