@@ -63,6 +63,14 @@ const USE_CF_ACCESS_HEADERS =
   Boolean(CF_ACCESS_CLIENT_ID && CF_ACCESS_CLIENT_SECRET) && SPLASH_OPENAI_HOST && SPLASH_OPENAI_HOST !== "api.openai.com";
 const CHEM_CHAT_SESSION_TTL_MS = 6 * 60 * 60 * 1000;
 const CHEM_CHAT_SESSIONS = new Map();
+const SITE_HOSTNAME = (() => {
+  try {
+    return new URL(SITE_URL).hostname.toLowerCase();
+  } catch {
+    return "";
+  }
+})();
+const REDIRECT_WWW_HOST = SITE_HOSTNAME && !SITE_HOSTNAME.startsWith("www.") ? `www.${SITE_HOSTNAME}` : "";
 const SITEMAP_PATHS = [
   "/",
   "/portfolio/hovercraft.html",
@@ -146,6 +154,22 @@ function resolvePublicBaseUrl(req) {
   const host = req.get("host");
   return host ? `${protocol}://${host}` : SITE_URL;
 }
+
+function normalizeHostHeader(value) {
+  return String(value || "")
+    .trim()
+    .toLowerCase()
+    .replace(/:\d+$/, "");
+}
+
+app.use((req, res, next) => {
+  if (!REDIRECT_WWW_HOST || !SITE_HOSTNAME) return next();
+  const requestHost = normalizeHostHeader(req.get("host"));
+  if (requestHost !== REDIRECT_WWW_HOST) return next();
+  const forwardedProto = req.get("x-forwarded-proto");
+  const protocol = forwardedProto ? forwardedProto.split(",")[0].trim() : req.protocol;
+  return res.redirect(308, `${protocol}://${SITE_HOSTNAME}${req.originalUrl || "/"}`);
+});
 
 app.get("/sitemap.xml", (req, res) => {
   const baseUrl = resolvePublicBaseUrl(req);
@@ -304,24 +328,52 @@ function renderContactPage({ status, error, debug }) {
       : "";
 
   const captchaUi = isTurnstileEnabled()
-    ? '<div id="contact-turnstile" class="mt-2 min-h-[65px]"></div>'
+    ? '<div id="contact-turnstile" class="mt-2 min-h-[65px]"></div><p id="contact-turnstile-note" class="mt-2 text-sm text-slate-600">Complete verification to send your message.</p>'
     : '<p class="mt-2 text-sm text-rose-700">Contact form anti-spam is not configured. Please refresh the page and try again.</p>';
   const turnstileInitScript = isTurnstileEnabled()
     ? `<script>
   (function () {
     const siteKey = ${JSON.stringify(TURNSTILE_SITE_KEY)};
+    let renderAttempts = 0;
+    const maxRenderAttempts = 40;
+    const renderRetryDelayMs = 250;
     const renderTurnstile = () => {
       const container = document.getElementById("contact-turnstile");
+      const note = document.getElementById("contact-turnstile-note");
       if (!container || container.dataset.rendered === "1") return;
       if (!window.turnstile || typeof window.turnstile.render !== "function") return;
-      window.turnstile.render(container, { sitekey: siteKey });
+      window.turnstile.render(container, {
+        sitekey: siteKey,
+        callback() {
+          if (note) note.textContent = "Verification complete.";
+        },
+        "expired-callback"() {
+          if (note) note.textContent = "Verification expired. Please complete it again.";
+        },
+        "error-callback"(code) {
+          if (!note) return;
+          note.textContent =
+            "Verification could not load (code " +
+            String(code || "unknown") +
+            "). Ensure this hostname is allowed in Cloudflare Turnstile site key settings.";
+        }
+      });
       container.dataset.rendered = "1";
     };
-    if (window.turnstile && typeof window.turnstile.ready === "function") {
-      window.turnstile.ready(renderTurnstile);
+    const renderWithRetry = () => {
+      renderTurnstile();
+      const container = document.getElementById("contact-turnstile");
+      if (!container || container.dataset.rendered === "1") return;
+      if (renderAttempts >= maxRenderAttempts) return;
+      renderAttempts += 1;
+      window.setTimeout(renderWithRetry, renderRetryDelayMs);
+    };
+    if (document.readyState === "complete") {
+      renderWithRetry();
     } else {
-      window.addEventListener("load", renderTurnstile, { once: true });
+      window.addEventListener("load", renderWithRetry, { once: true });
     }
+    renderWithRetry();
   })();
 </script>`
     : "";
