@@ -172,6 +172,7 @@ tr.totals td{background:#eef6fc!important;font-weight:700;border-top:2px solid v
 .charts-row{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1rem}
 @media(max-width:860px){.charts-row{grid-template-columns:1fr}}
 .chart-box{position:relative;height:265px}
+@media(max-width:540px){.chart-box{height:200px}}
 
 .qa-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:1rem;margin-bottom:1rem}
 .qa-card{
@@ -259,7 +260,16 @@ footer{text-align:center;padding:1.5rem;font-size:.72rem;color:var(--muted)}
 .chem-chat-head{display:flex;align-items:center;justify-content:space-between;gap:.75rem;background:#e0f2fe;border-bottom:1px solid var(--border);padding:.65rem .75rem}
 .chem-chat-title{font-size:.82rem;font-weight:700;color:var(--blue)}
 .chem-chat-close{border:0;background:transparent;color:#475569;font-size:1.05rem;cursor:pointer}
-.chem-chat-thread{max-height:290px;overflow:auto;padding:.65rem;display:grid;gap:.55rem;background:#f8fbff}
+.chem-chat-thread{max-height:580px;overflow:auto;padding:.65rem;display:grid;gap:.55rem;background:#f8fbff}
+.chem-chat-resize{
+  height:10px;background:#e2e8f0;cursor:ns-resize;
+  display:flex;align-items:center;justify-content:center;
+  border-radius:12px 12px 0 0;flex-shrink:0;user-select:none
+}
+.chem-chat-resize::after{
+  content:'';display:block;width:32px;height:3px;
+  background:#94a3b8;border-radius:999px
+}
 .chem-chat-msg{font-size:.78rem;line-height:1.5;padding:.55rem .62rem;border-radius:10px;white-space:pre-wrap}
 .chem-chat-msg.user{background:#dbeafe;color:#1e3a8a}
 .chem-chat-msg.bot{background:#ecfeff;color:#155e75}
@@ -362,6 +372,7 @@ footer{text-align:center;padding:1.5rem;font-size:.72rem;color:var(--muted)}
   <button id="chem-chat-toggle" class="chem-chat-toggle" type="button" aria-expanded="false" aria-controls="chem-chat-panel">🤖 Chemistry bot</button>
 
   <section id="chem-chat-panel" class="chem-chat-panel" aria-label="Chemistry assistant">
+    <div class="chem-chat-resize" id="chem-chat-resize" role="separator" aria-label="Drag to resize"></div>
     <div class="chem-chat-head">
       <div class="chem-chat-title">Chemistry bot</div>
       <button id="chem-chat-close" class="chem-chat-close" type="button" aria-label="Close chemistry bot">×</button>
@@ -2618,6 +2629,42 @@ function initChemChat() {
   chemChatSyncGate();
   if (chemChatIsTurnstileEnabled()) {
     chemChatScheduleTurnstileRender();
+  }
+
+  /* ── drag-to-resize ── */
+  const resizeHandle = document.getElementById('chem-chat-resize');
+  const thread = document.getElementById('chem-chat-thread');
+  if (resizeHandle && thread) {
+    let startY = 0, startH = 0;
+    function applyResize(y) {
+      const delta = startY - y;
+      const newH = Math.max(80, Math.min(Math.round(window.innerHeight * 0.75), startH + delta));
+      thread.style.maxHeight = newH + 'px';
+    }
+    function onMouseMove(e) { applyResize(e.clientY); }
+    function onMouseUp() {
+      document.removeEventListener('mousemove', onMouseMove);
+      document.removeEventListener('mouseup', onMouseUp);
+    }
+    resizeHandle.addEventListener('mousedown', e => {
+      startY = e.clientY;
+      startH = thread.offsetHeight;
+      document.addEventListener('mousemove', onMouseMove);
+      document.addEventListener('mouseup', onMouseUp);
+      e.preventDefault();
+    });
+    function onTouchMove(e) { applyResize(e.touches[0].clientY); e.preventDefault(); }
+    function onTouchEnd() {
+      resizeHandle.removeEventListener('touchmove', onTouchMove);
+      resizeHandle.removeEventListener('touchend', onTouchEnd);
+    }
+    resizeHandle.addEventListener('touchstart', e => {
+      startY = e.touches[0].clientY;
+      startH = thread.offsetHeight;
+      resizeHandle.addEventListener('touchmove', onTouchMove, {passive:false});
+      resizeHandle.addEventListener('touchend', onTouchEnd);
+      e.preventDefault();
+    }, {passive:false});
   }
 }
 
