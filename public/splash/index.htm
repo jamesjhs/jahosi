@@ -260,14 +260,14 @@ footer{text-align:center;padding:1.5rem;font-size:.72rem;color:var(--muted)}
 .chem-chat-head{display:flex;align-items:center;justify-content:space-between;gap:.75rem;background:#e0f2fe;border-bottom:1px solid var(--border);padding:.65rem .75rem}
 .chem-chat-title{font-size:.82rem;font-weight:700;color:var(--blue)}
 .chem-chat-close{border:0;background:transparent;color:#475569;font-size:1.05rem;cursor:pointer}
-.chem-chat-thread{max-height:580px;overflow:auto;padding:.65rem;display:grid;gap:.55rem;background:#f8fbff}
+.chem-chat-thread{height:260px;min-height:120px;max-height:75vh;overflow:auto;padding:.65rem;display:grid;gap:.55rem;background:#f8fbff;align-content:start}
 .chem-chat-resize{
-  height:10px;background:#e2e8f0;cursor:ns-resize;
+  height:22px;background:#e2e8f0;cursor:ns-resize;
   display:flex;align-items:center;justify-content:center;
-  border-radius:12px 12px 0 0;flex-shrink:0;user-select:none
+  border-radius:12px 12px 0 0;flex-shrink:0;user-select:none;touch-action:none
 }
 .chem-chat-resize::after{
-  content:'';display:block;width:32px;height:3px;
+  content:'';display:block;width:40px;height:4px;
   background:#94a3b8;border-radius:999px
 }
 .chem-chat-msg{font-size:.78rem;line-height:1.5;padding:.55rem .62rem;border-radius:10px;white-space:pre-wrap}
@@ -2636,10 +2636,16 @@ function initChemChat() {
   const thread = document.getElementById('chem-chat-thread');
   if (resizeHandle && thread) {
     let startY = 0, startH = 0;
+    const minH = 120, maxHFrac = 0.82;
     function applyResize(y) {
       const delta = startY - y;
-      const newH = Math.max(80, Math.min(Math.round(window.innerHeight * 0.75), startH + delta));
+      const newH = Math.max(minH, Math.min(Math.round(window.innerHeight * maxHFrac), startH + delta));
+      thread.style.height = newH + 'px';
       thread.style.maxHeight = newH + 'px';
+    }
+    function currentThreadH() {
+      const explicit = parseInt(thread.style.height, 10);
+      return isNaN(explicit) ? thread.getBoundingClientRect().height : explicit;
     }
     function onMouseMove(e) { applyResize(e.clientY); }
     function onMouseUp() {
@@ -2648,7 +2654,7 @@ function initChemChat() {
     }
     resizeHandle.addEventListener('mousedown', e => {
       startY = e.clientY;
-      startH = thread.offsetHeight;
+      startH = currentThreadH();
       document.addEventListener('mousemove', onMouseMove);
       document.addEventListener('mouseup', onMouseUp);
       e.preventDefault();
@@ -2660,7 +2666,7 @@ function initChemChat() {
     }
     resizeHandle.addEventListener('touchstart', e => {
       startY = e.touches[0].clientY;
-      startH = thread.offsetHeight;
+      startH = currentThreadH();
       resizeHandle.addEventListener('touchmove', onTouchMove, {passive:false});
       resizeHandle.addEventListener('touchend', onTouchEnd);
       e.preventDefault();
