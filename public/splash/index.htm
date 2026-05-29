@@ -12,19 +12,21 @@
 <meta property="og:title" content="splash! | Jahosi App Portfolio">
 <meta property="og:description" content="splash! is a Jahosi blue-sky app that turns playpool heating guesswork into weather-aware thermal and electricity cost planning.">
 <meta property="og:site_name" content="splash!">
-  <meta property="og:image" content="https://jahosi.co.uk/me.jpg">
+<meta property="og:image" content="https://jahosi.co.uk/splash/gemini-splash.jpg">
+<meta property="og:image:alt" content="splash! illustrated playpool planning artwork">
 <meta property="og:url" content="https://jahosi.co.uk/splash/">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="splash! | Jahosi App Portfolio">
 <meta name="twitter:description" content="splash! is a Jahosi blue-sky app that turns playpool heating guesswork into weather-aware thermal and electricity cost planning.">
-  <meta name="twitter:image" content="https://jahosi.co.uk/me.jpg">
+<meta name="twitter:image" content="https://jahosi.co.uk/splash/gemini-splash.jpg">
+<meta name="twitter:image:alt" content="splash! illustrated playpool planning artwork">
 <link rel="icon" type="image/svg+xml" href="./icons/pool-icon-192.svg">
 <link rel="apple-touch-icon" href="./icons/pool-icon-192.svg">
 <link rel="manifest" href="./manifest.webmanifest">
 <title>splash! | Jahosi App Portfolio</title>
 <script
   src="/version-refresh.js"
-  data-page-version="1.6.4"
+  data-page-version="1.6.5"
   data-version-url="/splash/version.json"
   data-storage-key="splash_app_version"
   data-cache-prefix="pool-calculator-shell-"
@@ -191,6 +193,13 @@ tr.totals td{background:#eef6fc!important;font-weight:700;border-top:2px solid v
 .source-list a{color:var(--blue);font-weight:600}
 
 .sec{font-size:1rem;font-weight:700;color:var(--blue);margin:0 0 .75rem;display:flex;align-items:center;gap:.5rem}
+.hero-visual{
+  max-width:1380px;margin:1rem auto 0;padding:0 1rem;
+}
+.hero-visual img{
+  display:block;width:100%;height:auto;max-height:480px;object-fit:cover;
+  border-radius:18px;box-shadow:var(--shadow);border:1px solid var(--border)
+}
 .intro-grid{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(260px,.7fr);gap:1rem;align-items:start}
 .intro-copy p{font-size:.88rem;color:var(--text);line-height:1.7;margin-bottom:.8rem}
 .intro-list{padding-left:1.15rem;display:grid;gap:.45rem;font-size:.82rem;color:var(--text)}
@@ -280,8 +289,12 @@ footer{text-align:center;padding:1.5rem;font-size:.72rem;color:var(--muted)}
 
 <header>
   <h1>splash! <em>by Jahosi</em></h1>
-  <p>Cost estimates for your playpool · v1.6.4</p>
+  <p>Cost estimates for your playpool · v1.6.5</p>
 </header>
+
+<div class="hero-visual">
+  <img src="./gemini-splash.jpg" alt="Illustrated splash! hero artwork showing a sunny playpool scene">
+</div>
 
 <div class="wrap">
 
@@ -305,6 +318,7 @@ footer{text-align:center;padding:1.5rem;font-size:.72rem;color:var(--muted)}
         <ul class="intro-list">
           <li>Manual forecast entry always stays available, even after location-based weather auto-fill.</li>
           <li>Set pool season start and end dates to see a cost breakdown for your actual outdoor season, including water fill costs (UK Anglian Water metered baseline: 0.55 p/L).</li>
+          <li>v1.6.5 adds a dedicated splash! hero image at the top of the page and uses it for `/splash` social previews.</li>
           <li>v1.6.4 forces a fresh HTML reload when the live splash version changes, helping PWA and browser users pick up the latest features sooner.</li>
           <li>v1.6.3 clarifies chemistry target bands as standard guideline ranges, tightens the default CYA target band, and adds clearer hardness caveats for different pool surfaces.</li>
           <li>v1.6.2 hardens saved-location persistence, launch-time forecast refresh, and mobile options toggle behavior.</li>
@@ -814,8 +828,8 @@ Ask about your current chemistry readings and dosing cards.</div>
       </div>
 
       <div class="card" style="margin-bottom:1rem" id="model-review-card">
-        <div class="card-title">Model review in v1.6.4</div>
-        <p class="inline-help">Core daylight-solar and forecast-cap safeguards remain in place. v1.6.4 adds a version-manifest-driven HTML refresh path so browser and PWA users are pushed onto the latest shell sooner when a new release lands. v1.6.3 keeps the existing weather model intact while clarifying that chemistry targets are standard residential guideline bands rather than strip-brand-specific normals, with tighter default CYA guidance and clearer hardness caveats. v1.6.2 hardens save/restore behavior for weather-location context and improves launch-time weather refresh resilience while keeping manual entry as fallback. v1.6.0 extends near-term simulation to 2 days, removes the coarse 7-day schedule chart, and uses hourly shortwave radiation when available so near-term solar heat gain follows observed forecast conditions more directly. Manual forecasts remain planning estimates, not guarantees.</p>
+        <div class="card-title">Model review in v1.6.5</div>
+        <p class="inline-help">Core daylight-solar and forecast-cap safeguards remain in place. v1.6.5 adds dedicated splash-specific hero artwork and preview metadata so shared `/splash` links present the app visually without changing the main Jahosi homepage preview image. v1.6.4 adds a version-manifest-driven HTML refresh path so browser and PWA users are pushed onto the latest shell sooner when a new release lands. v1.6.3 keeps the existing weather model intact while clarifying that chemistry targets are standard residential guideline bands rather than strip-brand-specific normals, with tighter default CYA guidance and clearer hardness caveats. v1.6.2 hardens save/restore behavior for weather-location context and improves launch-time weather refresh resilience while keeping manual entry as fallback. v1.6.0 extends near-term simulation to 2 days, removes the coarse 7-day schedule chart, and uses hourly shortwave radiation when available so near-term solar heat gain follows observed forecast conditions more directly. Manual forecasts remain planning estimates, not guarantees.</p>
       </div>
 
       <div class="card" style="margin-bottom:1rem" id="export-card">
@@ -1190,7 +1204,7 @@ Ask about your current chemistry readings and dosing cards.</div>
 </div><!-- /wrap -->
 
 <footer>
-  splash! &mdash; costing for your playpool · v1.6.4.<br>
+  splash! &mdash; costing for your playpool · v1.6.5.<br>
   Physics model: surface losses combine free-convection, evaporation (dominant) and long-wave radiation; parameterised by shade/shelter.
   Location-aware global climate profiling with fallback baselines. Costs are indicative estimates only. Not for safety-critical application.<br>
   Copyright © jahosi.co.uk 2026
@@ -1226,7 +1240,7 @@ const COVER_TYPES = {
   liquid:  {label:'Liquid solar cover',             surfaceLossFactor:0.65, solarTransmittance:0.98, evaporationReduction:0.40}
 };
 
-const APP_VERSION = '1.6.4';
+const APP_VERSION = '1.6.5';
 const APP_COPYRIGHT = 'Copyright © jahosi.co.uk 2026';
 const TARGET_TEMP_MIN = 18;
 const TARGET_TEMP_MAX = 40;
