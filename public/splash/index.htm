@@ -26,7 +26,7 @@
 <title>splash! | Jahosi App Portfolio</title>
 <script
   src="/version-refresh.js"
-  data-page-version="1.6.5"
+  data-page-version="1.6.6"
   data-version-url="/splash/version.json"
   data-storage-key="splash_app_version"
   data-cache-prefix="pool-calculator-shell-"
@@ -297,7 +297,7 @@ footer{text-align:center;padding:1.5rem;font-size:.72rem;color:var(--muted)}
 
 <header>
   <h1>splash! <em>by Jahosi</em></h1>
-  <p>Cost estimates for your garden pool · v1.6.5</p>
+  <p>Cost estimates for your garden pool · v1.6.6</p>
 </header>
 
 <div class="hero-visual">
@@ -822,8 +822,8 @@ Ask about your current chemistry readings and dosing cards.</div>
       </div>
 
       <div class="card" style="margin-bottom:1rem" id="model-review-card">
-        <div class="card-title">Model review in v1.6.5</div>
-        <p class="inline-help">Core daylight-solar and forecast-cap safeguards remain in place. v1.6.5 adds dedicated splash-specific hero artwork and preview metadata so shared `/splash` links present the app visually without changing the main Jahosi homepage preview image. v1.6.4 adds a version-manifest-driven HTML refresh path so browser and PWA users are pushed onto the latest shell sooner when a new release lands. v1.6.3 keeps the existing weather model intact while clarifying that chemistry targets are standard residential guideline bands rather than strip-brand-specific normals, with tighter default CYA guidance and clearer hardness caveats. v1.6.2 hardens save/restore behavior for weather-location context and improves launch-time weather refresh resilience while keeping manual entry as fallback. v1.6.0 extends near-term simulation to 2 days, removes the coarse 7-day schedule chart, and uses hourly shortwave radiation when available so near-term solar heat gain follows observed forecast conditions more directly. Manual forecasts remain planning estimates, not guarantees.</p>
+        <div class="card-title">Model review in v1.6.6</div>
+        <p class="inline-help">Core daylight-solar and forecast-cap safeguards remain in place. v1.6.6 fixes PWA data persistence: chemistry readings (FC, TC, TA, pH, CYA, CH, BR) and chlorine-type selection are now saved to localStorage as you type, and selected location coordinates are persisted immediately on dropdown selection, so all settings survive app restarts. v1.6.5 adds dedicated splash-specific hero artwork and preview metadata so shared `/splash` links present the app visually without changing the main Jahosi homepage preview image. v1.6.4 adds a version-manifest-driven HTML refresh path so browser and PWA users are pushed onto the latest shell sooner when a new release lands. v1.6.3 keeps the existing weather model intact while clarifying that chemistry targets are standard residential guideline bands rather than strip-brand-specific normals, with tighter default CYA guidance and clearer hardness caveats. v1.6.2 hardens save/restore behavior for weather-location context and improves launch-time weather refresh resilience while keeping manual entry as fallback. v1.6.0 extends near-term simulation to 2 days, removes the coarse 7-day schedule chart, and uses hourly shortwave radiation when available so near-term solar heat gain follows observed forecast conditions more directly. Manual forecasts remain planning estimates, not guarantees.</p>
       </div>
 
       <div class="card" style="margin-bottom:1rem" id="export-card">
@@ -1198,7 +1198,7 @@ Ask about your current chemistry readings and dosing cards.</div>
 </div><!-- /wrap -->
 
 <footer>
-  splash! &mdash; costing for your playpool · v1.6.5.<br>
+  splash! &mdash; costing for your playpool · v1.6.6.<br>
   Physics model: surface losses combine free-convection, evaporation (dominant) and long-wave radiation; parameterised by shade/shelter.
   Location-aware global climate profiling with fallback baselines. Costs are indicative estimates only. Not for safety-critical application.<br>
   Copyright © jahosi.co.uk 2026
@@ -1234,7 +1234,7 @@ const COVER_TYPES = {
   liquid:  {label:'Liquid solar cover',             surfaceLossFactor:0.65, solarTransmittance:0.98, evaporationReduction:0.40}
 };
 
-const APP_VERSION = '1.6.5';
+const APP_VERSION = '1.6.6';
 const APP_COPYRIGHT = 'Copyright © jahosi.co.uk 2026';
 const TARGET_TEMP_MIN = 18;
 const TARGET_TEMP_MAX = 40;
@@ -2154,6 +2154,7 @@ function chemGo() {
       waterProfileNote.innerHTML = `Water profile sensitivity: these quantities can move substantially with hard/soft source water, rainfall dilution, and bather load. Treat them as <strong>rough guides only</strong> and tune using your own measured TA/pH/CH/CYA results. <strong>Do NOT take these calculations as correct — ALWAYS follow the instructions on the product label.</strong>`;
     }
   }
+  saveConfigToLS();
 }
 
 function downloadChemSchedule() {
@@ -3924,6 +3925,7 @@ function initWeatherAutofill() {
       applySelectedCoordinates(place);
       rememberResolvedPlace(place);
       setWeatherStatus(`Selected: ${placeLabel(place)}. Click “Use selected place forecast” to populate weather.`, 'info');
+      saveConfigToLS();
     });
   }
 }
