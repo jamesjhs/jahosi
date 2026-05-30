@@ -82,8 +82,6 @@ header p{font-size:.85rem;opacity:.85;margin-top:.25rem}
 .controls-grid{display:grid;gap:1rem}
 .results-panel{min-width:0}
 
-.mobile-toolbar{display:none;margin-bottom:1rem}
-.mobile-toolbar button{width:100%;border:0;border-radius:10px;background:var(--blue);color:#fff;padding:.7rem 1rem;font-weight:700;cursor:pointer;box-shadow:var(--shadow)}
 .floating-options-btn{
   display:none;position:fixed;right:1rem;bottom:1rem;z-index:1200;
   border:0;border-radius:999px;background:var(--blue);color:#fff;
@@ -204,11 +202,12 @@ tr.totals td{background:#eef6fc!important;font-weight:700;border-top:2px solid v
 .intro-grid{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(260px,.7fr);gap:1rem;align-items:start}
 .intro-copy p{font-size:.88rem;color:var(--text);line-height:1.7;margin-bottom:.8rem}
 .intro-list{padding-left:1.15rem;display:grid;gap:.45rem;font-size:.82rem;color:var(--text)}
-.info-actions{display:flex;flex-wrap:wrap;gap:.75rem;margin-top:1rem}
+.info-actions{display:flex;flex-wrap:wrap;gap:.75rem;margin-top:1rem;justify-content:center}
 .action-btn,.link-btn{
   display:inline-flex;align-items:center;justify-content:center;gap:.45rem;
   border:0;border-radius:8px;background:var(--blue);color:#fff;
-  padding:.68rem 1rem;font-weight:700;cursor:pointer;box-shadow:var(--shadow);text-decoration:none
+  padding:.68rem 1rem;font-weight:700;cursor:pointer;box-shadow:var(--shadow);text-decoration:none;
+  width:13.5rem;text-align:center
 }
 .link-btn{background:#0f766e}
 .action-btn:disabled{opacity:.65;cursor:wait}
@@ -280,7 +279,6 @@ footer{text-align:center;padding:1.5rem;font-size:.72rem;color:var(--muted)}
 
 @media(max-width:980px){
   .layout{grid-template-columns:1fr}
-  .mobile-toolbar{display:block}
   .controls-panel{position:fixed;top:0;right:0;z-index:1000;height:100dvh;width:min(96vw,420px);max-height:none;transform:translateX(100%);transition:transform .25s ease;border-radius:0;overflow-y:auto;overflow-x:hidden}
   .controls-panel.open{transform:translateX(0)}
   .controls-close{display:inline-block}
@@ -334,8 +332,8 @@ footer{text-align:center;padding:1.5rem;font-size:.72rem;color:var(--muted)}
         <p class="inline-help">2b. Optionally set pool-in and pool-away dates plus your water rate to unlock a season cost summary.</p>
         <p class="inline-help">3. Review the forecast, charts, maths checks, and exports.</p>
         <div class="info-actions">
+          <button id="open-controls" type="button" class="action-btn">⚙️ Edit my pool</button>
           <a class="link-btn" href="./help.htm">Open help guide</a>
-          <a class="link-btn" href="./appendices.htm" style="background:#475569">Open appendices</a>
           <a class="link-btn" href="#chemistry-sec">Jump to chemistry</a>
           <button type="button" class="action-btn" id="fetch-weather-main">Fetch current forecast</button>
         </div>
@@ -352,9 +350,6 @@ footer{text-align:center;padding:1.5rem;font-size:.72rem;color:var(--muted)}
     </p>
   </section>
 
-  <div class="mobile-toolbar">
-    <button id="open-controls" type="button">⚙️ Adjust Settings</button>
-  </div>
   <button id="floating-options" class="floating-options-btn" type="button">⚙️ Options</button>
   <button id="chem-chat-toggle" class="chem-chat-toggle" type="button" aria-expanded="false" aria-controls="chem-chat-panel">🤖 Chemistry bot</button>
 
