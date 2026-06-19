@@ -25,12 +25,12 @@
 <link rel="manifest" href="./manifest.webmanifest">
 <title>splash! | Jahosi App Portfolio</title>
 <script
-  src="/version-refresh.js"
-  data-page-version="1.6.6"
-  data-version-url="/splash/version.json"
+  src="./version-refresh.js"
+  data-page-version="1.6.8"
+  data-version-url="./version.json"
   data-storage-key="splash_app_version"
   data-cache-prefix="pool-calculator-shell-"
-  data-unregister-scope="/splash/"
+  data-unregister-scope="./"
   data-preserve-keys="splash_cfg_1"
 ></script>
 <script type="application/ld+json">
@@ -297,7 +297,7 @@ footer{text-align:center;padding:1.5rem;font-size:.72rem;color:var(--muted)}
 
 <header>
   <h1>splash! <em>by Jahosi</em></h1>
-  <p>Cost estimates for your garden pool · v1.6.6</p>
+  <p>Cost estimates for your garden pool · v1.6.8</p>
 </header>
 
 <div class="hero-visual">
@@ -822,8 +822,8 @@ Ask about your current chemistry readings and dosing cards.</div>
       </div>
 
       <div class="card" style="margin-bottom:1rem" id="model-review-card">
-        <div class="card-title">Model review in v1.6.6</div>
-        <p class="inline-help">Core daylight-solar and forecast-cap safeguards remain in place. v1.6.6 fixes PWA data persistence: chemistry readings (FC, TC, TA, pH, CYA, CH, BR) and chlorine-type selection are now saved to localStorage as you type, and selected location coordinates are persisted immediately on dropdown selection, so all settings survive app restarts. v1.6.5 adds dedicated splash-specific hero artwork and preview metadata so shared `/splash` links present the app visually without changing the main Jahosi homepage preview image. v1.6.4 adds a version-manifest-driven HTML refresh path so browser and PWA users are pushed onto the latest shell sooner when a new release lands. v1.6.3 keeps the existing weather model intact while clarifying that chemistry targets are standard residential guideline bands rather than strip-brand-specific normals, with tighter default CYA guidance and clearer hardness caveats. v1.6.2 hardens save/restore behavior for weather-location context and improves launch-time weather refresh resilience while keeping manual entry as fallback. v1.6.0 extends near-term simulation to 2 days, removes the coarse 7-day schedule chart, and uses hourly shortwave radiation when available so near-term solar heat gain follows observed forecast conditions more directly. Manual forecasts remain planning estimates, not guarantees.</p>
+        <div class="card-title">Model review in v1.6.8</div>
+        <p class="inline-help">Core daylight-solar and forecast-cap safeguards remain in place. v1.6.8 fixes the local version-refresh script path so the app runs cleanly when `/splash` is served as its own development root. v1.6.7 critically revises chemistry pH guidance: pH dosing is now presented as a scenario-sensitive range rather than a single confident amount, with cover use, aeration/CO₂ outgassing, rainfall exposure, and TA buffering called out explicitly. v1.6.6 fixes PWA data persistence: chemistry readings (FC, TC, TA, pH, CYA, CH, BR) and chlorine-type selection are now saved to localStorage as you type, and selected location coordinates are persisted immediately on dropdown selection, so all settings survive app restarts. v1.6.5 adds dedicated splash-specific hero artwork and preview metadata so shared `/splash` links present the app visually without changing the main Jahosi homepage preview image. v1.6.4 adds a version-manifest-driven HTML refresh path so browser and PWA users are pushed onto the latest shell sooner when a new release lands. Manual forecasts remain planning estimates, not guarantees.</p>
       </div>
 
       <div class="card" style="margin-bottom:1rem" id="export-card">
@@ -928,6 +928,7 @@ Ask about your current chemistry readings and dosing cards.</div>
     Dosing figures here are indicative starting points derived from industry-standard formulas and published reference data
     (WHO, PWTAG, ANSI/APSP, Taylor Technologies). Actual outcomes depend on your specific water source,
     temperature, bather load, UV exposure, organic load, and local water chemistry.
+    pH is especially variable because it is controlled by total alkalinity and the carbonate/CO₂ buffer system; a covered, low-aeration pool may need little or no pH adjustment for weeks, while an uncovered, splashy, high-TA pool may rise quickly.
     These target bands are standard guideline ranges for a typical residential outdoor chlorine pool — they are not intended to mirror one specific dip-stick brand, and strip packaging may show slightly different "normal" colours or labels.
     <strong>Never add any chemical to your pool without first testing the water.</strong>
     Test before and after every chemical addition, and allow mixing time before re-testing.
@@ -971,6 +972,11 @@ Ask about your current chemistry readings and dosing cards.</div>
       <strong>Dichlor</strong> is typically granular and quick-dissolving; good for regular dosing.
       <strong>Trichlor</strong> is typically slow-dissolving tablets or sticks used in a floating feeder.
       Monitor CYA regularly and carry out a partial water change if CYA exceeds 90 ppm.
+    </p>
+    <p class="hint">
+      pH Plus / pH Minus quantities are deliberately shown as broad ranges. Total Alkalinity, cover hours, water features,
+      rain exposure, source-water alkalinity, and CO₂ outgassing can change the real dose by several-fold.
+      If pH is already inside range, the best dose is usually <strong>zero</strong>: keep testing rather than chasing a calculator.
     </p>
 
     <div style="font-size:.78rem;font-weight:700;color:var(--blue);margin:.75rem 0 .4rem;text-transform:uppercase;letter-spacing:.05em">Enter your current test results (all fields optional)</div>
@@ -1030,7 +1036,7 @@ Ask about your current chemistry readings and dosing cards.</div>
     </div>
     <div class="chem-card chem-na" id="chem-card-ph">
       <div class="chem-name">pH</div>
-      <div class="chem-range">Ideal: 7.4–7.6 &middot; Acceptable: 7.2–7.8</div>
+      <div class="chem-range">Ideal: 7.4–7.6 &middot; Acceptable: 7.2–7.8 &middot; dosing is highly scenario-dependent</div>
       <span class="chem-badge na" id="chem-badge-ph">No reading</span>
       <div class="chem-action" id="chem-action-ph">Enter a reading above to see dosing recommendations.</div>
     </div>
@@ -1079,12 +1085,12 @@ Ask about your current chemistry readings and dosing cards.</div>
           <tr>
             <td><strong>Total Alkalinity (TA)</strong></td>
             <td>80</td><td>80–120</td><td>140</td><td>ppm as CaCO₃</td>
-            <td>Acts as a pH buffer. Low TA causes rapid pH "bounce"; high TA makes pH correction difficult. (PWTAG 2017; ANSI/APSP/ICC 11-2019)</td>
+            <td>Acts as a pH buffer through the carbonate system. Low TA can cause pH bounce; high carbonate alkalinity gives a higher pH ceiling and faster upward drift when CO₂ is lost through aeration. (PWTAG 2017; ANSI/APSP/ICC 11-2019; PHTA; Wojtowicz 2001)</td>
           </tr>
           <tr>
             <td><strong>pH</strong></td>
             <td>7.2</td><td>7.4–7.6</td><td>7.8</td><td>—</td>
-            <td>Below 7.2: eye/skin irritation, equipment corrosion. Above 7.8: HOCl fraction drops sharply (from ~66 % at 7.2 to ~33 % at 7.6), greatly reducing sanitiser effectiveness. (WHO Vol 2, 2006; CDC MAHC 2023)</td>
+            <td>Below 7.2: eye/skin irritation and corrosion risk. Above 7.8: chlorine works less efficiently, especially above 8.0. Real pH drift is usually driven by CO₂ loss: aeration/rain impact can raise pH, while solid covers suppress CO₂ outgassing and often stabilise pH. (WHO Vol 2, 2006; CDC Healthy Swimming; PHTA; PWTAG; Orenda)</td>
           </tr>
           <tr>
             <td><strong>Free Chlorine (FC)</strong></td>
@@ -1118,6 +1124,35 @@ Ask about your current chemistry readings and dosing cards.</div>
       Taylor Technologies <em>Pool &amp; Spa Water Chemistry</em> Professional Reference.
     </p>
     <p class="mini-note">These are standard reference targets for typical residential outdoor chlorine pools. Hot tubs, indoor pools, vinyl/liner pools, plaster/concrete pools, and high-bather-load facilities may need different targets. Strip packaging may differ slightly; always treat these as rough guides and test your own water regularly with calibrated equipment.</p>
+  </div>
+
+  <div class="card" style="margin-bottom:1rem">
+    <div class="card-title">🧭 pH Balancing: Why the Calculator May Say "Wait"</div>
+    <p class="hint" style="margin-top:0">
+      pH is not a simple monthly consumable. In a stable covered pool, measured pH can stay in range for weeks with no pH Plus or pH Minus at all.
+      This is expected chemistry, not a calculator failure. The main driver of natural pH rise is dissolved CO₂ leaving the water; aeration, splashing,
+      upward-pointing returns, waterfalls, heavy rain impact, and salt-cell turbulence can speed that up.
+    </p>
+    <div class="tbl-wrap">
+      <table class="chem-ref-table">
+        <thead>
+          <tr><th>Scenario</th><th>Likely pH Effect</th><th>Practical Response</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><strong>Covered most of the day</strong></td><td>Less CO₂ outgassing, less evaporation/top-up, less direct rain dilution. pH often drifts slowly or stays near its closing value.</td><td>Test weekly; dose only from measured pH. Open periodically to let the pool breathe and clear chloramine odours.</td></tr>
+          <tr><td><strong>Uncovered, splashy, windy, water features on</strong></td><td>More aeration and CO₂ loss, so pH tends to rise, especially when TA is high.</td><td>Expect more acid demand; consider lowering TA gradually if pH repeatedly rises.</td></tr>
+          <tr><td><strong>Rainfall into uncovered pool</strong></td><td>Rainwater can be mildly acidic and dilute alkalinity, but raindrop impact also aerates water and can raise pH through CO₂ loss. Net effect may be small or mixed.</td><td>Retest pH and TA after substantial rain before adjusting.</td></tr>
+          <tr><td><strong>High-alkalinity fill water/top-ups</strong></td><td>Imports buffer and can raise the natural pH ceiling over time.</td><td>Track TA monthly and after large top-ups; pH dosing alone may not solve repeated upward drift.</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="chem-source-note">
+      Chemistry basis:
+      <a href="https://www.cdc.gov/healthy-swimming/about/home-pool-and-hot-tub-water-treatment-and-testing.html" target="_blank" rel="noopener noreferrer">CDC pH guidance</a> ·
+      <a href="https://www.phta.org/pub/?id=50ffe77d-1866-daac-99fb-9719108d1367" target="_blank" rel="noopener noreferrer">PHTA carbon dioxide / pH fact sheet</a> ·
+      <a href="https://blog.orendatech.com/swimming-pool-covers" target="_blank" rel="noopener noreferrer">Orenda on covers and CO₂ suppression</a> ·
+      <a href="https://www.pwtag.org/carbon-dioxide-for-ph-control-august-2011/" target="_blank" rel="noopener noreferrer">PWTAG on CO₂ pH control</a>.
+    </p>
   </div>
 
   <!-- Rate of change table -->
@@ -1160,7 +1195,7 @@ Ask about your current chemistry readings and dosing cards.</div>
     <p class="hint" style="margin-top:0">
       Approximate routine usage based on your selected location climate profile, current temperature band, and pool volume.
       These are rough guides only and assume typical residential usage.
-      <strong>Hard vs soft water can materially change pH/alkalinity/hardness demand.</strong>
+      <strong>Hard vs soft water, cover use, aeration, and rainfall exposure can materially change pH/alkalinity/hardness demand.</strong>
     </p>
     <div class="tbl-wrap">
       <table class="chem-ref-table">
@@ -1198,7 +1233,7 @@ Ask about your current chemistry readings and dosing cards.</div>
 </div><!-- /wrap -->
 
 <footer>
-  splash! &mdash; costing for your playpool · v1.6.6.<br>
+  splash! &mdash; costing for your playpool · v1.6.8.<br>
   Physics model: surface losses combine free-convection, evaporation (dominant) and long-wave radiation; parameterised by shade/shelter.
   Location-aware global climate profiling with fallback baselines. Costs are indicative estimates only. Not for safety-critical application.<br>
   Copyright © jahosi.co.uk 2026
@@ -1234,7 +1269,7 @@ const COVER_TYPES = {
   liquid:  {label:'Liquid solar cover',             surfaceLossFactor:0.65, solarTransmittance:0.98, evaporationReduction:0.40}
 };
 
-const APP_VERSION = '1.6.6';
+const APP_VERSION = '1.6.8';
 const APP_COPYRIGHT = 'Copyright © jahosi.co.uk 2026';
 const TARGET_TEMP_MIN = 18;
 const TARGET_TEMP_MAX = 40;
@@ -1851,7 +1886,77 @@ function chemFcMin(cyaPpm) {
   return Math.max(1.0, 0.075 * cyaPpm);
 }
 
-function chemRaiseAction(key, delta, current, kL, chlorineType, cyaReading) {
+function chemPhScenario(taReading) {
+  const coverType = gs('cover-type') || 'none';
+  const coverHours = clamp(gi('cover-hours') || 0, 0, 24);
+  const cover = COVER_TYPES[coverType] || COVER_TYPES.none;
+  const coveredFraction = coverType === 'none' ? 0 : coverHours / 24;
+  let doseLo = 0.45;
+  let doseHi = 1.9;
+  const notes = [];
+
+  if (coveredFraction >= 0.65 && coverType !== 'liquid') {
+    doseLo *= 0.55;
+    doseHi *= 0.95;
+    notes.push('cover use suppresses CO₂ outgassing, so pH may stay stable and acid demand may be low');
+  } else if (coveredFraction <= 0.15 || coverType === 'none') {
+    doseLo *= 0.85;
+    doseHi *= 1.45;
+    notes.push('uncovered water can lose CO₂ faster, so upward pH drift is more likely');
+  } else {
+    notes.push('partial cover use moderates CO₂ loss but does not eliminate pH drift');
+  }
+
+  if (taReading !== null && !isNaN(taReading)) {
+    if (taReading < 70) {
+      doseLo *= 0.65;
+      doseHi *= 0.9;
+      notes.push('low TA means smaller additions can move pH more sharply');
+    } else if (taReading > 140) {
+      doseLo *= 1.15;
+      doseHi *= 2.2;
+      notes.push('high TA strongly buffers acid/base additions and raises the natural pH ceiling');
+    } else if (taReading > 110) {
+      doseLo *= 1.0;
+      doseHi *= 1.45;
+      notes.push('upper-range TA can make pH reduction slower than label examples suggest');
+    } else {
+      notes.push('TA is close to the usual assumption used by simple pH dosing tables');
+    }
+  } else {
+    doseLo *= 0.75;
+    doseHi *= 2.4;
+    notes.push('no TA reading is entered, so the pH dose range is deliberately wide');
+  }
+
+  if (coverType === 'liquid') {
+    doseHi *= 1.15;
+    notes.push('liquid covers reduce evaporation less reliably than solid covers and do not protect from rainfall');
+  }
+
+  const scenario = coveredFraction >= 0.65 && coverType !== 'liquid'
+    ? 'covered / low-aeration'
+    : (coveredFraction <= 0.15 || coverType === 'none')
+      ? 'uncovered / higher-aeration'
+      : 'part-covered';
+
+  return {
+    scenario,
+    coverLabel: cover.label,
+    coverHours,
+    doseLo: Math.max(0.2, doseLo),
+    doseHi: Math.max(0.8, doseHi),
+    notes: notes.join('; ')
+  };
+}
+
+function chemPhDoseRange(baseG, scenario) {
+  const low = Math.max(1, Math.round(baseG * scenario.doseLo));
+  const high = Math.max(low, Math.round(baseG * scenario.doseHi));
+  return {low, high};
+}
+
+function chemRaiseAction(key, delta, current, kL, chlorineType, cyaReading, taReading) {
   switch (key) {
     case 'ta': {
       const g = (delta * kL * CHEM_DOSING.nabicarbonate_g_per_1000L_ppm).toFixed(0);
@@ -1861,9 +1966,11 @@ function chemRaiseAction(key, delta, current, kL, chlorineType, cyaReading) {
     }
     case 'ph': {
       const steps = Math.max(1, Math.ceil(delta / 0.2));
-      const g = (steps * kL * CHEM_DOSING.sodaash_g_per_1000L_per_0p2pH).toFixed(0);
-      return `To raise pH by ~${delta.toFixed(1)} units: add approx. <strong>${g} g sodium carbonate (soda ash, Na₂CO₃)</strong>. `
-        + `<span style="color:var(--amber);font-weight:600">pH adjustment varies significantly with Total Alkalinity — add in small increments and retest after 4 h. This estimate assumes TA~100 ppm only.</span>`;
+      const baseG = steps * kL * CHEM_DOSING.sodaash_g_per_1000L_per_0p2pH;
+      const scenario = chemPhScenario(taReading);
+      const range = chemPhDoseRange(baseG, scenario);
+      return `To raise pH by ~${delta.toFixed(1)} units: trial-dose roughly <strong>${range.low}–${range.high} g sodium carbonate (soda ash, Na₂CO₃)</strong>, starting near the low end. `
+        + `<span style="color:var(--amber);font-weight:600">Scenario: ${scenario.scenario}, ${scenario.coverLabel}, ${scenario.coverHours.toFixed(1)} h/day cover. ${scenario.notes}. Add a partial dose, circulate, and retest after 4 h; do not chase pH if it is already in range.</span>`;
     }
     case 'fc': {
       const dosK  = chlorineType === 'trichlor' ? CHEM_DOSING.trichlor_g_per_1000L_ppm  : CHEM_DOSING.dichlor_g_per_1000L_ppm;
@@ -1898,15 +2005,17 @@ function chemRaiseAction(key, delta, current, kL, chlorineType, cyaReading) {
   }
 }
 
-function chemLowerAction(key, delta, current, volL, kL, chlorineType) {
+function chemLowerAction(key, delta, current, volL, kL, chlorineType, taReading) {
   switch (key) {
     case 'ta':
-      return `<span style="color:var(--amber);font-weight:600">TA is above the ideal range. To lower TA: add dry acid (sodium bisulfate) to depress pH to ~7.0, then aerate vigorously to drive off CO₂ and raise pH without raising TA. This process requires multiple steps — consult PWTAG guidance or a pool professional.</span>`;
+      return `<span style="color:var(--amber);font-weight:600">TA is above the ideal range. Repeated pH rise is often a TA/CO₂ problem rather than a simple "more pH Minus" problem. Lower TA gradually with acid additions followed by controlled aeration to raise pH without raising TA; this is a multi-step process, so follow product guidance and consider professional advice.</span>`;
     case 'ph': {
       const steps = Math.max(1, Math.ceil(delta / 0.2));
-      const g = (steps * kL * CHEM_DOSING.dryacid_g_per_1000L_per_0p2pH).toFixed(0);
-      return `To lower pH by ~${delta.toFixed(1)} units: add approx. <strong>${g} g sodium bisulfate (dry acid, NaHSO₄·H₂O)</strong>. `
-        + `<span style="color:var(--amber);font-weight:600">pH adjustment varies significantly with Total Alkalinity — add in small increments with pump running; retest after 4 h. Rough estimate at TA~100 ppm only.</span>`;
+      const baseG = steps * kL * CHEM_DOSING.dryacid_g_per_1000L_per_0p2pH;
+      const scenario = chemPhScenario(taReading);
+      const range = chemPhDoseRange(baseG, scenario);
+      return `To lower pH by ~${delta.toFixed(1)} units: trial-dose roughly <strong>${range.low}–${range.high} g sodium bisulfate (dry acid, NaHSO₄·H₂O)</strong>, starting near the low end. `
+        + `<span style="color:var(--amber);font-weight:600">Scenario: ${scenario.scenario}, ${scenario.coverLabel}, ${scenario.coverHours.toFixed(1)} h/day cover. ${scenario.notes}. Acid lowers both pH and TA; circulate and retest after 4 h before adding more.</span>`;
     }
     case 'fc':
       return `FC is above the ideal range. Allow natural depletion (sunlight, chemistry) or increased bather use. Do not add more chlorine until FC drops below ${CHEM_TARGETS.fc.hi} ppm. Above 5 ppm may cause eye and skin irritation.`;
@@ -1927,7 +2036,7 @@ function chemRatingPrefix(level, summary) {
   return `<strong>${label} rating:</strong> ${summary}`;
 }
 
-function chemCardUpdate(key, reading, volL, chlorineType, fcReading, cyaReading) {
+function chemCardUpdate(key, reading, volL, chlorineType, fcReading, cyaReading, taReading) {
   const cardEl  = document.getElementById(`chem-card-${key}`);
   const badgeEl = document.getElementById(`chem-badge-${key}`);
   const actEl   = document.getElementById(`chem-action-${key}`);
@@ -2020,17 +2129,20 @@ function chemCardUpdate(key, reading, volL, chlorineType, fcReading, cyaReading)
   badgeEl.className   = `chem-badge ${badgeCls}`;
 
   let actionHtml = '';
-  if (statusClass === 'chem-ok') {
+  if (key === 'ph' && reading >= tgt.min && reading <= tgt.max) {
+    const phScenario = chemPhScenario(taReading);
+    actionHtml = `${chemRatingPrefix(ratingLevel, ratingSummary)} No pH chemical is normally recommended while pH remains within the acceptable 7.2–7.8 range. Scenario: ${phScenario.scenario}; ${phScenario.notes}. Keep testing and only dose from measured out-of-range pH.`;
+  } else if (statusClass === 'chem-ok') {
     actionHtml = `${chemRatingPrefix(ratingLevel, ratingSummary)} ✓`;
     if (key === 'fc' && cyaReading !== null && !isNaN(cyaReading) && cyaReading > 0) {
       actionHtml += ` FC:CYA ratio = ${((reading / cyaReading) * 100).toFixed(1)} % (MAHC 2023 minimum = 7.5 %).`;
     }
   } else if (reading < loActual) {
     const raiseBy = loActual - reading;
-    actionHtml = `${chemRatingPrefix(ratingLevel, ratingSummary)} ${chemRaiseAction(key, raiseBy, reading, kL, chlorineType, cyaReading)}`;
+    actionHtml = `${chemRatingPrefix(ratingLevel, ratingSummary)} ${chemRaiseAction(key, raiseBy, reading, kL, chlorineType, cyaReading, taReading)}`;
   } else if (reading > tgt.hi) {
     const lowerBy = reading - tgt.hi;
-    actionHtml = `${chemRatingPrefix(ratingLevel, ratingSummary)} ${chemLowerAction(key, lowerBy, reading, volL, kL, chlorineType)}`;
+    actionHtml = `${chemRatingPrefix(ratingLevel, ratingSummary)} ${chemLowerAction(key, lowerBy, reading, volL, kL, chlorineType, taReading)}`;
   }
 
   actEl.innerHTML = actionHtml;
@@ -2057,12 +2169,12 @@ function chemGo() {
   if (volEl) volEl.textContent = `${Math.round(volL).toLocaleString()} L`;
 
   // Update parameter cards
-  chemCardUpdate('ta',  rTA,  volL, chlorineType, rFC, rCYA);
-  chemCardUpdate('ph',  rPH,  volL, chlorineType, rFC, rCYA);
-  chemCardUpdate('fc',  rFC,  volL, chlorineType, rFC, rCYA);
-  chemCardUpdate('th',  rTH,  volL, chlorineType, rFC, rCYA);
-  chemCardUpdate('cya', rCYA, volL, chlorineType, rFC, rCYA);
-  chemCardUpdate('tc',  rTC,  volL, chlorineType, rFC, rCYA);
+  chemCardUpdate('ta',  rTA,  volL, chlorineType, rFC, rCYA, rTA);
+  chemCardUpdate('ph',  rPH,  volL, chlorineType, rFC, rCYA, rTA);
+  chemCardUpdate('fc',  rFC,  volL, chlorineType, rFC, rCYA, rTA);
+  chemCardUpdate('th',  rTH,  volL, chlorineType, rFC, rCYA, rTA);
+  chemCardUpdate('cya', rCYA, volL, chlorineType, rFC, rCYA, rTA);
+  chemCardUpdate('tc',  rTC,  volL, chlorineType, rFC, rCYA, rTA);
 
   // Temperature display
   const tempEl = document.getElementById('chem-current-temp');
@@ -2131,6 +2243,14 @@ function chemGo() {
       {name:'Neutral-water scenario', taPpm:6, chPpm:8, note:'Typical balanced mains-water estimate.'},
       {name:'Hard-water scenario', taPpm:2, chPpm:0, note:'Hard source water may need little/no CH addition; watch scaling and pH rise.'}
     ];
+    const phScenario = chemPhScenario(rTA);
+    const phBaseDownG = kL * CHEM_DOSING.dryacid_g_per_1000L_per_0p2pH;
+    const phBaseUpG = kL * CHEM_DOSING.sodaash_g_per_1000L_per_0p2pH;
+    const phDownRange = chemPhDoseRange(phBaseDownG, phScenario);
+    const phUpRange = chemPhDoseRange(phBaseUpG, phScenario);
+    const phCurrentText = rPH === null || isNaN(rPH)
+      ? 'No pH reading entered'
+      : `Current pH ${rPH.toFixed(1)}: ${rPH >= CHEM_TARGETS.ph.min && rPH <= CHEM_TARGETS.ph.max ? 'no pH product recommended while it remains in range' : 'adjust from measured value only'}`;
 
     const scenarioRows = hardSoftScenarios.map(s => {
       const taG = s.taPpm * kL * CHEM_DOSING.nabicarbonate_g_per_1000L_ppm;
@@ -2147,11 +2267,13 @@ function chemGo() {
       <tr><td><strong>Liquid chlorine alternative (12% NaOCl)</strong></td><td>~${liquid12pctL.toFixed(2)} L</td><td>Per week</td><td>Use this to maintain FC without adding extra CYA.</td></tr>
       <tr><td><strong>Cyanuric acid increase from stabilised chlorine</strong></td><td>~${cyaPerMonth.toFixed(0)} ppm CYA</td><td>Per 30 days</td><td>Monitor CYA and switch to liquid chlorine when CYA trends high.</td></tr>
       <tr><td><strong>Partial refill guidance</strong></td><td>${refillLitres > 0 ? `${refillLitres.toLocaleString()} L estimated` : 'None projected this month'}</td><td>${refillLitres > 0 ? 'If CYA remains above 90 ppm' : 'Monitor monthly'}</td><td>${refillLitres > 0 ? 'Estimated dilution to bring CYA back toward 70–80 ppm.' : 'If CYA exceeds 90 ppm, estimate refill from measured CYA and retest.'}</td></tr>
+      <tr><td><strong>pH Down / dry acid sensitivity</strong><br><span style="font-size:.72rem;color:var(--muted)">${phCurrentText}</span></td><td>~${phDownRange.low}–${phDownRange.high} g per −0.2 pH trial dose</td><td>Only after a high pH test</td><td>${phScenario.scenario}; ${phScenario.notes}. Acid also lowers TA, so retest before repeating.</td></tr>
+      <tr><td><strong>pH Plus / soda ash sensitivity</strong><br><span style="font-size:.72rem;color:var(--muted)">Usually avoid unless pH is genuinely low.</span></td><td>~${phUpRange.low}–${phUpRange.high} g per +0.2 pH trial dose</td><td>Only after a low pH test</td><td>TA, aeration, and cover use can change the dose several-fold; if pH is stable in range, expected use is zero.</td></tr>
       ${scenarioRows}
     `;
 
     if (waterProfileNote) {
-      waterProfileNote.innerHTML = `Water profile sensitivity: these quantities can move substantially with hard/soft source water, rainfall dilution, and bather load. Treat them as <strong>rough guides only</strong> and tune using your own measured TA/pH/CH/CYA results. <strong>Do NOT take these calculations as correct — ALWAYS follow the instructions on the product label.</strong>`;
+      waterProfileNote.innerHTML = `Water profile sensitivity: these quantities can move substantially with hard/soft source water, rainfall dilution, cover use, CO₂ outgassing/aeration, and bather load. A covered pool can legitimately need <strong>zero pH adjustment</strong> for long periods if tests remain in range. Treat figures as rough guides only and tune using measured TA/pH/CH/CYA results. <strong>Do NOT take these calculations as correct — ALWAYS follow the instructions on the product label.</strong>`;
     }
   }
   saveConfigToLS();
@@ -2167,6 +2289,10 @@ function downloadChemSchedule() {
   const chlorShort   = chlorineType === 'trichlor' ? 'Trichlor' : 'Dichlor';
   const dosGperPpm   = chlorineType === 'trichlor' ? CHEM_DOSING.trichlor_g_per_1000L_ppm : CHEM_DOSING.dichlor_g_per_1000L_ppm;
   const cyaK         = chlorineType === 'trichlor' ? CHEM_DOSING.trichlor_cya_per_fc_ppm  : CHEM_DOSING.dichlor_cya_per_fc_ppm;
+  const taReadingForPh = parseFloat(document.getElementById('chem-ta')?.value);
+  const phScenario = chemPhScenario(isNaN(taReadingForPh) ? null : taReadingForPh);
+  const phDownRange = chemPhDoseRange(CHEM_DOSING.dryacid_g_per_1000L_per_0p2pH * kL, phScenario);
+  const phUpRange = chemPhDoseRange(CHEM_DOSING.sodaash_g_per_1000L_per_0p2pH * kL, phScenario);
 
   // Build dosing table rows
   const dosingRows = [
@@ -2174,8 +2300,8 @@ function downloadChemSchedule() {
     {param:'Total Alkalinity (TA)',   chemical:'Sodium bicarbonate (NaHCO₃)',         unitNote:'per 1 ppm TA',   gPerUnit: CHEM_DOSING.nabicarbonate_g_per_1000L_ppm * kL, extra:'Retest after 24 h'},
     {param:'Calcium Hardness (CH)',   chemical:'Calcium chloride (CaCl₂, ~77 %)',     unitNote:'per 1 ppm CH',   gPerUnit: CHEM_DOSING.cacl2_g_per_1000L_ppm * kL, extra:'Retest after 4 h'},
     {param:'Cyanuric Acid (CYA)',     chemical:'Cyanuric acid / stabiliser (>98 %)', unitNote:'per 1 ppm CYA',  gPerUnit: CHEM_DOSING.cya_g_per_1000L_ppm * kL, extra:'Dissolves slowly — retest after 24–48 h'},
-    {param:'pH (raise)',              chemical:'Sodium carbonate (soda ash, Na₂CO₃)', unitNote:'per +0.2 pH',    gPerUnit: CHEM_DOSING.sodaash_g_per_1000L_per_0p2pH * kL, extra:'Rough guide at TA~100 ppm — verify with testing'},
-    {param:'pH (lower)',              chemical:'Sodium bisulfate (dry acid, NaHSO₄)', unitNote:'per −0.2 pH',    gPerUnit: CHEM_DOSING.dryacid_g_per_1000L_per_0p2pH * kL, extra:'Rough guide at TA~100 ppm — verify with testing'}
+    {param:'pH (raise)',              chemical:'Sodium carbonate (soda ash, Na₂CO₃)', unitNote:'per +0.2 pH',    gPerUnit: CHEM_DOSING.sodaash_g_per_1000L_per_0p2pH * kL, extra:`Scenario range ${phUpRange.low}–${phUpRange.high} g. ${phScenario.notes}`},
+    {param:'pH (lower)',              chemical:'Sodium bisulfate (dry acid, NaHSO₄)', unitNote:'per −0.2 pH',    gPerUnit: CHEM_DOSING.dryacid_g_per_1000L_per_0p2pH * kL, extra:`Scenario range ${phDownRange.low}–${phDownRange.high} g. ${phScenario.notes}`}
   ];
 
   // Build monthly planner using climate data
@@ -2239,7 +2365,7 @@ footer{margin-top:18pt;font-size:7.5pt;color:#9ca3af;border-top:0.5pt solid #e5e
   <strong>⚠ ROUGH GUIDE — ESTIMATES ONLY. ALWAYS TEST FIRST.</strong><br>
   Dosing quantities on this schedule are indicative starting points based on published industry formulas
   (WHO, PWTAG, ANSI/APSP, Taylor Technologies). Actual results vary with your water source, temperature,
-  bather load, UV exposure, and local water chemistry. <strong>Always test with calibrated test strips or
+  bather load, UV exposure, cover use, aeration/CO₂ outgassing, rainfall exposure, and local water chemistry. <strong>Always test with calibrated test strips or
   a drop-test kit before and after every chemical addition.</strong> Never add chemicals without testing first.
   These figures are not a substitute for professional water analysis or the advice of a qualified pool technician.
   Overdosing can be hazardous. When in doubt, add less and retest.
@@ -2250,7 +2376,7 @@ footer{margin-top:18pt;font-size:7.5pt;color:#9ca3af;border-top:0.5pt solid #e5e
   <thead><tr><th>Parameter</th><th>Minimum</th><th>Ideal Range</th><th>Maximum</th><th>Units</th><th>Key Notes</th></tr></thead>
   <tbody>
     <tr><td><strong>Total Alkalinity (TA)</strong></td><td>80</td><td>80–120</td><td>140</td><td>ppm as CaCO₃</td><td>pH buffer. Low TA = pH bounce; high TA = pH hard to move.</td></tr>
-    <tr><td><strong>pH</strong></td><td>7.2</td><td>7.4–7.6</td><td>7.8</td><td>—</td><td>Below 7.2: corrosive, irritating. Above 7.8: chlorine much less effective.</td></tr>
+    <tr><td><strong>pH</strong></td><td>7.2</td><td>7.4–7.6</td><td>7.8</td><td>—</td><td>Below 7.2: corrosive, irritating. Above 7.8: chlorine much less effective. Drift is strongly affected by TA and CO₂ loss.</td></tr>
     <tr><td><strong>Free Chlorine (FC)</strong></td><td>1.0*</td><td>2–4</td><td>5.0</td><td>ppm</td><td>*Minimum = max(1.0, 7.5% × CYA) per CDC MAHC 2023. e.g. at CYA 50 ppm → min FC = 3.75 ppm.</td></tr>
     <tr><td><strong>Total Hardness (CH)</strong></td><td>200</td><td>250–350</td><td>500</td><td>ppm as CaCO₃</td><td>Below 200: corrosive to surfaces. Above 500: scale &amp; cloudy water.</td></tr>
     <tr><td><strong>Cyanuric Acid (CYA)</strong></td><td>30</td><td>40–80</td><td>90</td><td>ppm</td><td>UV protection for FC outdoors. Above 90 ppm: chlorine lock — partial water change required.</td></tr>
@@ -2269,8 +2395,21 @@ footer{margin-top:18pt;font-size:7.5pt;color:#9ca3af;border-top:0.5pt solid #e5e
 <p style="font-size:8pt;color:#6b7280">
   Dosing ratios: NaHCO₃ to raise TA — MW 84/50 = 1.68 theoretical, industry std 1.8 g/1000 L/ppm (APSP).
   CaCl₂ to raise CH — 1.5 g/1000 L/ppm (APSP, ~77 % grade). CYA — 1.0 g/1000 L/ppm (direct mass).
-  ${chlorShort} to raise FC — ${dosGperPpm.toFixed(2)} g/1000 L/ppm (1/available-Cl-fraction, MW ratio). pH: rough guide at TA~100 ppm only.
+  ${chlorShort} to raise FC — ${dosGperPpm.toFixed(2)} g/1000 L/ppm (1/available-Cl-fraction, MW ratio). pH base figures assume TA~100 ppm, then are widened for scenario sensitivity.
 </p>
+
+<h2>2b. pH Scenario Sensitivity</h2>
+<p style="font-size:8pt;color:#6b7280;margin-bottom:6pt">
+  Current cover scenario: <strong>${phScenario.scenario}</strong>, ${phScenario.coverLabel}, ${phScenario.coverHours.toFixed(1)} h/day.
+  ${phScenario.notes}. If measured pH is already between 7.2 and 7.8, routine pH Plus / Minus use should normally be zero.
+</p>
+<table>
+  <thead><tr><th>Adjustment</th><th>Scenario Range for This Pool</th><th>Use Only When</th><th>Operational Note</th></tr></thead>
+  <tbody>
+    <tr><td><strong>pH Down / dry acid</strong></td><td>${phDownRange.low}–${phDownRange.high} g per −0.2 pH trial dose</td><td>Measured pH is high</td><td>Acid lowers both pH and TA; add less than the high estimate, circulate, and retest.</td></tr>
+    <tr><td><strong>pH Plus / soda ash</strong></td><td>${phUpRange.low}–${phUpRange.high} g per +0.2 pH trial dose</td><td>Measured pH is low</td><td>Soda ash can raise TA; avoid if pH is stable in range.</td></tr>
+  </tbody>
+</table>
 
 <h2>3. Temperature-Based Checking Schedule</h2>
 <p style="font-size:8pt;color:#6b7280;margin-bottom:6pt">FC depletion rates assume CYA-stabilised chlorine (40–80 ppm), low-to-moderate bather load, outdoor daytime use.</p>
@@ -2327,6 +2466,9 @@ footer{margin-top:18pt;font-size:7.5pt;color:#9ca3af;border-top:0.5pt solid #e5e
   <li>Taylor Technologies (current edition). <em>Pool &amp; Spa Water Chemistry: A Testing and Treatment Guide.</em> Taylor Technologies Inc., Sparks MD.</li>
   <li>White, G.C. (1999). <em>Handbook of Chlorination and Alternative Disinfectants</em>, 4th ed. New York: Wiley-Interscience.</li>
   <li>Wojtowicz, J.C. (2001). Effect of temperature on chemical equilibria in swimming pools. <em>Journal of the Swimming Pool and Spa Industry</em>, 4(1), 15–25.</li>
+  <li>Pool &amp; Hot Tub Alliance (PHTA). Fact sheet: carbon dioxide loss raises pool pH through the carbonate buffer system.</li>
+  <li>Orenda Technologies. Swimming pool covers and water chemistry: covers suppress CO₂ outgassing and can stabilise pH.</li>
+  <li>PWTAG. Carbon dioxide for pH control technical note: CO₂, alkalinity, aeration, and pH control interactions.</li>
 </ul>
 
 <footer>

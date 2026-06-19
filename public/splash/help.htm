@@ -19,12 +19,12 @@
 <link rel="icon" type="image/svg+xml" href="./icons/pool-icon-192.svg">
 <title>splash! Help Guide | Jahosi App Portfolio</title>
 <script
-  src="/version-refresh.js"
-  data-page-version="1.6.4"
-  data-version-url="/splash/version.json"
+  src="./version-refresh.js"
+  data-page-version="1.6.8"
+  data-version-url="./version.json"
   data-storage-key="splash_app_version"
   data-cache-prefix="pool-calculator-shell-"
-  data-unregister-scope="/splash/"
+  data-unregister-scope="./"
 ></script>
 <style>
   :root {
@@ -100,6 +100,22 @@
       <li><strong>Reference-month metrics:</strong> the planner now uses a location-aware reference month (warmest monthly average in the active climate profile) instead of fixed UK July assumptions for key comparative cards and charts.</li>
       <li><strong>Remaining limitations:</strong> the planner still uses public monthly climate normals and a simplified single-body water model. Wind spikes, rain, splashing, and stratification can shift real outcomes noticeably.</li>
     </ol>
+  </section>
+
+  <section class="card">
+    <h2>What’s new in v1.6.8</h2>
+    <ul>
+      <li><strong>Local script loading fixed:</strong> splash now carries its own version-refresh helper so local `/splash` development servers do not 404 or block script execution.</li>
+    </ul>
+  </section>
+
+  <section class="card">
+    <h2>What’s new in v1.6.7</h2>
+    <ul>
+      <li><strong>pH advice corrected:</strong> pH Plus / pH Minus guidance now reflects carbonate buffering, CO₂ outgassing, cover use, rainfall exposure, and aeration rather than presenting one confident dose.</li>
+      <li><strong>Scenario-sensitive chemistry:</strong> stable covered pools may legitimately need zero pH adjustment for weeks when measured pH remains in range.</li>
+      <li><strong>References expanded:</strong> appendices now include PHTA, PWTAG CO₂ guidance, CDC residential pH guidance, and cover/pH chemistry sources.</li>
+    </ul>
   </section>
 
   <section class="card">
@@ -205,8 +221,15 @@
         <tr><td>CYA raise</td><td><code>1 ppm = 1 mg/L</code> ⇒ 1 g per 1000 L per ppm</td><td>Direct mass-balance.</td></tr>
         <tr><td>FC minimum with CYA</td><td><code>FC_min = max(1.0, 0.075 × CYA)</code></td><td>CDC MAHC FC:CYA ratio rule.</td></tr>
         <tr><td>Combined chlorine</td><td><code>CC = TC − FC</code>; breakpoint shock rough guide <code>10 × CC</code></td><td>Operational rule-of-thumb, then retest.</td></tr>
+        <tr><td>pH dose sensitivity</td><td>Base pH Plus / Minus values are widened by TA and cover/aeration scenario factors.</td><td>pH is governed by carbonate alkalinity and dissolved CO₂, so single-dose calculators are intrinsically approximate.</td></tr>
       </tbody>
     </table>
+  </section>
+
+  <section class="card">
+    <h2>pH balancing caveats</h2>
+    <p>pH is not treated as a fixed monthly product demand. A covered, low-aeration pool may keep pH in range for weeks because the cover suppresses CO₂ outgassing and reduces rainfall/top-up disturbance. An uncovered, splashy, high-TA pool may drift upward much faster. Rainfall can be mixed: rainwater can be mildly acidic and dilute TA, while raindrop impact can also aerate the pool and raise pH by driving off CO₂.</p>
+    <div class="note">The app now treats pH Plus / Minus as a measured correction only. If pH is already between 7.2 and 7.8, routine pH product use should normally be zero.</div>
   </section>
 
   <section class="card">
@@ -216,6 +239,7 @@
       <li>Location-aware monthly climate profile (archive when available; fallback baseline otherwise) is used for monthly scheduling context.</li>
       <li>Hard/soft water scenario ranges are intentionally broad and marked as rough guides because local supply chemistry can vary significantly, even within the same region.</li>
       <li>Product quantity tables are planning aids only and should always be corrected using measured TA/pH/CH/CYA/FC/TC readings.</li>
+      <li>pH Plus / Minus outputs are scenario-sensitive trial ranges rather than monthly consumable forecasts.</li>
     </ul>
   </section>
 
@@ -230,12 +254,16 @@
       <li>White, G.C. (1999). <em>Handbook of Chlorination and Alternative Disinfectants</em>, 4th ed., Wiley.</li>
       <li>Wojtowicz, J.C. (2001). Effect of temperature on chemical equilibria in swimming pools. <em>Journal of the Swimming Pool and Spa Industry</em>.</li>
       <li>Taylor Technologies. <em>Pool &amp; Spa Water Chemistry</em> professional reference materials.</li>
+      <li><a href="https://www.phta.org/pub/?id=50ffe77d-1866-daac-99fb-9719108d1367" target="_blank" rel="noopener noreferrer">Pool &amp; Hot Tub Alliance (PHTA). Carbon dioxide / pH fact sheet.</a></li>
+      <li><a href="https://www.pwtag.org/carbon-dioxide-for-ph-control-august-2011/" target="_blank" rel="noopener noreferrer">PWTAG. Carbon dioxide for pH control technical note.</a></li>
+      <li><a href="https://blog.orendatech.com/swimming-pool-covers" target="_blank" rel="noopener noreferrer">Orenda Technologies. Swimming pool covers and water chemistry.</a></li>
+      <li><a href="https://www.cdc.gov/healthy-swimming/about/home-pool-and-hot-tub-water-treatment-and-testing.html" target="_blank" rel="noopener noreferrer">CDC. Home Pool and Hot Tub Water Treatment and Testing.</a></li>
       <li>Open-Meteo API documentation and datasets for geocoding, forecast, and archive climate inputs.</li>
     </ol>
   </section>
 </main>
 <footer>
-  splash! v1.6.4 · Copyright © jahosi.co.uk 2026
+  splash! v1.6.8 · Copyright © jahosi.co.uk 2026
 </footer>
 </body>
 </html>

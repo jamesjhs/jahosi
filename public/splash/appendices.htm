@@ -19,12 +19,12 @@
 <link rel="icon" type="image/svg+xml" href="./icons/pool-icon-192.svg">
 <title>splash! Appendices | Jahosi App Portfolio</title>
 <script
-  src="/version-refresh.js"
-  data-page-version="1.6.4"
-  data-version-url="/splash/version.json"
+  src="./version-refresh.js"
+  data-page-version="1.6.8"
+  data-version-url="./version.json"
   data-storage-key="splash_app_version"
   data-cache-prefix="pool-calculator-shell-"
-  data-unregister-scope="/splash/"
+  data-unregister-scope="./"
 ></script>
 <style>
   :root{--blue:#0077b6;--blue-lt:#e0f2fe;--bg:#eef6fc;--card:#ffffff;--text:#1a202c;--muted:#64748b;--border:#cde8f5;--shadow:0 2px 10px rgba(0,80,160,0.1)}
@@ -91,8 +91,16 @@
         <tr><td>CYA raise</td><td><code>1 ppm = 1 mg/L</code> ⇒ 1 g per 1000 L per ppm</td><td>Direct mass-balance.</td></tr>
         <tr><td>FC minimum with CYA</td><td><code>FC_min = max(1.0, 0.075 × CYA)</code></td><td>CDC MAHC FC:CYA ratio rule.</td></tr>
         <tr><td>Combined chlorine</td><td><code>CC = TC − FC</code>; breakpoint shock rough guide <code>10 × CC</code></td><td>Operational rule-of-thumb, then retest.</td></tr>
+        <tr><td>pH dose sensitivity</td><td>Base pH Plus / Minus values are widened by TA and cover/aeration scenario factors.</td><td>pH is controlled by carbonate alkalinity and dissolved CO₂, so single-dose calculators are intrinsically approximate.</td></tr>
       </tbody>
     </table>
+  </section>
+
+  <section class="card">
+    <h2>pH balancing critical appraisal</h2>
+    <p>The previous splash! chemistry guidance treated pH Plus / pH Minus as rough but still displayed a single expected amount. That was too confident. Professional and industry sources consistently point to the carbonate buffer system: total alkalinity resists pH movement, while dissolved carbon dioxide suppresses pH. When CO₂ leaves the water through aeration, splashing, rainfall impact, water features, uncovered circulation, or salt-cell turbulence, pH tends to rise without a matching TA rise.</p>
+    <p>A pool cover changes that pathway. A solid or bubble cover reduces surface exchange, evaporation, rainfall entry, and wind-driven agitation, so CO₂ outgassing is suppressed and pH may remain close to its prior value for long periods. That means the correct pH Plus / Minus quantity for a stable covered pool can be zero, even over several weeks. Conversely, an uncovered high-TA pool with water features may need repeated acid additions and may be better managed by gradual TA reduction rather than repeated pH chasing.</p>
+    <p>Rainfall is mixed rather than one-directional. Rainwater can be mildly acidic and can dilute TA, but heavy rain also aerates the surface and can accelerate CO₂ loss. The net pH effect depends on rainfall volume, impact/agitation, cover use, initial TA, and source-water top-up chemistry. For this reason splash! now advises retesting pH and TA after substantial rain instead of predicting a guaranteed pH rise or fall.</p>
   </section>
 
   <section class="card">
@@ -102,6 +110,7 @@
       <li>Location-aware monthly climate profile (archive when available; fallback baseline otherwise) is used for monthly scheduling context.</li>
       <li>Hard/soft water scenario ranges are intentionally broad and marked as rough guides because local supply chemistry can vary significantly, even within the same region.</li>
       <li>Product quantity tables are planning aids only and should always be corrected using measured TA/pH/CH/CYA/FC/TC readings.</li>
+      <li>pH Plus / Minus outputs are scenario-sensitive trial ranges, not monthly consumable forecasts. Cover use, aeration, rainfall, and TA can shift real demand by several-fold.</li>
     </ul>
   </section>
 
@@ -116,12 +125,16 @@
       <li>White, G.C. (1999). <em>Handbook of Chlorination and Alternative Disinfectants</em>, 4th ed., Wiley.</li>
       <li>Wojtowicz, J.C. (2001). Effect of temperature on chemical equilibria in swimming pools. <em>Journal of the Swimming Pool and Spa Industry</em>.</li>
       <li>Taylor Technologies. <em>Pool &amp; Spa Water Chemistry</em> professional reference materials.</li>
+      <li><a href="https://www.phta.org/pub/?id=50ffe77d-1866-daac-99fb-9719108d1367" target="_blank" rel="noopener noreferrer">Pool &amp; Hot Tub Alliance (PHTA). Carbon dioxide / pH fact sheet</a>: CO₂ loss raises pH through the carbonate buffer system.</li>
+      <li><a href="https://www.pwtag.org/carbon-dioxide-for-ph-control-august-2011/" target="_blank" rel="noopener noreferrer">PWTAG. Carbon dioxide for pH control technical note</a>: guidance on CO₂, alkalinity, aeration, and operational suitability.</li>
+      <li><a href="https://blog.orendatech.com/swimming-pool-covers" target="_blank" rel="noopener noreferrer">Orenda Technologies. Swimming pool covers and water chemistry</a>: practical explanation of cover-driven CO₂ suppression and pH stability.</li>
+      <li><a href="https://www.cdc.gov/healthy-swimming/about/home-pool-and-hot-tub-water-treatment-and-testing.html" target="_blank" rel="noopener noreferrer">CDC. Home Pool and Hot Tub Water Treatment and Testing</a>: residential pH range and chlorine-effectiveness guidance.</li>
       <li>Open-Meteo API documentation and datasets for geocoding, forecast, and archive climate inputs.</li>
     </ol>
   </section>
 </main>
 <footer>
-  splash! appendices · v1.6.4 · Copyright © jahosi.co.uk 2026
+  splash! appendices · v1.6.8 · Copyright © jahosi.co.uk 2026
 </footer>
 </body>
 </html>
