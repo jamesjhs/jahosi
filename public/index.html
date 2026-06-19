@@ -3,26 +3,22 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Jahosi is my portfolio of blue-sky apps and websites, built over time to solve real problems through practical software development.">
+  <meta name="description" content="Jahosi is Dr James Rowson's portfolio of practical web apps, PWAs, data tools, calculators, and archive projects built to solve real problems.">
   <meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1">
   <link rel="canonical" href="https://jahosi.co.uk/">
   <meta property="og:type" content="website">
-  <meta property="og:title" content="Jahosi | Portfolio of Blue-Sky Apps & Websites by James Rowson">
-  <meta property="og:description" content="Jahosi is my portfolio of blue-sky apps and websites, built over time to solve real problems through practical software development.">
+  <meta property="og:title" content="Jahosi | Practical Apps & Web Projects by Dr James Rowson">
+  <meta property="og:description" content="A portfolio of practical web apps, PWAs, data tools, calculators, and archive projects built by Dr James Rowson.">
   <meta property="og:url" content="https://jahosi.co.uk/">
   <meta property="og:site_name" content="Dr James Rowson Portfolio">
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="Jahosi | Portfolio of Blue-Sky Apps & Websites by James Rowson">
-  <meta name="twitter:description" content="Jahosi is my portfolio of blue-sky apps and websites, built over time to solve real problems through practical software development.">
+  <meta name="twitter:title" content="Jahosi | Practical Apps & Web Projects by Dr James Rowson">
+  <meta name="twitter:description" content="A portfolio of practical web apps, PWAs, data tools, calculators, and archive projects built by Dr James Rowson.">
   <meta property="og:image" content="https://jahosi.co.uk/me.jpg">
+  <meta property="og:image:alt" content="Portrait of Dr James Rowson">
   <meta name="twitter:image" content="https://jahosi.co.uk/me.jpg">
-  <title>Jahosi | Portfolio of Blue-Sky Apps & Websites by James Rowson</title>
-  <script
-    src="/version-refresh.js"
-    data-page-version="1.6.4"
-    data-version-url="/splash/version.json"
-    data-storage-key="splash_site_version"
-  ></script>
+  <meta name="twitter:image:alt" content="Portrait of Dr James Rowson">
+  <title>Jahosi | Practical Apps & Web Projects by Dr James Rowson</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script type="application/ld+json">
     {
@@ -35,7 +31,35 @@
         "http://facebook.com/jamesjhs",
         "https://500px.com/p/Jahosi?view=photos"
       ],
-      "jobTitle": "Software Developer"
+      "jobTitle": "Software Developer",
+      "knowsAbout": [
+        "web applications",
+        "progressive web apps",
+        "data tools",
+        "software prototyping",
+        "portfolio websites"
+      ]
+    }
+  </script>
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "ItemList",
+      "name": "Jahosi project portfolio",
+      "itemListElement": [
+        {"@type": "ListItem", "position": 1, "url": "https://jahosi.co.uk/portfolio/hovercraft.html", "name": "James' Hovercraft Site", "description": "Long-running hovercraft archive and custom CMS preserving craft, route, and hoverport history."},
+        {"@type": "ListItem", "position": 2, "url": "https://jahosi.co.uk/portfolio/hamster.html", "name": "Hamster Activity Logger", "description": "ESP32 and Raspberry Pi activity logger for tracking distance, time, and nocturnal patterns."},
+        {"@type": "ListItem", "position": 3, "url": "https://jahosi.co.uk/portfolio/museum-gallery.html", "name": "Aviation Museum Archives and Gallery", "description": "Node.js archive gallery for browsing and preserving aviation museum photography exports."},
+        {"@type": "ListItem", "position": 4, "url": "https://jahosi.co.uk/portfolio/museum-vms.html", "name": "Museum Volunteer Management System", "description": "Volunteer coordination proof of concept for museums and volunteer-led organisations."},
+        {"@type": "ListItem", "position": 5, "url": "https://jahosi.co.uk/portfolio/tasker.html", "name": "Tasker", "description": "Anonymous task timer for measuring admin workload and operational demand."},
+        {"@type": "ListItem", "position": 6, "url": "https://jahosi.co.uk/portfolio/taskit.html", "name": "Taskit", "description": "Cross-platform task management app with collaboration, recurring tasks, calendar feed, and encrypted storage."},
+        {"@type": "ListItem", "position": 7, "url": "https://jahosi.co.uk/portfolio/leccy.html", "name": "Leccy", "description": "EV charging cost tracker with tariff management, analytics, and PWA support."},
+        {"@type": "ListItem", "position": 8, "url": "https://jahosi.co.uk/portfolio/splash.html", "name": "splash!", "description": "Pool and hot-tub thermal, cost, and chemistry planner with Open-Meteo weather and 48-hour forecasting."},
+        {"@type": "ListItem", "position": 9, "url": "https://jahosi.co.uk/portfolio/project-ai.html", "name": "Project AI", "description": "AI-assisted front-end experiment with animated visual effects and interactive gallery work."},
+        {"@type": "ListItem", "position": 10, "url": "https://jahosi.co.uk/portfolio/messaging.html", "name": "TLS Secure Messaging", "description": "Self-hosted secure messaging app with encrypted storage, PWA delivery, and private media controls."},
+        {"@type": "ListItem", "position": 11, "url": "https://jahosi.co.uk/portfolio/qglimpse.html", "name": "Qglimpse", "description": "Visitor feedback platform with kiosk capture, scheduling, and demographic-aware analytics."},
+        {"@type": "ListItem", "position": 12, "url": "https://jahosi.co.uk/portfolio/pingme-help.html", "name": "pingme.help", "description": "Privacy-first safety check-in app with trusted codewords, status sharing, and secure follow-up."}
+      ]
     }
   </script>
   <style>
@@ -145,23 +169,23 @@
             <div class="absolute inset-0 opacity-40" style="background:radial-gradient(circle at 20% 35%,#38bdf8,transparent 45%),radial-gradient(circle at 78% 68%,#67e8f9,transparent 45%);"></div>
             <div class="absolute inset-0 p-3 flex flex-col justify-between text-white">
               <div class="flex items-center justify-between">
-                <span class="rounded-full border border-white/35 bg-white/15 px-2 py-0.5 text-[10px] font-bold tracking-widest uppercase">Global Weather</span>
-                <span class="rounded-full border border-white/35 bg-white/15 px-2 py-0.5 text-[10px] font-bold tracking-widest uppercase">v1.6.4</span>
+                <span class="rounded-full border border-white/35 bg-white/15 px-2 py-0.5 text-[10px] font-bold tracking-widest uppercase">Open-Meteo</span>
+                <span class="rounded-full border border-white/35 bg-white/15 px-2 py-0.5 text-[10px] font-bold tracking-widest uppercase">v1.6.8</span>
               </div>
               <div class="rounded-lg border border-white/35 bg-white/10 p-2">
                 <div class="flex items-end justify-between text-[10px] text-white/85">
-                  <span>36h forecast</span>
-                  <span>£ season cost</span>
+                  <span>48h hourly</span>
+                  <span>3-day daily</span>
                 </div>
                 <div class="mt-1 h-1.5 rounded-full bg-white/20 overflow-hidden">
-                  <div class="h-full w-2/3 bg-gradient-to-r from-cyan-300 via-sky-200 to-emerald-200"></div>
+                  <div class="h-full w-full bg-gradient-to-r from-cyan-300 via-sky-200 to-emerald-200"></div>
                 </div>
               </div>
             </div>
           </div>
           <div class="p-4">
             <h2 class="font-bold text-slate-900">splash!</h2>
-            <p class="mt-1 text-sm text-slate-600">Interactive playpool/hot-tub planner with global weather auto-fill, expert-flow UX, chemistry quantity guidance, and formulas/references appendices.</p>
+            <p class="mt-1 text-sm text-slate-600">Interactive playpool/hot-tub planner with Open-Meteo weather, 48-hour hourly forecasting, 3-day simulation, scenario-sensitive pH chemistry guidance, and formulas/references appendices.</p>
           </div>
         </a>
 
