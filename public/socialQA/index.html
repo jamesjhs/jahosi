@@ -176,24 +176,54 @@ body.high-contrast .disclaimer{background:#fff}
   grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
   gap:.75rem;
 }
-.action-card,.question-card,.copy-card,.term-card{
+.action-card,.question-card,.question-pack,.term-card{
   border:1px solid var(--line);
   border-radius:8px;
   background:#fbfefd;
   padding:.85rem;
 }
-.action-card h3,.copy-card h3,.term-card h3{
+.action-card h3,.term-card h3{
   margin:0 0 .35rem;
   font-size:1rem;
 }
-.action-card p,.copy-card p,.term-card p{
+.action-card p,.term-card p{
   margin:.35rem 0 .65rem;
   color:var(--muted);
   font-size:.94rem;
 }
-.action-card button,.question-card,.copy-card button{
+.action-card button,.question-card{
   width:100%;
 }
+.question-pack{
+  padding:0;
+  overflow:hidden;
+}
+.question-pack summary{
+  padding:.85rem;
+  color:var(--brand-dark);
+  font-weight:700;
+  cursor:pointer;
+}
+.question-pack summary:hover{
+  color:#fff;
+  background:var(--brand-dark);
+}
+.question-pack[open] summary{
+  border-bottom:1px solid var(--line);
+}
+.question-pack-body{
+  padding:.85rem;
+}
+.question-pack-body p{
+  margin:.35rem 0 .65rem;
+  color:var(--muted);
+  font-size:.94rem;
+}
+.question-pack-body ol{
+  margin:.65rem 0 0;
+  padding-left:1.35rem;
+}
+.question-pack-body li{margin:.35rem 0}
 .question-card{
   color:var(--brand-dark);
   background:#fff;
@@ -633,48 +663,56 @@ body.high-contrast footer{color:#fff}
   </section>
 
   <section class="panel panel-pad guided-section" aria-labelledby="packs-title">
-    <h2 id="packs-title">Copyable question packs</h2>
-    <p class="source-scope">These prompts can be copied into an email, notes app or the chat. Avoid adding private personal details unless speaking directly to the official organisation.</p>
+    <h2 id="packs-title">Question packs</h2>
+    <p class="source-scope">Expand a card to see useful questions. Avoid adding private personal details unless speaking directly to the official organisation.</p>
     <div class="question-pack-grid">
-      <article class="copy-card">
-        <h3>Questions for the council</h3>
-        <p>Useful when asking about needs assessment, financial assessment and local charging.</p>
-        <button type="button" data-copy-text="Questions for the local authority:
-1. Has a care needs assessment been completed, and can we have a written copy?
-2. Has a financial assessment been completed, and what evidence is needed?
-3. Which local charging policy applies?
-4. Are there any top-up fees, and who is being asked to agree them?
-5. What local care options are available that meet the assessed needs?
-6. What is the review process if needs, savings or care costs change?
-7. Who should we contact if we disagree with the decision?">Copy council questions</button>
-      </article>
-      <article class="copy-card">
-        <h3>Questions for the ICB or CHC team</h3>
-        <p>Useful for NHS Continuing Healthcare and NHS-funded nursing care questions.</p>
-        <button type="button" data-copy-text="Questions for the NHS ICB or Continuing Healthcare team:
-1. Has a NHS Continuing Healthcare checklist been considered?
-2. If not, why not, and who can request one?
-3. If a checklist or Decision Support Tool was completed, can we have a copy?
-4. What evidence was used to decide whether there is a primary health need?
-5. Has NHS-funded nursing care been considered if the person is in a nursing home?
-6. What is the review or appeal route if we disagree?
-7. Who is the named contact for this case?">Copy CHC questions</button>
-      </article>
-      <article class="copy-card">
-        <h3>Questions before signing</h3>
-        <p>Useful before agreeing care home fees, extras or top-ups.</p>
-        <button type="button" data-copy-text="Questions before signing a care home agreement:
-1. What is included in the weekly fee?
-2. What is charged separately?
-3. Can fees increase, and how much notice is given?
-4. Is any third-party top-up being requested, and what written agreement explains it?
-5. What happens if funding changes or savings run down?
-6. What notice period applies?
-7. Where are the latest CQC inspection report and rating?
-8. What is the complaints process?">Copy signing questions</button>
-      </article>
+      <details class="question-pack">
+        <summary>Questions for the council</summary>
+        <div class="question-pack-body">
+          <p>Useful when asking about needs assessment, financial assessment and local charging.</p>
+          <ol>
+            <li>Has a care needs assessment been completed, and can we have a written copy?</li>
+            <li>Has a financial assessment been completed, and what evidence is needed?</li>
+            <li>Which local charging policy applies?</li>
+            <li>Are there any top-up fees, and who is being asked to agree them?</li>
+            <li>What local care options are available that meet the assessed needs?</li>
+            <li>What is the review process if needs, savings or care costs change?</li>
+            <li>Who should we contact if we disagree with the decision?</li>
+          </ol>
+        </div>
+      </details>
+      <details class="question-pack">
+        <summary>Questions for the ICB or CHC team</summary>
+        <div class="question-pack-body">
+          <p>Useful for NHS Continuing Healthcare and NHS-funded nursing care questions.</p>
+          <ol>
+            <li>Has a NHS Continuing Healthcare checklist been considered?</li>
+            <li>If not, why not, and who can request one?</li>
+            <li>If a checklist or Decision Support Tool was completed, can we have a copy?</li>
+            <li>What evidence was used to decide whether there is a primary health need?</li>
+            <li>Has NHS-funded nursing care been considered if the person is in a nursing home?</li>
+            <li>What is the review or appeal route if we disagree?</li>
+            <li>Who is the named contact for this case?</li>
+          </ol>
+        </div>
+      </details>
+      <details class="question-pack">
+        <summary>Questions before signing</summary>
+        <div class="question-pack-body">
+          <p>Useful before agreeing care home fees, extras or top-ups.</p>
+          <ol>
+            <li>What is included in the weekly fee?</li>
+            <li>What is charged separately?</li>
+            <li>Can fees increase, and how much notice is given?</li>
+            <li>Is any third-party top-up being requested, and what written agreement explains it?</li>
+            <li>What happens if funding changes or savings run down?</li>
+            <li>What notice period applies?</li>
+            <li>Where are the latest CQC inspection report and rating?</li>
+            <li>What is the complaints process?</li>
+          </ol>
+        </div>
+      </details>
     </div>
-    <p id="copy-status" class="subtle-note" aria-live="polite"></p>
   </section>
 
   <section class="panel panel-pad guided-section" aria-labelledby="glossary-title">
@@ -737,7 +775,6 @@ body.high-contrast footer{color:#fff}
   const postcodeInput = document.getElementById("postcode-input");
   const postcodeSubmit = document.getElementById("postcode-submit");
   const localResults = document.getElementById("local-results");
-  const copyStatus = document.getElementById("copy-status");
   const gate = document.getElementById("chat-gate");
   const gateNote = document.getElementById("chat-gate-note");
   const contrastToggle = document.getElementById("contrast-toggle");
@@ -1149,19 +1186,6 @@ body.high-contrast footer{color:#fff}
       input.value = button.getAttribute("data-prompt") || "";
       input.focus();
       input.scrollIntoView({behavior:"smooth", block:"center"});
-    });
-  });
-  document.querySelectorAll("[data-copy-text]").forEach(function(button){
-    button.addEventListener("click", async function(){
-      const text = button.getAttribute("data-copy-text") || "";
-      try{
-        await navigator.clipboard.writeText(text);
-        copyStatus.textContent = "Copied.";
-      }catch{
-        input.value = text;
-        input.focus();
-        copyStatus.textContent = "Could not copy automatically, so the text has been placed in the question box.";
-      }
     });
   });
   applyDisplayOptions(loadDisplayOptions());
