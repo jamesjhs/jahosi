@@ -107,14 +107,14 @@ header{
   max-width:1180px;
   margin:0 auto;
   padding:1.5rem 1rem;
-  display:grid;
-  grid-template-columns:minmax(0,1fr) auto;
-  gap:1rem;
-  align-items:start;
+  position:relative;
 }
-.header-copy{min-width:0}
+.header-copy{
+  min-width:0;
+}
 h1{
-  margin:.55rem 0 .35rem;
+  margin:0 0 .35rem;
+  padding-right:10rem;
   font-size:clamp(2rem,5vw,3.2rem);
   line-height:1.05;
   letter-spacing:0;
@@ -126,6 +126,9 @@ h1{
   font-size:1.06rem;
 }
 .header-tools{
+  position:absolute;
+  top:1rem;
+  right:1rem;
   display:flex;
   flex-wrap:wrap;
   justify-content:flex-end;
@@ -135,6 +138,7 @@ h1{
   max-width:1180px;
   margin:0 auto;
   padding:1rem;
+  overflow-wrap:anywhere;
 }
 .notice{
   border-left:6px solid var(--warn);
@@ -334,10 +338,11 @@ body.high-contrast .disclaimer{background:#fff}
   background:#fbfefd;
 }
 .message{
-  max-width:84ch;
+  max-width:min(72ch, calc(100% - 1rem));
   border-radius:8px;
   padding:.85rem 1rem;
   white-space:pre-wrap;
+  overflow-wrap:anywhere;
 }
 .message.bot{
   background:#eef8f6;
@@ -410,13 +415,17 @@ button:hover{
 }
 button:disabled{opacity:.65;cursor:wait}
 .toggle-btn{
-  background:#fff;
-  color:var(--brand-dark);
-  border:2px solid var(--brand-dark);
+  background:transparent;
+  color:#e9fffb;
+  border:0;
+  border-radius:0;
+  padding:.15rem 0;
+  text-decoration:underline;
+  text-underline-offset:3px;
 }
 .toggle-btn:hover,
 .toggle-btn[aria-pressed="true"]{
-  background:var(--brand-dark);
+  background:transparent;
   color:#fff;
 }
 body.high-contrast button{
@@ -429,25 +438,44 @@ body.high-contrast button:hover{
   color:#fff;
 }
 body.high-contrast .toggle-btn{
-  background:#fff;
-  color:#000;
-  border-color:#000;
+  background:transparent;
+  color:#fff;
+  border:0;
 }
 body.high-contrast .toggle-btn:hover,
 body.high-contrast .toggle-btn[aria-pressed="true"]{
-  background:#000;
+  background:transparent;
   color:#fff;
+}
+body.high-contrast .export-btn{
+  background:transparent;
+  color:#003078;
+  border:0;
+}
+body.high-contrast .export-btn:hover{
+  background:transparent;
+  color:#003078;
 }
 .chat-actions{
   display:flex;
-  flex-wrap:wrap;
+  flex-direction:column;
+  align-items:flex-end;
   gap:.5rem;
 }
 .export-btn{
-  background:#334155;
+  background:transparent;
+  color:var(--brand-dark);
+  border:0;
+  border-radius:0;
+  padding:.1rem 0;
+  text-decoration:underline;
+  text-underline-offset:3px;
+  font-size:.94rem;
 }
 .export-btn:hover{
-  background:#1f2937;
+  background:transparent;
+  color:var(--brand-dark);
+  text-decoration-thickness:2px;
 }
 .references h2,.quick h2{
   margin:0 0 .65rem;
@@ -516,15 +544,65 @@ footer{
 }
 body.high-contrast footer{color:#fff}
 @media(max-width:900px){
-  .header-inner{grid-template-columns:1fr}
-  .header-tools{justify-content:flex-start}
   .chat-panel{grid-template-rows:auto minmax(300px,50vh) auto}
 }
 @media(max-width:620px){
+  body{font-size:15.5px}
+  body.large-font{font-size:18px}
+  .header-inner{padding:1rem .75rem}
+  h1{padding-right:8rem}
+  .header-tools{
+    top:.85rem;
+    right:.75rem;
+    gap:.4rem;
+    font-size:.92rem;
+  }
+  h1{font-size:2rem}
+  .lede{font-size:1rem}
+  .wrap{padding:.75rem .5rem}
+  .notice,
+  .panel-pad,
+  .collapsible-tool-body,
+  .chat-head,
+  .chat-form{
+    padding:.75rem;
+  }
+  .collapsible-tool summary{padding:.85rem .75rem}
+  .action-grid,.question-grid,.glossary-grid,.question-pack-grid{
+    grid-template-columns:minmax(0,1fr);
+    gap:.6rem;
+  }
+  .chat-panel{grid-template-rows:auto minmax(280px,52vh) auto}
+  .thread{
+    padding:.65rem;
+    gap:.65rem;
+  }
+  .message{
+    max-width:92%;
+    padding:.7rem .75rem;
+  }
+  .message.bot{max-width:96%}
   .postcode-form{grid-template-columns:1fr}
   .input-row{display:block}
   button{width:100%}
-  .message{max-width:100%}
+  .toggle-btn,
+  .export-btn{
+    width:auto;
+  }
+  .chat-actions{
+    align-items:stretch;
+  }
+  .export-btn{
+    align-self:flex-end;
+  }
+}
+@media(max-width:360px){
+  h1{padding-right:7rem}
+  .header-tools{
+    flex-direction:column;
+    align-items:flex-end;
+    gap:.15rem;
+  }
 }
 </style>
 </head>
@@ -534,7 +612,7 @@ body.high-contrast footer{color:#fff}
   <div class="header-inner">
     <div class="header-copy">
       <h1>SocialQA</h1>
-      <p class="lede">Plain-English Q&A for people navigating adult social care funding, care homes, nursing homes, NHS Continuing Healthcare and NHS-funded nursing care in England. SocialQA helps make adult social care funding easier to understand, including questions about care home fees, nursing home costs, financial assessments, care assessments, complaints and finding regulated care services. Answers are written in plain English and should point back to official or professional references so the original information can be checked.</p>
+      <p class="lede">Helping you navigate adult social care funding, care homes, NHS continuing healthcare and funded nursing care in England.</p>
     </div>
     <div class="header-tools" aria-label="Display options">
       <button id="contrast-toggle" class="toggle-btn" type="button" aria-pressed="false">High contrast</button>
@@ -638,11 +716,11 @@ body.high-contrast footer{color:#fff}
       </div>
       <form id="chat-form" class="chat-form">
         <label for="chat-input">Your question</label>
-        <textarea id="chat-input" maxlength="1000" autocomplete="off" placeholder="For example: What is NHS Continuing Healthcare, and can it cover care home fees? Press Enter to send, or Shift+Enter for a new line."></textarea>
+        <textarea id="chat-input" maxlength="1000" autocomplete="off" placeholder="For example: What is NHS Continuing Healthcare, and can it cover care home fees?"></textarea>
         <div class="input-row">
           <div class="chat-actions">
-            <button id="export-pdf" class="export-btn" type="button">Export PDF</button>
             <button id="chat-send" type="submit">Ask</button>
+            <button id="export-pdf" class="export-btn" type="button">Export PDF</button>
           </div>
         </div>
       </form>
