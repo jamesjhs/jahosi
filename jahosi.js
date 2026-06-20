@@ -227,10 +227,15 @@ const SOCIAL_QA_CHAT_GUIDELINES = [
   "Source rule: use ONLY the validated sources listed below. Do not use public opinion, popular press, forums, blogs, marketing pages, unverified law firm pages, or memory of uncited facts.",
   "Every user query is headed by this requirement: answer only from robust professional, statutory, official regulator, official data, or official ombudsman sources.",
   "Every answer must include a 'References' section naming the source titles and URLs used.",
+  "Use plain text only. Do not use Markdown heading markers such as ###, bold markers such as **, or decorative ASCII formatting.",
   "If the listed sources do not support the answer, say plainly: 'I cannot answer that from the validated sources on this page.' Then suggest which official body or local authority/NHS body the user should contact.",
   "Do not invent rules, thresholds, exceptions, contact details, statistics, dates, figures, eligibility outcomes, or URLs.",
   "Use plain English, short paragraphs, and practical next steps. Explain that this is information, not legal, financial, or medical advice.",
   "Be careful about devolution. Unless the user asks otherwise, say the page is focused on England. For Scotland, Wales, or Northern Ireland, explain that rules differ and refer users to the relevant official national body.",
+  "Always warn that local variation can significantly affect practical outcomes, and users should check with their own local authority, NHS integrated care board, care provider, regulator, ombudsman, qualified adviser, or professional representative before acting.",
+  "Never give opinions, reviews, rankings, endorsements, comparisons, or recommendations about any specific care home, care agency, nursing home, day care centre, hospital, GP surgery, healthcare service, or named person involved in care such as a carer, manager, nurse, GP, social worker, assessor, or clinician.",
+  "If asked whether a provider, service, or named person is good, bad, safe, suitable, trustworthy, best, or recommended, do not answer with an opinion. Instead explain how to check official sources such as CQC reports, the provider's own written terms, the relevant local authority or NHS body, and how to seek independent advice.",
+  "You may explain how to read official inspection reports, ratings, complaints routes, contracts, fees, and assessment documents, but must not decide which provider or person the user should choose.",
   "For urgent safety, neglect, abuse, or immediate medical risks, advise contacting emergency services, NHS 111/999 as appropriate, the local authority safeguarding team, or the care provider/CQC route as relevant.",
   "Do not recommend paid services or specific providers.",
   "Validated sources:\n" + SOCIAL_QA_SOURCE_TEXT,
@@ -332,6 +337,80 @@ app.get("/socialQA/index.html", (req, res) => {
 });
 
 app.use("/socialQA", express.static(path.join(__dirname, "public", "socialQA"), { index: false, setHeaders: setPublicFileHeaders }));
+
+app.get("/socialQA/local-info", async (req, res) => {
+  const postcode = String(req.query.postcode || "").trim().toUpperCase();
+  const compactPostcode = postcode.replace(/\s+/g, "");
+  const govFindCouncilUrl = "https://www.gov.uk/find-local-council";
+
+  if (!/^[A-Z]{1,2}\d[A-Z\d]?\d[A-Z]{2}$/.test(compactPostcode)) {
+    return res.status(400).json({
+      error: "invalid_postcode",
+      message: "Enter a full UK postcode, for example SW1A 2AA.",
+      govFindCouncilUrl,
+    });
+  }
+
+  try {
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 6000);
+    const govRes = await fetch(
+      `https://www.gov.uk/api/local-authority?postcode=${encodeURIComponent(postcode)}`,
+      { signal: controller.signal }
+    );
+    clearTimeout(timeout);
+
+    const data = await govRes.json().catch(() => ({}));
+    if (!govRes.ok) {
+      return res.status(govRes.status).json({
+        error: "lookup_failed",
+        message: data?.error || "The local authority lookup could not resolve that postcode.",
+        govFindCouncilUrl,
+      });
+    }
+
+    if (Array.isArray(data.addresses)) {
+      return res.json({
+        postcode,
+        ambiguous: true,
+        message:
+          "This postcode may cross more than one local authority boundary. Use GOV.UK to choose the exact address.",
+        addresses: data.addresses.slice(0, 8),
+        govFindCouncilUrl,
+      });
+    }
+
+    const localAuthority = data.local_authority && typeof data.local_authority === "object" ? data.local_authority : null;
+    if (!localAuthority) {
+      return res.status(404).json({
+        error: "not_found",
+        message: "No local authority record was returned for that postcode.",
+        govFindCouncilUrl,
+      });
+    }
+
+    const authorities = [localAuthority];
+    if (localAuthority.parent && typeof localAuthority.parent === "object") {
+      authorities.push(localAuthority.parent);
+    }
+
+    return res.json({
+      postcode,
+      authorities,
+      govFindCouncilUrl,
+      cqcCareSearchUrl: "https://www.cqc.org.uk/care-services",
+      nhsIcbSearchUrl: "https://www.nhs.uk/nhs-services/find-your-local-integrated-care-board/",
+      nhsEnglandIcbContactUrl:
+        "https://www.england.nhs.uk/contact-us/about-nhs-services/contact-your-local-integrated-care-board-icb/",
+    });
+  } catch {
+    return res.status(502).json({
+      error: "lookup_unavailable",
+      message: "The postcode lookup is temporarily unavailable.",
+      govFindCouncilUrl,
+    });
+  }
+});
 
 app.use(express.static(path.join(__dirname, "public"), { setHeaders: setPublicFileHeaders }));
 
@@ -458,6 +537,13 @@ function renderSplashIndexHtml() {
 const SOCIAL_QA_INDEX_HTML_TEMPLATE = fs.readFileSync(path.join(__dirname, "public", "socialQA", "index.html"), "utf8");
 function renderSocialQaIndexHtml() {
   return SOCIAL_QA_INDEX_HTML_TEMPLATE.replace('"__TURNSTILE_SITE_KEY__"', JSON.stringify(TURNSTILE_SITE_KEY));
+}
+
+function normalizeSocialQaReply(reply) {
+  return String(reply || "")
+    .replace(/^\s{0,3}#{1,6}\s+/gm, "")
+    .replace(/\*\*/g, "")
+    .trim();
 }
 
 function renderContactPage({ status, error, debug }) {
@@ -837,7 +923,7 @@ app.post("/socialQA/chat", splashChatRateLimit, express.json({ limit: "50kb" }),
     if (typeof reply !== "string" || !reply.trim()) {
       return res.status(502).json({ error: "upstream_empty" });
     }
-    const response = { reply: reply.trim() };
+    const response = { reply: normalizeSocialQaReply(reply) };
     if (resolvedChatSessionToken) {
       response.chatSessionToken = resolvedChatSessionToken;
     }

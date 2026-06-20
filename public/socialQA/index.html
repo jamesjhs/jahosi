@@ -18,6 +18,7 @@
 <meta name="twitter:description" content="Plain-English adult social care funding Q&A using validated official and professional sources only.">
 <title>SocialQA | Adult Social Care Funding Q&A</title>
 <script src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit" async defer></script>
+<script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js" defer></script>
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -134,6 +135,87 @@ h1{
   max-width:920px;
   margin:0 auto;
 }
+.local-tool{
+  max-width:920px;
+  margin:0 auto 1rem;
+}
+.start-tool{
+  max-width:920px;
+  margin:0 auto 1rem;
+}
+.action-grid,.question-grid,.glossary-grid,.question-pack-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+  gap:.75rem;
+}
+.action-card,.question-card,.copy-card,.term-card{
+  border:1px solid var(--line);
+  border-radius:8px;
+  background:#fbfefd;
+  padding:.85rem;
+}
+.action-card h3,.copy-card h3,.term-card h3{
+  margin:0 0 .35rem;
+  font-size:1rem;
+}
+.action-card p,.copy-card p,.term-card p{
+  margin:.35rem 0 .65rem;
+  color:var(--muted);
+  font-size:.94rem;
+}
+.action-card button,.question-card,.copy-card button{
+  width:100%;
+}
+.question-card{
+  color:var(--brand-dark);
+  background:#fff;
+  border:1px solid var(--line);
+  text-align:left;
+}
+.subtle-note{
+  margin:.75rem 0 0;
+  color:var(--muted);
+  font-size:.92rem;
+}
+.postcode-form{
+  display:grid;
+  grid-template-columns:minmax(0,1fr) auto;
+  gap:.75rem;
+  align-items:end;
+}
+.postcode-form label{
+  display:grid;
+  gap:.35rem;
+  font-weight:700;
+}
+.postcode-form input{
+  width:100%;
+  border:2px solid var(--line);
+  border-radius:8px;
+  padding:.8rem;
+  color:var(--ink);
+  font:inherit;
+  text-transform:uppercase;
+}
+.local-results{
+  margin-top:1rem;
+  border-top:1px solid var(--line);
+  padding-top:1rem;
+}
+.local-results[hidden]{display:none}
+.local-results h3{
+  margin:0 0 .5rem;
+  font-size:1.05rem;
+}
+.local-results ul{
+  margin:.5rem 0 0;
+  padding-left:1.2rem;
+}
+.local-results li{margin:.35rem 0}
+.result-note{
+  color:var(--muted);
+  margin:.35rem 0;
+}
 .panel{
   background:var(--panel);
   border:1px solid var(--line);
@@ -190,6 +272,10 @@ h1{
   border:1px solid #a8d8cf;
 }
 .message strong{display:block;margin-bottom:.25rem}
+.message.thinking{
+  color:var(--muted);
+  font-style:italic;
+}
 .chat-gate{
   border-top:1px solid var(--line);
   background:#f8fafc;
@@ -255,6 +341,17 @@ button:disabled{opacity:.65;cursor:wait}
   padding:.55rem .7rem;
   font-size:.92rem;
 }
+.chat-actions{
+  display:flex;
+  flex-wrap:wrap;
+  gap:.5rem;
+}
+.export-btn{
+  background:#334155;
+}
+.export-btn:hover{
+  background:#1f2937;
+}
 .references h2,.quick h2{
   margin:0 0 .65rem;
   font-size:1.15rem;
@@ -286,6 +383,9 @@ button:disabled{opacity:.65;cursor:wait}
   font-size:.92rem;
 }
 .quick{
+  margin-top:1rem;
+}
+.guided-section{
   margin-top:1rem;
 }
 .references{
@@ -321,7 +421,7 @@ footer{
   .chat-panel{grid-template-rows:auto auto minmax(300px,50vh) auto}
 }
 @media(max-width:620px){
-  .input-row{grid-template-columns:1fr}
+  .input-row,.postcode-form{grid-template-columns:1fr}
   button{width:100%}
   .message{max-width:100%}
 }
@@ -349,10 +449,73 @@ footer{
     <p>SocialQA is an experimental AI-assisted information page. AI responses can be incomplete, outdated, misread a source, or phrase something too strongly. Do not rely on an answer as the sole basis for a care, funding, legal, financial or medical decision.</p>
     <ul>
       <li>Always open the cited references and check the original official wording yourself.</li>
+      <li>Local variations can significantly affect practical outcomes, including care availability, local authority charging policies, financial assessment decisions, care home fees, top-up arrangements, NHS integrated care board processes and complaint routes.</li>
+      <li>For a specific situation, check local authority information and local NHS information before acting.</li>
       <li>Confirm important decisions with the relevant local authority, NHS integrated care board, care provider, regulator, ombudsman, qualified adviser or professional representative.</li>
       <li>Jahosi.co.uk cannot accept responsibility for decisions, losses, delays, disputes or other consequences arising from AI answers or from use of this page without independent fact checking.</li>
       <li>Do not enter sensitive personal, medical, financial or identification details into the chat.</li>
     </ul>
+  </section>
+
+  <section class="notice" aria-labelledby="choice-limits-title">
+    <h2 id="choice-limits-title">Provider choice limits</h2>
+    <p>SocialQA can help explain how to check official sources, such as CQC reports, local authority information, NHS information, contracts and complaints routes. It must not give opinions, reviews, rankings or recommendations about specific care homes, care agencies, nursing homes, day care centres, healthcare services or named people involved in care.</p>
+  </section>
+
+  <section class="notice" aria-labelledby="urgent-title">
+    <h2 id="urgent-title">Urgent safety or medical concerns</h2>
+    <p>If someone is in immediate danger, call 999. For urgent medical help, use NHS 111 or 999 as appropriate. For abuse, neglect or serious care safety concerns, contact the relevant local authority safeguarding adults team and follow urgent routes from the care provider, NHS body or regulator where applicable.</p>
+  </section>
+
+  <section class="panel panel-pad start-tool" aria-labelledby="start-title">
+    <h2 id="start-title">Start here</h2>
+    <p class="source-scope">Choose the situation that is closest to yours. This fills the question box with a safer starter question that avoids personal details.</p>
+    <div class="action-grid">
+      <article class="action-card">
+        <h3>Already in a care home</h3>
+        <p>Understand fees, reviews, top-ups, local authority involvement and what to check next.</p>
+        <button type="button" data-prompt="A person is already living in a care home in England. What official steps should their family check about care fees, financial assessment, top-up fees, care reviews and possible NHS Continuing Healthcare or NHS-funded nursing care?">Use this starter</button>
+      </article>
+      <article class="action-card">
+        <h3>Choosing a care home</h3>
+        <p>Find out what official documents and checks to use without asking the AI to recommend a provider.</p>
+        <button type="button" data-prompt="What official checks should someone use when choosing a care home in England, including CQC reports, contracts, fees, top-up arrangements, local authority advice and NHS-funded care questions? Do not recommend or rank any provider.">Use this starter</button>
+      </article>
+      <article class="action-card">
+        <h3>Told to self-fund</h3>
+        <p>Check what a financial assessment means and when local authority or NHS routes may still matter.</p>
+        <button type="button" data-prompt="Someone has been told they need to self-fund care in England. What should they check from official sources about needs assessment, financial assessment, capital limits, care home fees and possible NHS Continuing Healthcare?">Use this starter</button>
+      </article>
+      <article class="action-card">
+        <h3>Possible NHS Continuing Healthcare</h3>
+        <p>Ask about CHC screening, assessment, decision-making and complaint or review routes.</p>
+        <button type="button" data-prompt="What is the official NHS Continuing Healthcare process in England, and what should someone ask about the checklist, Decision Support Tool, primary health need, timescales, reviews and complaints?">Use this starter</button>
+      </article>
+      <article class="action-card">
+        <h3>Hospital discharge</h3>
+        <p>Understand which organisations may be involved when care is arranged after hospital.</p>
+        <button type="button" data-prompt="A hospital discharge is being planned in England and care may be needed afterwards. What official questions should the family ask about assessment, care planning, funding responsibility, NHS Continuing Healthcare and local authority involvement?">Use this starter</button>
+      </article>
+      <article class="action-card">
+        <h3>Challenge or complaint</h3>
+        <p>Work out whether to use council, NHS, CQC, LGSCO or PHSO routes.</p>
+        <button type="button" data-prompt="How should someone work out the official complaint or challenge route in England for a care funding, care assessment, care home fee, NHS Continuing Healthcare or NHS-funded nursing care issue?">Use this starter</button>
+      </article>
+    </div>
+  </section>
+
+  <section class="panel panel-pad local-tool" aria-labelledby="local-title">
+    <h2 id="local-title">Find local sources</h2>
+    <p class="source-scope">Enter a postcode to find local authority signposts and links to services that can help with local rules, assessments, care availability and complaints routes.</p>
+    <p class="source-scope">This page is focused on England. Social care rules and organisations differ in Scotland, Wales and Northern Ireland.</p>
+    <form id="postcode-form" class="postcode-form">
+      <label for="postcode-input">
+        Postcode
+        <input id="postcode-input" name="postcode" type="text" autocomplete="postal-code" maxlength="10" placeholder="For example SW1A 2AA">
+      </label>
+      <button id="postcode-submit" type="submit">Find local sources</button>
+    </form>
+    <div id="local-results" class="local-results" hidden aria-live="polite"></div>
   </section>
 
   <div class="chat-wrap">
@@ -372,14 +535,19 @@ footer{
       </div>
       <form id="chat-form" class="chat-form">
         <label for="chat-input">Your question</label>
-        <textarea id="chat-input" maxlength="1000" autocomplete="off" placeholder="For example: What is NHS Continuing Healthcare, and can it cover care home fees?"></textarea>
+        <textarea id="chat-input" maxlength="1000" autocomplete="off" placeholder="For example: What is NHS Continuing Healthcare, and can it cover care home fees? Press Enter to send, or Shift+Enter for a new line."></textarea>
         <div class="input-row">
           <div class="examples" aria-label="Example questions">
             <button class="example-btn" type="button" data-question="What is NHS Continuing Healthcare, and can it pay care home fees?">CHC and care home fees</button>
             <button class="example-btn" type="button" data-question="What is NHS-funded nursing care?">Funded nursing care</button>
             <button class="example-btn" type="button" data-question="Where can I check a care home's inspection rating?">Check a care home</button>
+            <button class="example-btn" type="button" data-question="What should I ask a care home before signing a contract?">Before signing</button>
+            <button class="example-btn" type="button" data-question="How do I challenge a NHS Continuing Healthcare decision?">Challenge CHC</button>
           </div>
-          <button id="chat-send" type="submit">Ask</button>
+          <div class="chat-actions">
+            <button id="export-pdf" class="export-btn" type="button">Export PDF</button>
+            <button id="chat-send" type="submit">Ask</button>
+          </div>
         </div>
       </form>
     </section>
@@ -394,9 +562,80 @@ footer{
     </ul>
   </section>
 
+  <section class="panel panel-pad guided-section" aria-labelledby="common-title">
+    <h2 id="common-title">Common questions</h2>
+    <div class="question-grid">
+      <button class="question-card" type="button" data-question="Who may pay care home fees in England, and what is the difference between local authority funding, self-funding, NHS Continuing Healthcare and NHS-funded nursing care?">Who may pay care home fees?</button>
+      <button class="question-card" type="button" data-question="What is a care needs assessment and what should someone ask the local authority before or after it?">What is a care needs assessment?</button>
+      <button class="question-card" type="button" data-question="What is a financial assessment for adult social care in England, and what should someone check locally?">What is a financial assessment?</button>
+      <button class="question-card" type="button" data-question="What is a care home top-up fee, and what should be checked before anyone agrees to one?">What is a top-up fee?</button>
+      <button class="question-card" type="button" data-question="What happens if someone's savings reduce while they are paying care home fees?">What if savings run down?</button>
+      <button class="question-card" type="button" data-question="Where can someone check official information about a care home's registration, inspection reports and ratings without asking for an opinion or recommendation?">How do I check a care home?</button>
+    </div>
+  </section>
+
+  <section class="panel panel-pad guided-section" aria-labelledby="packs-title">
+    <h2 id="packs-title">Copyable question packs</h2>
+    <p class="source-scope">These prompts can be copied into an email, notes app or the chat. Avoid adding private personal details unless speaking directly to the official organisation.</p>
+    <div class="question-pack-grid">
+      <article class="copy-card">
+        <h3>Questions for the council</h3>
+        <p>Useful when asking about needs assessment, financial assessment and local charging.</p>
+        <button type="button" data-copy-text="Questions for the local authority:
+1. Has a care needs assessment been completed, and can we have a written copy?
+2. Has a financial assessment been completed, and what evidence is needed?
+3. Which local charging policy applies?
+4. Are there any top-up fees, and who is being asked to agree them?
+5. What local care options are available that meet the assessed needs?
+6. What is the review process if needs, savings or care costs change?
+7. Who should we contact if we disagree with the decision?">Copy council questions</button>
+      </article>
+      <article class="copy-card">
+        <h3>Questions for the ICB or CHC team</h3>
+        <p>Useful for NHS Continuing Healthcare and NHS-funded nursing care questions.</p>
+        <button type="button" data-copy-text="Questions for the NHS ICB or Continuing Healthcare team:
+1. Has a NHS Continuing Healthcare checklist been considered?
+2. If not, why not, and who can request one?
+3. If a checklist or Decision Support Tool was completed, can we have a copy?
+4. What evidence was used to decide whether there is a primary health need?
+5. Has NHS-funded nursing care been considered if the person is in a nursing home?
+6. What is the review or appeal route if we disagree?
+7. Who is the named contact for this case?">Copy CHC questions</button>
+      </article>
+      <article class="copy-card">
+        <h3>Questions before signing</h3>
+        <p>Useful before agreeing care home fees, extras or top-ups.</p>
+        <button type="button" data-copy-text="Questions before signing a care home agreement:
+1. What is included in the weekly fee?
+2. What is charged separately?
+3. Can fees increase, and how much notice is given?
+4. Is any third-party top-up being requested, and what written agreement explains it?
+5. What happens if funding changes or savings run down?
+6. What notice period applies?
+7. Where are the latest CQC inspection report and rating?
+8. What is the complaints process?">Copy signing questions</button>
+      </article>
+    </div>
+    <p id="copy-status" class="subtle-note" aria-live="polite"></p>
+  </section>
+
+  <section class="panel panel-pad guided-section" aria-labelledby="glossary-title">
+    <h2 id="glossary-title">Plain-English glossary</h2>
+    <div class="glossary-grid">
+      <article class="term-card"><h3>CHC</h3><p>NHS Continuing Healthcare. A package arranged and funded solely by the NHS for adults assessed as having a primary health need.</p></article>
+      <article class="term-card"><h3>FNC</h3><p>NHS-funded nursing care. A contribution paid by the NHS towards registered nursing care in a nursing home when CHC does not apply.</p></article>
+      <article class="term-card"><h3>ICB</h3><p>Integrated care board. The NHS body involved in commissioning local NHS services and NHS Continuing Healthcare decisions.</p></article>
+      <article class="term-card"><h3>Needs assessment</h3><p>A local authority assessment of care and support needs. It is separate from a financial assessment.</p></article>
+      <article class="term-card"><h3>Financial assessment</h3><p>A local authority assessment of income, savings and assets to work out what someone may need to contribute.</p></article>
+      <article class="term-card"><h3>Top-up fee</h3><p>An extra payment, often by a third party, when a preferred care option costs more than the amount the local authority will usually pay.</p></article>
+      <article class="term-card"><h3>CQC</h3><p>Care Quality Commission. The regulator for health and adult social care services in England.</p></article>
+      <article class="term-card"><h3>LGSCO and PHSO</h3><p>Official ombudsman routes. LGSCO covers adult social care complaints, while PHSO covers NHS complaints including some CHC issues.</p></article>
+    </div>
+  </section>
+
   <section class="panel panel-pad references" aria-labelledby="references-title">
     <h2 id="references-title">References</h2>
-    <p class="source-scope">These are the validated sources used by this page. Open the original source before relying on any answer.</p>
+    <p class="source-scope">These are the validated sources used by this page. Open the original source before relying on any answer. Sources last reviewed: 20 June 2026.</p>
     <ul class="source-list">
       <li><a href="https://www.legislation.gov.uk/ukpga/2014/23/contents">Care Act 2014</a><span class="source-org">legislation.gov.uk</span><p class="source-scope">Primary legislation for adult care and support in England.</p></li>
       <li><a href="https://www.gov.uk/government/publications/care-act-statutory-guidance/care-and-support-statutory-guidance">Care and support statutory guidance</a><span class="source-org">Department of Health and Social Care / GOV.UK</span><p class="source-scope">Statutory guidance for local authorities under the Care Act 2014.</p></li>
@@ -434,6 +673,12 @@ footer{
   const form = document.getElementById("chat-form");
   const input = document.getElementById("chat-input");
   const send = document.getElementById("chat-send");
+  const exportPdf = document.getElementById("export-pdf");
+  const postcodeForm = document.getElementById("postcode-form");
+  const postcodeInput = document.getElementById("postcode-input");
+  const postcodeSubmit = document.getElementById("postcode-submit");
+  const localResults = document.getElementById("local-results");
+  const copyStatus = document.getElementById("copy-status");
   const gate = document.getElementById("chat-gate");
   const gateNote = document.getElementById("chat-gate-note");
 
@@ -467,11 +712,221 @@ footer{
     item.appendChild(document.createTextNode(content));
     thread.appendChild(item);
     thread.scrollTop = thread.scrollHeight;
+    return item;
   }
   function setBusy(isBusy){
     send.disabled = isBusy;
     input.disabled = isBusy;
     send.textContent = isBusy ? "Checking sources..." : "Ask";
+  }
+  function setPostcodeBusy(isBusy){
+    postcodeSubmit.disabled = isBusy;
+    postcodeInput.disabled = isBusy;
+    postcodeSubmit.textContent = isBusy ? "Looking..." : "Find local sources";
+  }
+  function clearElement(element){
+    while (element.firstChild) element.removeChild(element.firstChild);
+  }
+  function appendLocalLink(list, label, href, note){
+    const item = document.createElement("li");
+    const link = document.createElement("a");
+    link.href = href;
+    link.textContent = label;
+    link.rel = "noopener";
+    item.appendChild(link);
+    if (note) {
+      item.appendChild(document.createTextNode(" - " + note));
+    }
+    list.appendChild(item);
+  }
+  function showLocalMessage(title, message, links){
+    clearElement(localResults);
+    const heading = document.createElement("h3");
+    heading.textContent = title;
+    localResults.appendChild(heading);
+    const copy = document.createElement("p");
+    copy.className = "result-note";
+    copy.textContent = message;
+    localResults.appendChild(copy);
+    if (Array.isArray(links) && links.length) {
+      const list = document.createElement("ul");
+      links.forEach(function(link){
+        appendLocalLink(list, link.label, link.href, link.note);
+      });
+      localResults.appendChild(list);
+    }
+    localResults.hidden = false;
+  }
+  function renderLocalResults(data){
+    clearElement(localResults);
+    const heading = document.createElement("h3");
+    heading.textContent = "Local signposts";
+    localResults.appendChild(heading);
+
+    const intro = document.createElement("p");
+    intro.className = "result-note";
+    intro.textContent = "Use these links to check local policies, local contact routes and local care availability. The national SocialQA answer may not cover local details.";
+    localResults.appendChild(intro);
+
+    const list = document.createElement("ul");
+    if (Array.isArray(data.authorities)) {
+      data.authorities.forEach(function(authority){
+        if (!authority || !authority.homepage_url) return;
+        const tier = authority.tier ? authority.tier + " authority" : "local authority";
+        appendLocalLink(list, authority.name + " website", authority.homepage_url, tier + ". Search this site for adult social care, financial assessment, charging policy, care homes and safeguarding.");
+      });
+    }
+    appendLocalLink(list, "GOV.UK find your local council", data.govFindCouncilUrl || "https://www.gov.uk/find-local-council", "Use this if the council result looks wrong or the postcode crosses boundaries.");
+    appendLocalLink(list, "CQC find care services", data.cqcCareSearchUrl || "https://www.cqc.org.uk/care-services", "Search by postcode for care homes, nursing homes and inspection ratings.");
+    appendLocalLink(list, "NHS find your local integrated care board", data.nhsIcbSearchUrl || "https://www.nhs.uk/nhs-services/find-your-local-integrated-care-board/", "Use for local NHS commissioning and NHS Continuing Healthcare routes.");
+    appendLocalLink(list, "NHS England ICB contact guidance", data.nhsEnglandIcbContactUrl || "https://www.england.nhs.uk/contact-us/about-nhs-services/contact-your-local-integrated-care-board-icb/", "NHS England explains how to identify and contact the relevant ICB.");
+    localResults.appendChild(list);
+    localResults.hidden = false;
+  }
+  async function lookupLocalSources(postcode){
+    if (!postcode) {
+      showLocalMessage("Enter a postcode", "Enter a full UK postcode so the page can look for local signposts.", []);
+      return;
+    }
+    setPostcodeBusy(true);
+    try{
+      const res = await fetch("/socialQA/local-info?postcode=" + encodeURIComponent(postcode), {
+        headers: {"Accept":"application/json"}
+      });
+      const data = await res.json().catch(function(){return {};});
+      if (data.ambiguous) {
+        showLocalMessage("Choose the exact address on GOV.UK", data.message || "This postcode may cross more than one local authority boundary.", [
+          {label:"GOV.UK find your local council", href:data.govFindCouncilUrl || "https://www.gov.uk/find-local-council", note:"Use the exact address to confirm the local authority."},
+          {label:"CQC find care services", href:"https://www.cqc.org.uk/care-services", note:"Search by postcode for care services and ratings."},
+          {label:"NHS find your local integrated care board", href:"https://www.nhs.uk/nhs-services/find-your-local-integrated-care-board/", note:"Use for local NHS commissioning and CHC routes."}
+        ]);
+        return;
+      }
+      if (!res.ok) {
+        showLocalMessage("Lookup problem", data.message || "The postcode lookup could not be completed.", [
+          {label:"GOV.UK find your local council", href:data.govFindCouncilUrl || "https://www.gov.uk/find-local-council", note:"Try the official GOV.UK lookup directly."},
+          {label:"CQC find care services", href:"https://www.cqc.org.uk/care-services", note:"Search by postcode for care services and ratings."},
+          {label:"NHS find your local integrated care board", href:"https://www.nhs.uk/nhs-services/find-your-local-integrated-care-board/", note:"Use for local NHS commissioning and CHC routes."}
+        ]);
+        return;
+      }
+      renderLocalResults(data);
+    }catch{
+      showLocalMessage("Lookup unavailable", "The local lookup is temporarily unavailable. Use these official links directly.", [
+        {label:"GOV.UK find your local council", href:"https://www.gov.uk/find-local-council", note:"Find the relevant council by postcode."},
+        {label:"CQC find care services", href:"https://www.cqc.org.uk/care-services", note:"Search by postcode for care services and ratings."},
+        {label:"NHS find your local integrated care board", href:"https://www.nhs.uk/nhs-services/find-your-local-integrated-care-board/", note:"Use for local NHS commissioning and CHC routes."}
+      ]);
+    }finally{
+      setPostcodeBusy(false);
+    }
+  }
+  function getConversationLines(){
+    return Array.from(thread.querySelectorAll(".message")).map(function(item){
+      const speaker = item.querySelector("strong");
+      const label = speaker ? speaker.textContent.trim() : "Message";
+      const body = item.textContent.replace(label, "").trim();
+      return {label: label, body: body};
+    }).filter(function(item){
+      return item.body && item.body !== "Thinking...";
+    });
+  }
+  function addWrappedText(doc, text, x, y, options){
+    const pageHeight = doc.internal.pageSize.getHeight();
+    const maxWidth = options.maxWidth;
+    const lineHeight = options.lineHeight || 6;
+    const lines = doc.splitTextToSize(text, maxWidth);
+    lines.forEach(function(line){
+      if (y > pageHeight - 18) {
+        doc.addPage();
+        y = 18;
+      }
+      doc.text(line, x, y);
+      y += lineHeight;
+    });
+    return y;
+  }
+  function exportChatPdf(){
+    const jspdf = window.jspdf && window.jspdf.jsPDF;
+    if (!jspdf) {
+      window.print();
+      return;
+    }
+    const doc = new jspdf({unit:"mm", format:"a4"});
+    const generatedAt = new Date().toLocaleString("en-GB", {dateStyle:"medium", timeStyle:"short"});
+    const siteUrl = "https://jahosi.co.uk/socialQA/";
+    const disclaimer = [
+      "SocialQA is an experimental AI-assisted information page. AI responses can be incomplete, outdated, misread a source, or phrase something too strongly. Do not rely on an answer as the sole basis for a care, funding, legal, financial or medical decision.",
+      "Always open the cited references and check the original official wording yourself.",
+      "Local variations can significantly affect practical outcomes, including care availability, local authority charging policies, financial assessment decisions, care home fees, top-up arrangements, NHS integrated care board processes and complaint routes.",
+      "For a specific situation, check local authority information and local NHS information before acting.",
+      "SocialQA must not give opinions, reviews, rankings or recommendations about specific care homes, care agencies, nursing homes, day care centres, healthcare services or named people involved in care.",
+      "Confirm important decisions with the relevant local authority, NHS integrated care board, care provider, regulator, ombudsman, qualified adviser or professional representative.",
+      "Jahosi.co.uk cannot accept responsibility for decisions, losses, delays, disputes or other consequences arising from AI answers or from use of this page without independent fact checking.",
+      "Do not enter sensitive personal, medical, financial or identification details into the chat."
+    ];
+    const references = Array.from(document.querySelectorAll(".references .source-list li")).map(function(item){
+      const link = item.querySelector("a");
+      const org = item.querySelector(".source-org");
+      return [
+        link ? link.textContent.trim() : "",
+        org ? org.textContent.trim() : "",
+        link ? link.href : ""
+      ].filter(Boolean).join(" - ");
+    });
+    let y = 18;
+    doc.setProperties({title:"SocialQA chat export", subject:"Adult social care funding Q&A"});
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(18);
+    doc.text("SocialQA chat export", 14, y);
+    y += 8;
+    doc.setFont("helvetica", "normal");
+    doc.setFontSize(10);
+    y = addWrappedText(doc, "Generated: " + generatedAt, 14, y, {maxWidth:180, lineHeight:5});
+    y = addWrappedText(doc, "Website: " + siteUrl, 14, y, {maxWidth:180, lineHeight:5});
+    y += 4;
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(13);
+    doc.text("Important disclaimer", 14, y);
+    y += 7;
+    doc.setFont("helvetica", "normal");
+    doc.setFontSize(10);
+    disclaimer.forEach(function(line){
+      y = addWrappedText(doc, line, 14, y, {maxWidth:180, lineHeight:5});
+      y += 2;
+    });
+    y += 3;
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(13);
+    doc.text("Chat", 14, y);
+    y += 7;
+    doc.setFontSize(10);
+    getConversationLines().forEach(function(item){
+      doc.setFont("helvetica", "bold");
+      y = addWrappedText(doc, item.label + ":", 14, y, {maxWidth:180, lineHeight:5});
+      doc.setFont("helvetica", "normal");
+      y = addWrappedText(doc, item.body, 14, y, {maxWidth:180, lineHeight:5});
+      y += 3;
+    });
+    y += 3;
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(13);
+    if (y > 270) {
+      doc.addPage();
+      y = 18;
+    }
+    doc.text("References", 14, y);
+    y += 7;
+    doc.setFont("helvetica", "normal");
+    doc.setFontSize(9);
+    references.forEach(function(line){
+      y = addWrappedText(doc, line, 14, y, {maxWidth:180, lineHeight:4.5});
+      y += 1.5;
+    });
+    doc.save("socialqa-chat-export.pdf");
+  }
+  function removeThinkingMessage(thinkingMessage){
+    if (thinkingMessage && thinkingMessage.parentNode) thinkingMessage.remove();
   }
   function needsGate(){
     return TURNSTILE_ENABLED && !getSessionToken();
@@ -531,6 +986,8 @@ footer{
     storeHistory();
     input.value = "";
     setBusy(true);
+    const thinkingMessage = appendMessage("assistant", "Thinking...");
+    thinkingMessage.classList.add("thinking");
     try{
       const payload = {
         message: question,
@@ -545,12 +1002,14 @@ footer{
       });
       const data = await res.json().catch(function(){return {};});
       if (res.status === 403 && data && data.error === "turnstile_required") {
+        removeThinkingMessage(thinkingMessage);
         clearSessionToken();
         updateGate();
         setGateMessage("Complete the Turnstile check to start chatting.");
         return;
       }
       if (res.status === 403 && data && data.error === "turnstile_failed") {
+        removeThinkingMessage(thinkingMessage);
         clearSessionToken();
         resetTurnstile();
         updateGate();
@@ -564,12 +1023,14 @@ footer{
       }
       const reply = typeof data.reply === "string" ? data.reply : "";
       if (!reply.trim()) throw new Error("empty_reply");
+      removeThinkingMessage(thinkingMessage);
       appendMessage("assistant", reply.trim());
       history.push({role:"assistant", content:reply.trim()});
       history = history.slice(-8);
       storeHistory();
       updateGate();
     }catch{
+      removeThinkingMessage(thinkingMessage);
       appendMessage("assistant", "I could not complete that request. Please try again, and use the References links directly if the question is urgent.");
     }finally{
       setBusy(false);
@@ -580,10 +1041,41 @@ footer{
     event.preventDefault();
     askQuestion(input.value.trim());
   });
+  postcodeForm.addEventListener("submit", function(event){
+    event.preventDefault();
+    lookupLocalSources(postcodeInput.value.trim());
+  });
+  exportPdf.addEventListener("click", exportChatPdf);
+  input.addEventListener("keydown", function(event){
+    if (event.key === "Enter" && !event.shiftKey) {
+      event.preventDefault();
+      form.requestSubmit();
+    }
+  });
   document.querySelectorAll("[data-question]").forEach(function(button){
     button.addEventListener("click", function(){
       input.value = button.getAttribute("data-question") || "";
       input.focus();
+    });
+  });
+  document.querySelectorAll("[data-prompt]").forEach(function(button){
+    button.addEventListener("click", function(){
+      input.value = button.getAttribute("data-prompt") || "";
+      input.focus();
+      input.scrollIntoView({behavior:"smooth", block:"center"});
+    });
+  });
+  document.querySelectorAll("[data-copy-text]").forEach(function(button){
+    button.addEventListener("click", async function(){
+      const text = button.getAttribute("data-copy-text") || "";
+      try{
+        await navigator.clipboard.writeText(text);
+        copyStatus.textContent = "Copied.";
+      }catch{
+        input.value = text;
+        input.focus();
+        copyStatus.textContent = "Could not copy automatically, so the text has been placed in the question box.";
+      }
     });
   });
   updateGate();
