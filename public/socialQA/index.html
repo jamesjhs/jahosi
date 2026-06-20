@@ -107,7 +107,12 @@ header{
   max-width:1180px;
   margin:0 auto;
   padding:1.5rem 1rem;
+  display:grid;
+  grid-template-columns:minmax(0,1fr) auto;
+  gap:1rem;
+  align-items:start;
 }
+.header-copy{min-width:0}
 .home-link{
   color:#dff5f1;
   font-size:.92rem;
@@ -124,6 +129,12 @@ h1{
   margin:0;
   color:#e9fffb;
   font-size:1.06rem;
+}
+.header-tools{
+  display:flex;
+  flex-wrap:wrap;
+  justify-content:flex-end;
+  gap:.5rem;
 }
 .wrap{
   max-width:1180px;
@@ -246,24 +257,6 @@ body.high-contrast .disclaimer{background:#fff}
   border:1px solid var(--line);
   border-radius:8px;
   box-shadow:var(--shadow);
-}
-.access-tools{
-  max-width:920px;
-  margin:0 auto 1rem;
-  display:flex;
-  flex-wrap:wrap;
-  gap:.75rem;
-  align-items:center;
-  justify-content:space-between;
-}
-.access-tools h2{
-  margin:0;
-  font-size:1.05rem;
-}
-.access-controls{
-  display:flex;
-  flex-wrap:wrap;
-  gap:.5rem;
 }
 .panel-pad{padding:1rem}
 .chat-panel{
@@ -482,6 +475,8 @@ footer{
 }
 body.high-contrast footer{color:#fff}
 @media(max-width:900px){
+  .header-inner{grid-template-columns:1fr}
+  .header-tools{justify-content:flex-start}
   .chat-panel{grid-template-rows:auto auto minmax(300px,50vh) auto}
 }
 @media(max-width:620px){
@@ -496,27 +491,19 @@ body.high-contrast footer{color:#fff}
 <a class="skip-link" href="#ask">Skip to Q&A</a>
 <header>
   <div class="header-inner">
-    <a class="home-link" href="/">Jahosi home</a>
-    <h1>SocialQA</h1>
-    <p class="lede">Plain-English Q&A for people navigating adult social care funding, care homes, nursing homes, NHS Continuing Healthcare and NHS-funded nursing care in England.</p>
+    <div class="header-copy">
+      <a class="home-link" href="/">Jahosi home</a>
+      <h1>SocialQA</h1>
+      <p class="lede">Plain-English Q&A for people navigating adult social care funding, care homes, nursing homes, NHS Continuing Healthcare and NHS-funded nursing care in England. SocialQA helps make adult social care funding easier to understand, including questions about care home fees, nursing home costs, financial assessments, care assessments, complaints and finding regulated care services. Answers are written in plain English and should point back to official or professional references so the original information can be checked.</p>
+    </div>
+    <div class="header-tools" aria-label="Display options">
+      <button id="contrast-toggle" class="toggle-btn" type="button" aria-pressed="false">High contrast</button>
+      <button id="font-toggle" class="toggle-btn" type="button" aria-pressed="false">Large font</button>
+    </div>
   </div>
 </header>
 
 <main class="wrap">
-  <section class="notice" aria-labelledby="source-standard-title">
-    <h2 id="source-standard-title">What this page helps with</h2>
-    <p>SocialQA helps make adult social care funding easier to understand. It is designed for questions about care home fees, nursing home costs, NHS Continuing Healthcare, NHS-funded nursing care, financial assessments, care assessments, complaints and finding regulated care services.</p>
-    <p>Answers are written in plain English and should point back to official or professional references so the original information can be checked.</p>
-  </section>
-
-  <section class="panel panel-pad access-tools" aria-labelledby="access-title">
-    <h2 id="access-title">Display options</h2>
-    <div class="access-controls" aria-label="Display options">
-      <button id="contrast-toggle" class="toggle-btn" type="button" aria-pressed="false">High contrast</button>
-      <button id="font-toggle" class="toggle-btn" type="button" aria-pressed="false">Large font</button>
-    </div>
-  </section>
-
   <section class="notice" aria-labelledby="urgent-title">
     <h2 id="urgent-title">Urgent safety or medical concerns</h2>
     <p>If someone is in immediate danger, call 999. For urgent medical help, use NHS 111 or 999 as appropriate. For abuse, neglect or serious care safety concerns, contact the relevant local authority safeguarding adults team and follow urgent routes from the care provider, NHS body or regulator where applicable.</p>
@@ -727,7 +714,7 @@ body.high-contrast footer{color:#fff}
 </main>
 
 <footer>
-  SocialQA uses temporary in-memory chat only. AI responses must be independently checked against the cited official references before use.
+  version 0.1.0 | &copy; 2026 www.jahosi.co.uk
 </footer>
 
 <script>
