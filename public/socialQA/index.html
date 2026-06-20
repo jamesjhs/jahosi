@@ -468,6 +468,23 @@ body.high-contrast .export-btn:hover{
   align-items:flex-end;
   gap:.5rem;
 }
+.ask-row{
+  display:flex;
+  align-items:center;
+  justify-content:flex-end;
+  gap:.75rem;
+}
+.disclaimer-ack{
+  display:flex;
+  align-items:center;
+  gap:.45rem;
+  color:var(--muted);
+  font-size:.94rem;
+}
+.disclaimer-ack input{
+  width:auto;
+  accent-color:var(--brand);
+}
 .export-btn{
   background:transparent;
   color:var(--brand-dark);
@@ -483,7 +500,7 @@ body.high-contrast .export-btn:hover{
   color:var(--brand-dark);
   text-decoration-thickness:2px;
 }
-.references h2,.quick h2{
+.references h2{
   margin:0 0 .65rem;
   font-size:1.15rem;
 }
@@ -513,9 +530,6 @@ body.high-contrast .export-btn:hover{
   color:var(--muted);
   font-size:.92rem;
 }
-.quick{
-  margin-top:1rem;
-}
 .guided-section{
   margin-top:1rem;
 }
@@ -536,11 +550,6 @@ body.high-contrast .export-btn:hover{
   border-top:1px solid var(--line);
   padding-top:.85rem;
 }
-.quick ul{
-  margin:.5rem 0 0;
-  padding-left:1.2rem;
-}
-.quick li{margin:.35rem 0}
 footer{
   max-width:1180px;
   margin:0 auto;
@@ -597,6 +606,13 @@ body.high-contrast footer{color:#fff}
   }
   .chat-actions{
     align-items:stretch;
+  }
+  .ask-row{
+    flex-direction:column;
+    align-items:stretch;
+  }
+  .disclaimer-ack{
+    align-self:flex-start;
   }
   .export-btn{
     align-self:flex-end;
@@ -725,40 +741,19 @@ body.high-contrast footer{color:#fff}
         <textarea id="chat-input" maxlength="1000" autocomplete="off" placeholder="For example: What is NHS Continuing Healthcare, and can it cover care home fees?"></textarea>
         <div class="input-row">
           <div class="chat-actions">
-            <button id="chat-send" type="submit">Ask</button>
+            <div class="ask-row">
+              <label class="disclaimer-ack" for="disclaimer-ack">
+                <input id="disclaimer-ack" type="checkbox" required>
+                <span>I have read the <a href="#disclaimer-title">disclaimer</a></span>
+              </label>
+              <button id="chat-send" type="submit">Ask</button>
+            </div>
             <button id="export-pdf" class="export-btn" type="button">Export PDF</button>
           </div>
         </div>
       </form>
     </section>
   </div>
-
-  <section class="notice disclaimer" aria-labelledby="disclaimer-title">
-    <h2 id="disclaimer-title">Important disclaimer</h2>
-    <p>SocialQA is an experimental AI-assisted information page. AI responses can be incomplete, outdated, misread a source, or phrase something too strongly. Do not rely on an answer as the sole basis for a care, funding, legal, financial or medical decision.</p>
-    <ul>
-      <li>Always open the cited references and check the original official wording yourself.</li>
-      <li>Local variations can significantly affect practical outcomes, including care availability, local authority charging policies, financial assessment decisions, care home fees, top-up arrangements, NHS integrated care board processes and complaint routes.</li>
-      <li>For a specific situation, check local authority information and local NHS information before acting.</li>
-      <li>Confirm important decisions with the relevant local authority, NHS integrated care board, care provider, regulator, ombudsman, qualified adviser or professional representative.</li>
-      <li>Jahosi.co.uk cannot accept responsibility for decisions, losses, delays, disputes or other consequences arising from AI answers or from use of this page without independent fact checking.</li>
-      <li>Do not enter sensitive personal, medical, financial or identification details into the chat.</li>
-    </ul>
-  </section>
-
-  <section class="notice" aria-labelledby="choice-limits-title">
-    <h2 id="choice-limits-title">Provider choice limits</h2>
-    <p>SocialQA can help explain how to check official sources, such as CQC reports, local authority information, NHS information, contracts and complaints routes. It must not give opinions, reviews, rankings or recommendations about specific care homes, care agencies, nursing homes, day care centres, healthcare services or named people involved in care.</p>
-  </section>
-
-  <section class="panel panel-pad quick" aria-labelledby="quick-title">
-    <h2 id="quick-title">What this page is for</h2>
-    <ul>
-      <li>Understanding whether a question is about local authority social care, NHS Continuing Healthcare, or NHS-funded nursing care.</li>
-      <li>Finding official documents and data before making care funding decisions.</li>
-      <li>Preparing clearer questions for a council, integrated care board, care provider, CQC, LGSCO or PHSO.</li>
-    </ul>
-  </section>
 
   <section class="panel panel-pad guided-section" aria-labelledby="packs-title">
     <h2 id="packs-title">Question packs</h2>
@@ -813,6 +808,24 @@ body.high-contrast footer{color:#fff}
     </div>
   </section>
 
+  <section class="notice disclaimer" aria-labelledby="disclaimer-title">
+    <h2 id="disclaimer-title">Important disclaimer</h2>
+    <p>SocialQA is an experimental AI-assisted information page. AI responses can be incomplete, outdated, misread a source, or phrase something too strongly. Do not rely on an answer as the sole basis for a care, funding, legal, financial or medical decision.</p>
+    <ul>
+      <li>Always open the cited references and check the original official wording yourself.</li>
+      <li>Local variations can significantly affect practical outcomes, including care availability, local authority charging policies, financial assessment decisions, care home fees, top-up arrangements, NHS integrated care board processes and complaint routes.</li>
+      <li>For a specific situation, check local authority information and local NHS information before acting.</li>
+      <li>Confirm important decisions with the relevant local authority, NHS integrated care board, care provider, regulator, ombudsman, qualified adviser or professional representative.</li>
+      <li>Jahosi.co.uk cannot accept responsibility for decisions, losses, delays, disputes or other consequences arising from AI answers or from use of this page without independent fact checking.</li>
+      <li>Do not enter sensitive personal, medical, financial or identification details into the chat.</li>
+    </ul>
+  </section>
+
+  <section class="notice" aria-labelledby="choice-limits-title">
+    <h2 id="choice-limits-title">Provider choice limits</h2>
+    <p>SocialQA can help explain how to check official sources, such as CQC reports, local authority information, NHS information, contracts and complaints routes. It must not give opinions, reviews, rankings or recommendations about specific care homes, care agencies, nursing homes, day care centres, healthcare services or named people involved in care.</p>
+  </section>
+
   <section class="panel panel-pad guided-section" aria-labelledby="glossary-title">
     <h2 id="glossary-title">Plain-English glossary</h2>
     <div class="glossary-grid">
@@ -831,20 +844,20 @@ body.high-contrast footer{color:#fff}
     <h2 id="references-title">References</h2>
     <p class="source-scope">These are the validated sources used by this page. Open the original source before relying on any answer. Sources last reviewed: 20 June 2026.</p>
     <ul class="source-list">
-      <li><a href="https://www.legislation.gov.uk/ukpga/2014/23/contents">Care Act 2014</a><span class="source-org">legislation.gov.uk</span><p class="source-scope">Primary legislation for adult care and support in England.</p></li>
-      <li><a href="https://www.gov.uk/government/publications/care-act-statutory-guidance/care-and-support-statutory-guidance">Care and support statutory guidance</a><span class="source-org">Department of Health and Social Care / GOV.UK</span><p class="source-scope">Statutory guidance for local authorities under the Care Act 2014.</p></li>
-      <li><a href="https://www.gov.uk/government/publications/social-care-charging-for-local-authorities-2026-to-2027">Social care charging for local authorities: 2026 to 2027</a><span class="source-org">Department of Health and Social Care / GOV.UK</span><p class="source-scope">Current local authority charging circular, capital limits, PEA and related figures.</p></li>
-      <li><a href="https://www.gov.uk/government/publications/national-framework-for-nhs-continuing-healthcare-and-nhs-funded-nursing-care">National framework for NHS continuing healthcare and NHS-funded nursing care</a><span class="source-org">Department of Health and Social Care / GOV.UK</span><p class="source-scope">Official CHC and NHS-funded nursing care principles, process and assessment documents.</p></li>
-      <li><a href="https://www.nhs.uk/social-care-and-support/money-work-and-benefits/nhs-continuing-healthcare/">NHS continuing healthcare</a><span class="source-org">NHS</span><p class="source-scope">Plain-English NHS public guidance on CHC.</p></li>
-      <li><a href="https://www.nhs.uk/social-care-and-support/money-work-and-benefits/nhs-funded-nursing-care/">NHS-funded nursing care</a><span class="source-org">NHS</span><p class="source-scope">Plain-English NHS public guidance on funded nursing care.</p></li>
-      <li><a href="https://www.england.nhs.uk/healthcare/">NHS Continuing Healthcare</a><span class="source-org">NHS England</span><p class="source-scope">NHS England guidance on CHC and integrated care boards.</p></li>
-      <li><a href="https://digital.nhs.uk/data-and-information/publications/statistical/nhse-nhs-continuing-healthcare-and-nhs-funded-nursing-care">CHC and NHS-funded nursing care statistics</a><span class="source-org">NHS England Digital</span><p class="source-scope">Official statistics for CHC and NHS-funded nursing care activity in England.</p></li>
-      <li><a href="https://www.cqc.org.uk/care-services">Find care services</a><span class="source-org">Care Quality Commission</span><p class="source-scope">Care home, nursing home and care provider search with inspection ratings.</p></li>
-      <li><a href="https://www.cqc.org.uk/about-us/transparency/using-cqc-data">Using CQC data</a><span class="source-org">Care Quality Commission</span><p class="source-scope">CQC API and downloadable data for registered services and ratings.</p></li>
-      <li><a href="https://www.nice.org.uk/guidance/ng22/chapter/recommendations">Older people with social care needs and multiple long-term conditions</a><span class="source-org">NICE</span><p class="source-scope">Professional guidance on planning and delivering social care support.</p></li>
-      <li><a href="https://www.ons.gov.uk/peoplepopulationandcommunity/healthandsocialcare/socialcare">Social care statistics</a><span class="source-org">Office for National Statistics</span><p class="source-scope">Official social care data publications, including care homes.</p></li>
-      <li><a href="https://www.lgo.org.uk/adult-social-care/complaints-about-health-and-social-care">Complaints about health and social care</a><span class="source-org">Local Government and Social Care Ombudsman</span><p class="source-scope">Official route for complaints involving adult social care and joint health/social care issues.</p></li>
-      <li><a href="https://www.ombudsman.org.uk/making-complaint/what-we-can-and-cant-help/how-we-can-help-complaints-about-continuing-healthcare-funding">Complaints about continuing healthcare funding</a><span class="source-org">Parliamentary and Health Service Ombudsman</span><p class="source-scope">Official route for complaints about NHS continuing healthcare funding.</p></li>
+      <li><a href="https://www.legislation.gov.uk/ukpga/2014/23/contents" target="_blank" rel="noopener noreferrer">Care Act 2014</a><span class="source-org">legislation.gov.uk</span><p class="source-scope">Primary legislation for adult care and support in England.</p></li>
+      <li><a href="https://www.gov.uk/government/publications/care-act-statutory-guidance/care-and-support-statutory-guidance" target="_blank" rel="noopener noreferrer">Care and support statutory guidance</a><span class="source-org">Department of Health and Social Care / GOV.UK</span><p class="source-scope">Statutory guidance for local authorities under the Care Act 2014.</p></li>
+      <li><a href="https://www.gov.uk/government/publications/social-care-charging-for-local-authorities-2026-to-2027" target="_blank" rel="noopener noreferrer">Social care charging for local authorities: 2026 to 2027</a><span class="source-org">Department of Health and Social Care / GOV.UK</span><p class="source-scope">Current local authority charging circular, capital limits, PEA and related figures.</p></li>
+      <li><a href="https://www.gov.uk/government/publications/national-framework-for-nhs-continuing-healthcare-and-nhs-funded-nursing-care" target="_blank" rel="noopener noreferrer">National framework for NHS continuing healthcare and NHS-funded nursing care</a><span class="source-org">Department of Health and Social Care / GOV.UK</span><p class="source-scope">Official CHC and NHS-funded nursing care principles, process and assessment documents.</p></li>
+      <li><a href="https://www.nhs.uk/social-care-and-support/money-work-and-benefits/nhs-continuing-healthcare/" target="_blank" rel="noopener noreferrer">NHS continuing healthcare</a><span class="source-org">NHS</span><p class="source-scope">Plain-English NHS public guidance on CHC.</p></li>
+      <li><a href="https://www.nhs.uk/social-care-and-support/money-work-and-benefits/nhs-funded-nursing-care/" target="_blank" rel="noopener noreferrer">NHS-funded nursing care</a><span class="source-org">NHS</span><p class="source-scope">Plain-English NHS public guidance on funded nursing care.</p></li>
+      <li><a href="https://www.england.nhs.uk/healthcare/" target="_blank" rel="noopener noreferrer">NHS Continuing Healthcare</a><span class="source-org">NHS England</span><p class="source-scope">NHS England guidance on CHC and integrated care boards.</p></li>
+      <li><a href="https://digital.nhs.uk/data-and-information/publications/statistical/nhse-nhs-continuing-healthcare-and-nhs-funded-nursing-care" target="_blank" rel="noopener noreferrer">CHC and NHS-funded nursing care statistics</a><span class="source-org">NHS England Digital</span><p class="source-scope">Official statistics for CHC and NHS-funded nursing care activity in England.</p></li>
+      <li><a href="https://www.cqc.org.uk/care-services" target="_blank" rel="noopener noreferrer">Find care services</a><span class="source-org">Care Quality Commission</span><p class="source-scope">Care home, nursing home and care provider search with inspection ratings.</p></li>
+      <li><a href="https://www.cqc.org.uk/about-us/transparency/using-cqc-data" target="_blank" rel="noopener noreferrer">Using CQC data</a><span class="source-org">Care Quality Commission</span><p class="source-scope">CQC API and downloadable data for registered services and ratings.</p></li>
+      <li><a href="https://www.nice.org.uk/guidance/ng22/chapter/recommendations" target="_blank" rel="noopener noreferrer">Older people with social care needs and multiple long-term conditions</a><span class="source-org">NICE</span><p class="source-scope">Professional guidance on planning and delivering social care support.</p></li>
+      <li><a href="https://www.ons.gov.uk/peoplepopulationandcommunity/healthandsocialcare/socialcare" target="_blank" rel="noopener noreferrer">Social care statistics</a><span class="source-org">Office for National Statistics</span><p class="source-scope">Official social care data publications, including care homes.</p></li>
+      <li><a href="https://www.lgo.org.uk/adult-social-care/complaints-about-health-and-social-care" target="_blank" rel="noopener noreferrer">Complaints about health and social care</a><span class="source-org">Local Government and Social Care Ombudsman</span><p class="source-scope">Official route for complaints involving adult social care and joint health/social care issues.</p></li>
+      <li><a href="https://www.ombudsman.org.uk/making-complaint/what-we-can-and-cant-help/how-we-can-help-complaints-about-continuing-healthcare-funding" target="_blank" rel="noopener noreferrer">Complaints about continuing healthcare funding</a><span class="source-org">Parliamentary and Health Service Ombudsman</span><p class="source-scope">Official route for complaints about NHS continuing healthcare funding.</p></li>
     </ul>
   </section>
 </main>
@@ -897,6 +910,12 @@ body.high-contrast footer{color:#fff}
     storeDisplayOptions(options);
     applyDisplayOptions(options);
   }
+  function markExternalLinks(){
+    document.querySelectorAll('a[href^="http://"],a[href^="https://"]').forEach(function(link){
+      link.target = "_blank";
+      link.rel = "noopener noreferrer";
+    });
+  }
 
   function getSessionToken(){
     try{return sessionStorage.getItem(CHAT_SESSION_STORAGE_KEY) || "";}catch{return "";}
@@ -948,7 +967,8 @@ body.high-contrast footer{color:#fff}
     const link = document.createElement("a");
     link.href = href;
     link.textContent = label;
-    link.rel = "noopener";
+    link.target = "_blank";
+    link.rel = "noopener noreferrer";
     item.appendChild(link);
     if (note) {
       item.appendChild(document.createTextNode(" - " + note));
@@ -1291,6 +1311,7 @@ body.high-contrast footer{color:#fff}
     });
   });
   applyDisplayOptions(loadDisplayOptions());
+  markExternalLinks();
   updateGate();
   scheduleTurnstile();
 })();
