@@ -1194,6 +1194,7 @@ body.high-contrast footer{color:#fff}
     button.addEventListener("click", function(){
       input.value = button.getAttribute("data-question") || "";
       input.focus();
+      form.requestSubmit();
     });
   });
   document.querySelectorAll("[data-prompt]").forEach(function(button){
@@ -1202,6 +1203,7 @@ body.high-contrast footer{color:#fff}
       if (startTool) startTool.open = false;
       input.focus();
       input.scrollIntoView({behavior:"smooth", block:"center"});
+      form.requestSubmit();
     });
   });
   applyDisplayOptions(loadDisplayOptions());
