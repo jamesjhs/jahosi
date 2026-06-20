@@ -316,13 +316,14 @@ const SOCIAL_QA_CHAT_GUIDELINES = [
   "Every user query is headed by this requirement: answer only from robust professional, statutory, official regulator, official data, or official ombudsman sources.",
   "Every answer must include a 'References' section naming the source titles and URLs used.",
   "Use plain text only. Do not use Markdown heading markers such as ###, bold markers such as **, or decorative ASCII formatting.",
-  "If the listed sources do not support the answer, say plainly: 'I cannot answer that from the validated sources on this page.' Then suggest which official body or local authority/NHS body the user should contact.",
+  "If the listed sources do not support the exact answer requested, do not stop at a blunt refusal. Say: 'I cannot answer your exact question because that would go beyond the validated sources and may require professional advice.' Then add: 'However, based on the themes of your question, I can explain these general points from the validated sources.' Break the safe answer into themes and signpost where to go next.",
   "Do not invent rules, thresholds, exceptions, contact details, statistics, dates, figures, eligibility outcomes, or URLs.",
   "Use plain English, short paragraphs, and practical next steps. Explain that this is information, not legal, financial, or medical advice.",
   "If a user enters or appears to enter sensitive personal, medical, financial, safeguarding, identity, account, address, NHS number, National Insurance number, bank, contract, complaint-file, medication, diagnosis, password, or document details, display a clear warning that they should not enter sensitive information. Do not repeat or quote those details back. Explain that SocialQA has no persistent memory beyond the temporary session context, but submitted text is still processed to produce the answer. Provide only general signposting if safe, or ask them to rephrase without sensitive details.",
   "For financial planning, investments, equity release, annuities, tax, estate planning, or regulated financial products, do not give recommendations or product advice. Explain the issue at a high level from the validated sources and signpost to MoneyHelper, the FCA Firm Checker, SOLLA, or a qualified regulated adviser as appropriate.",
   "For broad questions about protecting assets, a house, inheritance, family benefit, self-funding, or paying care fees, do not blanket-refuse solely because the topic touches financial planning. Give a high-level source-based explanation of the financial assessment, deprivation of assets, deferred payment agreements, NHS funding checks, benefits, and specialist regulated advice routes. Then clearly warn that SocialQA cannot advise how to shelter assets, avoid care fees, transfer property, create trusts, choose products, or decide what the user should do.",
   "Only refuse asset or house questions outright if the user asks for a tactic, plan, recommendation, instruction, suitability assessment, loophole, product, provider, trust, transfer, tax route, estate plan, or any answer intended to avoid, reduce, conceal, or manipulate care charges for their circumstances. In that refusal, still offer safe general signposting to the local authority, MoneyHelper, FCA Firm Checker, SOLLA, or a solicitor/qualified regulated adviser.",
+  "When refusing a care-fees, assets, house, inheritance, estate-planning, provider-choice, eligibility, complaint, or safeguarding request, always include a section called 'What I can explain generally' unless the request is abusive or unsafe. Use themes from the user's question and explain only safe general information from the validated sources.",
   "Reject any request to recommend, choose, compare, rank, endorse, approve, assess suitability of, or predict outcomes for financial products, investments, equity release, annuities, tax plans, estate plans, providers, advisers, care homes, care agencies, hospitals, clinicians, social workers, named people, care packages, funding applications, eligibility decisions, CHC decisions, financial-assessment outcomes, safeguarding decisions, complaint outcomes, appeal outcomes, or whether a user should accept/refuse/sign/pay/move/challenge. When refusing, display a warning that SocialQA cannot make or steer those decisions and must only provide general source-based signposting.",
   "If your draft answer would amount to a recommendation, regulated financial advice, provider recommendation, care assessment, NHS/local authority decision, eligibility prediction, safeguarding decision, legal conclusion, or instruction likely to affect care or finances, stop and replace it with a warning plus neutral signposting to the relevant official body, regulator, ombudsman, MoneyHelper, FCA-authorised adviser, solicitor, local authority, NHS integrated care board, or emergency/safeguarding route.",
   "Be careful about devolution. Unless the user asks otherwise, say the page is focused on England. For Scotland, Wales, or Northern Ireland, explain that rules differ and refer users to the relevant official national body.",
@@ -648,6 +649,50 @@ function normalizeSocialQaReply(reply) {
     .replace(/^\s{0,3}#{1,6}\s+/gm, "")
     .replace(/\*\*/g, "")
     .trim();
+}
+
+function hasAssetCareFeeTheme(message) {
+  const text = String(message || "").toLowerCase();
+  const hasCareFeeTerm = /\b(care fee|care fees|paying care|self[-\s]?fund|funding care|financial assessment|care charge|care charges)\b/.test(text);
+  const hasAssetTerm = /\b(asset|assets|house|home|property|inheritance|family|families|gift|gifting|trust|estate|will|benefit|deprivation)\b/.test(text);
+  return hasCareFeeTerm && hasAssetTerm;
+}
+
+function expandSocialQaBluntRefusal(reply, message) {
+  const normalized = normalizeSocialQaReply(reply);
+  if (!hasAssetCareFeeTheme(message)) return normalized;
+  if (!/(I cannot answer that from the validated sources on this page|I cannot answer your exact question because)/i.test(normalized)) return normalized;
+  if (/What I can explain generally/i.test(normalized)) return normalized;
+
+  return [
+    "I cannot answer your exact question because it could become personal legal, financial, tax or estate-planning advice, or advice on how to shelter assets or avoid care charges.",
+    "",
+    "However, based on the themes of your question, I can explain these general points from the validated sources.",
+    "",
+    "What I can explain generally",
+    "",
+    "1. Financial assessment",
+    "If a local authority charges for care and support, it must carry out a financial assessment. The Care Act statutory guidance says this looks across income and capital, using the charging regulations and guidance. The local authority should explain the assessment and the charge.",
+    "",
+    "2. Deprivation of assets",
+    "The Care Act statutory guidance has specific rules for situations where someone may have deliberately reduced or transferred income or capital to avoid or reduce care charges. This can include gifts, transferring property, putting assets into an irrevocable trust, or converting assets into something that might be disregarded. Deprivation should not be assumed automatically, but if a local authority decides it has happened, it may treat the person as still having the asset for charging purposes.",
+    "",
+    "3. The house and ways to pay",
+    "MoneyHelper and the Care Act guidance point people towards general routes such as checking local authority support, NHS Continuing Healthcare or NHS-funded nursing care, benefits, deferred payment agreements, and specialist care-fees financial advice. SocialQA can explain what those routes are, but cannot say which one you should use.",
+    "",
+    "4. Family benefit and estate planning",
+    "SocialQA cannot advise how to preserve inheritance, transfer property, set up trusts, use equity release, buy an annuity, or structure assets. Those questions need a solicitor, specialist care-fees adviser, or regulated financial adviser who can look at the facts and responsibilities properly.",
+    "",
+    "Practical next steps",
+    "Ask the local authority for its written financial assessment and charging explanation. Ask whether a deferred payment agreement, NHS Continuing Healthcare check, NHS-funded nursing care, Attendance Allowance or Pension Credit may be relevant. For financial planning, use MoneyHelper guidance, check adviser authorisation with the FCA, and consider a specialist later-life or care-fees adviser.",
+    "",
+    "References",
+    "Care and support statutory guidance - Department of Health and Social Care / GOV.UK: https://www.gov.uk/government/publications/care-act-statutory-guidance/care-and-support-statutory-guidance",
+    "Long-term care - MoneyHelper: https://www.moneyhelper.org.uk/en/family-and-care/long-term-care",
+    "Help funding care - how to get advice - MoneyHelper: https://www.moneyhelper.org.uk/en/getting-help-and-advice/long-term-care-advice/get-financial-advice-on-how-to-fund-your-long-term-care",
+    "FCA Firm Checker - Financial Conduct Authority: https://www.fca.org.uk/consumers/fca-firm-checker",
+    "About the Society of Later Life Advisers - SOLLA: https://societyoflaterlifeadvisers.co.uk/about",
+  ].join("\n");
 }
 
 function renderContactPage({ status, error, debug }) {
@@ -1027,7 +1072,7 @@ app.post("/socialQA/chat", splashChatRateLimit, express.json({ limit: "50kb" }),
     if (typeof reply !== "string" || !reply.trim()) {
       return res.status(502).json({ error: "upstream_empty" });
     }
-    const response = { reply: normalizeSocialQaReply(reply) };
+    const response = { reply: expandSocialQaBluntRefusal(reply, message) };
     if (resolvedChatSessionToken) {
       response.chatSessionToken = resolvedChatSessionToken;
     }
