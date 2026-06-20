@@ -171,6 +171,29 @@ body.high-contrast .disclaimer{background:#fff}
   max-width:920px;
   margin:0 auto 1rem;
 }
+.collapsible-tool{
+  padding:0;
+  overflow:hidden;
+}
+.collapsible-tool summary{
+  padding:1rem;
+  color:var(--brand-dark);
+  font-weight:700;
+  font-size:1.15rem;
+  cursor:pointer;
+}
+.collapsible-tool summary:hover{
+  color:#fff;
+  background:var(--brand-dark);
+}
+.collapsible-tool[open] summary{
+  border-bottom:1px solid var(--line);
+}
+.collapsible-tool-body{
+  padding:1rem;
+}
+.collapsible-tool-body > :first-child{margin-top:0}
+.collapsible-tool-body > :last-child{margin-bottom:0}
 .action-grid,.question-grid,.glossary-grid,.question-pack-grid{
   display:grid;
   grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
@@ -291,7 +314,7 @@ body.high-contrast .disclaimer{background:#fff}
 .panel-pad{padding:1rem}
 .chat-panel{
   display:grid;
-  grid-template-rows:auto auto minmax(340px,54vh) auto;
+  grid-template-rows:auto minmax(340px,54vh) auto;
   overflow:hidden;
 }
 .chat-head{
@@ -306,13 +329,6 @@ body.high-contrast .disclaimer{background:#fff}
 .chat-head p{
   margin:.35rem 0 0;
   color:#24423d;
-}
-.source-rule{
-  margin:0;
-  padding:.85rem 1rem;
-  border-bottom:1px solid var(--line);
-  background:#f0fdfa;
-  font-weight:700;
 }
 .thread{
   overflow:auto;
@@ -507,7 +523,7 @@ body.high-contrast footer{color:#fff}
 @media(max-width:900px){
   .header-inner{grid-template-columns:1fr}
   .header-tools{justify-content:flex-start}
-  .chat-panel{grid-template-rows:auto auto minmax(300px,50vh) auto}
+  .chat-panel{grid-template-rows:auto minmax(300px,50vh) auto}
 }
 @media(max-width:620px){
   .postcode-form{grid-template-columns:1fr}
@@ -539,66 +555,68 @@ body.high-contrast footer{color:#fff}
     <p>If someone is in immediate danger, call 999. For urgent medical help, use NHS 111 or 999 as appropriate. For abuse, neglect or serious care safety concerns, contact the relevant local authority safeguarding adults team and follow urgent routes from the care provider, NHS body or regulator where applicable.</p>
   </section>
 
-  <section class="panel panel-pad start-tool" aria-labelledby="start-title">
-    <h2 id="start-title">Start here</h2>
-    <p class="source-scope">Choose the situation that is closest to yours. This fills the question box with a safer starter question that avoids personal details.</p>
-    <div class="action-grid">
-      <article class="action-card">
-        <h3>Already in a care home</h3>
-        <p>Understand fees, reviews, top-ups, local authority involvement and what to check next.</p>
-        <button type="button" data-prompt="A person is already living in a care home in England. What official steps should their family check about care fees, financial assessment, top-up fees, care reviews and possible NHS Continuing Healthcare or NHS-funded nursing care?">Ask this question</button>
-      </article>
-      <article class="action-card">
-        <h3>Choosing a care home</h3>
-        <p>Find out what official documents and checks to use without asking the AI to recommend a provider.</p>
-        <button type="button" data-prompt="What official checks should someone use when choosing a care home in England, including CQC reports, contracts, fees, top-up arrangements, local authority advice and NHS-funded care questions? Do not recommend or rank any provider.">Ask this question</button>
-      </article>
-      <article class="action-card">
-        <h3>Told to self-fund</h3>
-        <p>Check what a financial assessment means and when local authority or NHS routes may still matter.</p>
-        <button type="button" data-prompt="Someone has been told they need to self-fund care in England. What should they check from official sources about needs assessment, financial assessment, capital limits, care home fees and possible NHS Continuing Healthcare?">Ask this question</button>
-      </article>
-      <article class="action-card">
-        <h3>Possible NHS Continuing Healthcare</h3>
-        <p>Ask about CHC screening, assessment, decision-making and complaint or review routes.</p>
-        <button type="button" data-prompt="What is the official NHS Continuing Healthcare process in England, and what should someone ask about the checklist, Decision Support Tool, primary health need, timescales, reviews and complaints?">Ask this question</button>
-      </article>
-      <article class="action-card">
-        <h3>Hospital discharge</h3>
-        <p>Understand which organisations may be involved when care is arranged after hospital.</p>
-        <button type="button" data-prompt="A hospital discharge is being planned in England and care may be needed afterwards. What official questions should the family ask about assessment, care planning, funding responsibility, NHS Continuing Healthcare and local authority involvement?">Ask this question</button>
-      </article>
-      <article class="action-card">
-        <h3>Challenge or complaint</h3>
-        <p>Work out whether to use council, NHS, CQC, LGSCO or PHSO routes.</p>
-        <button type="button" data-prompt="How should someone work out the official complaint or challenge route in England for a care funding, care assessment, care home fee, NHS Continuing Healthcare or NHS-funded nursing care issue?">Ask this question</button>
-      </article>
+  <details id="start-tool" class="panel start-tool collapsible-tool" open>
+    <summary>Start here</summary>
+    <div class="collapsible-tool-body">
+      <p class="source-scope">Choose the situation that is closest to yours. This fills the question box with a safer starter question that avoids personal details.</p>
+      <div class="action-grid">
+        <article class="action-card">
+          <h3>Already in a care home</h3>
+          <p>Understand fees, reviews, top-ups, local authority involvement and what to check next.</p>
+          <button type="button" data-prompt="A person is already living in a care home in England. What official steps should their family check about care fees, financial assessment, top-up fees, care reviews and possible NHS Continuing Healthcare or NHS-funded nursing care?">Ask this question</button>
+        </article>
+        <article class="action-card">
+          <h3>Choosing a care home</h3>
+          <p>Find out what official documents and checks to use without asking the AI to recommend a provider.</p>
+          <button type="button" data-prompt="What official checks should someone use when choosing a care home in England, including CQC reports, contracts, fees, top-up arrangements, local authority advice and NHS-funded care questions? Do not recommend or rank any provider.">Ask this question</button>
+        </article>
+        <article class="action-card">
+          <h3>Told to self-fund</h3>
+          <p>Check what a financial assessment means and when local authority or NHS routes may still matter.</p>
+          <button type="button" data-prompt="Someone has been told they need to self-fund care in England. What should they check from official sources about needs assessment, financial assessment, capital limits, care home fees and possible NHS Continuing Healthcare?">Ask this question</button>
+        </article>
+        <article class="action-card">
+          <h3>Possible NHS Continuing Healthcare</h3>
+          <p>Ask about CHC screening, assessment, decision-making and complaint or review routes.</p>
+          <button type="button" data-prompt="What is the official NHS Continuing Healthcare process in England, and what should someone ask about the checklist, Decision Support Tool, primary health need, timescales, reviews and complaints?">Ask this question</button>
+        </article>
+        <article class="action-card">
+          <h3>Hospital discharge</h3>
+          <p>Understand which organisations may be involved when care is arranged after hospital.</p>
+          <button type="button" data-prompt="A hospital discharge is being planned in England and care may be needed afterwards. What official questions should the family ask about assessment, care planning, funding responsibility, NHS Continuing Healthcare and local authority involvement?">Ask this question</button>
+        </article>
+        <article class="action-card">
+          <h3>Challenge or complaint</h3>
+          <p>Work out whether to use council, NHS, CQC, LGSCO or PHSO routes.</p>
+          <button type="button" data-prompt="How should someone work out the official complaint or challenge route in England for a care funding, care assessment, care home fee, NHS Continuing Healthcare or NHS-funded nursing care issue?">Ask this question</button>
+        </article>
+      </div>
     </div>
-  </section>
+  </details>
 
-  <section class="panel panel-pad local-tool" aria-labelledby="local-title">
-    <h2 id="local-title">Find local sources</h2>
-    <p class="source-scope">Enter a postcode to find local authority signposts and links to services that can help with local rules, assessments, care availability and complaints routes.</p>
-    <p class="source-scope">This page is focused on England. Social care rules and organisations differ in Scotland, Wales and Northern Ireland.</p>
-    <form id="postcode-form" class="postcode-form">
-      <label for="postcode-input">
-        Postcode
-        <input id="postcode-input" name="postcode" type="text" autocomplete="postal-code" maxlength="10" placeholder="For example SW1A 2AA">
-      </label>
-      <button id="postcode-submit" type="submit">Find local sources</button>
-    </form>
-    <div id="local-results" class="local-results" hidden aria-live="polite"></div>
-  </section>
+  <details class="panel local-tool collapsible-tool">
+    <summary>Find resources in your local area</summary>
+    <div class="collapsible-tool-body">
+      <p class="source-scope">Enter a postcode to find local authority signposts and links to services that can help with local rules, assessments, care availability and complaints routes.</p>
+      <p class="source-scope">This page is focused on England. Social care rules and organisations differ in Scotland, Wales and Northern Ireland.</p>
+      <form id="postcode-form" class="postcode-form">
+        <label for="postcode-input">
+          Postcode
+          <input id="postcode-input" name="postcode" type="text" autocomplete="postal-code" maxlength="10" placeholder="For example SW1A 2AA">
+        </label>
+        <button id="postcode-submit" type="submit">Find resources</button>
+      </form>
+      <div id="local-results" class="local-results" hidden aria-live="polite"></div>
+    </div>
+  </details>
 
   <div class="chat-wrap">
     <section id="ask" class="panel chat-panel" aria-labelledby="qa-title">
       <div class="chat-head">
         <h2 id="qa-title">Ask a social care funding question</h2>
-        <p>Ask one clear question at a time. The answer should explain the main point, suggest practical next steps where possible, and show which reference sources were used.</p>
       </div>
-      <p class="source-rule">This page is focused on reliable information from official, statutory, regulator, NHS, NICE, official data and ombudsman sources.</p>
       <div id="chat-thread" class="thread" aria-live="polite" aria-label="Q&A conversation">
-        <div class="message bot"><strong>SocialQA</strong>Use this page to explore adult social care funding in England in clearer language. Good starting points include who may pay for care, how NHS Continuing Healthcare differs from local authority support, what NHS-funded nursing care means, where to check a care home's rating, and where to go if a decision or process seems wrong.</div>
+        <div class="message bot"><strong>SocialQA</strong>Ask one clear question about adult social care funding in England. I can explain the main point, suggest next steps, cite sources, and cover fees, CHC, NHS-funded nursing care, ratings or challenges.</div>
       </div>
       <div id="chat-gate" class="chat-gate" hidden>
         <div class="gate-copy">Complete the Turnstile check to start chatting.</div>
@@ -775,6 +793,7 @@ body.high-contrast footer{color:#fff}
   const postcodeInput = document.getElementById("postcode-input");
   const postcodeSubmit = document.getElementById("postcode-submit");
   const localResults = document.getElementById("local-results");
+  const startTool = document.getElementById("start-tool");
   const gate = document.getElementById("chat-gate");
   const gateNote = document.getElementById("chat-gate-note");
   const contrastToggle = document.getElementById("contrast-toggle");
@@ -839,7 +858,7 @@ body.high-contrast footer{color:#fff}
   function setPostcodeBusy(isBusy){
     postcodeSubmit.disabled = isBusy;
     postcodeInput.disabled = isBusy;
-    postcodeSubmit.textContent = isBusy ? "Looking..." : "Find local sources";
+    postcodeSubmit.textContent = isBusy ? "Looking..." : "Find resources";
   }
   function clearElement(element){
     while (element.firstChild) element.removeChild(element.firstChild);
@@ -1184,6 +1203,7 @@ body.high-contrast footer{color:#fff}
   document.querySelectorAll("[data-prompt]").forEach(function(button){
     button.addEventListener("click", function(){
       input.value = button.getAttribute("data-prompt") || "";
+      if (startTool) startTool.open = false;
       input.focus();
       input.scrollIntoView({behavior:"smooth", block:"center"});
     });
