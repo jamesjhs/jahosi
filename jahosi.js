@@ -90,6 +90,7 @@ const SITEMAP_PATHS = [
   "/splash/help.htm",
   "/splash/appendices.htm",
   "/socialQA/",
+  "/socialQA/policy.html",
 ];
 
 const MAX_REQUESTS_PER_WINDOW = 5;
@@ -298,7 +299,10 @@ const SOCIAL_QA_CHAT_GUIDELINES = [
   "If the listed sources do not support the answer, say plainly: 'I cannot answer that from the validated sources on this page.' Then suggest which official body or local authority/NHS body the user should contact.",
   "Do not invent rules, thresholds, exceptions, contact details, statistics, dates, figures, eligibility outcomes, or URLs.",
   "Use plain English, short paragraphs, and practical next steps. Explain that this is information, not legal, financial, or medical advice.",
+  "If a user enters or appears to enter sensitive personal, medical, financial, safeguarding, identity, account, address, NHS number, National Insurance number, bank, contract, complaint-file, medication, diagnosis, password, or document details, display a clear warning that they should not enter sensitive information. Do not repeat or quote those details back. Explain that SocialQA has no persistent memory beyond the temporary session context, but submitted text is still processed to produce the answer. Provide only general signposting if safe, or ask them to rephrase without sensitive details.",
   "For financial planning, investments, equity release, annuities, tax, estate planning, or regulated financial products, do not give recommendations or product advice. Explain the issue at a high level from the validated sources and signpost to MoneyHelper, the FCA Firm Checker, SOLLA, or a qualified regulated adviser as appropriate.",
+  "Reject any request to recommend, choose, compare, rank, endorse, approve, assess suitability of, or predict outcomes for financial products, investments, equity release, annuities, tax plans, estate plans, providers, advisers, care homes, care agencies, hospitals, clinicians, social workers, named people, care packages, funding applications, eligibility decisions, CHC decisions, financial-assessment outcomes, safeguarding decisions, complaint outcomes, appeal outcomes, or whether a user should accept/refuse/sign/pay/move/challenge. When refusing, display a warning that SocialQA cannot make or steer those decisions and must only provide general source-based signposting.",
+  "If your draft answer would amount to a recommendation, regulated financial advice, provider recommendation, care assessment, NHS/local authority decision, eligibility prediction, safeguarding decision, legal conclusion, or instruction likely to affect care or finances, stop and replace it with a warning plus neutral signposting to the relevant official body, regulator, ombudsman, MoneyHelper, FCA-authorised adviser, solicitor, local authority, NHS integrated care board, or emergency/safeguarding route.",
   "Be careful about devolution. Unless the user asks otherwise, say the page is focused on England. For Scotland, Wales, or Northern Ireland, explain that rules differ and refer users to the relevant official national body.",
   "Always warn that local variation can significantly affect practical outcomes, and users should check with their own local authority, NHS integrated care board, care provider, regulator, ombudsman, qualified adviser, or professional representative before acting.",
   "Never give opinions, reviews, rankings, endorsements, comparisons, or recommendations about any specific care home, care agency, nursing home, day care centre, hospital, GP surgery, healthcare service, or named person involved in care such as a carer, manager, nurse, GP, social worker, assessor, or clinician.",
@@ -402,6 +406,11 @@ app.get("/socialQA/", (req, res) => {
 app.get("/socialQA/index.html", (req, res) => {
   setNoCacheHeaders(res);
   res.send(renderSocialQaIndexHtml());
+});
+
+app.get("/socialQA/policy.html", (req, res) => {
+  setNoCacheHeaders(res);
+  res.send(renderSocialQaPolicyHtml());
 });
 
 app.use("/socialQA", express.static(path.join(__dirname, "public", "socialQA"), { index: false, setHeaders: setPublicFileHeaders }));
@@ -605,6 +614,10 @@ function renderSplashIndexHtml() {
 const SOCIAL_QA_INDEX_HTML_TEMPLATE = fs.readFileSync(path.join(__dirname, "public", "socialQA", "index.html"), "utf8");
 function renderSocialQaIndexHtml() {
   return SOCIAL_QA_INDEX_HTML_TEMPLATE.replace('"__TURNSTILE_SITE_KEY__"', JSON.stringify(TURNSTILE_SITE_KEY));
+}
+const SOCIAL_QA_POLICY_HTML_TEMPLATE = fs.readFileSync(path.join(__dirname, "public", "socialQA", "policy.html"), "utf8");
+function renderSocialQaPolicyHtml() {
+  return SOCIAL_QA_POLICY_HTML_TEMPLATE.replaceAll("__CONTACT_PAGE_PATH__", CONTACT_PAGE_PATH);
 }
 
 function normalizeSocialQaReply(reply) {
