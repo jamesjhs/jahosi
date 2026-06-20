@@ -23,6 +23,15 @@ function normalizeEnvString(value) {
   return cleaned;
 }
 
+function normalizeContactPagePath(value) {
+  const cleaned = normalizeEnvString(value);
+  if (!cleaned || !cleaned.startsWith("/") || cleaned.startsWith("//") || /[\s"'<>]/.test(cleaned) || cleaned.includes("?") || cleaned.includes("#")) {
+    console.error("CONTACT_PAGE_PATH must be a local absolute path such as /about/contact-random-suffix.");
+    process.exit(1);
+  }
+  return cleaned;
+}
+
 const REQUIRED_ENV = [
   "CONTACT_PAGE_PATH",
   "CONTACT_TO_EMAIL",
@@ -37,7 +46,7 @@ if (missingEnv.length) {
   process.exit(1);
 }
 
-const CONTACT_PAGE_PATH = process.env.CONTACT_PAGE_PATH;
+const CONTACT_PAGE_PATH = normalizeContactPagePath(process.env.CONTACT_PAGE_PATH);
 const CONTACT_TO_EMAIL = process.env.CONTACT_TO_EMAIL;
 const CONTACT_FROM_EMAIL = process.env.CONTACT_FROM_EMAIL;
 const SPLASH_OPENAI_API_KEY = process.env.SPLASH_OPENAI_API_KEY || "";
@@ -316,10 +325,10 @@ const SOCIAL_QA_CHAT_GUIDELINES = [
 app.use(express.urlencoded({ extended: false }));
 
 const INDEX_HTML_TEMPLATE = fs.readFileSync(path.join(__dirname, "public", "index.html"), "utf8");
-const INDEX_HTML = INDEX_HTML_TEMPLATE.replace("__CONTACT_PAGE_PATH__", CONTACT_PAGE_PATH);
+const INDEX_HTML = INDEX_HTML_TEMPLATE.replaceAll("__CONTACT_PAGE_PATH__", CONTACT_PAGE_PATH);
 
 // index.html is served dynamically so the contact link reflects CONTACT_PAGE_PATH at runtime.
-app.get("/", (req, res) => {
+app.get(["/", "/index.html"], (req, res) => {
   setNoCacheHeaders(res);
   res.send(INDEX_HTML);
 });
@@ -1015,7 +1024,7 @@ app.post("/socialQA/chat", splashChatRateLimit, express.json({ limit: "50kb" }),
 });
 
 app.get("*", (req, res) => {
-  res.status(404).sendFile(path.join(__dirname, "public", "index.html"));
+  res.status(404).send(INDEX_HTML);
 });
 
 app.listen(port, "127.0.0.1", () => {
