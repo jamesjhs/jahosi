@@ -1,0 +1,594 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#0f766e">
+<meta name="application-name" content="SocialQA">
+<meta name="description" content="SocialQA is a plain-English Q&A page for navigating adult social care funding, care homes, nursing homes, NHS Continuing Healthcare and NHS-funded nursing care in England, using official and professional sources only.">
+<meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1">
+<link rel="canonical" href="https://jahosi.co.uk/socialQA/">
+<meta property="og:type" content="website">
+<meta property="og:title" content="SocialQA | Adult Social Care Funding Q&A">
+<meta property="og:description" content="Ask plain-English questions about adult social care funding, care homes, nursing homes, NHS Continuing Healthcare and NHS-funded nursing care in England. Answers must cite validated official and professional sources.">
+<meta property="og:url" content="https://jahosi.co.uk/socialQA/">
+<meta property="og:site_name" content="SocialQA">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="SocialQA | Adult Social Care Funding Q&A">
+<meta name="twitter:description" content="Plain-English adult social care funding Q&A using validated official and professional sources only.">
+<title>SocialQA | Adult Social Care Funding Q&A</title>
+<script src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit" async defer></script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebPage",
+  "name": "SocialQA",
+  "url": "https://jahosi.co.uk/socialQA/",
+  "description": "Plain-English Q&A for adult social care funding, care homes, nursing homes, NHS Continuing Healthcare and NHS-funded nursing care in England, using validated official and professional sources only.",
+  "about": [
+    "Adult social care",
+    "Care home funding",
+    "Nursing home funding",
+    "NHS Continuing Healthcare",
+    "NHS-funded nursing care"
+  ],
+  "isAccessibleForFree": true,
+  "inLanguage": "en-GB"
+}
+</script>
+<style>
+:root{
+  --bg:#f7faf9;
+  --panel:#ffffff;
+  --ink:#10201d;
+  --muted:#53635f;
+  --line:#cfe1dc;
+  --brand:#0f766e;
+  --brand-dark:#115e59;
+  --brand-pale:#dff5f1;
+  --warn:#92400e;
+  --warn-bg:#fff7ed;
+  --error:#991b1b;
+  --focus:#f59e0b;
+  --shadow:0 2px 10px rgba(15,118,110,.10);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0;
+  font-family:Arial, Helvetica, sans-serif;
+  font-size:16px;
+  line-height:1.55;
+  color:var(--ink);
+  background:var(--bg);
+}
+a{color:var(--brand-dark);font-weight:700}
+a:hover{text-decoration-thickness:2px}
+a:focus,button:focus,input:focus,textarea:focus{
+  outline:3px solid var(--focus);
+  outline-offset:3px;
+}
+.skip-link{
+  position:absolute;
+  left:.75rem;
+  top:.75rem;
+  z-index:20;
+  transform:translateY(-160%);
+  background:#fff;
+  color:var(--ink);
+  border:2px solid var(--brand);
+  border-radius:6px;
+  padding:.55rem .75rem;
+}
+.skip-link:focus{transform:translateY(0)}
+header{
+  background:#0b3d39;
+  color:#fff;
+  border-bottom:5px solid var(--brand);
+}
+.header-inner{
+  max-width:1180px;
+  margin:0 auto;
+  padding:1.5rem 1rem;
+}
+.home-link{
+  color:#dff5f1;
+  font-size:.92rem;
+  text-decoration:none;
+}
+h1{
+  margin:.55rem 0 .35rem;
+  font-size:clamp(2rem,5vw,3.2rem);
+  line-height:1.05;
+  letter-spacing:0;
+}
+.lede{
+  max-width:860px;
+  margin:0;
+  color:#e9fffb;
+  font-size:1.06rem;
+}
+.wrap{
+  max-width:1180px;
+  margin:0 auto;
+  padding:1rem;
+}
+.notice{
+  border-left:6px solid var(--warn);
+  background:var(--warn-bg);
+  padding:1rem;
+  margin:1rem 0;
+}
+.notice h2,.notice p{margin:.2rem 0}
+.notice h2{font-size:1.05rem}
+.disclaimer{
+  border-left-color:var(--error);
+  background:#fff1f2;
+}
+.disclaimer ul{
+  margin:.55rem 0 0;
+  padding-left:1.2rem;
+}
+.disclaimer li{margin:.35rem 0}
+.chat-wrap{
+  max-width:920px;
+  margin:0 auto;
+}
+.panel{
+  background:var(--panel);
+  border:1px solid var(--line);
+  border-radius:8px;
+  box-shadow:var(--shadow);
+}
+.panel-pad{padding:1rem}
+.chat-panel{
+  display:grid;
+  grid-template-rows:auto auto minmax(340px,54vh) auto;
+  overflow:hidden;
+}
+.chat-head{
+  padding:1rem;
+  border-bottom:1px solid var(--line);
+  background:var(--brand-pale);
+}
+.chat-head h2{
+  margin:0;
+  font-size:1.25rem;
+}
+.chat-head p{
+  margin:.35rem 0 0;
+  color:#24423d;
+}
+.source-rule{
+  margin:0;
+  padding:.85rem 1rem;
+  border-bottom:1px solid var(--line);
+  background:#f0fdfa;
+  font-weight:700;
+}
+.thread{
+  overflow:auto;
+  padding:1rem;
+  display:grid;
+  gap:.85rem;
+  align-content:start;
+  background:#fbfefd;
+}
+.message{
+  max-width:84ch;
+  border-radius:8px;
+  padding:.85rem 1rem;
+  white-space:pre-wrap;
+}
+.message.bot{
+  background:#eef8f6;
+  border:1px solid var(--line);
+}
+.message.user{
+  margin-left:auto;
+  background:#dff5f1;
+  border:1px solid #a8d8cf;
+}
+.message strong{display:block;margin-bottom:.25rem}
+.chat-gate{
+  border-top:1px solid var(--line);
+  background:#f8fafc;
+  padding:.85rem 1rem;
+  display:grid;
+  gap:.55rem;
+}
+.chat-gate[hidden]{display:none}
+.gate-copy{font-weight:700;color:var(--brand-dark)}
+.chat-turnstile{overflow:hidden}
+.gate-note{
+  margin:0;
+  color:var(--muted);
+  font-size:.92rem;
+}
+.chat-form{
+  border-top:1px solid var(--line);
+  padding:1rem;
+  display:grid;
+  gap:.75rem;
+  background:#fff;
+}
+.chat-form label{
+  font-weight:700;
+}
+.input-row{
+  display:grid;
+  grid-template-columns:minmax(0,1fr) auto;
+  gap:.75rem;
+  align-items:end;
+}
+textarea{
+  width:100%;
+  min-height:5.5rem;
+  resize:vertical;
+  border:2px solid var(--line);
+  border-radius:8px;
+  padding:.8rem;
+  color:var(--ink);
+  font:inherit;
+}
+button{
+  border:0;
+  border-radius:8px;
+  background:var(--brand);
+  color:#fff;
+  padding:.8rem 1rem;
+  font:inherit;
+  font-weight:700;
+  cursor:pointer;
+}
+button:hover{background:var(--brand-dark)}
+button:disabled{opacity:.65;cursor:wait}
+.examples{
+  display:flex;
+  flex-wrap:wrap;
+  gap:.5rem;
+}
+.example-btn{
+  background:#fff;
+  color:var(--brand-dark);
+  border:1px solid var(--line);
+  padding:.55rem .7rem;
+  font-size:.92rem;
+}
+.references h2,.quick h2{
+  margin:0 0 .65rem;
+  font-size:1.15rem;
+}
+.source-list{
+  display:grid;
+  gap:.75rem;
+  margin:0;
+  padding:0;
+  list-style:none;
+}
+.source-list li{
+  border-top:1px solid var(--line);
+  padding-top:.75rem;
+}
+.source-list li:first-child{
+  border-top:0;
+  padding-top:0;
+}
+.source-org{
+  display:block;
+  color:var(--muted);
+  font-size:.9rem;
+  font-weight:400;
+}
+.source-scope{
+  margin:.2rem 0 0;
+  color:var(--muted);
+  font-size:.92rem;
+}
+.quick{
+  margin-top:1rem;
+}
+.references{
+  margin-top:1rem;
+}
+.references .source-list{
+  grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
+  gap:1rem;
+}
+.references .source-list li{
+  border:1px solid var(--line);
+  border-radius:8px;
+  padding:.85rem;
+  background:#fbfefd;
+}
+.references .source-list li:first-child{
+  border-top:1px solid var(--line);
+  padding-top:.85rem;
+}
+.quick ul{
+  margin:.5rem 0 0;
+  padding-left:1.2rem;
+}
+.quick li{margin:.35rem 0}
+footer{
+  max-width:1180px;
+  margin:0 auto;
+  padding:1.5rem 1rem 2rem;
+  color:var(--muted);
+  font-size:.92rem;
+}
+@media(max-width:900px){
+  .chat-panel{grid-template-rows:auto auto minmax(300px,50vh) auto}
+}
+@media(max-width:620px){
+  .input-row{grid-template-columns:1fr}
+  button{width:100%}
+  .message{max-width:100%}
+}
+</style>
+</head>
+<body>
+<a class="skip-link" href="#ask">Skip to Q&A</a>
+<header>
+  <div class="header-inner">
+    <a class="home-link" href="/">Jahosi home</a>
+    <h1>SocialQA</h1>
+    <p class="lede">Plain-English Q&A for people navigating adult social care funding, care homes, nursing homes, NHS Continuing Healthcare and NHS-funded nursing care in England.</p>
+  </div>
+</header>
+
+<main class="wrap">
+  <section class="notice" aria-labelledby="source-standard-title">
+    <h2 id="source-standard-title">What this page helps with</h2>
+    <p>SocialQA helps make adult social care funding easier to understand. It is designed for questions about care home fees, nursing home costs, NHS Continuing Healthcare, NHS-funded nursing care, financial assessments, care assessments, complaints and finding regulated care services.</p>
+    <p>Answers are written in plain English and should point back to official or professional references so the original information can be checked.</p>
+  </section>
+
+  <section class="notice disclaimer" aria-labelledby="disclaimer-title">
+    <h2 id="disclaimer-title">Important disclaimer</h2>
+    <p>SocialQA is an experimental AI-assisted information page. AI responses can be incomplete, outdated, misread a source, or phrase something too strongly. Do not rely on an answer as the sole basis for a care, funding, legal, financial or medical decision.</p>
+    <ul>
+      <li>Always open the cited references and check the original official wording yourself.</li>
+      <li>Confirm important decisions with the relevant local authority, NHS integrated care board, care provider, regulator, ombudsman, qualified adviser or professional representative.</li>
+      <li>Jahosi.co.uk cannot accept responsibility for decisions, losses, delays, disputes or other consequences arising from AI answers or from use of this page without independent fact checking.</li>
+      <li>Do not enter sensitive personal, medical, financial or identification details into the chat.</li>
+    </ul>
+  </section>
+
+  <div class="chat-wrap">
+    <section id="ask" class="panel chat-panel" aria-labelledby="qa-title">
+      <div class="chat-head">
+        <h2 id="qa-title">Ask a social care funding question</h2>
+        <p>Ask one clear question at a time. The answer should explain the main point, suggest practical next steps where possible, and show which reference sources were used.</p>
+      </div>
+      <p class="source-rule">This page is focused on reliable information from official, statutory, regulator, NHS, NICE, official data and ombudsman sources.</p>
+      <div id="chat-thread" class="thread" aria-live="polite" aria-label="Q&A conversation">
+        <div class="message bot"><strong>SocialQA</strong>Use this page to explore adult social care funding in England in clearer language. Good starting points include who may pay for care, how NHS Continuing Healthcare differs from local authority support, what NHS-funded nursing care means, where to check a care home's rating, and where to go if a decision or process seems wrong.</div>
+      </div>
+      <div id="chat-gate" class="chat-gate" hidden>
+        <div class="gate-copy">Complete the Turnstile check to start chatting.</div>
+        <div id="chat-turnstile" class="chat-turnstile"></div>
+        <p id="chat-gate-note" class="gate-note">Your chat session stays temporary and in-memory only.</p>
+      </div>
+      <form id="chat-form" class="chat-form">
+        <label for="chat-input">Your question</label>
+        <textarea id="chat-input" maxlength="1000" autocomplete="off" placeholder="For example: What is NHS Continuing Healthcare, and can it cover care home fees?"></textarea>
+        <div class="input-row">
+          <div class="examples" aria-label="Example questions">
+            <button class="example-btn" type="button" data-question="What is NHS Continuing Healthcare, and can it pay care home fees?">CHC and care home fees</button>
+            <button class="example-btn" type="button" data-question="What is NHS-funded nursing care?">Funded nursing care</button>
+            <button class="example-btn" type="button" data-question="Where can I check a care home's inspection rating?">Check a care home</button>
+          </div>
+          <button id="chat-send" type="submit">Ask</button>
+        </div>
+      </form>
+    </section>
+  </div>
+
+  <section class="panel panel-pad quick" aria-labelledby="quick-title">
+    <h2 id="quick-title">What this page is for</h2>
+    <ul>
+      <li>Understanding whether a question is about local authority social care, NHS Continuing Healthcare, or NHS-funded nursing care.</li>
+      <li>Finding official documents and data before making care funding decisions.</li>
+      <li>Preparing clearer questions for a council, integrated care board, care provider, CQC, LGSCO or PHSO.</li>
+    </ul>
+  </section>
+
+  <section class="panel panel-pad references" aria-labelledby="references-title">
+    <h2 id="references-title">References</h2>
+    <p class="source-scope">These are the validated sources used by this page. Open the original source before relying on any answer.</p>
+    <ul class="source-list">
+      <li><a href="https://www.legislation.gov.uk/ukpga/2014/23/contents">Care Act 2014</a><span class="source-org">legislation.gov.uk</span><p class="source-scope">Primary legislation for adult care and support in England.</p></li>
+      <li><a href="https://www.gov.uk/government/publications/care-act-statutory-guidance/care-and-support-statutory-guidance">Care and support statutory guidance</a><span class="source-org">Department of Health and Social Care / GOV.UK</span><p class="source-scope">Statutory guidance for local authorities under the Care Act 2014.</p></li>
+      <li><a href="https://www.gov.uk/government/publications/social-care-charging-for-local-authorities-2026-to-2027">Social care charging for local authorities: 2026 to 2027</a><span class="source-org">Department of Health and Social Care / GOV.UK</span><p class="source-scope">Current local authority charging circular, capital limits, PEA and related figures.</p></li>
+      <li><a href="https://www.gov.uk/government/publications/national-framework-for-nhs-continuing-healthcare-and-nhs-funded-nursing-care">National framework for NHS continuing healthcare and NHS-funded nursing care</a><span class="source-org">Department of Health and Social Care / GOV.UK</span><p class="source-scope">Official CHC and NHS-funded nursing care principles, process and assessment documents.</p></li>
+      <li><a href="https://www.nhs.uk/social-care-and-support/money-work-and-benefits/nhs-continuing-healthcare/">NHS continuing healthcare</a><span class="source-org">NHS</span><p class="source-scope">Plain-English NHS public guidance on CHC.</p></li>
+      <li><a href="https://www.nhs.uk/social-care-and-support/money-work-and-benefits/nhs-funded-nursing-care/">NHS-funded nursing care</a><span class="source-org">NHS</span><p class="source-scope">Plain-English NHS public guidance on funded nursing care.</p></li>
+      <li><a href="https://www.england.nhs.uk/healthcare/">NHS Continuing Healthcare</a><span class="source-org">NHS England</span><p class="source-scope">NHS England guidance on CHC and integrated care boards.</p></li>
+      <li><a href="https://digital.nhs.uk/data-and-information/publications/statistical/nhse-nhs-continuing-healthcare-and-nhs-funded-nursing-care">CHC and NHS-funded nursing care statistics</a><span class="source-org">NHS England Digital</span><p class="source-scope">Official statistics for CHC and NHS-funded nursing care activity in England.</p></li>
+      <li><a href="https://www.cqc.org.uk/care-services">Find care services</a><span class="source-org">Care Quality Commission</span><p class="source-scope">Care home, nursing home and care provider search with inspection ratings.</p></li>
+      <li><a href="https://www.cqc.org.uk/about-us/transparency/using-cqc-data">Using CQC data</a><span class="source-org">Care Quality Commission</span><p class="source-scope">CQC API and downloadable data for registered services and ratings.</p></li>
+      <li><a href="https://www.nice.org.uk/guidance/ng22/chapter/recommendations">Older people with social care needs and multiple long-term conditions</a><span class="source-org">NICE</span><p class="source-scope">Professional guidance on planning and delivering social care support.</p></li>
+      <li><a href="https://www.ons.gov.uk/peoplepopulationandcommunity/healthandsocialcare/socialcare">Social care statistics</a><span class="source-org">Office for National Statistics</span><p class="source-scope">Official social care data publications, including care homes.</p></li>
+      <li><a href="https://www.lgo.org.uk/adult-social-care/complaints-about-health-and-social-care">Complaints about health and social care</a><span class="source-org">Local Government and Social Care Ombudsman</span><p class="source-scope">Official route for complaints involving adult social care and joint health/social care issues.</p></li>
+      <li><a href="https://www.ombudsman.org.uk/making-complaint/what-we-can-and-cant-help/how-we-can-help-complaints-about-continuing-healthcare-funding">Complaints about continuing healthcare funding</a><span class="source-org">Parliamentary and Health Service Ombudsman</span><p class="source-scope">Official route for complaints about NHS continuing healthcare funding.</p></li>
+    </ul>
+  </section>
+</main>
+
+<footer>
+  SocialQA uses temporary in-memory chat only. AI responses must be independently checked against the cited official references before use.
+</footer>
+
+<script>
+(function(){
+  const TURNSTILE_SITE_KEY = "__TURNSTILE_SITE_KEY__";
+  const CHAT_SESSION_STORAGE_KEY = "socialqa_chat_session_1";
+  const CHAT_HISTORY_STORAGE_KEY = "socialqa_chat_history_1";
+  const TURNSTILE_ENABLED = Boolean(TURNSTILE_SITE_KEY);
+  let turnstileToken = "";
+  let turnstileWidgetId = null;
+  let history = loadHistory();
+
+  const thread = document.getElementById("chat-thread");
+  const form = document.getElementById("chat-form");
+  const input = document.getElementById("chat-input");
+  const send = document.getElementById("chat-send");
+  const gate = document.getElementById("chat-gate");
+  const gateNote = document.getElementById("chat-gate-note");
+
+  function getSessionToken(){
+    try{return sessionStorage.getItem(CHAT_SESSION_STORAGE_KEY) || "";}catch{return "";}
+  }
+  function storeSessionToken(token){
+    try{sessionStorage.setItem(CHAT_SESSION_STORAGE_KEY, token);}catch{}
+  }
+  function clearSessionToken(){
+    try{sessionStorage.removeItem(CHAT_SESSION_STORAGE_KEY);}catch{}
+  }
+  function loadHistory(){
+    try{
+      const parsed = JSON.parse(sessionStorage.getItem(CHAT_HISTORY_STORAGE_KEY) || "[]");
+      return Array.isArray(parsed) ? parsed.slice(-8) : [];
+    }catch{return [];}
+  }
+  function storeHistory(){
+    try{sessionStorage.setItem(CHAT_HISTORY_STORAGE_KEY, JSON.stringify(history.slice(-8)));}catch{}
+  }
+  function setGateMessage(message){
+    if (gateNote) gateNote.textContent = message;
+  }
+  function appendMessage(role, content){
+    const item = document.createElement("div");
+    item.className = "message " + (role === "user" ? "user" : "bot");
+    const label = document.createElement("strong");
+    label.textContent = role === "user" ? "You" : "SocialQA";
+    item.appendChild(label);
+    item.appendChild(document.createTextNode(content));
+    thread.appendChild(item);
+    thread.scrollTop = thread.scrollHeight;
+  }
+  function setBusy(isBusy){
+    send.disabled = isBusy;
+    input.disabled = isBusy;
+    send.textContent = isBusy ? "Checking sources..." : "Ask";
+  }
+  function needsGate(){
+    return TURNSTILE_ENABLED && !getSessionToken();
+  }
+  function updateGate(){
+    if (!gate) return;
+    gate.hidden = !needsGate();
+    if (needsGate()) ensureTurnstileWidget();
+  }
+  function resetTurnstile(){
+    turnstileToken = "";
+    if (window.turnstile && typeof window.turnstile.reset === "function" && turnstileWidgetId !== null) {
+      try{window.turnstile.reset(turnstileWidgetId);}catch{}
+    }
+  }
+  function ensureTurnstileWidget(){
+    const container = document.getElementById("chat-turnstile");
+    if (!TURNSTILE_ENABLED || !container || turnstileWidgetId !== null) return;
+    if (!window.turnstile || typeof window.turnstile.render !== "function") return;
+    turnstileWidgetId = window.turnstile.render(container, {
+      sitekey: TURNSTILE_SITE_KEY,
+      callback: function(token){
+        turnstileToken = token || "";
+        setGateMessage("Verification complete. You can chat in this browser session.");
+      },
+      "expired-callback": function(){
+        turnstileToken = "";
+        setGateMessage("Verification expired. Please complete it again.");
+      },
+      "error-callback": function(code){
+        turnstileToken = "";
+        setGateMessage("Verification could not load (code " + String(code || "unknown") + ").");
+      }
+    });
+  }
+  function scheduleTurnstile(){
+    if (!TURNSTILE_ENABLED) return;
+    if (window.turnstile && typeof window.turnstile.ready === "function") {
+      window.turnstile.ready(function(){ensureTurnstileWidget();});
+    }
+    let attempts = 0;
+    const timer = window.setInterval(function(){
+      ensureTurnstileWidget();
+      attempts += 1;
+      if (turnstileWidgetId !== null || attempts >= 40) window.clearInterval(timer);
+    }, 250);
+  }
+  async function askQuestion(question){
+    if (!question) return;
+    if (needsGate() && !turnstileToken) {
+      updateGate();
+      setGateMessage("Complete the Turnstile check to start chatting.");
+      return;
+    }
+    appendMessage("user", question);
+    history.push({role:"user", content:question});
+    storeHistory();
+    input.value = "";
+    setBusy(true);
+    try{
+      const payload = {
+        message: question,
+        history: history.slice(-8),
+        chatSessionToken: getSessionToken()
+      };
+      if (turnstileToken) payload.turnstileToken = turnstileToken;
+      const res = await fetch("/socialQA/chat", {
+        method: "POST",
+        headers: {"Content-Type":"application/json"},
+        body: JSON.stringify(payload)
+      });
+      const data = await res.json().catch(function(){return {};});
+      if (res.status === 403 && data && data.error === "turnstile_required") {
+        clearSessionToken();
+        updateGate();
+        setGateMessage("Complete the Turnstile check to start chatting.");
+        return;
+      }
+      if (res.status === 403 && data && data.error === "turnstile_failed") {
+        clearSessionToken();
+        resetTurnstile();
+        updateGate();
+        setGateMessage("Verification failed. Please try again.");
+        return;
+      }
+      if (!res.ok) throw new Error(data.error || "chat_failed");
+      if (typeof data.chatSessionToken === "string" && data.chatSessionToken) {
+        storeSessionToken(data.chatSessionToken);
+        turnstileToken = "";
+      }
+      const reply = typeof data.reply === "string" ? data.reply : "";
+      if (!reply.trim()) throw new Error("empty_reply");
+      appendMessage("assistant", reply.trim());
+      history.push({role:"assistant", content:reply.trim()});
+      history = history.slice(-8);
+      storeHistory();
+      updateGate();
+    }catch{
+      appendMessage("assistant", "I could not complete that request. Please try again, and use the References links directly if the question is urgent.");
+    }finally{
+      setBusy(false);
+    }
+  }
+
+  form.addEventListener("submit", function(event){
+    event.preventDefault();
+    askQuestion(input.value.trim());
+  });
+  document.querySelectorAll("[data-question]").forEach(function(button){
+    button.addEventListener("click", function(){
+      input.value = button.getAttribute("data-question") || "";
+      input.focus();
+    });
+  });
+  updateGate();
+  scheduleTurnstile();
+})();
+</script>
+</body>
+</html>

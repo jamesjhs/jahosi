@@ -88,6 +88,7 @@ const SITEMAP_PATHS = [
   "/splash/",
   "/splash/help.htm",
   "/splash/appendices.htm",
+  "/socialQA/",
 ];
 
 const MAX_REQUESTS_PER_WINDOW = 5;
@@ -127,6 +128,112 @@ const SPLASH_CHAT_GUIDELINES = [
   "If user asks for safety-critical medical or emergency advice, recommend contacting a qualified pool technician.",
   "Reference ranges for context only (do not use these to calculate doses): TA ideal 80-120 ppm, pH ideal 7.4-7.6, FC ideal 2-4 ppm, CYA ideal 40-60 ppm, CC should be < 0.5 ppm.",
   "Keep answers concise and practical, focused on diagnosing problems and explaining what needs to be addressed.",
+].join("\n");
+
+const SOCIAL_QA_SOURCES = [
+  {
+    title: "Care Act 2014",
+    organisation: "legislation.gov.uk",
+    url: "https://www.legislation.gov.uk/ukpga/2014/23/contents",
+    scope: "Primary legislation for adult care and support in England.",
+  },
+  {
+    title: "Care and support statutory guidance",
+    organisation: "Department of Health and Social Care / GOV.UK",
+    url: "https://www.gov.uk/government/publications/care-act-statutory-guidance/care-and-support-statutory-guidance",
+    scope: "Statutory guidance for local authorities under the Care Act 2014.",
+  },
+  {
+    title: "Social care charging for local authorities: 2026 to 2027",
+    organisation: "Department of Health and Social Care / GOV.UK",
+    url: "https://www.gov.uk/government/publications/social-care-charging-for-local-authorities-2026-to-2027",
+    scope: "Current local authority charging circular, capital limits, PEA and related figures.",
+  },
+  {
+    title: "National framework for NHS continuing healthcare and NHS-funded nursing care",
+    organisation: "Department of Health and Social Care / GOV.UK",
+    url: "https://www.gov.uk/government/publications/national-framework-for-nhs-continuing-healthcare-and-nhs-funded-nursing-care",
+    scope: "Official CHC and NHS-funded nursing care principles, process and assessment documents.",
+  },
+  {
+    title: "NHS continuing healthcare",
+    organisation: "NHS",
+    url: "https://www.nhs.uk/social-care-and-support/money-work-and-benefits/nhs-continuing-healthcare/",
+    scope: "Plain-English NHS public guidance on CHC.",
+  },
+  {
+    title: "NHS-funded nursing care",
+    organisation: "NHS",
+    url: "https://www.nhs.uk/social-care-and-support/money-work-and-benefits/nhs-funded-nursing-care/",
+    scope: "Plain-English NHS public guidance on funded nursing care.",
+  },
+  {
+    title: "NHS Continuing Healthcare",
+    organisation: "NHS England",
+    url: "https://www.england.nhs.uk/healthcare/",
+    scope: "NHS England public guidance on CHC and the role of integrated care boards.",
+  },
+  {
+    title: "NHS Continuing Healthcare and NHS-funded Nursing Care statistics",
+    organisation: "NHS England Digital",
+    url: "https://digital.nhs.uk/data-and-information/publications/statistical/nhse-nhs-continuing-healthcare-and-nhs-funded-nursing-care",
+    scope: "Official statistics for CHC and NHS-funded nursing care activity in England.",
+  },
+  {
+    title: "Find care services",
+    organisation: "Care Quality Commission",
+    url: "https://www.cqc.org.uk/care-services",
+    scope: "Official care home, nursing home and care provider search with ratings.",
+  },
+  {
+    title: "Using CQC data",
+    organisation: "Care Quality Commission",
+    url: "https://www.cqc.org.uk/about-us/transparency/using-cqc-data",
+    scope: "CQC API and downloadable data for registered services and ratings.",
+  },
+  {
+    title: "Older people with social care needs and multiple long-term conditions",
+    organisation: "NICE",
+    url: "https://www.nice.org.uk/guidance/ng22/chapter/recommendations",
+    scope: "Professional guidance on planning and delivering social care support.",
+  },
+  {
+    title: "Social care",
+    organisation: "Office for National Statistics",
+    url: "https://www.ons.gov.uk/peoplepopulationandcommunity/healthandsocialcare/socialcare",
+    scope: "Official statistics and data publications on social care, including care homes.",
+  },
+  {
+    title: "Complaints about health and social care",
+    organisation: "Local Government and Social Care Ombudsman",
+    url: "https://www.lgo.org.uk/adult-social-care/complaints-about-health-and-social-care",
+    scope: "Official route for complaints involving adult social care and joint health/social care issues.",
+  },
+  {
+    title: "How we can help with complaints about continuing healthcare funding",
+    organisation: "Parliamentary and Health Service Ombudsman",
+    url: "https://www.ombudsman.org.uk/making-complaint/what-we-can-and-cant-help/how-we-can-help-complaints-about-continuing-healthcare-funding",
+    scope: "Official route for complaints about NHS continuing healthcare funding.",
+  },
+];
+
+const SOCIAL_QA_SOURCE_TEXT = SOCIAL_QA_SOURCES.map(
+  (source, index) =>
+    `${index + 1}. ${source.title} - ${source.organisation}. URL: ${source.url}. Scope: ${source.scope}`
+).join("\n");
+
+const SOCIAL_QA_CHAT_GUIDELINES = [
+  "You are SocialQA, a plain-English Q&A assistant for people navigating adult social care in England, especially care funding, care homes, nursing homes, NHS Continuing Healthcare, and NHS-funded nursing care.",
+  "Source rule: use ONLY the validated sources listed below. Do not use public opinion, popular press, forums, blogs, marketing pages, unverified law firm pages, or memory of uncited facts.",
+  "Every user query is headed by this requirement: answer only from robust professional, statutory, official regulator, official data, or official ombudsman sources.",
+  "Every answer must include a 'References' section naming the source titles and URLs used.",
+  "If the listed sources do not support the answer, say plainly: 'I cannot answer that from the validated sources on this page.' Then suggest which official body or local authority/NHS body the user should contact.",
+  "Do not invent rules, thresholds, exceptions, contact details, statistics, dates, figures, eligibility outcomes, or URLs.",
+  "Use plain English, short paragraphs, and practical next steps. Explain that this is information, not legal, financial, or medical advice.",
+  "Be careful about devolution. Unless the user asks otherwise, say the page is focused on England. For Scotland, Wales, or Northern Ireland, explain that rules differ and refer users to the relevant official national body.",
+  "For urgent safety, neglect, abuse, or immediate medical risks, advise contacting emergency services, NHS 111/999 as appropriate, the local authority safeguarding team, or the care provider/CQC route as relevant.",
+  "Do not recommend paid services or specific providers.",
+  "Validated sources:\n" + SOCIAL_QA_SOURCE_TEXT,
 ].join("\n");
 
 app.use(express.urlencoded({ extended: false }));
@@ -209,6 +316,22 @@ app.get("/robots.txt", (req, res) => {
   ].join("\n");
   res.type("text/plain").send(`${robotsTxt}\n`);
 });
+
+app.get(/^\/socialQA$/, (req, res) => {
+  res.redirect("/socialQA/");
+});
+
+app.get("/socialQA/", (req, res) => {
+  setNoCacheHeaders(res);
+  res.send(renderSocialQaIndexHtml());
+});
+
+app.get("/socialQA/index.html", (req, res) => {
+  setNoCacheHeaders(res);
+  res.send(renderSocialQaIndexHtml());
+});
+
+app.use("/socialQA", express.static(path.join(__dirname, "public", "socialQA"), { index: false, setHeaders: setPublicFileHeaders }));
 
 app.use(express.static(path.join(__dirname, "public"), { setHeaders: setPublicFileHeaders }));
 
@@ -330,6 +453,11 @@ function chatCompletionHeaders() {
 const SPLASH_INDEX_HTML_TEMPLATE = fs.readFileSync(path.join(__dirname, "public", "splash", "index.htm"), "utf8");
 function renderSplashIndexHtml() {
   return SPLASH_INDEX_HTML_TEMPLATE.replace('"__TURNSTILE_SITE_KEY__"', JSON.stringify(TURNSTILE_SITE_KEY));
+}
+
+const SOCIAL_QA_INDEX_HTML_TEMPLATE = fs.readFileSync(path.join(__dirname, "public", "socialQA", "index.html"), "utf8");
+function renderSocialQaIndexHtml() {
+  return SOCIAL_QA_INDEX_HTML_TEMPLATE.replace('"__TURNSTILE_SITE_KEY__"', JSON.stringify(TURNSTILE_SITE_KEY));
 }
 
 function renderContactPage({ status, error, debug }) {
@@ -615,6 +743,87 @@ app.post("/splash/chat", splashChatRateLimit, express.json({ limit: "50kb" }), a
       body: JSON.stringify({
         model: "gpt-4o-mini",
         temperature: 0.2,
+        messages: payloadMessages,
+      }),
+    });
+
+    if (!llmRes.ok) {
+      return res.status(502).json({ error: "upstream_failed" });
+    }
+
+    const data = await llmRes.json();
+    const reply = data?.choices?.[0]?.message?.content;
+    if (typeof reply !== "string" || !reply.trim()) {
+      return res.status(502).json({ error: "upstream_empty" });
+    }
+    const response = { reply: reply.trim() };
+    if (resolvedChatSessionToken) {
+      response.chatSessionToken = resolvedChatSessionToken;
+    }
+    return res.json(response);
+  } catch {
+    return res.status(502).json({ error: "upstream_unreachable" });
+  }
+});
+
+app.post("/socialQA/chat", splashChatRateLimit, express.json({ limit: "50kb" }), async (req, res) => {
+  if (!SPLASH_OPENAI_API_KEY) {
+    return res.status(404).json({ error: "disabled" });
+  }
+
+  const body = req.body && typeof req.body === "object" ? req.body : {};
+  const message = typeof body.message === "string" ? body.message.trim() : "";
+  const history = Array.isArray(body.history) ? body.history : [];
+  const chatSessionToken = typeof body.chatSessionToken === "string" ? body.chatSessionToken.trim() : "";
+  const turnstileToken = typeof body.turnstileToken === "string" ? body.turnstileToken.trim() : "";
+  const remoteip = req.ip || req.socket.remoteAddress || undefined;
+
+  if (!message || message.length > 2000) {
+    return res.status(400).json({ error: "invalid_message" });
+  }
+
+  let resolvedChatSessionToken = chatSessionToken;
+  if (isTurnstileEnabled()) {
+    if (!validateChemChatSession(resolvedChatSessionToken)) {
+      if (!turnstileToken) {
+        return res.status(403).json({ error: "turnstile_required" });
+      }
+      const turnstileOk = await verifyTurnstileToken(turnstileToken, remoteip);
+      if (!turnstileOk) {
+        return res.status(403).json({ error: "turnstile_failed" });
+      }
+      resolvedChatSessionToken = mintChemChatSession();
+    }
+  }
+
+  const safeHistory = history
+    .slice(-8)
+    .filter((item) => item && typeof item === "object")
+    .map((item) => {
+      const role = item.role === "assistant" ? "assistant" : "user";
+      const content = String(item.content || "").slice(0, 2500);
+      return { role, content };
+    })
+    .filter((item) => item.content.trim());
+
+  const payloadMessages = [
+    { role: "system", content: SOCIAL_QA_CHAT_GUIDELINES },
+    ...safeHistory,
+    {
+      role: "user",
+      content:
+        "Requirement: answer only from robust professional, statutory, official regulator, official data, or official ombudsman sources. Include references with URLs. User question: " +
+        message,
+    },
+  ];
+
+  try {
+    const llmRes = await fetch(`${SPLASH_OPENAI_BASE_URL}/chat/completions`, {
+      method: "POST",
+      headers: chatCompletionHeaders(),
+      body: JSON.stringify({
+        model: "gpt-4o-mini",
+        temperature: 0.1,
         messages: payloadMessages,
       }),
     });
