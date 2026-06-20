@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="SocialQA is a plain-English adult social care funding Q&A tool for England, using constrained official sources, local signposting, accessibility controls, and exportable chat.">
+  <meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1">
+  <link rel="canonical" href="https://jahosi.co.uk/portfolio/socialqa.html">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="SocialQA | Jahosi Portfolio">
+  <meta property="og:description" content="A plain-English adult social care funding Q&A tool for England, with official-source constraints, local signposting, and accessibility-aware design.">
+  <meta property="og:url" content="https://jahosi.co.uk/portfolio/socialqa.html">
+  <meta property="og:site_name" content="Dr James Rowson Portfolio">
+  <meta property="og:image" content="https://jahosi.co.uk/me.jpg">
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="SocialQA | Jahosi Portfolio">
+  <meta name="twitter:description" content="Plain-English adult social care funding Q&A for England, using constrained official sources and local signposting.">
+  <meta name="twitter:image" content="https://jahosi.co.uk/me.jpg">
+  <title>SocialQA | Jahosi Portfolio</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&display=swap');
+    body { font-family: "Manrope", sans-serif; }
+  </style>
+</head>
+<body class="min-h-screen text-slate-900" style="background:radial-gradient(900px 380px at 8% -10%,#ccfbf1,transparent 55%),radial-gradient(850px 340px at 90% 0%,#fef3c7,transparent 52%),#f8fafc;">
+  <main class="mx-auto max-w-4xl px-4 py-10 sm:px-6">
+    <a href="../index.html" class="text-sm font-semibold text-sky-700 hover:text-sky-900">← Back to portfolio</a>
+
+    <section class="mt-4 rounded-3xl border border-slate-200 bg-white/90 p-8 shadow-xl backdrop-blur-sm">
+      <p class="text-sm font-semibold uppercase tracking-widest text-teal-600">Project</p>
+      <h1 class="mt-2 text-3xl font-extrabold">SocialQA</h1>
+      <p class="mt-1 text-sm text-slate-500">Adult social care funding Q&A · England-focused · Node/Express + static UI + constrained AI workflow</p>
+
+      <p class="mt-5 text-slate-600">SocialQA exists because adult social care funding is difficult to navigate at precisely the point when people are often tired, under pressure, and dealing with emotionally loaded decisions. The project is not trying to replace professional advice. It is a careful translation layer: a way to turn complicated funding routes, local authority processes, NHS Continuing Healthcare language, care home checks, and complaint pathways into clearer questions and next steps.</p>
+
+      <p class="mt-4 text-slate-600">The design philosophy is deliberately restrained. SocialQA does not try to be a care-home recommender, legal adviser, financial planner, or medical decision-maker. Its job is narrower and more useful: help someone ask a better question, understand the likely official route, and know which source or organisation they should check next.</p>
+
+      <div class="mt-6 rounded-2xl border border-slate-200 shadow-sm overflow-hidden" aria-hidden="true">
+        <div class="grid md:grid-cols-2">
+          <div class="p-5 text-white" style="background:linear-gradient(145deg,#0b3d39,#0f766e);">
+            <p class="text-xs font-semibold uppercase tracking-[0.16em] text-teal-100">Core interaction</p>
+            <ol class="mt-3 space-y-2 text-sm text-teal-50">
+              <li><span class="font-bold text-teal-200">1.</span> Pick a starter or ask a clear question</li>
+              <li><span class="font-bold text-teal-200">2.</span> Keep personal details out of the prompt</li>
+              <li><span class="font-bold text-teal-200">3.</span> Receive a plain-English answer with references</li>
+              <li><span class="font-bold text-teal-200">4.</span> Check the official source or local body before acting</li>
+            </ol>
+          </div>
+          <div class="p-5 bg-slate-50">
+            <p class="text-xs font-semibold uppercase tracking-[0.16em] text-slate-500">Interface snapshot</p>
+            <div class="mt-3 space-y-3">
+              <div class="rounded-lg border border-slate-200 bg-white p-3">
+                <p class="text-xs text-slate-500">Focus</p>
+                <p class="mt-1 text-xl font-extrabold text-slate-900">Ask one clear question</p>
+              </div>
+              <div class="rounded-lg border border-teal-200 bg-teal-50 p-3">
+                <p class="text-xs text-teal-700">Guardrail</p>
+                <p class="mt-1 text-sm font-semibold text-teal-900">Official, statutory, regulator, NHS, NICE, data, and ombudsman sources only.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <h2 class="mt-8 text-xl font-bold">Who it is for</h2>
+      <p class="mt-3 text-sm text-slate-600">The target audience is people in England trying to make sense of adult social care funding and care-home processes: families, carers, advocates, self-funders, people approaching a local authority assessment, and people trying to understand NHS Continuing Healthcare or NHS-funded nursing care. It is also useful for people preparing clearer questions before speaking to a council, integrated care board, care provider, CQC, LGSCO, PHSO, adviser, or representative.</p>
+
+      <h2 class="mt-8 text-xl font-bold">What it can do</h2>
+      <ul class="mt-3 space-y-1 text-sm text-slate-600 list-disc list-inside">
+        <li>Explain adult social care funding concepts in plainer English.</li>
+        <li>Help distinguish local authority funding, self-funding, NHS Continuing Healthcare, and NHS-funded nursing care.</li>
+        <li>Suggest practical next questions about care needs assessments, financial assessments, top-up fees, care home contracts, and savings running down.</li>
+        <li>Point users towards official reference sources and local signposting routes.</li>
+        <li>Offer starter prompts, common questions, and question packs for councils, ICB/CHC teams, and care-home contract discussions.</li>
+        <li>Look up local authority and related signposts from a postcode, with fallbacks to official services.</li>
+        <li>Export the chat as a PDF for offline review or to take into a conversation.</li>
+      </ul>
+
+      <h2 class="mt-8 text-xl font-bold">Design philosophy</h2>
+      <div class="mt-3 grid gap-3 md:grid-cols-2">
+        <article class="rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
+          <h3 class="text-sm font-bold uppercase tracking-wide text-slate-700">Calm before clever</h3>
+          <p class="mt-2 text-sm text-slate-600">The page avoids novelty UI and makes the first useful action obvious. The tone is deliberately steady because the subject matter is stressful.</p>
+        </article>
+        <article class="rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
+          <h3 class="text-sm font-bold uppercase tracking-wide text-slate-700">Sources over confidence</h3>
+          <p class="mt-2 text-sm text-slate-600">The assistant is constrained to validated official and professional sources. The user is repeatedly nudged back to original wording and local confirmation.</p>
+        </article>
+        <article class="rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
+          <h3 class="text-sm font-bold uppercase tracking-wide text-slate-700">Actionable, not advisory</h3>
+          <p class="mt-2 text-sm text-slate-600">Answers should explain the route and help prepare the next conversation. They should not decide eligibility, recommend a provider, or replace qualified advice.</p>
+        </article>
+        <article class="rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
+          <h3 class="text-sm font-bold uppercase tracking-wide text-slate-700">Accessible by default</h3>
+          <p class="mt-2 text-sm text-slate-600">Large-font and high-contrast controls, collapsible panels, mobile-first spacing, and concise prompts reflect an audience that may be using the page under pressure.</p>
+        </article>
+      </div>
+
+      <h2 class="mt-8 text-xl font-bold">Build and functions</h2>
+      <p class="mt-3 text-sm text-slate-600">SocialQA is served from the same Node/Express portfolio application as the rest of Jahosi. The page itself is intentionally simple: static HTML, CSS, and browser JavaScript, with the server providing chat, postcode lookup support, Turnstile-aware session handling, rate limiting, and source-constrained prompt construction.</p>
+
+      <div class="mt-3 grid gap-2 text-sm sm:grid-cols-2 lg:grid-cols-4">
+        <div class="rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-center font-semibold text-slate-700">Node.js</div>
+        <div class="rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-center font-semibold text-slate-700">Express</div>
+        <div class="rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-center font-semibold text-slate-700">Turnstile-ready</div>
+        <div class="rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-center font-semibold text-slate-700">PDF export</div>
+      </div>
+
+      <h2 class="mt-8 text-xl font-bold">Limitations and guardrails</h2>
+      <ul class="mt-3 space-y-1 text-sm text-slate-600 list-disc list-inside">
+        <li>It is information support, not legal, financial, medical, safeguarding, or care-planning advice.</li>
+        <li>It is focused on England; social care law and routes differ in Scotland, Wales, and Northern Ireland.</li>
+        <li>It should not be used to share sensitive personal, medical, financial, or identification details.</li>
+        <li>It does not recommend, rank, endorse, or review specific care homes, care agencies, services, or named people.</li>
+        <li>AI responses can be incomplete or phrase something too strongly, so original sources and local organisations must be checked before acting.</li>
+        <li>Local variation matters: councils, integrated care boards, contracts, charging policies, care availability, and complaint routes can affect the practical answer.</li>
+      </ul>
+
+      <h2 class="mt-8 text-xl font-bold">Why this belongs in the Jahosi portfolio</h2>
+      <p class="mt-3 text-sm text-slate-600">Many Jahosi projects are practical tools built around a specific real-world friction: tracking admin workload, understanding EV charging costs, coordinating museum data, planning pool heating, or sharing safety status. SocialQA follows the same pattern, but applies it to a public-information problem. Its value is not just the chat box; it is the surrounding structure of source discipline, disclaimers, collapsible starter flows, local signposting, mobile ergonomics, and accessibility controls.</p>
+
+      <div class="mt-8 flex flex-wrap gap-3">
+        <a href="/socialQA/" class="inline-flex items-center gap-2 rounded-lg bg-teal-700 px-4 py-2 text-sm font-semibold text-white hover:bg-teal-800">Open SocialQA →</a>
+        <a href="../index.html" class="inline-flex items-center gap-2 rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-semibold text-slate-700 hover:border-slate-400 hover:text-slate-900">Back to portfolio</a>
+      </div>
+    </section>
+  </main>
+</body>
+</html>

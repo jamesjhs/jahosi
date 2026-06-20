@@ -84,6 +84,7 @@ const SITEMAP_PATHS = [
   "/portfolio/messaging.html",
   "/portfolio/qglimpse.html",
   "/portfolio/pingme-help.html",
+  "/portfolio/socialqa.html",
   "/portfolio/splash.html",
   "/splash/",
   "/splash/help.htm",
