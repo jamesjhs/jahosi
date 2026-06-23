@@ -167,6 +167,7 @@ body.high-contrast .disclaimer{background:#fff}
 .chat-wrap{
   max-width:920px;
   margin:0 auto;
+  scroll-margin-top:1rem;
 }
 .local-tool{
   max-width:920px;
@@ -322,6 +323,10 @@ body.high-contrast .disclaimer{background:#fff}
   grid-template-rows:auto minmax(340px,54vh) auto;
   overflow:hidden;
 }
+.chat-panel.is-active{
+  border-color:var(--brand);
+  box-shadow:0 0 0 3px rgba(15,118,110,.20), var(--shadow);
+}
 .chat-head{
   padding:1rem;
   border-bottom:1px solid var(--line);
@@ -334,6 +339,11 @@ body.high-contrast .disclaimer{background:#fff}
 .chat-head p{
   margin:.35rem 0 0;
   color:#24423d;
+}
+.chat-status{
+  margin:.45rem 0 0;
+  color:#24423d;
+  font-size:.94rem;
 }
 .thread{
   overflow:auto;
@@ -363,6 +373,10 @@ body.high-contrast .disclaimer{background:#fff}
 .message.thinking{
   color:var(--muted);
   font-style:italic;
+}
+.message.is-new{
+  outline:3px solid rgba(15,118,110,.24);
+  outline-offset:2px;
 }
 .chat-gate{
   border-top:1px solid var(--line);
@@ -500,6 +514,20 @@ body.high-contrast .export-btn:hover{
   color:var(--brand-dark);
   text-decoration-thickness:2px;
 }
+.form-note{
+  margin:0;
+  color:var(--error);
+  font-weight:700;
+}
+.form-note[hidden]{display:none}
+.back-to-chat{
+  position:fixed;
+  right:1rem;
+  bottom:1rem;
+  z-index:15;
+  box-shadow:0 6px 20px rgba(15,23,42,.20);
+}
+.back-to-chat[hidden]{display:none}
 .references h2{
   margin:0 0 .65rem;
   font-size:1.15rem;
@@ -727,9 +755,10 @@ body.high-contrast footer{color:#fff}
     <section id="ask" class="panel chat-panel" aria-labelledby="qa-title">
       <div class="chat-head">
         <h2 id="qa-title">Ask the SocialQA bot a question</h2>
+        <p id="chat-status" class="chat-status">Answers from starter prompts and common questions appear here.</p>
       </div>
       <div id="chat-thread" class="thread" aria-live="polite" aria-label="Q&A conversation">
-        <div class="message bot"><strong>SocialQA</strong>Ask one clear question about adult social care funding in England. Do NOT provide any personal or identifiable data. Do NOT ask for my preferences, opinions or suggestions about care providers, or for specific financial advice. I can give general source-based information and signposting only.</div>
+        <div class="message bot"><strong>SocialQA</strong>Ask a question about adult social care in England. Don't provide any personal or identifiable data. For local signposting, use the postcode lookup or tell me only your council area, town or the first part of your postcode. I cannot give preferences, opinions or suggestions about care providers, or specific financial advice. I can give general source-based information and signposting only.</div>
       </div>
       <div id="chat-gate" class="chat-gate" hidden>
         <div class="gate-copy">Complete the Turnstile check to start chatting.</div>
@@ -749,11 +778,13 @@ body.high-contrast footer{color:#fff}
               <button id="chat-send" type="submit">Ask</button>
             </div>
             <button id="export-pdf" class="export-btn" type="button">Export PDF</button>
+            <p id="form-note" class="form-note" hidden></p>
           </div>
         </div>
       </form>
     </section>
   </div>
+  <button id="back-to-chat" class="back-to-chat" type="button" hidden>Back to chat</button>
 
   <section class="panel panel-pad guided-section" aria-labelledby="packs-title">
     <h2 id="packs-title">Question packs</h2>
@@ -842,7 +873,7 @@ body.high-contrast footer{color:#fff}
 
   <section class="panel panel-pad references" aria-labelledby="references-title">
     <h2 id="references-title">References</h2>
-    <p class="source-scope">These are the validated sources used by this page. Open the original source before relying on any answer. Sources last reviewed: 20 June 2026.</p>
+    <p class="source-scope">These are the validated sources used by this page. Open the original source before relying on any answer. Sources last reviewed: 24 June 2026.</p>
     <ul class="source-list">
       <li><a href="https://www.legislation.gov.uk/ukpga/2014/23/contents" target="_blank" rel="noopener noreferrer">Care Act 2014</a><span class="source-org">legislation.gov.uk</span><p class="source-scope">Primary legislation for adult care and support in England.</p></li>
       <li><a href="https://www.gov.uk/government/publications/care-act-statutory-guidance/care-and-support-statutory-guidance" target="_blank" rel="noopener noreferrer">Care and support statutory guidance</a><span class="source-org">Department of Health and Social Care / GOV.UK</span><p class="source-scope">Statutory guidance for local authorities under the Care Act 2014, including charging, financial assessment and deprivation of assets.</p></li>
@@ -858,6 +889,10 @@ body.high-contrast footer{color:#fff}
       <li><a href="https://www.england.nhs.uk/healthcare/" target="_blank" rel="noopener noreferrer">NHS Continuing Healthcare</a><span class="source-org">NHS England</span><p class="source-scope">NHS England guidance on CHC and integrated care boards.</p></li>
       <li><a href="https://digital.nhs.uk/data-and-information/publications/statistical/nhse-nhs-continuing-healthcare-and-nhs-funded-nursing-care" target="_blank" rel="noopener noreferrer">CHC and NHS-funded nursing care statistics</a><span class="source-org">NHS England Digital</span><p class="source-scope">Official statistics for CHC and NHS-funded nursing care activity in England.</p></li>
       <li><a href="https://www.cqc.org.uk/care-services" target="_blank" rel="noopener noreferrer">Find care services</a><span class="source-org">Care Quality Commission</span><p class="source-scope">Care home, nursing home and care provider search with inspection ratings.</p></li>
+      <li><a href="https://www.gov.uk/find-local-council" target="_blank" rel="noopener noreferrer">Find your local council</a><span class="source-org">GOV.UK</span><p class="source-scope">Official postcode lookup for the relevant local council website.</p></li>
+      <li><a href="https://www.nhs.uk/service-search/other-health-services/local-authority-adult-social-care/" target="_blank" rel="noopener noreferrer">Find local authority adult social care services</a><span class="source-org">NHS</span><p class="source-scope">Official NHS lookup for local authority adult social care services in England.</p></li>
+      <li><a href="https://www.nhs.uk/nhs-services/find-your-local-integrated-care-board/" target="_blank" rel="noopener noreferrer">Find your local integrated care board</a><span class="source-org">NHS</span><p class="source-scope">Official NHS page for finding the local integrated care board in England.</p></li>
+      <li><a href="https://www.england.nhs.uk/contact-us/about-nhs-services/contact-your-local-integrated-care-board-icb/" target="_blank" rel="noopener noreferrer">Contact your local integrated care board</a><span class="source-org">NHS England</span><p class="source-scope">NHS England guidance on identifying and contacting the relevant ICB.</p></li>
       <li><a href="https://www.cqc.org.uk/about-us/transparency/using-cqc-data" target="_blank" rel="noopener noreferrer">Using CQC data</a><span class="source-org">Care Quality Commission</span><p class="source-scope">CQC API and downloadable data for registered services and ratings.</p></li>
       <li><a href="https://www.nice.org.uk/guidance/ng22/chapter/recommendations" target="_blank" rel="noopener noreferrer">Older people with social care needs and multiple long-term conditions</a><span class="source-org">NICE</span><p class="source-scope">Professional guidance on planning and delivering social care support.</p></li>
       <li><a href="https://www.ons.gov.uk/peoplepopulationandcommunity/healthandsocialcare/socialcare" target="_blank" rel="noopener noreferrer">Social care statistics</a><span class="source-org">Office for National Statistics</span><p class="source-scope">Official social care data publications, including care homes.</p></li>
@@ -875,7 +910,7 @@ body.high-contrast footer{color:#fff}
 
 <footer>
   <a href="/socialQA/policy.html">Privacy, use policy and disclaimer</a><br>
-  version 0.2.0 | Last updated: 20 June 2026 | &copy; 2026 <a href="/">www.jahosi.co.uk</a>
+  version 0.3.0 | Last updated: 24 June 2026 | &copy; 2026 <a href="/">www.jahosi.co.uk</a>
 </footer>
 
 <script>
@@ -888,12 +923,17 @@ body.high-contrast footer{color:#fff}
   let turnstileToken = "";
   let turnstileWidgetId = null;
   let history = loadHistory();
+  let localChatContext = null;
 
   const thread = document.getElementById("chat-thread");
   const form = document.getElementById("chat-form");
   const input = document.getElementById("chat-input");
   const send = document.getElementById("chat-send");
   const exportPdf = document.getElementById("export-pdf");
+  const chatPanel = document.getElementById("ask");
+  const chatStatus = document.getElementById("chat-status");
+  const formNote = document.getElementById("form-note");
+  const backToChat = document.getElementById("back-to-chat");
   const postcodeForm = document.getElementById("postcode-form");
   const postcodeInput = document.getElementById("postcode-input");
   const postcodeSubmit = document.getElementById("postcode-submit");
@@ -949,6 +989,51 @@ body.high-contrast footer{color:#fff}
   }
   function setGateMessage(message){
     if (gateNote) gateNote.textContent = message;
+  }
+  function setChatStatus(message){
+    if (chatStatus) chatStatus.textContent = message;
+  }
+  function setFormNote(message){
+    if (!formNote) return;
+    formNote.textContent = message || "";
+    formNote.hidden = !message;
+  }
+  function highlightChat(){
+    if (!chatPanel) return;
+    chatPanel.classList.add("is-active");
+    window.clearTimeout(highlightChat.timer);
+    highlightChat.timer = window.setTimeout(function(){
+      chatPanel.classList.remove("is-active");
+    }, 2400);
+  }
+  function revealElement(element, block){
+    if (!element || typeof element.scrollIntoView !== "function") return;
+    window.requestAnimationFrame(function(){
+      element.scrollIntoView({behavior:"smooth", block:block || "nearest"});
+    });
+  }
+  function revealChat(block){
+    highlightChat();
+    revealElement(chatPanel, block || "start");
+  }
+  function revealFormProblem(message, element){
+    setFormNote(message);
+    setChatStatus(message);
+    revealChat("center");
+    window.setTimeout(function(){
+      if (element && typeof element.focus === "function") element.focus({preventScroll:true});
+    }, 250);
+  }
+  function clearNewMessageMarkers(){
+    thread.querySelectorAll(".message.is-new").forEach(function(item){
+      item.classList.remove("is-new");
+    });
+  }
+  function revealNewMessage(messageElement){
+    clearNewMessageMarkers();
+    if (messageElement) messageElement.classList.add("is-new");
+    revealElement(messageElement || chatPanel, "start");
+    highlightChat();
   }
   function appendReplyContent(element, content){
     const urlPattern = /\bhttps?:\/\/[^\s<>"']+/gi;
@@ -1026,7 +1111,24 @@ body.high-contrast footer{color:#fff}
     }
     list.appendChild(item);
   }
+  function buildLocalChatContext(data){
+    const authorities = Array.isArray(data.authorities) ? data.authorities.map(function(authority){
+      return {
+        name: authority && authority.name ? String(authority.name).slice(0, 120) : "",
+        tier: authority && authority.tier ? String(authority.tier).slice(0, 80) : "",
+        homepage_url: authority && authority.homepage_url ? String(authority.homepage_url).slice(0, 300) : ""
+      };
+    }).filter(function(authority){return authority.name;}) : [];
+    const links = Array.isArray(data.localLinks) ? data.localLinks.map(function(link){
+      return {
+        label: link && link.label ? String(link.label).slice(0, 120) : "",
+        href: link && link.href ? String(link.href).slice(0, 300) : ""
+      };
+    }).filter(function(link){return link.label && link.href;}) : [];
+    return authorities.length || links.length ? {authorities: authorities, links: links} : null;
+  }
   function showLocalMessage(title, message, links){
+    localChatContext = null;
     clearElement(localResults);
     const heading = document.createElement("h3");
     heading.textContent = title;
@@ -1056,18 +1158,38 @@ body.high-contrast footer{color:#fff}
     localResults.appendChild(intro);
 
     const list = document.createElement("ul");
-    if (Array.isArray(data.authorities)) {
+    if (Array.isArray(data.localLinks) && data.localLinks.length) {
+      data.localLinks.forEach(function(link){
+        if (!link || !link.label || !link.href) return;
+        appendLocalLink(list, link.label, link.href, link.note || "");
+      });
+    } else if (Array.isArray(data.authorities)) {
       data.authorities.forEach(function(authority){
         if (!authority || !authority.homepage_url) return;
         const tier = authority.tier ? authority.tier + " authority" : "local authority";
         appendLocalLink(list, authority.name + " website", authority.homepage_url, tier + ". Search this site for adult social care, financial assessment, charging policy, care homes and safeguarding.");
       });
+      appendLocalLink(list, "GOV.UK find your local council", data.govFindCouncilUrl || "https://www.gov.uk/find-local-council", "Use this if the council result looks wrong or the postcode crosses boundaries.");
+      appendLocalLink(list, "CQC find care services", data.cqcCareSearchUrl || "https://www.cqc.org.uk/care-services", "Search by postcode for care homes, nursing homes and inspection ratings.");
+      appendLocalLink(list, "NHS find your local integrated care board", data.nhsIcbSearchUrl || "https://www.nhs.uk/nhs-services/find-your-local-integrated-care-board/", "Use for local NHS commissioning and NHS Continuing Healthcare routes.");
+      appendLocalLink(list, "NHS England ICB contact guidance", data.nhsEnglandIcbContactUrl || "https://www.england.nhs.uk/contact-us/about-nhs-services/contact-your-local-integrated-care-board-icb/", "NHS England explains how to identify and contact the relevant ICB.");
     }
-    appendLocalLink(list, "GOV.UK find your local council", data.govFindCouncilUrl || "https://www.gov.uk/find-local-council", "Use this if the council result looks wrong or the postcode crosses boundaries.");
-    appendLocalLink(list, "CQC find care services", data.cqcCareSearchUrl || "https://www.cqc.org.uk/care-services", "Search by postcode for care homes, nursing homes and inspection ratings.");
-    appendLocalLink(list, "NHS find your local integrated care board", data.nhsIcbSearchUrl || "https://www.nhs.uk/nhs-services/find-your-local-integrated-care-board/", "Use for local NHS commissioning and NHS Continuing Healthcare routes.");
-    appendLocalLink(list, "NHS England ICB contact guidance", data.nhsEnglandIcbContactUrl || "https://www.england.nhs.uk/contact-us/about-nhs-services/contact-your-local-integrated-care-board-icb/", "NHS England explains how to identify and contact the relevant ICB.");
     localResults.appendChild(list);
+
+    if (Array.isArray(data.localDirectorySearchTerms) && data.localDirectorySearchTerms.length) {
+      const terms = document.createElement("p");
+      terms.className = "result-note";
+      terms.textContent = "On the council site, try these official-directory search terms: " + data.localDirectorySearchTerms.join(", ") + ".";
+      localResults.appendChild(terms);
+    }
+
+    if (data.localDirectoryNote) {
+      const note = document.createElement("p");
+      note.className = "result-note";
+      note.textContent = data.localDirectoryNote;
+      localResults.appendChild(note);
+    }
+    localChatContext = buildLocalChatContext(data);
     localResults.hidden = false;
   }
   async function lookupLocalSources(postcode){
@@ -1274,11 +1396,20 @@ body.high-contrast footer{color:#fff}
   }
   async function askQuestion(question){
     if (!question) return;
+    if (!form.reportValidity()) {
+      const invalid = form.querySelector(":invalid");
+      revealFormProblem("Tick the disclaimer acknowledgement before asking SocialQA.", invalid || input);
+      return;
+    }
     if (needsGate() && !turnstileToken) {
       updateGate();
       setGateMessage("Complete the Turnstile check to start chatting.");
+      revealFormProblem("Complete the Turnstile check to start chatting.", gate || input);
       return;
     }
+    setFormNote("");
+    setChatStatus("Checking official sources...");
+    revealChat("start");
     appendMessage("user", question);
     history.push({role:"user", content:question});
     storeHistory();
@@ -1286,12 +1417,14 @@ body.high-contrast footer{color:#fff}
     setBusy(true);
     const thinkingMessage = appendMessage("assistant", "Thinking...");
     thinkingMessage.classList.add("thinking");
+    revealNewMessage(thinkingMessage);
     try{
       const payload = {
         message: question,
         history: history.slice(-8),
         chatSessionToken: getSessionToken()
       };
+      if (localChatContext) payload.localContext = localChatContext;
       if (turnstileToken) payload.turnstileToken = turnstileToken;
       const res = await fetch("/socialQA/chat", {
         method: "POST",
@@ -1304,6 +1437,7 @@ body.high-contrast footer{color:#fff}
         clearSessionToken();
         updateGate();
         setGateMessage("Complete the Turnstile check to start chatting.");
+        revealFormProblem("Complete the Turnstile check to start chatting.", gate || input);
         return;
       }
       if (res.status === 403 && data && data.error === "turnstile_failed") {
@@ -1312,6 +1446,7 @@ body.high-contrast footer{color:#fff}
         resetTurnstile();
         updateGate();
         setGateMessage("Verification failed. Please try again.");
+        revealFormProblem("Verification failed. Please try again.", gate || input);
         return;
       }
       if (!res.ok) throw new Error(data.error || "chat_failed");
@@ -1322,14 +1457,18 @@ body.high-contrast footer{color:#fff}
       const reply = typeof data.reply === "string" ? data.reply : "";
       if (!reply.trim()) throw new Error("empty_reply");
       removeThinkingMessage(thinkingMessage);
-      appendMessage("assistant", reply.trim());
+      const replyMessage = appendMessage("assistant", reply.trim());
+      revealNewMessage(replyMessage);
+      setChatStatus("Answer added. Check the references in the response before acting.");
       history.push({role:"assistant", content:reply.trim()});
       history = history.slice(-8);
       storeHistory();
       updateGate();
     }catch{
       removeThinkingMessage(thinkingMessage);
-      appendMessage("assistant", "I could not complete that request. Please try again, and use the References links directly if the question is urgent.");
+      const errorMessage = appendMessage("assistant", "I could not complete that request. Please try again, and use the References links directly if the question is urgent.");
+      revealNewMessage(errorMessage);
+      setChatStatus("The request could not be completed.");
     }finally{
       setBusy(false);
     }
@@ -1339,6 +1478,13 @@ body.high-contrast footer{color:#fff}
     event.preventDefault();
     askQuestion(input.value.trim());
   });
+  form.addEventListener("invalid", function(event){
+    if (event.target === input) {
+      revealFormProblem("Enter a question before asking SocialQA.", input);
+      return;
+    }
+    revealFormProblem("Tick the disclaimer acknowledgement before asking SocialQA.", event.target);
+  }, true);
   contrastToggle.addEventListener("click", function(){
     updateDisplayOption("highContrast");
   });
@@ -1350,6 +1496,20 @@ body.high-contrast footer{color:#fff}
     lookupLocalSources(postcodeInput.value.trim());
   });
   exportPdf.addEventListener("click", exportChatPdf);
+  if (backToChat) {
+    backToChat.addEventListener("click", function(){
+      revealChat("start");
+      input.focus({preventScroll:true});
+      backToChat.hidden = true;
+    });
+  }
+  window.addEventListener("scroll", function(){
+    if (!backToChat || !chatPanel) return;
+    const rect = chatPanel.getBoundingClientRect();
+    const isChatVisible = rect.top < window.innerHeight * .65 && rect.bottom > window.innerHeight * .25;
+    const hasConversation = thread.querySelectorAll(".message").length > 1;
+    backToChat.hidden = isChatVisible || !hasConversation;
+  }, {passive:true});
   input.addEventListener("keydown", function(event){
     if (event.key === "Enter" && !event.shiftKey) {
       event.preventDefault();
@@ -1359,17 +1519,20 @@ body.high-contrast footer{color:#fff}
   document.querySelectorAll("[data-question]").forEach(function(button){
     button.addEventListener("click", function(){
       input.value = button.getAttribute("data-question") || "";
-      input.focus();
-      form.requestSubmit();
+      setChatStatus("Common question selected. The answer will appear here.");
+      revealChat("start");
+      input.focus({preventScroll:true});
+      askQuestion(input.value.trim());
     });
   });
   document.querySelectorAll("[data-prompt]").forEach(function(button){
     button.addEventListener("click", function(){
       input.value = button.getAttribute("data-prompt") || "";
       if (startTool) startTool.open = false;
-      input.focus();
-      input.scrollIntoView({behavior:"smooth", block:"center"});
-      form.requestSubmit();
+      setChatStatus("Starter question selected. The answer will appear here.");
+      revealChat("start");
+      input.focus({preventScroll:true});
+      askQuestion(input.value.trim());
     });
   });
   applyDisplayOptions(loadDisplayOptions());

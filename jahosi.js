@@ -227,6 +227,30 @@ const SOCIAL_QA_SOURCES = [
     scope: "Official care home, nursing home and care provider search with ratings.",
   },
   {
+    title: "Find your local council",
+    organisation: "GOV.UK",
+    url: "https://www.gov.uk/find-local-council",
+    scope: "Official postcode lookup for the relevant local council website.",
+  },
+  {
+    title: "Find local authority adult social care services",
+    organisation: "NHS",
+    url: "https://www.nhs.uk/service-search/other-health-services/local-authority-adult-social-care/",
+    scope: "Official NHS lookup for local authority adult social care services in England.",
+  },
+  {
+    title: "Find your local integrated care board",
+    organisation: "NHS",
+    url: "https://www.nhs.uk/nhs-services/find-your-local-integrated-care-board/",
+    scope: "Official NHS page for finding the local integrated care board in England.",
+  },
+  {
+    title: "Contact your local integrated care board",
+    organisation: "NHS England",
+    url: "https://www.england.nhs.uk/contact-us/about-nhs-services/contact-your-local-integrated-care-board-icb/",
+    scope: "NHS England guidance on identifying and contacting the relevant ICB.",
+  },
+  {
     title: "Using CQC data",
     organisation: "Care Quality Commission",
     url: "https://www.cqc.org.uk/about-us/transparency/using-cqc-data",
@@ -328,6 +352,9 @@ const SOCIAL_QA_CHAT_GUIDELINES = [
   "If your draft answer would amount to a recommendation, regulated financial advice, provider recommendation, care assessment, NHS/local authority decision, eligibility prediction, safeguarding decision, legal conclusion, or instruction likely to affect care or finances, stop and replace it with a warning plus neutral signposting to the relevant official body, regulator, ombudsman, MoneyHelper, FCA-authorised adviser, solicitor, local authority, NHS integrated care board, or emergency/safeguarding route.",
   "Be careful about devolution. Unless the user asks otherwise, say the page is focused on England. For Scotland, Wales, or Northern Ireland, explain that rules differ and refer users to the relevant official national body.",
   "Always warn that local variation can significantly affect practical outcomes, and users should check with their own local authority, NHS integrated care board, care provider, regulator, ombudsman, qualified adviser, or professional representative before acting.",
+  "For questions where local rules, available services, safeguarding routes, care directories, community directories, Local Offer pages, charging policies, complaints routes, care-market availability, or NHS commissioning may matter, ask the user for their local authority, town, or the first part of their postcode if they have not already provided enough location context. Do not require a full postcode in chat; full postcodes can be identifying. Suggest the page's postcode lookup for official local signposting.",
+  "When local context is provided by the postcode lookup, use it only for signposting and for explaining which official local bodies to check. Do not infer eligibility, availability, quality, safety, costs, or outcomes from location alone.",
+  "Explain that Norfolk Community Directory is an example of a council-area directory, but similar resources vary by council and may be called community directory, care and support directory, wellbeing directory, Local Offer, family information service, SEND Local Offer, or adult social care directory. Use the user's council website, GOV.UK Find your local council, NHS local authority adult social care lookup, CQC search, and NHS ICB lookup as the robust route across England.",
   "Never give opinions, reviews, rankings, endorsements, comparisons, or recommendations about any specific care home, care agency, nursing home, day care centre, hospital, GP surgery, healthcare service, or named person involved in care such as a carer, manager, nurse, GP, social worker, assessor, or clinician.",
   "If asked whether a provider, service, or named person is good, bad, safe, suitable, trustworthy, best, or recommended, do not answer with an opinion. Instead explain how to check official sources such as CQC reports, the provider's own written terms, the relevant local authority or NHS body, and how to seek independent advice.",
   "You may explain how to read official inspection reports, ratings, complaints routes, contracts, fees, and assessment documents, but must not decide which provider or person the user should choose.",
@@ -386,6 +413,100 @@ function setPublicFileHeaders(res, filePath) {
   ) {
     setNoCacheHeaders(res);
   }
+}
+
+const SOCIAL_QA_LOCAL_SEARCH_TERMS = [
+  "adult social care",
+  "care and support",
+  "community directory",
+  "care and support directory",
+  "wellbeing directory",
+  "Local Offer",
+  "financial assessment",
+  "charging policy",
+  "safeguarding adults",
+  "care homes",
+];
+
+function buildSocialQaLocalLinks(authorities) {
+  const links = [];
+  const seen = new Set();
+  (Array.isArray(authorities) ? authorities : []).forEach((authority) => {
+    if (!authority || !authority.homepage_url) return;
+    const href = String(authority.homepage_url).slice(0, 300);
+    if (seen.has(href)) return;
+    seen.add(href);
+    const tier = authority.tier ? `${authority.tier} authority` : "local authority";
+    links.push({
+      label: `${String(authority.name || "Local authority").slice(0, 120)} website`,
+      href,
+      note: `${tier}. Search this site for adult social care, financial assessment, charging policy, local directories, care homes and safeguarding.`,
+    });
+  });
+  links.push(
+    {
+      label: "GOV.UK find your local council",
+      href: "https://www.gov.uk/find-local-council",
+      note: "Use this if the council result looks wrong or the postcode crosses boundaries.",
+    },
+    {
+      label: "NHS find local authority adult social care services",
+      href: "https://www.nhs.uk/service-search/other-health-services/local-authority-adult-social-care/",
+      note: "Search by postcode or place for the adult social care contact route.",
+    },
+    {
+      label: "CQC find care services",
+      href: "https://www.cqc.org.uk/care-services",
+      note: "Search by postcode for care homes, nursing homes, home care agencies and inspection ratings.",
+    },
+    {
+      label: "NHS find your local integrated care board",
+      href: "https://www.nhs.uk/nhs-services/find-your-local-integrated-care-board/",
+      note: "Use for local NHS commissioning and NHS Continuing Healthcare routes.",
+    },
+    {
+      label: "NHS England ICB contact guidance",
+      href: "https://www.england.nhs.uk/contact-us/about-nhs-services/contact-your-local-integrated-care-board-icb/",
+      note: "NHS England explains how to identify and contact the relevant ICB.",
+    }
+  );
+  return links;
+}
+
+function sanitizeSocialQaLocalContext(value) {
+  if (!value || typeof value !== "object") return "";
+  const authorities = Array.isArray(value.authorities)
+    ? value.authorities
+        .slice(0, 3)
+        .map((authority) => {
+          if (!authority || typeof authority !== "object") return null;
+          const name = String(authority.name || "").replace(/[^\w\s.'()&,-]/g, "").trim().slice(0, 120);
+          const tier = String(authority.tier || "").replace(/[^\w\s-]/g, "").trim().slice(0, 80);
+          const homepage = String(authority.homepage_url || "").trim().slice(0, 300);
+          if (!name) return null;
+          return [name, tier && `tier: ${tier}`, homepage && `website: ${homepage}`].filter(Boolean).join(" | ");
+        })
+        .filter(Boolean)
+    : [];
+  const links = Array.isArray(value.links)
+    ? value.links
+        .slice(0, 8)
+        .map((link) => {
+          if (!link || typeof link !== "object") return null;
+          const label = String(link.label || "").replace(/[^\w\s.'()&,-]/g, "").trim().slice(0, 120);
+          const href = String(link.href || "").trim().slice(0, 300);
+          if (!label || !/^https?:\/\//i.test(href)) return null;
+          return `${label}: ${href}`;
+        })
+        .filter(Boolean)
+    : [];
+  const lines = [];
+  if (authorities.length) lines.push("Local authorities from postcode lookup:\n- " + authorities.join("\n- "));
+  if (links.length) lines.push("Official local signposting links:\n- " + links.join("\n- "));
+  if (lines.length) {
+    lines.push("Suggested council-site search terms: " + SOCIAL_QA_LOCAL_SEARCH_TERMS.join(", "));
+  }
+  return lines.join("\n");
 }
 
 app.use((req, res, next) => {
@@ -494,11 +615,17 @@ app.get("/socialQA/local-info", async (req, res) => {
     if (localAuthority.parent && typeof localAuthority.parent === "object") {
       authorities.push(localAuthority.parent);
     }
+    const localLinks = buildSocialQaLocalLinks(authorities);
 
     return res.json({
       postcode,
       authorities,
+      localLinks,
+      localDirectorySearchTerms: SOCIAL_QA_LOCAL_SEARCH_TERMS,
+      localDirectoryNote:
+        "Official council-area directories vary across England. On the relevant council website, look for terms such as community directory, care and support directory, wellbeing directory, Local Offer, family information service, adult social care directory and safeguarding adults.",
       govFindCouncilUrl,
+      nhsAdultSocialCareSearchUrl: "https://www.nhs.uk/service-search/other-health-services/local-authority-adult-social-care/",
       cqcCareSearchUrl: "https://www.cqc.org.uk/care-services",
       nhsIcbSearchUrl: "https://www.nhs.uk/nhs-services/find-your-local-integrated-care-board/",
       nhsEnglandIcbContactUrl:
@@ -1009,6 +1136,7 @@ app.post("/socialQA/chat", splashChatRateLimit, express.json({ limit: "50kb" }),
   const body = req.body && typeof req.body === "object" ? req.body : {};
   const message = typeof body.message === "string" ? body.message.trim() : "";
   const history = Array.isArray(body.history) ? body.history : [];
+  const localContext = sanitizeSocialQaLocalContext(body.localContext);
   const chatSessionToken = typeof body.chatSessionToken === "string" ? body.chatSessionToken.trim() : "";
   const turnstileToken = typeof body.turnstileToken === "string" ? body.turnstileToken.trim() : "";
   const remoteip = req.ip || req.socket.remoteAddress || undefined;
@@ -1043,6 +1171,16 @@ app.post("/socialQA/chat", splashChatRateLimit, express.json({ limit: "50kb" }),
 
   const payloadMessages = [
     { role: "system", content: SOCIAL_QA_CHAT_GUIDELINES },
+    ...(localContext
+      ? [
+          {
+            role: "system",
+            content:
+              "User-selected local context from the postcode lookup. Use this only for official local signposting, not for eligibility, safety, quality, cost or outcome predictions.\n" +
+              localContext,
+          },
+        ]
+      : []),
     ...safeHistory,
     {
       role: "user",

@@ -118,7 +118,7 @@ footer{
 <main class="wrap">
   <section class="panel notice" aria-labelledby="status-title">
     <h2 id="status-title">Status of this policy</h2>
-    <p><strong>Version:</strong> 0.2.0. <strong>Published:</strong> 20 June 2026. <strong>Last updated:</strong> 20 June 2026. <strong>Sources reviewed:</strong> 20 June 2026.</p>
+    <p><strong>Version:</strong> 0.3.0. <strong>Published:</strong> 20 June 2026. <strong>Last updated:</strong> 24 June 2026. <strong>Sources reviewed:</strong> 24 June 2026.</p>
     <p>This policy is written for SocialQA at <a href="/socialQA/">https://jahosi.co.uk/socialQA/</a>. It will be updated over time as the page, source list, regulations, guidance, hosting arrangements or AI services change.</p>
     <p>This page is not legal advice. It is a practical public statement of how the SocialQA page is intended to work and the limits that users must understand before using it.</p>
   </section>
@@ -161,7 +161,10 @@ footer{
       <li>The chat sends the user's question and recent temporary browser-session chat history to the SocialQA server.</li>
       <li>The server passes the question to a configured AI service with instructions to use only the validated SocialQA source list.</li>
       <li>The page includes starter prompts, common questions, question packs, local signposting by postcode, high-contrast and large-font display controls, and browser-side PDF export.</li>
+      <li>Starter prompts and common questions move focus back to the chat panel, show status text, and reveal the generated answer where it appears.</li>
+      <li>The chat panel includes clearer blocked-state messages when the disclaimer acknowledgement or Turnstile check is required.</li>
       <li>The local-resource lookup sends the postcode to the SocialQA server, which queries the GOV.UK local authority API and returns signposting links.</li>
+      <li>After a successful local-resource lookup, limited council and official signposting context may be sent with later chat questions so answers can point to the relevant local bodies. The full postcode is not sent to chat as local context by the browser-side code.</li>
       <li>Cloudflare Turnstile may be used to reduce automated abuse before chat is enabled.</li>
     </ul>
   </section>
@@ -208,6 +211,7 @@ footer{
     <ul>
       <li><strong>Chat question:</strong> the text you submit is sent to the SocialQA server and then to the configured AI service so an answer can be generated.</li>
       <li><strong>Recent chat history:</strong> recent messages are held in your browser session storage and sent with later questions to preserve short-term context.</li>
+      <li><strong>Local signposting context:</strong> after a successful postcode lookup, the page may send the returned council names, council websites and official signposting links with later chat questions so the bot can give more local signposting. The raw postcode is not included in that chat context.</li>
       <li><strong>Session token:</strong> a temporary browser-session token may be stored in session storage after Turnstile verification.</li>
       <li><strong>Display settings:</strong> high-contrast and large-font preferences may be stored in browser local storage.</li>
       <li><strong>Postcode lookup:</strong> if you use local resources, the postcode is sent to the SocialQA server and queried against the GOV.UK local authority lookup API.</li>
@@ -240,7 +244,7 @@ footer{
 
   <section id="sources" class="panel">
     <h2>Sources and freshness</h2>
-    <p>SocialQA is constrained to a curated source list of official, statutory, regulator, NHS, NICE, official data, ombudsman and recognised guidance sources. The source list was last reviewed on <strong>20 June 2026</strong>. Sources can change without notice. SocialQA will be updated over time as able, but users must check the original source and local body before acting.</p>
+    <p>SocialQA is constrained to a curated source list of official, statutory, regulator, NHS, NICE, official data, ombudsman and recognised guidance sources. The source list was last reviewed on <strong>24 June 2026</strong>. Sources can change without notice. SocialQA will be updated over time as able, but users must check the original source and local body before acting.</p>
     <p>Where SocialQA cannot answer from the validated source list, it should say so and signpost the relevant official body, local authority, NHS body, regulator, ombudsman or qualified adviser instead of inventing an answer.</p>
   </section>
 
@@ -251,6 +255,8 @@ footer{
     <ul>
       <li>The main risk is over-reliance: users may treat a clear AI answer as a decision rather than a guide.</li>
       <li>The page now requires a disclaimer acknowledgement before asking the bot a question.</li>
+      <li>Starter and common-question buttons now route users to the chat panel and reveal the answer area, reducing the risk that a generated answer appears away from the user's current viewport.</li>
+      <li>The page provides a return-to-chat control after a conversation has started and the user scrolls away from the chat area.</li>
       <li>The page repeatedly tells users not to enter sensitive personal, medical or financial information. The bot also has instructions to warn users if sensitive information appears in a prompt, but it is not possible to guarantee prevention because users control what they type.</li>
       <li>The AI has no persistent memory of inputs beyond temporary session context, but submitted text is still processed to generate answers and may be visible in technical or upstream processing flows.</li>
       <li>The tool should remain careful, plain and source-linked, especially for money, eligibility, complaints and urgent safety questions.</li>
@@ -263,6 +269,7 @@ footer{
       <li>The source list includes official and recognised sources for care funding, financial-planning signposting, benefits, mental capacity, home adaptations, safeguarding and complaints.</li>
       <li>The app does not intentionally persist SocialQA chats in a database, but technical logs and upstream provider processing remain privacy considerations.</li>
       <li>The postcode lookup is a narrow signposting function, not a care assessment or eligibility decision.</li>
+      <li>Local context passed to chat is limited to council and official signposting data returned by the lookup, and must not be used by the bot to infer eligibility, provider quality, safety, costs or outcomes.</li>
       <li>PDF export is user-initiated and browser-side, but users should avoid exporting sensitive content.</li>
     </ul>
 
@@ -292,7 +299,7 @@ footer{
 </main>
 
 <footer>
-  version 0.2.0 | Last updated: 20 June 2026 | &copy; 2026 <a href="/">www.jahosi.co.uk</a>
+  version 0.3.0 | Last updated: 24 June 2026 | &copy; 2026 <a href="/">www.jahosi.co.uk</a>
 </footer>
 </body>
 </html>

@@ -43,7 +43,7 @@
             <ol class="mt-3 space-y-2 text-sm text-teal-50">
               <li><span class="font-bold text-teal-200">1.</span> Pick a starter or ask a clear question</li>
               <li><span class="font-bold text-teal-200">2.</span> Keep personal details out of the prompt</li>
-              <li><span class="font-bold text-teal-200">3.</span> Receive a plain-English answer with references</li>
+              <li><span class="font-bold text-teal-200">3.</span> Follow the highlighted chat panel as the answer appears</li>
               <li><span class="font-bold text-teal-200">4.</span> Check the official source or local body before acting</li>
             </ol>
           </div>
@@ -73,7 +73,8 @@
         <li>Suggest practical next questions about care needs assessments, financial assessments, top-up fees, care home contracts, and savings running down.</li>
         <li>Point users towards official reference sources and local signposting routes.</li>
         <li>Offer starter prompts, common questions, and question packs for councils, ICB/CHC teams, and care-home contract discussions.</li>
-        <li>Look up local authority and related signposts from a postcode, with fallbacks to official services.</li>
+        <li>Look up local authority and related signposts from a postcode, with fallbacks to official services and limited local context for later chat answers.</li>
+        <li>Move users back to the chat panel when a starter or common question is used, with visible status, answer highlighting and a return-to-chat control.</li>
         <li>Export the chat as a PDF for offline review or to take into a conversation.</li>
       </ul>
 
@@ -98,7 +99,7 @@
       </div>
 
       <h2 class="mt-8 text-xl font-bold">Build and functions</h2>
-      <p class="mt-3 text-sm text-slate-600">SocialQA is served from the same Node/Express portfolio application as the rest of Jahosi. The page itself is intentionally simple: static HTML, CSS, and browser JavaScript, with the server providing chat, postcode lookup support, Turnstile-aware session handling, rate limiting, and source-constrained prompt construction.</p>
+      <p class="mt-3 text-sm text-slate-600">SocialQA is served from the same Node/Express portfolio application as the rest of Jahosi. The page itself is intentionally simple: static HTML, CSS, and browser JavaScript, with the server providing chat, postcode lookup support, Turnstile-aware session handling, rate limiting, source-constrained prompt construction, and local signposting context after a successful postcode lookup.</p>
 
       <div class="mt-3 grid gap-2 text-sm sm:grid-cols-2 lg:grid-cols-4">
         <div class="rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-center font-semibold text-slate-700">Node.js</div>
