@@ -161,6 +161,18 @@ function toFiniteNumber(value) {
   return Number.isFinite(num) ? num : null;
 }
 
+function escapeRegExp(value) {
+  return String(value).replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+}
+
+function splashChemChatMentionsTarget(message, target) {
+  return target.terms.some((term) => {
+    const escaped = escapeRegExp(term.toLowerCase());
+    const boundary = /^[a-z0-9]+$/.test(term) ? "\\b" : "";
+    return new RegExp(`${boundary}${escaped}${boundary}`, "i").test(message);
+  });
+}
+
 function splashChemChatWrongDirectionReply(message, poolState) {
   const lowerMessage = String(message || "").toLowerCase();
   const asksQuantity = /\b(how much|quantity|amount|dose|add)\b/.test(lowerMessage);
@@ -169,7 +181,7 @@ function splashChemChatWrongDirectionReply(message, poolState) {
   if (!asksQuantity || (!wantsRaise && !wantsLower)) return "";
 
   for (const [field, target] of Object.entries(SPLASH_CHEM_CHAT_TARGETS)) {
-    if (!target.terms.some((term) => lowerMessage.includes(term.toLowerCase()))) continue;
+    if (!splashChemChatMentionsTarget(lowerMessage, target)) continue;
     const current = toFiniteNumber(poolState[field]);
     if (current === null) continue;
 
