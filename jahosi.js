@@ -127,8 +127,12 @@ const SPLASH_CHAT_GUIDELINES = [
   "You are a pool assistant for splash!, helping users with general pool problems including water chemistry, heating, water quality, and water colour.",
   "You may estimate chemical quantities when the user asks, but only as rough pool-maintenance guidance based on the current pool state and the user's supplied product details.",
   "When a user asks for a chemical quantity or dose, your first question must be to confirm the product type, the chemical name or brand name, and, if the product is a liquid, the concentration/strength shown on the label before calculating.",
-  "If those product details are missing or ambiguous, do not calculate yet. Ask for them first, and also ask for any missing essentials needed for the calculation such as pool volume, current reading, and target reading.",
+  "If those product details are missing or ambiguous, do not calculate yet. Ask for them first, and also ask for any missing essentials needed for the calculation such as pool volume and current reading.",
+  "Do not ask the user for a target concentration unless they explicitly want a custom target. By default, always use the midpoint of the target range: TA 100 ppm, pH 7.5, FC 3 ppm, hardness 300 ppm, CYA 50 ppm, and CC 0.2 ppm.",
+  "Before calculating, compare the current reading with the target range and the user's intended adjustment. If the requested action is directionally wrong, respond with an error instead of a dose. For example, if chlorine/FC is above the 2-4 ppm target range, do not calculate how much chlorine to add; say the reading is already above target and no chlorine addition is appropriate. If a value is already inside its target range, normally recommend no adjustment rather than calculating a dose.",
+  "Never calculate a chemical addition that would move a reading farther away from the target range. For high CYA or high hardness, explain that no chemical lowers it and dilution/partial water replacement is the usual route.",
   "When giving any quantity estimate, show every calculation step. Start with a raw formula line before substituting numbers, then show the full working-out with units.",
+  "Format quantity estimates in friendly plain text with short section labels, not Markdown tables. Use this order: Product checked, Target used, Raw formula, Working, Result, Safety check.",
   "Every quantity estimate must include this disclaimer: Always check against the manufacturer's guidance on the product label to ensure the suggested quantity is within the product's instruction limits.",
   "Never present a dosing calculation as exact; describe it as a rough starting estimate and advise adding chemicals incrementally, circulating/mixing, then retesting.",
   "You may explain what a chemical does, why it is used, and how the calculation is derived.",
@@ -140,9 +144,77 @@ const SPLASH_CHAT_GUIDELINES = [
   "Always include this exact sentence at the end of every answer: Test before and after every addition.",
   "Prefix every answer with: 🤖 General guide — always test first.",
   "If user asks for safety-critical medical or emergency advice, recommend contacting a qualified pool technician.",
-  "Reference ranges for context only (do not use these to calculate doses): TA ideal 80-120 ppm, pH ideal 7.4-7.6, FC ideal 2-4 ppm, CYA ideal 40-60 ppm, CC should be < 0.5 ppm.",
+  "Target ranges for calculations: TA ideal 80-120 ppm, pH ideal 7.4-7.6, FC ideal 2-4 ppm, hardness ideal 200-400 ppm, CYA ideal 40-60 ppm, CC should be under 0.5 ppm and ideally around 0-0.2 ppm.",
   "Keep answers concise and practical, focused on diagnosing problems and explaining what needs to be addressed.",
 ].join("\n");
+
+const SPLASH_CHEM_CHAT_TARGETS = {
+  fc: { label: "Free Chlorine (FC)", unit: "ppm", lo: 2, hi: 4, mid: 3, terms: ["chlorine", "free chlorine", "fc"] },
+  ta: { label: "Total Alkalinity (TA)", unit: "ppm", lo: 80, hi: 120, mid: 100, terms: ["alkalinity", "total alkalinity", "ta"] },
+  ph: { label: "pH", unit: "", lo: 7.4, hi: 7.6, mid: 7.5, terms: ["ph", "pH"] },
+  th: { label: "Hardness", unit: "ppm", lo: 200, hi: 400, mid: 300, terms: ["hardness", "calcium hardness", "total hardness", "ch", "th"] },
+  cya: { label: "Cyanuric Acid (CYA)", unit: "ppm", lo: 40, hi: 60, mid: 50, terms: ["cyanuric", "cya", "stabiliser", "stabilizer"] },
+};
+
+function toFiniteNumber(value) {
+  const num = Number(value);
+  return Number.isFinite(num) ? num : null;
+}
+
+function splashChemChatWrongDirectionReply(message, poolState) {
+  const lowerMessage = String(message || "").toLowerCase();
+  const asksQuantity = /\b(how much|quantity|amount|dose|add)\b/.test(lowerMessage);
+  const wantsLower = /\b(lower|reduce|decrease|bring down|drop)\b/.test(lowerMessage);
+  const wantsRaise = /\b(add|dose|raise|increase|boost|more|top ?up)\b/.test(lowerMessage) || (asksQuantity && !wantsLower);
+  if (!asksQuantity || (!wantsRaise && !wantsLower)) return "";
+
+  for (const [field, target] of Object.entries(SPLASH_CHEM_CHAT_TARGETS)) {
+    if (!target.terms.some((term) => lowerMessage.includes(term.toLowerCase()))) continue;
+    const current = toFiniteNumber(poolState[field]);
+    if (current === null) continue;
+
+    const unit = target.unit ? ` ${target.unit}` : "";
+    const currentText = `${current}${unit}`;
+    const rangeText = `${target.lo}-${target.hi}${unit}`;
+    const midpointText = `${target.mid}${unit}`;
+
+    if (wantsRaise && current > target.hi) {
+      return [
+        "🤖 General guide — always test first.",
+        `Error: your current ${target.label} reading is ${currentText}, which is above the ${rangeText} target range.`,
+        `No ${target.label} increase is appropriate, so I should not calculate an addition that would move it farther from target.`,
+        `Target used: ${rangeText}; midpoint ${midpointText} for future dose calculations.`,
+        field === "fc"
+          ? "Let chlorine fall naturally with circulation/UV/use, follow the product label for safe-use limits, and retest before dosing again."
+          : "Retest and follow the appropriate lowering guidance rather than adding more product.",
+        "Test before and after every addition.",
+      ].join("\n");
+    }
+
+    if (wantsLower && current < target.lo) {
+      return [
+        "🤖 General guide — always test first.",
+        `Error: your current ${target.label} reading is ${currentText}, which is below the ${rangeText} target range.`,
+        `No ${target.label} reduction is appropriate, so I should not calculate a lowering adjustment that would move it farther from target.`,
+        `Target used: ${rangeText}; midpoint ${midpointText} for future dose calculations.`,
+        "Retest and correct upward only if the reading remains below range.",
+        "Test before and after every addition.",
+      ].join("\n");
+    }
+
+    if (wantsRaise && current >= target.lo && current <= target.hi) {
+      return [
+        "🤖 General guide — always test first.",
+        `Error: your current ${target.label} reading is ${currentText}, which is already inside the ${rangeText} target range.`,
+        "No increase is normally recommended while the reading remains in range.",
+        `Target used: ${rangeText}; midpoint ${midpointText} for future dose calculations.`,
+        "Test before and after every addition.",
+      ].join("\n");
+    }
+  }
+
+  return "";
+}
 
 const SOCIAL_QA_SOURCES = [
   {
@@ -1076,6 +1148,15 @@ app.post("/splash/chat", splashChatRateLimit, express.json({ limit: "50kb" }), a
     const printable = String(value).slice(0, 120);
     return `- ${field}: ${printable}`;
   });
+
+  const wrongDirectionReply = splashChemChatWrongDirectionReply(message, poolState);
+  if (wrongDirectionReply) {
+    const response = { reply: wrongDirectionReply };
+    if (resolvedChatSessionToken) {
+      response.chatSessionToken = resolvedChatSessionToken;
+    }
+    return res.json(response);
+  }
 
   const safeHistory = history
     .slice(-10)
