@@ -287,6 +287,7 @@ footer{text-align:center;padding:1.5rem;font-size:.72rem;color:var(--muted)}
 .chem-chat-msg{font-size:.78rem;line-height:1.5;padding:.55rem .62rem;border-radius:10px;white-space:pre-wrap}
 .chem-chat-msg.user{background:#dbeafe;color:#1e3a8a}
 .chem-chat-msg.bot{background:#ecfeff;color:#155e75}
+.chem-chat-msg a{color:#0369a1;font-weight:700;text-decoration:underline;text-underline-offset:2px;overflow-wrap:anywhere}
 .chem-chat-form{display:grid;grid-template-columns:1fr auto;gap:.5rem;padding:.65rem;border-top:1px solid var(--border);background:#fff}
 .chem-chat-input{border:1.5px solid var(--border);border-radius:8px;padding:.55rem .6rem;font-size:.8rem}
 .chem-chat-send{border:0;border-radius:8px;background:var(--blue);color:#fff;padding:.55rem .8rem;font-weight:700;cursor:pointer}
@@ -2596,7 +2597,32 @@ function chemChatAppend(role, text) {
   if (!thread) return;
   const msg = document.createElement('div');
   msg.className = `chem-chat-msg ${role === 'user' ? 'user' : 'bot'}`;
-  msg.textContent = String(text || '').trim();
+  const cleanText = String(text || '').trim();
+  const urlRe = /https?:\/\/[^\s<>"']+/g;
+  let lastIndex = 0;
+  for (const match of cleanText.matchAll(urlRe)) {
+    const url = match[0].replace(/[),.;:!?]+$/, '');
+    const trailing = match[0].slice(url.length);
+    if (match.index > lastIndex) {
+      msg.appendChild(document.createTextNode(cleanText.slice(lastIndex, match.index)));
+    }
+    try {
+      const parsed = new URL(url);
+      const link = document.createElement('a');
+      link.href = parsed.href;
+      link.target = '_blank';
+      link.rel = 'noopener noreferrer';
+      link.textContent = parsed.href;
+      msg.appendChild(link);
+    } catch {
+      msg.appendChild(document.createTextNode(url));
+    }
+    if (trailing) msg.appendChild(document.createTextNode(trailing));
+    lastIndex = match.index + match[0].length;
+  }
+  if (lastIndex < cleanText.length) {
+    msg.appendChild(document.createTextNode(cleanText.slice(lastIndex)));
+  }
   thread.appendChild(msg);
   thread.scrollTop = thread.scrollHeight;
 }
