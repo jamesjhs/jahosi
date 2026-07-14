@@ -4424,13 +4424,16 @@ function go() {
   }
   const needResidual = Math.abs(annRow.dNeed - annualNeedKWh);
   const costResidual = Math.abs(annRow.monCost - annualCost);
-  document.getElementById('math-checks').innerHTML = `
-    <li><span class="${uaResidual < 1e-6 ? 'diag-pass' : 'diag-warn'}">${uaResidual < 1e-6 ? 'PASS' : 'WARN'}</span> UA decomposition residual: ${fmt(uaResidual, 6)} W/K</li>
-    <li><span class="${qnetResidual < 1e-6 ? 'diag-pass' : 'diag-warn'}">${qnetResidual < 1e-6 ? 'PASS' : 'WARN'}</span> ${refMonthName} net-heat balance residual: ${fmt(qnetResidual, 6)} W</li>
-    <li><span class="${(tResidual === null || tResidual < 0.05) ? 'diag-pass' : 'diag-warn'}">${(tResidual === null || tResidual < 0.05) ? 'PASS' : 'WARN'}</span> Heat-up inverse check residual: ${tResidual === null ? 'n/a (target unreachable)' : `${fmt(tResidual, 3)} °C`}</li>
-    <li><span class="${needResidual < 1e-6 ? 'diag-pass' : 'diag-warn'}">${needResidual < 1e-6 ? 'PASS' : 'WARN'}</span> Annual energy aggregation residual: ${fmt(needResidual, 6)} kWh</li>
-    <li><span class="${costResidual < 1e-6 ? 'diag-pass' : 'diag-warn'}">${costResidual < 1e-6 ? 'PASS' : 'WARN'}</span> Annual cost aggregation residual: £${fmt(costResidual, 6)}</li>
-  `;
+  const mathChecksEl = document.getElementById('math-checks');
+  if (mathChecksEl) {
+    mathChecksEl.innerHTML = `
+      <li><span class="${uaResidual < 1e-6 ? 'diag-pass' : 'diag-warn'}">${uaResidual < 1e-6 ? 'PASS' : 'WARN'}</span> UA decomposition residual: ${fmt(uaResidual, 6)} W/K</li>
+      <li><span class="${qnetResidual < 1e-6 ? 'diag-pass' : 'diag-warn'}">${qnetResidual < 1e-6 ? 'PASS' : 'WARN'}</span> ${refMonthName} net-heat balance residual: ${fmt(qnetResidual, 6)} W</li>
+      <li><span class="${(tResidual === null || tResidual < 0.05) ? 'diag-pass' : 'diag-warn'}">${(tResidual === null || tResidual < 0.05) ? 'PASS' : 'WARN'}</span> Heat-up inverse check residual: ${tResidual === null ? 'n/a (target unreachable)' : `${fmt(tResidual, 3)} °C`}</li>
+      <li><span class="${needResidual < 1e-6 ? 'diag-pass' : 'diag-warn'}">${needResidual < 1e-6 ? 'PASS' : 'WARN'}</span> Annual energy aggregation residual: ${fmt(needResidual, 6)} kWh</li>
+      <li><span class="${costResidual < 1e-6 ? 'diag-pass' : 'diag-warn'}">${costResidual < 1e-6 ? 'PASS' : 'WARN'}</span> Annual cost aggregation residual: £${fmt(costResidual, 6)}</li>
+    `;
+  }
 
   // ── Chart: monthly costs ──────────────────────────────────────────────────
   const costVals = monthly.map(m => +m.monCost.toFixed(2));
