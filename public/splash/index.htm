@@ -396,12 +396,7 @@ body.quickstart-open{overflow:hidden}
         </p>
       </div>
       <div class="card" style="margin:0">
-        <div class="card-title">Quick start</div>
-        <p class="inline-help">1. Set your pool geometry (radius or rectangular X × Y), heater, tariff, and cover assumptions.</p>
-        <p class="inline-help">1b. Use the target-temperature preset list for common use-cases (public swim, children, therapy, spa) or keep a custom target.</p>
-        <p class="inline-help">2. Use either a measured current pool temperature or the model estimate, then type the next 3 days manually or fetch them from a searched global location.</p>
-        <p class="inline-help">2b. Optionally set pool-in and pool-away dates plus your water rate to unlock a season cost summary.</p>
-        <p class="inline-help">3. Review the forecast, charts, maths checks, and exports.</p>
+        <div class="card-title">Main Menu</div>
         <div class="info-actions">
           <button id="open-quickstart" type="button" class="action-btn quick">Quick-start guide</button>
           <button id="open-controls" type="button" class="action-btn">⚙️ Edit my pool</button>
@@ -602,7 +597,7 @@ body.quickstart-open{overflow:hidden}
 
           <div class="field" style="margin-top:.6rem">
             <label for="cover-type">Passive Thermal Cover</label>
-            <select id="cover-type" onchange="go()">
+            <select id="cover-type" onchange="handleCoverTypeChange('cover-type')">
               <option value="none" selected>None</option>
               <option value="bubble">Solar bubble cover</option>
               <option value="fabric">Non-bubble fabric cover</option>
@@ -943,13 +938,6 @@ body.quickstart-open{overflow:hidden}
         <p class="mini-note" id="export-status" aria-live="polite">Exports are generated locally in your browser.</p>
       </div>
 
-      <div class="card" style="margin-bottom:1rem" id="math-checks-card">
-        <div class="card-title">Math Integrity Checks</div>
-        <ul class="diag-list" id="math-checks">
-          <li>Running checks…</li>
-        </ul>
-      </div>
-
       <div class="sec" id="monthly-sec">📅 Monthly Analysis — Maintaining Target Temperature</div>
       <div class="card" style="margin-bottom:1rem" id="monthly-card">
         <div class="tbl-wrap">
@@ -1080,7 +1068,7 @@ body.quickstart-open{overflow:hidden}
 
     <div style="font-size:.78rem;font-weight:700;color:var(--blue);margin:.75rem 0 .4rem;text-transform:uppercase;letter-spacing:.05em">Enter your current test results (all fields optional)</div>
     <p class="hint" style="margin-top:0">Fill in your most recent test-strip or drop-test readings to receive personalised rough dosing estimates.
-      Readings update instantly as you type. Leave fields blank to hide recommendations for that parameter.</p>
+      Readings update instantly as you type. Leave fields blank to hide recommendations for that parameter. Normal ranges here are shown using the EasyTest Pool & Spa Test Strips - other manufacturers' strips normal ranges may vary slightly.</p>
 
     <div class="field-row">
       <div class="field">
@@ -1219,7 +1207,7 @@ body.quickstart-open{overflow:hidden}
       <a href="https://www.who.int/publications/i/item/9789241546768" target="_blank" rel="noopener noreferrer">WHO Guidelines for Safe Recreational Water Environments Vol 2 (2006)</a> ·
       <a href="https://www.pwtag.org/" target="_blank" rel="noopener noreferrer">PWTAG Pool Water Treatment Advisory Group Technical Notes (2017)</a> ·
       ANSI/APSP/ICC 11-2019 Standard for Residential Pools &amp; Spas ·
-      <a href="https://www.cdc.gov/healthy-swimming/professionals/mahc/index.html" target="_blank" rel="noopener noreferrer">CDC Model Aquatic Health Code (MAHC) 2023</a> ·
+      <a href="https://www.cdc.gov/model-aquatic-health-code/media/pdfs/2023-MAHC-508.pdf" target="_blank" rel="noopener noreferrer">CDC Model Aquatic Health Code (MAHC) 2023</a> ·
       Taylor Technologies <em>Pool &amp; Spa Water Chemistry</em> Professional Reference.
     </p>
     <p class="mini-note">These are standard reference targets for typical residential outdoor chlorine pools. Hot tubs, indoor pools, vinyl/liner pools, plaster/concrete pools, and high-bather-load facilities may need different targets. Strip packaging may differ slightly; always treat these as rough guides and test your own water regularly with calibrated equipment.</p>
@@ -1487,6 +1475,13 @@ function schedHoursFromInput(inp) {
 function fmt(n, dp=0) { return n.toFixed(dp); }
 function fmtN(n) { return Math.round(n).toLocaleString(); }
 function degToRad(deg) { return deg * Math.PI / 180; }
+function currentPoolSeasonDefaults() {
+  const year = new Date().getFullYear();
+  return {
+    start: `${year}-05-01`,
+    end: `${year}-09-30`
+  };
+}
 function currentLatitude(inp) {
   return Number.isFinite(inp?.latitude) ? clamp(inp.latitude, LAT_MIN, LAT_MAX) : REF_LAT;
 }
@@ -3187,6 +3182,29 @@ function setInputValue(id, value, labelMeta = null) {
   if (labelMeta) sv(id, labelMeta.lbl, labelMeta.unit, labelMeta.dp);
 }
 
+function applyDefaultSeasonDates({ overwrite = false } = {}) {
+  const defaults = currentPoolSeasonDefaults();
+  const start = document.getElementById('pool-start');
+  const end = document.getElementById('pool-end');
+  if (start && (overwrite || !start.value)) start.value = defaults.start;
+  if (end && (overwrite || !end.value)) end.value = defaults.end;
+}
+
+function defaultCoverHoursForType(coverType) {
+  return coverType && coverType !== 'none' ? 18 : 0;
+}
+
+function setCoverHoursDefaultForType(coverType, targetId = 'cover-hours') {
+  const labelMeta = targetId === 'cover-hours' ? {lbl:'cover-hours-v', unit:' h/day', dp:1} : null;
+  setInputValue(targetId, defaultCoverHoursForType(coverType), labelMeta);
+}
+
+function handleCoverTypeChange(sourceId = 'cover-type') {
+  const coverType = document.getElementById(sourceId)?.value || 'none';
+  setCoverHoursDefaultForType(coverType);
+  go();
+}
+
 function setQuickStartStatus(message, tone = 'info') {
   const el = document.getElementById('quickstart-status');
   if (!el) return;
@@ -3343,19 +3361,23 @@ const QUICKSTART_STEPS = [
     title: 'Pool season dates',
     intro: 'Season dates turn the annual model into a more practical temporary-pool cost estimate. They let splash! separate likely electricity cost for the months you actually use the pool from water-fill costs.',
     render() {
+      const seasonDefaults = currentPoolSeasonDefaults();
+      const startValue = gs('pool-start') || seasonDefaults.start;
+      const endValue = gs('pool-end') || seasonDefaults.end;
       return `
         <p class="quickstart-copy">${this.intro}</p>
         <div class="quickstart-grid">
-          <div class="quickstart-field"><label for="quickstart-pool-start">Pool in from</label><input id="quickstart-pool-start" type="date" value="${escapeHtml(gs('pool-start'))}"></div>
-          <div class="quickstart-field"><label for="quickstart-pool-end">Pool away by</label><input id="quickstart-pool-end" type="date" value="${escapeHtml(gs('pool-end'))}"></div>
+          <div class="quickstart-field"><label for="quickstart-pool-start">Pool in from</label><input id="quickstart-pool-start" type="date" value="${escapeHtml(startValue)}"></div>
+          <div class="quickstart-field"><label for="quickstart-pool-end">Pool away by</label><input id="quickstart-pool-end" type="date" value="${escapeHtml(endValue)}"></div>
           <div class="quickstart-field"><label for="quickstart-pool-fills">Fills per season</label><input id="quickstart-pool-fills" type="number" min="1" max="52" step="1" value="${escapeHtml(gs('pool-fills'))}"></div>
           <div class="quickstart-field"><label for="quickstart-water-rate">Water rate (p/litre)</label><input id="quickstart-water-rate" type="number" min="0" max="10" step="0.01" value="${escapeHtml(gs('water-rate'))}"></div>
         </div>
       `;
     },
     apply() {
-      setInputValue('pool-start', document.getElementById('quickstart-pool-start')?.value || '');
-      setInputValue('pool-end', document.getElementById('quickstart-pool-end')?.value || '');
+      const seasonDefaults = currentPoolSeasonDefaults();
+      setInputValue('pool-start', document.getElementById('quickstart-pool-start')?.value || seasonDefaults.start);
+      setInputValue('pool-end', document.getElementById('quickstart-pool-end')?.value || seasonDefaults.end);
       setInputValue('pool-fills', clamp(Number(document.getElementById('quickstart-pool-fills')?.value), 1, 52));
       setInputValue('water-rate', clamp(Number(document.getElementById('quickstart-water-rate')?.value), 0, 10));
     }
@@ -3814,6 +3836,9 @@ function initQuickStartGuide() {
     await handleQuickStartAction(button.dataset.quickAction, button);
   });
   body.addEventListener('change', (event) => {
+    if (event.target?.id === 'quickstart-cover-type') {
+      setCoverHoursDefaultForType(event.target.value, 'quickstart-cover-hours');
+    }
     if (
       event.target?.id === 'quickstart-heat-mode' ||
       event.target?.id === 'quickstart-cover-type' ||
@@ -4941,6 +4966,7 @@ async function fetchForecastFromSelectedLocation() {
   btn.textContent = 'Fetching…';
   setWeatherStatus('Fetching daily + hourly weather (including solar radiation when available)…', 'info');
   setClimateStatus('Updating monthly climate profile…', 'info');
+  let forecastLoaded = false;
   try {
     applySelectedCoordinates(place);
     queryField.value = placeLabel(place);
@@ -4989,6 +5015,9 @@ async function fetchForecastFromSelectedLocation() {
       }
       return {time: hourlyTimeArr[i], air, cloud, solar};
     });
+    setInputValue('current-temp-source', 'estimate');
+    syncCurrentTempControls('current-temp-source');
+    forecastLoaded = true;
     setWeatherStatus(`Forecast filled from ${placeLabel(place)} via Open-Meteo (3-day daily + 48-hour hourly). You can still edit every value manually.`, 'ok');
   } catch {
     liveHourlyForecast = null;
@@ -4997,6 +5026,14 @@ async function fetchForecastFromSelectedLocation() {
   // Always refresh climate profile independently of forecast success/failure
   await fetchAndApplyClimateProfile(place);
   go();
+  if (forecastLoaded) {
+    const estimatedCurrentTemp = Number(lastReportData?.summary?.currentTempC);
+    if (Number.isFinite(estimatedCurrentTemp)) {
+      setInputValue('current-temp', estimatedCurrentTemp.toFixed(1));
+      syncCurrentTempControls('current-temp');
+      go();
+    }
+  }
   btn.disabled = false;
   btn.textContent = original;
 }
@@ -5137,6 +5174,7 @@ function applyConfig(cfg) {
     el.value = cfg[f.id];
     if (f.lbl) sv(f.id, f.lbl, f.unit, f.dp);
   }
+  applyDefaultSeasonDates();
   hydrateLocationSelectionFromState();
   go();
 }
@@ -5309,10 +5347,12 @@ document.addEventListener('DOMContentLoaded', async () => {
   updateHeatModeDisplay();
   setClimateStatus(`Monthly climate profile: ${activeClimateProfile.locationLabel}.`, 'info');
   const restored = restoreConfigFromLS();
+  applyDefaultSeasonDates();
   if (!restored) {
     go();
   } else {
     await refreshWeatherOnLaunchFromSavedLocation();
+    go();
   }
   registerServiceWorker();
 });
