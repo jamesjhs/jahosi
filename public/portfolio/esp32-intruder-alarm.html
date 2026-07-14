@@ -114,6 +114,76 @@
         <div class="rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-center font-semibold text-slate-700">Cloudflare Tunnel</div>
       </div>
 
+      <h2 class="mt-8 text-xl font-bold">References</h2>
+      <p class="mt-3 text-sm text-slate-600">The project sits in a small but active ESP32 CSI research space. These are the main technical references, datasets, and neighbouring open-source projects used to frame the build and keep the prototype honest about what commodity ESP32 hardware can and cannot do.</p>
+
+      <div class="mt-4 grid gap-4 md:grid-cols-2">
+        <article class="rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
+          <h3 class="text-sm font-bold uppercase tracking-wide text-slate-700">Technical foundations</h3>
+          <ul class="mt-3 space-y-2 text-sm text-slate-600">
+            <li><a class="font-semibold text-sky-700 hover:text-sky-900" href="https://docs.espressif.com/projects/esp-idf/en/stable/esp32/api-reference/network/esp_wifi.html" target="_blank" rel="noopener noreferrer">ESP-IDF Wi-Fi API</a> - official reference for CSI callback, configuration, and enable functions.</li>
+            <li><a class="font-semibold text-sky-700 hover:text-sky-900" href="https://docs.espressif.com/projects/esp-techpedia/en/latest/esp-friends/solution-introduction/esp-csi/esp-csi-solution.html" target="_blank" rel="noopener noreferrer">Espressif ESP-CSI solution overview</a> - explains Wi-Fi CSI as a sensing input for propagation, phase, SNR, and channel-state analysis.</li>
+            <li><a class="font-semibold text-sky-700 hover:text-sky-900" href="https://docs.espressif.com/projects/esp-idf/en/stable/esp32/api-reference/provisioning/provisioning.html" target="_blank" rel="noopener noreferrer">ESP-IDF Wi-Fi provisioning</a> - basis for local onboarding and stored Wi-Fi credentials.</li>
+            <li><a class="font-semibold text-sky-700 hover:text-sky-900" href="https://docs.espressif.com/projects/esp-idf/en/stable/esp32/api-reference/protocols/esp_http_server.html" target="_blank" rel="noopener noreferrer">ESP-IDF HTTP server</a> - basis for the ESP32 local dashboard and JSON APIs.</li>
+          </ul>
+        </article>
+
+        <article class="rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
+          <h3 class="text-sm font-bold uppercase tracking-wide text-slate-700">Research and datasets</h3>
+          <ul class="mt-3 space-y-2 text-sm text-slate-600">
+            <li><a class="font-semibold text-sky-700 hover:text-sky-900" href="https://zenodo.org/records/8021099" target="_blank" rel="noopener noreferrer">WiFi CSI-Based Long-Range Through-Wall Human Activity Recognition with the ESP32</a> - ESP32 CSI dataset for presence and activity-recognition experiments.</li>
+            <li><a class="font-semibold text-sky-700 hover:text-sky-900" href="https://arxiv.org/abs/2401.01388" target="_blank" rel="noopener noreferrer">Directional Antenna Systems for Long-Range Through-Wall Human Activity Recognition</a> - ESP32-S3 directional antenna evaluation for long-range HAR.</li>
+            <li><a class="font-semibold text-sky-700 hover:text-sky-900" href="https://arxiv.org/abs/2510.26148" target="_blank" rel="noopener noreferrer">STAR: Privacy-Preserving Edge AI for Wi-Fi CSI HAR</a> - edge-AI activity-recognition framework using ESP32-S3 CSI acquisition.</li>
+            <li><a class="font-semibold text-sky-700 hover:text-sky-900" href="https://arxiv.org/abs/2601.02177" target="_blank" rel="noopener noreferrer">Why Commodity WiFi Sensors Fail at Multi-Person Gait Identification</a> - useful cautionary work on ESP32 CSI limits in multi-person settings.</li>
+            <li><a class="font-semibold text-sky-700 hover:text-sky-900" href="https://github.com/NTUMARS/Awesome-WiFi-CSI-Sensing" target="_blank" rel="noopener noreferrer">Awesome WiFi CSI Sensing</a> - curated reading list across occupancy, activity recognition, localisation, and vital-sign sensing.</li>
+          </ul>
+        </article>
+
+        <article class="rounded-xl border border-slate-200 bg-white p-4 shadow-sm md:col-span-2">
+          <h3 class="text-sm font-bold uppercase tracking-wide text-slate-700">Similar GitHub repositories</h3>
+          <div class="mt-3 grid gap-3 md:grid-cols-2">
+            <a class="rounded-lg border border-slate-200 bg-slate-50 p-3 text-sm transition hover:border-sky-300 hover:bg-sky-50" href="https://github.com/espressif/esp-csi" target="_blank" rel="noopener noreferrer">
+              <span class="font-bold text-slate-900">espressif/esp-csi</span>
+              <span class="mt-1 block text-slate-600">Official Espressif CSI examples and Wi-Fi sensing demos, including motion and human-presence detection workflows.</span>
+            </a>
+            <a class="rounded-lg border border-slate-200 bg-slate-50 p-3 text-sm transition hover:border-sky-300 hover:bg-sky-50" href="https://github.com/StevenMHernandez/ESP32-CSI-Tool" target="_blank" rel="noopener noreferrer">
+              <span class="font-bold text-slate-900">StevenMHernandez/ESP32-CSI-Tool</span>
+              <span class="mt-1 block text-slate-600">Widely referenced toolkit for collecting ESP32 Channel State Information in active and passive modes.</span>
+            </a>
+            <a class="rounded-lg border border-slate-200 bg-slate-50 p-3 text-sm transition hover:border-sky-300 hover:bg-sky-50" href="https://github.com/francescopace/espectre" target="_blank" rel="noopener noreferrer">
+              <span class="font-bold text-slate-900">francescopace/espectre</span>
+              <span class="mt-1 block text-slate-600">ESPectre: motion detection from Wi-Fi spectre/CSI, positioned explicitly as a camera-free motion sensor.</span>
+            </a>
+            <a class="rounded-lg border border-slate-200 bg-slate-50 p-3 text-sm transition hover:border-sky-300 hover:bg-sky-50" href="https://github.com/Rui-Chun/ESP32-CSI-Collection-and-Display" target="_blank" rel="noopener noreferrer">
+              <span class="font-bold text-slate-900">Rui-Chun/ESP32-CSI-Collection-and-Display</span>
+              <span class="mt-1 block text-slate-600">Wireless real-time CSI collection/display project with a motion-detection use case.</span>
+            </a>
+            <a class="rounded-lg border border-slate-200 bg-slate-50 p-3 text-sm transition hover:border-sky-300 hover:bg-sky-50" href="https://github.com/jonathanmuller/ESP32-gather-channel-state-information-CSI-" target="_blank" rel="noopener noreferrer">
+              <span class="font-bold text-slate-900">jonathanmuller/ESP32-gather-channel-state-information-CSI</span>
+              <span class="mt-1 block text-slate-600">ESP32 CSI frame extraction project for localisation, phase aggregation, and fingerprinting experiments.</span>
+            </a>
+            <a class="rounded-lg border border-slate-200 bg-slate-50 p-3 text-sm transition hover:border-sky-300 hover:bg-sky-50" href="https://github.com/topics/wifi-csi" target="_blank" rel="noopener noreferrer">
+              <span class="font-bold text-slate-900">GitHub topic: wifi-csi</span>
+              <span class="mt-1 block text-slate-600">A useful discovery page for newer ESP32 CSI projects, including presence, movement, RF sensing, and human-activity-recognition dashboards.</span>
+            </a>
+          </div>
+        </article>
+
+        <article class="rounded-xl border border-slate-200 bg-white p-4 shadow-sm md:col-span-2">
+          <h3 class="text-sm font-bold uppercase tracking-wide text-slate-700">Deployment and security references</h3>
+          <ul class="mt-3 space-y-2 text-sm text-slate-600 md:columns-2">
+            <li><a class="font-semibold text-sky-700 hover:text-sky-900" href="https://developer.mozilla.org/en-US/docs/Web/API/Push_API" target="_blank" rel="noopener noreferrer">MDN Push API</a></li>
+            <li><a class="font-semibold text-sky-700 hover:text-sky-900" href="https://www.w3.org/TR/push-api/" target="_blank" rel="noopener noreferrer">W3C Push API</a></li>
+            <li><a class="font-semibold text-sky-700 hover:text-sky-900" href="https://developers.cloudflare.com/tunnel/setup/" target="_blank" rel="noopener noreferrer">Cloudflare Tunnel setup</a></li>
+            <li><a class="font-semibold text-sky-700 hover:text-sky-900" href="https://developers.cloudflare.com/cloudflare-one/access-controls/applications/http-apps/self-hosted-public-app/" target="_blank" rel="noopener noreferrer">Cloudflare Access for self-hosted apps</a></li>
+            <li><a class="font-semibold text-sky-700 hover:text-sky-900" href="https://www.zetetic.net/sqlcipher/documentation/" target="_blank" rel="noopener noreferrer">SQLCipher documentation</a></li>
+            <li><a class="font-semibold text-sky-700 hover:text-sky-900" href="https://cheatsheetseries.owasp.org/cheatsheets/Authentication_Cheat_Sheet.html" target="_blank" rel="noopener noreferrer">OWASP Authentication Cheat Sheet</a></li>
+            <li><a class="font-semibold text-sky-700 hover:text-sky-900" href="https://cheatsheetseries.owasp.org/cheatsheets/Session_Management_Cheat_Sheet.html" target="_blank" rel="noopener noreferrer">OWASP Session Management Cheat Sheet</a></li>
+            <li><a class="font-semibold text-sky-700 hover:text-sky-900" href="https://cheatsheetseries.owasp.org/cheatsheets/Multifactor_Authentication_Cheat_Sheet.html" target="_blank" rel="noopener noreferrer">OWASP Multifactor Authentication Cheat Sheet</a></li>
+          </ul>
+        </article>
+      </div>
+
       <div class="mt-8 flex flex-wrap gap-3">
         <a href="https://github.com/jamesjhs/esp32intruderalarm" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 rounded-lg bg-sky-600 px-4 py-2 text-sm font-semibold text-white hover:bg-sky-700">View on GitHub &rarr;</a>
         <a href="../index.html" class="inline-flex items-center gap-2 rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-semibold text-slate-700 hover:border-slate-400 hover:text-slate-900">Back to portfolio</a>
