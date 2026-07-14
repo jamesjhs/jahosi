@@ -309,6 +309,35 @@ body.quickstart-open{overflow:hidden}
   padding:.72rem .95rem;font-weight:700;cursor:pointer;box-shadow:var(--shadow)
 }
 .chem-chat-toggle[hidden]{display:none}
+.chem-dipstick-toggle{
+  display:none;position:fixed;left:1rem;bottom:1rem;z-index:1200;
+  border:0;border-radius:999px;background:var(--blue);color:#fff;
+  padding:.72rem .95rem;font-weight:700;cursor:pointer;box-shadow:var(--shadow)
+}
+.chem-dipstick-toggle[hidden]{display:none}
+.chem-dipstick-backdrop{
+  position:fixed;inset:0;z-index:1500;display:none;align-items:center;justify-content:center;
+  background:rgba(2,30,56,.55);padding:1rem
+}
+.chem-dipstick-backdrop.open{display:flex}
+.chem-dipstick-dialog{
+  width:min(94vw,460px);max-height:min(92dvh,720px);overflow:hidden;
+  background:var(--card);border:1px solid var(--border);border-radius:12px;box-shadow:0 18px 50px rgba(2,30,56,.24);
+  display:grid;grid-template-rows:auto 1fr auto
+}
+.chem-dipstick-head{display:flex;align-items:center;justify-content:space-between;gap:1rem;padding:.85rem 1rem;border-bottom:1px solid var(--border);background:#f8fbff}
+.chem-dipstick-title{font-size:.92rem;font-weight:700;color:var(--blue)}
+.chem-dipstick-close{border:0;background:transparent;color:#475569;font-size:1.2rem;line-height:1;cursor:pointer;padding:.2rem}
+.chem-dipstick-body{overflow:auto;padding:1rem;display:grid;gap:.7rem}
+.chem-dipstick-body .field{margin-bottom:0}
+.chem-dipstick-body input,.chem-dipstick-body select{
+  width:100%;padding:.45rem .55rem;border:1.5px solid var(--border);border-radius:6px;font-size:.85rem;background:#fff;color:var(--text)
+}
+.chem-dipstick-actions{display:flex;gap:.6rem;justify-content:flex-end;padding:.85rem 1rem;border-top:1px solid var(--border);background:#fff}
+.chem-dipstick-actions button{border:0;border-radius:8px;padding:.62rem .9rem;font-weight:700;cursor:pointer}
+.chem-dipstick-actions .secondary{background:#e2e8f0;color:#334155}
+.chem-dipstick-actions .primary{background:var(--blue);color:#fff}
+body.chem-dipstick-open{overflow:hidden}
 .chem-chat-panel{
   position:fixed;right:1rem;bottom:4.2rem;z-index:1201;
   width:min(92vw,370px);background:var(--card);border:2px solid var(--border);
@@ -359,6 +388,7 @@ body.quickstart-open{overflow:hidden}
   .intro-grid{grid-template-columns:1fr}
   .floating-options-btn{display:inline-flex;align-items:center;justify-content:center}
   .controls-close-bottom{display:block}
+  .chem-dipstick-toggle{display:inline-flex;align-items:center;justify-content:center;left:auto;right:1rem;bottom:8.2rem}
   .chem-chat-toggle{bottom:4.6rem}
   .chem-chat-panel{
     top:max(.6rem, env(safe-area-inset-top));
@@ -431,6 +461,7 @@ body.quickstart-open{overflow:hidden}
   </section>
 
   <button id="floating-options" class="floating-options-btn" type="button">⚙️ Options</button>
+  <button id="chem-dipstick-toggle" class="chem-dipstick-toggle" type="button" aria-expanded="false" aria-controls="chem-dipstick-overlay">🧪 Test strip</button>
   <button id="chem-chat-toggle" class="chem-chat-toggle" type="button" aria-expanded="false" aria-controls="chem-chat-panel">🤖 Chemistry bot</button>
 
   <section id="quickstart-overlay" class="quickstart-backdrop" aria-hidden="true">
@@ -454,6 +485,49 @@ body.quickstart-open{overflow:hidden}
         <button id="quickstart-back" class="secondary" type="button">Back</button>
         <button id="quickstart-skip" class="secondary" type="button">Skip</button>
         <button id="quickstart-next" class="primary" type="button">Next</button>
+      </div>
+    </div>
+  </section>
+
+  <section id="chem-dipstick-overlay" class="chem-dipstick-backdrop" aria-hidden="true">
+    <div class="chem-dipstick-dialog" role="dialog" aria-modal="true" aria-labelledby="chem-dipstick-title">
+      <div class="chem-dipstick-head">
+        <h2 id="chem-dipstick-title" class="chem-dipstick-title">Enter test strip readings</h2>
+        <button id="chem-dipstick-close" class="chem-dipstick-close" type="button" aria-label="Close test strip form">×</button>
+      </div>
+      <div class="chem-dipstick-body">
+        <div class="field">
+          <label for="dip-chem-th">Hardness</label>
+          <input type="number" id="dip-chem-th" min="0" max="2000" step="10" placeholder="200-400 ppm">
+        </div>
+        <div class="field">
+          <label for="dip-chem-fc">Free Chlorine (FC)</label>
+          <input type="number" id="dip-chem-fc" min="0" max="20" step="0.1" placeholder="1-3 ppm">
+        </div>
+        <div class="field">
+          <label for="dip-chem-br">Bromine</label>
+          <input type="number" id="dip-chem-br" min="0" max="20" step="0.1" placeholder="2-6 ppm">
+        </div>
+        <div class="field">
+          <label for="dip-chem-tc">Total Chlorine (TC)</label>
+          <input type="number" id="dip-chem-tc" min="0" max="20" step="0.1" placeholder="2-3 ppm">
+        </div>
+        <div class="field">
+          <label for="dip-chem-cya">Cyanuric Acid (Stabiliser)</label>
+          <input type="number" id="dip-chem-cya" min="0" max="300" step="5" placeholder="40-60 ppm">
+        </div>
+        <div class="field">
+          <label for="dip-chem-ta">Total Alkalinity (TA)</label>
+          <input type="number" id="dip-chem-ta" min="0" max="400" step="1" placeholder="80-120 ppm">
+        </div>
+        <div class="field">
+          <label for="dip-chem-ph">pH</label>
+          <input type="number" id="dip-chem-ph" min="5.0" max="10.0" step="0.1" placeholder="7.2-7.8">
+        </div>
+      </div>
+      <div class="chem-dipstick-actions">
+        <button id="chem-dipstick-clear" class="secondary" type="button">Clear</button>
+        <button id="chem-dipstick-done" class="primary" type="button">Done</button>
       </div>
     </div>
   </section>
@@ -2621,7 +2695,79 @@ function initChemistry() {
   const btn = document.getElementById('export-chem-schedule');
   if (btn) btn.addEventListener('click', downloadChemSchedule);
   syncChlorineTypeSelectors('chem-chlorine-type');
+  syncDipstickPopupFromMain();
+  initChemDipstickPopup();
   chemGo();
+}
+
+const CHEM_DIPSTICK_FIELDS = ['th', 'fc', 'br', 'tc', 'cya', 'ta', 'ph'];
+
+function syncDipstickPopupFromMain() {
+  CHEM_DIPSTICK_FIELDS.forEach((key) => {
+    const main = document.getElementById(`chem-${key}`);
+    const popup = document.getElementById(`dip-chem-${key}`);
+    if (main && popup) popup.value = main.value || '';
+  });
+}
+
+function syncMainChemFromDipstick(key) {
+  const popup = document.getElementById(`dip-chem-${key}`);
+  const main = document.getElementById(`chem-${key}`);
+  if (!popup || !main) return;
+  main.value = popup.value;
+  chemGo();
+  saveConfigToLS();
+}
+
+function clearDipstickReadings() {
+  CHEM_DIPSTICK_FIELDS.forEach((key) => {
+    const popup = document.getElementById(`dip-chem-${key}`);
+    const main = document.getElementById(`chem-${key}`);
+    if (popup) popup.value = '';
+    if (main) main.value = '';
+  });
+  chemGo();
+  saveConfigToLS();
+}
+
+function setDipstickPopupOpen(open) {
+  const overlay = document.getElementById('chem-dipstick-overlay');
+  const toggle = document.getElementById('chem-dipstick-toggle');
+  if (!overlay || !toggle) return;
+  if (open) syncDipstickPopupFromMain();
+  overlay.classList.toggle('open', open);
+  overlay.setAttribute('aria-hidden', open ? 'false' : 'true');
+  toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+  document.body.classList.toggle('chem-dipstick-open', open);
+}
+
+function initChemDipstickPopup() {
+  const toggle = document.getElementById('chem-dipstick-toggle');
+  const overlay = document.getElementById('chem-dipstick-overlay');
+  const closeBtn = document.getElementById('chem-dipstick-close');
+  const doneBtn = document.getElementById('chem-dipstick-done');
+  const clearBtn = document.getElementById('chem-dipstick-clear');
+  if (!toggle || !overlay) return;
+
+  CHEM_DIPSTICK_FIELDS.forEach((key) => {
+    const main = document.getElementById(`chem-${key}`);
+    const popup = document.getElementById(`dip-chem-${key}`);
+    if (!main || !popup) return;
+    main.addEventListener('input', () => {
+      popup.value = main.value || '';
+    });
+  });
+  toggle.addEventListener('click', () => setDipstickPopupOpen(true));
+  closeBtn?.addEventListener('click', () => setDipstickPopupOpen(false));
+  doneBtn?.addEventListener('click', () => setDipstickPopupOpen(false));
+  clearBtn?.addEventListener('click', clearDipstickReadings);
+  overlay.addEventListener('click', (event) => {
+    if (event.target === overlay) setDipstickPopupOpen(false);
+  });
+  overlay.addEventListener('input', (event) => {
+    const match = event.target?.id?.match(/^dip-chem-(th|fc|br|tc|cya|ta|ph)$/);
+    if (match) syncMainChemFromDipstick(match[1]);
+  });
 }
 
 // ─── CHEMISTRY CHAT ─────────────────────────────────────────────────────────────
@@ -2956,9 +3102,12 @@ function initChemChat() {
   initChemChatProblemStarters();
 
   const setOpen = (open) => {
+    const dipstickToggle = document.getElementById('chem-dipstick-toggle');
     panel.classList.toggle('open', open);
     toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
     toggle.hidden = open;
+    if (dipstickToggle) dipstickToggle.hidden = open;
+    if (open) setDipstickPopupOpen(false);
     if (open) {
       chemChatSyncGate();
       if (chemChatIsTurnstileEnabled()) {
@@ -3709,11 +3858,14 @@ function finishQuickStartGuide() {
   saveConfigToLS();
   const chatPanel = document.getElementById('chem-chat-panel');
   const chatToggle = document.getElementById('chem-chat-toggle');
+  const dipstickToggle = document.getElementById('chem-dipstick-toggle');
   if (chatPanel) chatPanel.classList.add('open');
   if (chatToggle) {
     chatToggle.setAttribute('aria-expanded', 'true');
     chatToggle.hidden = true;
   }
+  if (dipstickToggle) dipstickToggle.hidden = true;
+  setDipstickPopupOpen(false);
   if (typeof chemChatSyncGate === 'function') chemChatSyncGate();
   document.getElementById('forecast36-card')?.scrollIntoView({behavior:'smooth', block:'start'});
   window.setTimeout(() => {
