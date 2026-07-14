@@ -336,6 +336,12 @@ body.quickstart-open{overflow:hidden}
 .chem-chat-msg.user{background:#dbeafe;color:#1e3a8a}
 .chem-chat-msg.bot{background:#ecfeff;color:#155e75}
 .chem-chat-msg a{color:#0369a1;font-weight:700;text-decoration:underline;text-underline-offset:2px;overflow-wrap:anywhere}
+.chem-chat-starters{display:grid;gap:.45rem;padding:.6rem .65rem;border-top:1px solid var(--border);background:#f8fbff}
+.chem-chat-starters-title{font-size:.72rem;font-weight:700;color:var(--muted)}
+.chem-chat-starter-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(155px,1fr));gap:.4rem}
+.chem-chat-starter{border:1px solid var(--border);border-radius:8px;background:#fff;color:var(--blue);padding:.48rem .55rem;font-size:.72rem;font-weight:700;line-height:1.25;text-align:left;cursor:pointer}
+.chem-chat-starter:hover,.chem-chat-starter:focus{border-color:var(--blue);outline:none;background:#eff9ff}
+.chem-chat-starter:disabled{opacity:.55;cursor:wait}
 .chem-chat-form{display:grid;grid-template-columns:1fr auto;gap:.5rem;padding:.65rem;border-top:1px solid var(--border);background:#fff}
 .chem-chat-input{border:1.5px solid var(--border);border-radius:8px;padding:.55rem .6rem;font-size:.8rem}
 .chem-chat-send{border:0;border-radius:8px;background:var(--blue);color:#fff;padding:.55rem .8rem;font-weight:700;cursor:pointer}
@@ -451,17 +457,19 @@ body.quickstart-open{overflow:hidden}
       <button id="chem-chat-close" class="chem-chat-close" type="button" aria-label="Close chemistry bot">×</button>
     </div>
     <div id="chem-chat-thread" class="chem-chat-thread">
-      <div class="chem-chat-msg bot">🤖 Rough guide — always test first.
-Before chatting, confirm your garden pool geometry and latest chemistry readings are filled in correctly.
-Ask about your current chemistry readings and dosing cards.</div>
+      <div class="chem-chat-msg bot">is there a current problem with your pool?</div>
     </div>
     <div id="chem-chat-gate" class="chem-chat-gate" hidden>
       <div class="chem-chat-gate-copy">Complete the Turnstile check to start chatting.</div>
       <div id="chem-chat-turnstile" class="chem-chat-turnstile"></div>
       <p id="chem-chat-gate-note" class="chem-chat-gate-note">Your chat session stays temporary and in-memory only.</p>
     </div>
+    <div id="chem-chat-starters" class="chem-chat-starters" aria-label="Suggested pool problems">
+      <div class="chem-chat-starters-title">Select a common issue</div>
+      <div class="chem-chat-starter-grid" id="chem-chat-starter-grid"></div>
+    </div>
     <form id="chem-chat-form" class="chem-chat-form">
-      <input id="chem-chat-input" class="chem-chat-input" type="text" maxlength="500" placeholder="Ask about current readings…" autocomplete="off">
+      <input id="chem-chat-input" class="chem-chat-input" type="text" maxlength="500" placeholder="Describe the current pool problem…" autocomplete="off">
       <button id="chem-chat-send" class="chem-chat-send" type="submit">Send</button>
     </form>
   </section>
@@ -2612,6 +2620,15 @@ function initChemistry() {
 const CHEM_CHAT_MAX_PAIRS = 6;
 const CHEM_CHAT_TURNSTILE_SITE_KEY = "__TURNSTILE_SITE_KEY__";
 const CHEM_CHAT_SESSION_STORAGE_KEY = "splash_chem_chat_session_1";
+const CHEM_CHAT_PROBLEM_STARTERS = [
+  'Green water or algae',
+  'Cloudy or milky water',
+  'Chlorine is low or disappears',
+  'pH or alkalinity problem',
+  'Strong chlorine smell or irritation',
+  'Stains, scale, or coloured water',
+  'Pool is too cold or losing heat'
+];
 const chemChatHistory = [];
 let chemChatTurnstileWidgetId = null;
 let chemChatTurnstileToken = "";
@@ -2650,6 +2667,31 @@ function chemChatCanChat() {
   return chemChatHasSession() || Boolean(chemChatTurnstileToken);
 }
 
+function chemChatSelectedText(id) {
+  const el = document.getElementById(id);
+  if (!el) return null;
+  if (el.tagName === 'SELECT') {
+    return el.options[el.selectedIndex]?.textContent?.trim() || el.value || null;
+  }
+  return el.textContent?.trim() || el.value || null;
+}
+
+function chemChatPoolDimensionLabel() {
+  const shape = gs('pool-shape') || 'circular';
+  const depth = gi('depth');
+  if (shape === 'rectangular') {
+    return `${fmt(gi('pool-x'), 2)} m x ${fmt(gi('pool-y'), 2)} m x ${fmt(depth, 2)} m deep`;
+  }
+  return `${fmt(gi('radius'), 2)} m radius x ${fmt(depth, 2)} m deep`;
+}
+
+function chemChatNumericState(id) {
+  const raw = document.getElementById(id)?.value;
+  if (raw == null || String(raw).trim() === '') return null;
+  const value = Number(raw);
+  return Number.isFinite(value) ? value : null;
+}
+
 function chemChatSnapshot() {
   const chemResults = ['ta', 'ph', 'fc', 'th', 'cya', 'tc']
     .map((key) => {
@@ -2662,7 +2704,28 @@ function chemChatSnapshot() {
   return {
     poolState: {
       volL: Math.round(chemPoolVolL()),
+      aquaticMode: gs('aquatic-mode') || 'pool',
+      poolShape: gs('pool-shape') || 'circular',
+      dimensions: chemChatPoolDimensionLabel(),
+      radiusM: chemChatNumericState('radius'),
+      lengthM: chemChatNumericState('pool-x'),
+      widthM: chemChatNumericState('pool-y'),
+      depthM: chemChatNumericState('depth'),
+      ground: chemChatSelectedText('ground'),
+      shadePercent: chemChatNumericState('shade'),
+      targetTempC: chemChatNumericState('target'),
       tempC: chemCurrentTempC(),
+      currentTempSource: chemChatSelectedText('current-temp-source'),
+      heatMode: chemChatSelectedText('heat-mode'),
+      heaterPowerKw: chemChatNumericState('hpow'),
+      heaterEfficiencyPercent: chemChatNumericState('heff'),
+      heatingHoursPerDay: chemChatNumericState('heat-hours'),
+      coverType: chemChatSelectedText('cover-type'),
+      coverHoursPerDay: chemChatNumericState('cover-hours'),
+      seasonStart: gs('pool-start') || null,
+      seasonEnd: gs('pool-end') || null,
+      fillsPerSeason: chemChatNumericState('pool-fills'),
+      location: lastResolvedPlace ? placeLabel(lastResolvedPlace) : (gs('forecast-location-query') || null),
       chlorineType: gs('chem-chlorine-type'),
       ta: chemChatReadValue('chem-ta'),
       ph: chemChatReadValue('chem-ph'),
@@ -2726,6 +2789,9 @@ function chemChatSyncGate() {
   if (gate) gate.hidden = !locked;
   if (input) input.disabled = locked;
   if (sendBtn) sendBtn.disabled = locked;
+  document.querySelectorAll('.chem-chat-starter').forEach((button) => {
+    button.disabled = locked;
+  });
 }
 
 function chemChatSetGateMessage(message) {
@@ -2786,6 +2852,7 @@ function chemChatScheduleTurnstileRender() {
 
 async function chemChatSend(message) {
   const sendBtn = document.getElementById('chem-chat-send');
+  const starterButtons = Array.from(document.querySelectorAll('.chem-chat-starter'));
   const sessionToken = chemChatHasSession() ? sessionStorage.getItem(CHEM_CHAT_SESSION_STORAGE_KEY) || '' : '';
   const needsTurnstile = chemChatIsTurnstileEnabled() && !sessionToken;
   if (needsTurnstile && !chemChatTurnstileToken) {
@@ -2794,6 +2861,7 @@ async function chemChatSend(message) {
     return;
   }
   if (sendBtn) sendBtn.disabled = true;
+  starterButtons.forEach((button) => { button.disabled = true; });
   const { poolState, chemResults } = chemChatSnapshot();
   try {
     const payload = {
@@ -2840,8 +2908,34 @@ async function chemChatSend(message) {
     chemChatTrimHistory();
   } finally {
     if (sendBtn) sendBtn.disabled = false;
+    starterButtons.forEach((button) => { button.disabled = false; });
     chemChatSyncGate();
   }
+}
+
+async function chemChatSubmitMessage(message) {
+  const clean = String(message || '').trim();
+  if (!clean) return;
+  chemChatAppend('user', clean);
+  chemChatHistory.push({ role: 'user', content: clean });
+  chemChatTrimHistory();
+  await chemChatSend(clean);
+}
+
+function initChemChatProblemStarters() {
+  const grid = document.getElementById('chem-chat-starter-grid');
+  if (!grid || grid.dataset.rendered === 'true') return;
+  grid.dataset.rendered = 'true';
+  CHEM_CHAT_PROBLEM_STARTERS.forEach((label) => {
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.className = 'chem-chat-starter';
+    button.textContent = label;
+    button.addEventListener('click', async () => {
+      await chemChatSubmitMessage(`Current problem: ${label}. Please use my pool setup, heating, cover, and chemistry details to help me diagnose it.`);
+    });
+    grid.appendChild(button);
+  });
 }
 
 function initChemChat() {
@@ -2851,6 +2945,7 @@ function initChemChat() {
   const form = document.getElementById('chem-chat-form');
   const input = document.getElementById('chem-chat-input');
   if (!panel || !toggle || !closeBtn || !form || !input) return;
+  initChemChatProblemStarters();
 
   const setOpen = (open) => {
     panel.classList.toggle('open', open);
@@ -2871,11 +2966,8 @@ function initChemChat() {
     event.preventDefault();
     const message = input.value.trim();
     if (!message) return;
-    chemChatAppend('user', message);
-    chemChatHistory.push({ role: 'user', content: message });
-    chemChatTrimHistory();
     input.value = '';
-    await chemChatSend(message);
+    await chemChatSubmitMessage(message);
   });
   chemChatSyncGate();
   if (chemChatIsTurnstileEnabled()) {

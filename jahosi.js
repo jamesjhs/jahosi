@@ -143,6 +143,8 @@ const SPLASH_CHAT_GUIDELINES = [
   "Prefix every answer with: 🤖 General guide — always test first.",
   "If user asks for safety-critical medical or emergency advice, recommend contacting a qualified pool technician.",
   "Reference ranges for context only, not for dose calculations: TA ideal 80-120 ppm, pH ideal 7.4-7.6, FC ideal 2-4 ppm, hardness ideal 200-400 ppm, CYA ideal 40-60 ppm, CC should be under 0.5 ppm and ideally around 0-0.2 ppm.",
+  "Use the supplied pool setup context when diagnosing: pool mode, volume, dimensions, current and target temperature, heating mode, heater power, cover type/hours, season, location/environment, chlorine product, and readings.",
+  "When the user's first message is one of the suggested pool problems, begin by narrowing likely causes from the supplied setup and readings, then ask for any missing test or equipment detail needed to distinguish causes.",
   "Keep answers concise and practical, focused on diagnosing problems and explaining what needs to be addressed.",
 ].join("\n");
 
@@ -1071,7 +1073,39 @@ app.post("/splash/chat", splashChatRateLimit, express.json({ limit: "50kb" }), a
     }
   }
 
-  const allowedStateFields = ["volL", "tempC", "chlorineType", "ta", "ph", "fc", "br", "th", "cya", "tc"];
+  const allowedStateFields = [
+    "volL",
+    "aquaticMode",
+    "poolShape",
+    "dimensions",
+    "radiusM",
+    "lengthM",
+    "widthM",
+    "depthM",
+    "ground",
+    "shadePercent",
+    "targetTempC",
+    "tempC",
+    "currentTempSource",
+    "heatMode",
+    "heaterPowerKw",
+    "heaterEfficiencyPercent",
+    "heatingHoursPerDay",
+    "coverType",
+    "coverHoursPerDay",
+    "seasonStart",
+    "seasonEnd",
+    "fillsPerSeason",
+    "location",
+    "chlorineType",
+    "ta",
+    "ph",
+    "fc",
+    "br",
+    "th",
+    "cya",
+    "tc",
+  ];
   const poolStateLines = allowedStateFields.map((field) => {
     const value = poolState[field];
     if (value === null || value === undefined || value === "") return `- ${field}: (not provided)`;
