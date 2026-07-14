@@ -2433,7 +2433,7 @@ function chemGo() {
     const personalCyaPerMonth = personalFcPerDay * 30 * CHEM_DOSING.dichlor_cya_per_fc_ppm;
     const personalCompare = chlorineType === 'trichlor'
       ? ''
-      : ` Your own experience of around <strong>${personalDichlorDailyG} g dichlor per day</strong> is about ${personalDichlorWeeklyG} g/week, equivalent to roughly ${personalFcPerDay.toFixed(1)} ppm FC/day in this configured volume, so it is a sensible lived-in baseline if your tests stay in range.`;
+      : ` A moderate-use, covered, temperate-zone estimate of about <strong>${personalDichlorDailyG} g dichlor per day</strong> is about ${personalDichlorWeeklyG} g/week, equivalent to roughly ${personalFcPerDay.toFixed(1)} ppm FC/day in this configured volume, so it is a sensible lived-in baseline if your tests stay in range.`;
     const stabilizedChlorineNotes = chlorineType === 'trichlor'
       ? 'Trichlor is very concentrated and acidic, so it suits slow tablet-style dosing better than casual granular top-ups; it still adds CYA with every dose.'
       : 'Dichlor is quick-dissolving and convenient for small pools, but it is stabilised chlorine, so every FC top-up also adds CYA.';
