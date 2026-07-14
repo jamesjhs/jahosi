@@ -308,6 +308,7 @@ body.quickstart-open{overflow:hidden}
   border:0;border-radius:999px;background:#0f766e;color:#fff;
   padding:.72rem .95rem;font-weight:700;cursor:pointer;box-shadow:var(--shadow)
 }
+.chem-chat-toggle[hidden]{display:none}
 .chem-chat-panel{
   position:fixed;right:1rem;bottom:4.2rem;z-index:1201;
   width:min(92vw,370px);background:var(--card);border:2px solid var(--border);
@@ -359,7 +360,19 @@ body.quickstart-open{overflow:hidden}
   .floating-options-btn{display:inline-flex;align-items:center;justify-content:center}
   .controls-close-bottom{display:block}
   .chem-chat-toggle{bottom:4.6rem}
-  .chem-chat-panel{right:.6rem;left:.6rem;width:auto;bottom:8.1rem}
+  .chem-chat-panel{
+    top:max(.6rem, env(safe-area-inset-top));
+    right:.6rem;
+    bottom:max(.6rem, env(safe-area-inset-bottom));
+    left:.6rem;
+    width:auto;
+    max-height:calc(100dvh - 1.2rem);
+    display:none;
+    grid-template-rows:auto minmax(0,1fr) auto auto auto;
+  }
+  .chem-chat-panel.open{display:grid}
+  .chem-chat-thread{height:auto;min-height:0;max-height:none}
+  .chem-chat-resize{display:none}
   .quickstart-dialog{width:100%;max-height:94dvh}
 }
 </style>
@@ -2945,6 +2958,7 @@ function initChemChat() {
   const setOpen = (open) => {
     panel.classList.toggle('open', open);
     toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+    toggle.hidden = open;
     if (open) {
       chemChatSyncGate();
       if (chemChatIsTurnstileEnabled()) {
@@ -3696,7 +3710,10 @@ function finishQuickStartGuide() {
   const chatPanel = document.getElementById('chem-chat-panel');
   const chatToggle = document.getElementById('chem-chat-toggle');
   if (chatPanel) chatPanel.classList.add('open');
-  if (chatToggle) chatToggle.setAttribute('aria-expanded', 'true');
+  if (chatToggle) {
+    chatToggle.setAttribute('aria-expanded', 'true');
+    chatToggle.hidden = true;
+  }
   if (typeof chemChatSyncGate === 'function') chemChatSyncGate();
   document.getElementById('forecast36-card')?.scrollIntoView({behavior:'smooth', block:'start'});
   window.setTimeout(() => {
