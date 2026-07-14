@@ -431,11 +431,10 @@ body.chem-dipstick-open{overflow:hidden}
       <div class="intro-copy">
         <h2 class="sec">👋 Welcome to splash!</h2>
         <p>
-          splash! is a friendly planning tool for estimating how a small outdoor over-ground pool warms up, cools down overnight, and what it may cost to hold a target temperature.
-          You can type your own 3-day forecast manually at any time, or, when you are online, search any country / city / town worldwide to auto-fill the next three days plus an hourly 2-day profile from free public weather services.
+          splash! is a friendly planning tool for estimating everything you need to know, about your garden splashpool. Splash helps to predict temperatures, weather effects, heating costs, the effects of covering your pool, and even understand how to keep the water nice and clear and suitable for splashing about in.
         </p>
         <p>
-          The planner blends pool size, heater output, tariffs, passive cover use, current water temperature, and short-term weather into one place so you can compare likely outcomes before spending money or time.
+          Use Splash! to do some cost calculations before you buy a pool, or to optimize your current pool setup. You can even use the Chemistry Bot to get advice on how to keep your water clean and safe.
         </p>
       </div>
       <div class="card" style="margin:0">
@@ -970,7 +969,7 @@ body.chem-dipstick-open{overflow:hidden}
         </article>
       </div>
 
-      <div class="sec" id="sec-boost">🔮 Boost model &amp; 3-day prediction</div>
+      <div class="sec" id="sec-boost">🔮 Active heating model &amp; 3-day prediction</div>
       <div class="stats-row" id="forecast-stats-row">
         <div class="stat"><div class="lbl">Temp After Top-Ups</div><div class="val" id="s-afterboost">—</div><div class="sub">°C after hot water + kettles</div></div>
         <div class="stat"><div class="lbl">Hot Water Needed</div><div class="val" id="s-hotreq">—</div><div class="sub">L from tank to hit target now</div></div>
@@ -1086,7 +1085,7 @@ body.chem-dipstick-open{overflow:hidden}
         <p class="mini-note">These public-query and forum-derived heuristics are used for planning prompts and cover assumptions; always treat them as indicative rather than guaranteed outcomes.</p>
       </div>
       <div class="card" style="margin-bottom:1rem" id="limitations-card">
-        <div class="card-title">Why buried/permanent pools are not modelled yet</div>
+        <div class="card-title">Why buried/permanent pools are not modelled</div>
         <p class="inline-help">splash! currently targets temporary or lightly installed outdoor playpools and uses a simplified, single-body water model with public climate inputs. Fully buried or permanent pools need extra site-specific physics the app does not yet collect reliably, including layered wall/base construction, insulation thickness and type, soil moisture and drainage, ground-temperature lag, and nearby building effects on wind shelter, sky-view radiation, and shading. Without those inputs, one-size-fits-all buried-pool outputs would look precise but often be wrong, so this version keeps buried/permanent pool modelling out of scope and treats results as planning estimates, not guarantees.</p>
       </div>
     </main>
@@ -1371,20 +1370,8 @@ body.chem-dipstick-open{overflow:hidden}
       These are rough guides only and assume typical residential usage.
       <strong>Hard vs soft water, cover use, aeration, and rainfall exposure can materially change pH/alkalinity/hardness demand.</strong>
     </p>
-    <div class="tbl-wrap">
-      <table class="chem-ref-table">
-        <thead>
-          <tr>
-            <th>Maintenance Product</th>
-            <th>Estimated Quantity</th>
-            <th>Cadence</th>
-            <th>Why this may be needed</th>
-          </tr>
-        </thead>
-        <tbody id="chem-product-qty-tbody">
-          <tr><td colspan="4">Set your location and chemistry type to calculate rough product quantities.</td></tr>
-        </tbody>
-      </table>
+    <div id="chem-product-qty-copy" class="inline-help">
+      Set your location and chemistry type to calculate rough product guidance.
     </div>
     <p class="mini-note" id="chem-water-profile-note">Water chemistry profile guidance will appear here (soft/neutral/hard scenarios).</p>
   </div>
@@ -2415,7 +2402,7 @@ function chemGo() {
     cyaAccEl.innerHTML = html;
   }
 
-  const qtyBody = document.getElementById('chem-product-qty-tbody');
+  const qtyBody = document.getElementById('chem-product-qty-copy');
   const waterProfileNote = document.getElementById('chem-water-profile-note');
   if (qtyBody) {
     const kL = volL / 1000;
@@ -2427,12 +2414,6 @@ function chemGo() {
     const liquid12pctL = availClPerWeekG / 120;   // ~120 g available chlorine per litre
     const cyaPerMonth = avgFcPerDay * 30 * (chlorineType === 'trichlor'
       ? CHEM_DOSING.trichlor_cya_per_fc_ppm : CHEM_DOSING.dichlor_cya_per_fc_ppm);
-
-    const hardSoftScenarios = [
-      {name:'Soft-water scenario', taPpm:12, chPpm:20, note:'Soft source water often needs more TA and CH support.'},
-      {name:'Neutral-water scenario', taPpm:6, chPpm:8, note:'Typical balanced mains-water estimate.'},
-      {name:'Hard-water scenario', taPpm:2, chPpm:0, note:'Hard source water may need little/no CH addition; watch scaling and pH rise.'}
-    ];
     const phScenario = chemPhScenario(rTA);
     const phBaseDownG = kL * CHEM_DOSING.dryacid_g_per_1000L_per_0p2pH;
     const phBaseUpG = kL * CHEM_DOSING.sodaash_g_per_1000L_per_0p2pH;
@@ -2442,28 +2423,28 @@ function chemGo() {
       ? 'No pH reading entered'
       : `Current pH ${rPH.toFixed(1)}: ${rPH >= CHEM_TARGETS.ph.min && rPH <= CHEM_TARGETS.ph.max ? 'no pH product recommended while it remains in range' : 'adjust from measured value only'}`;
 
-    const scenarioRows = hardSoftScenarios.map(s => {
-      const taG = s.taPpm * kL * CHEM_DOSING.nabicarbonate_g_per_1000L_ppm;
-      const chG = s.chPpm * kL * CHEM_DOSING.cacl2_g_per_1000L_ppm;
-      return `<tr><td><strong>${s.name}</strong><br><span style="font-size:.72rem;color:var(--muted)">${s.note}</span></td><td>TA support ~${taG.toFixed(0)} g NaHCO₃ / month<br>CH support ~${chG.toFixed(0)} g CaCl₂ / month</td><td>Monthly review</td><td>Assumes location-climate-driven use and ordinary bather load; test-strip readings should override these guides.</td></tr>`;
-    }).join('');
-
     const projectedCya = (rCYA ?? 40) + cyaPerMonth;
     const refillLitres = projectedCya > CHEM_TARGETS.cya.max
       ? Math.round(volL * Math.min(0.6, (projectedCya - CHEM_TARGETS.cya.hi) / projectedCya))
       : 0;
+    const personalDichlorDailyG = 18;
+    const personalDichlorWeeklyG = personalDichlorDailyG * 7;
+    const personalFcPerDay = kL > 0 ? personalDichlorDailyG / (kL * CHEM_DOSING.dichlor_g_per_1000L_ppm) : 0;
+    const personalCyaPerMonth = personalFcPerDay * 30 * CHEM_DOSING.dichlor_cya_per_fc_ppm;
+    const personalCompare = chlorineType === 'trichlor'
+      ? ''
+      : ` Your own experience of around <strong>${personalDichlorDailyG} g dichlor per day</strong> is about ${personalDichlorWeeklyG} g/week, equivalent to roughly ${personalFcPerDay.toFixed(1)} ppm FC/day in this configured volume, so it is a sensible lived-in baseline if your tests stay in range.`;
+    const stabilizedChlorineNotes = chlorineType === 'trichlor'
+      ? 'Trichlor is very concentrated and acidic, so it suits slow tablet-style dosing better than casual granular top-ups; it still adds CYA with every dose.'
+      : 'Dichlor is quick-dissolving and convenient for small pools, but it is stabilised chlorine, so every FC top-up also adds CYA.';
     qtyBody.innerHTML = `
-      <tr><td><strong>${chlorLabel} chlorine</strong></td><td>~${stabilizedPerWeekG.toFixed(0)} g</td><td>Per week (split over ${Math.max(2, Math.round(7 / band.daysCheck))} doses)</td><td>Based on ${band.label} temperature band and selected location climate profile.</td></tr>
-      <tr><td><strong>Liquid chlorine alternative (12% NaOCl)</strong></td><td>~${liquid12pctL.toFixed(2)} L</td><td>Per week</td><td>Use this to maintain FC without adding extra CYA.</td></tr>
-      <tr><td><strong>Cyanuric acid increase from stabilised chlorine</strong></td><td>~${cyaPerMonth.toFixed(0)} ppm CYA</td><td>Per 30 days</td><td>Monitor CYA and switch to liquid chlorine when CYA trends high.</td></tr>
-      <tr><td><strong>Partial refill guidance</strong></td><td>${refillLitres > 0 ? `${refillLitres.toLocaleString()} L estimated` : 'None projected this month'}</td><td>${refillLitres > 0 ? 'If CYA remains above 90 ppm' : 'Monitor monthly'}</td><td>${refillLitres > 0 ? 'Estimated dilution to bring CYA back toward 70–80 ppm.' : 'If CYA exceeds 90 ppm, estimate refill from measured CYA and retest.'}</td></tr>
-      <tr><td><strong>pH Down / dry acid sensitivity</strong><br><span style="font-size:.72rem;color:var(--muted)">${phCurrentText}</span></td><td>~${phDownRange.low}–${phDownRange.high} g per −0.2 pH trial dose</td><td>Only after a high pH test</td><td>${phScenario.scenario}; ${phScenario.notes}. Acid also lowers TA, so retest before repeating.</td></tr>
-      <tr><td><strong>pH Plus / soda ash sensitivity</strong><br><span style="font-size:.72rem;color:var(--muted)">Usually avoid unless pH is genuinely low.</span></td><td>~${phUpRange.low}–${phUpRange.high} g per +0.2 pH trial dose</td><td>Only after a low pH test</td><td>TA, aeration, and cover use can change the dose several-fold; if pH is stable in range, expected use is zero.</td></tr>
-      ${scenarioRows}
+      <p><strong>${chlorLabel}</strong> is the routine sanitiser estimate here: about <strong>${stabilizedPerWeekG.toFixed(0)} g/week</strong> in the current ${band.label} temperature band, split into small doses and confirmed by FC tests. ${stabilizedChlorineNotes} At this rate the guide projects roughly <strong>${cyaPerMonth.toFixed(0)} ppm CYA per 30 days</strong>.${personalCompare} If CYA is already climbing, pause stabilised chlorine and consider dilution${refillLitres > 0 ? `; this setup currently projects a rough <strong>${refillLitres.toLocaleString()} L</strong> partial refill if CYA remains above 90 ppm` : ''}.</p>
+      <p><strong>Liquid chlorine</strong> (sodium hypochlorite, often 10-15%; this estimate uses 12%) is the cleaner alternative when you need free chlorine without adding more stabiliser: roughly <strong>${liquid12pctL.toFixed(2)} L/week</strong> would replace the same average FC demand. It tends to push pH upward temporarily and adds salt over time, but it is often the better top-up or shock choice when CYA is high. <strong>Pool clarifier</strong> is not a routine balancing chemical; use it only when water is dull or hazy after FC, pH, filtration, and cleaning are already under control. It clumps fine particles so the filter can catch them, but overdosing can make water gummy, foamy, or harder to filter.</p>
+      <p><strong>pH Minus</strong> products are usually sodium bisulfate dry acid, or sometimes hydrochloric/muriatic acid; they lower pH and also pull TA down. Based on the current setup, a cautious dry-acid trial dose for a 0.2 pH reduction would be about <strong>${phDownRange.low}-${phDownRange.high} g</strong>, then circulate and retest. <strong>pH Plus</strong> is usually sodium carbonate/soda ash; it raises pH and can raise TA, with a rough 0.2 pH trial dose here of <strong>${phUpRange.low}-${phUpRange.high} g</strong>. ${phCurrentText}. In hard, high-alkalinity water, pH often drifts up and pH Minus is the more relevant product; avoid calcium increasers and be alert for scaling. In soft or low-alkalinity water, pH can be unstable, so sodium bicarbonate/alkalinity increaser may be more suitable than repeatedly using pH Plus, and calcium hardness increaser may be needed for plaster or equipment protection. If pH is stable in range, the right routine quantity of pH products and clarifier can be zero.</p>
     `;
 
     if (waterProfileNote) {
-      waterProfileNote.innerHTML = `Water profile sensitivity: these quantities can move substantially with hard/soft source water, rainfall dilution, cover use, CO₂ outgassing/aeration, and bather load. A covered pool can legitimately need <strong>zero pH adjustment</strong> for long periods if tests remain in range. Treat figures as rough guides only and tune using measured TA/pH/CH/CYA results. <strong>Do NOT take these calculations as correct — ALWAYS follow the instructions on the product label.</strong>`;
+      waterProfileNote.innerHTML = `Water profile sensitivity: source-water hardness, rainfall dilution, cover use, CO₂ outgassing/aeration, and bather load can change demand dramatically. A covered pool can legitimately need <strong>zero pH adjustment</strong> and little or no clarifier for long periods if tests remain in range. The 18 g/day dichlor experience would add roughly <strong>${personalCyaPerMonth.toFixed(0)} ppm CYA/month</strong> in the configured volume, so keep testing CYA even when the water looks good. <strong>Do NOT take these calculations as correct — ALWAYS follow the instructions on the product label.</strong>`;
     }
   }
   saveConfigToLS();
