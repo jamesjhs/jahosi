@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="ESP32 Intruder Alarm is a privacy-preserving CSI movement-sensing prototype using ESP32 receiver/sender firmware, Raspberry Pi services, and a PWA dashboard.">
+  <meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1">
+  <link rel="canonical" href="https://jahosi.co.uk/portfolio/esp32-intruder-alarm.html">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="ESP32 Intruder Alarm | Jahosi Portfolio">
+  <meta property="og:description" content="A privacy-preserving ESP32 CSI alarm prototype with receiver/sender firmware, Raspberry Pi services, calibration tooling, and an installable PWA dashboard.">
+  <meta property="og:url" content="https://jahosi.co.uk/portfolio/esp32-intruder-alarm.html">
+  <meta property="og:site_name" content="Dr James Rowson Portfolio">
+  <meta property="og:image" content="https://jahosi.co.uk/images/esp32-alarm-dashboard.png">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="ESP32 Intruder Alarm | Jahosi Portfolio">
+  <meta name="twitter:description" content="ESP32 CSI movement sensing, Raspberry Pi fusion, calibration, push plumbing, and a PWA dashboard.">
+  <meta name="twitter:image" content="https://jahosi.co.uk/images/esp32-alarm-dashboard.png">
+  <title>ESP32 Intruder Alarm | Jahosi Portfolio</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&display=swap');
+    body { font-family: "Manrope", sans-serif; }
+  </style>
+</head>
+<body class="min-h-screen text-slate-900" style="background:radial-gradient(900px 380px at 8% -10%,#dbeafe,transparent 55%),radial-gradient(820px 340px at 90% 0%,#ccfbf1,transparent 52%),#f8fafc;">
+  <main class="mx-auto max-w-4xl px-4 py-10 sm:px-6">
+    <a href="../index.html" class="text-sm font-semibold text-sky-700 hover:text-sky-900">&larr; Back to portfolio</a>
+
+    <section class="mt-4 rounded-3xl border border-slate-200 bg-white/90 p-8 shadow-xl backdrop-blur-sm">
+      <p class="text-sm font-semibold uppercase tracking-widest text-sky-600">Project</p>
+      <h1 class="mt-2 text-3xl font-extrabold">ESP32 Intruder Alarm</h1>
+      <p class="mt-1 text-sm text-slate-500">Wi-Fi CSI movement sensing &middot; ESP-IDF firmware &middot; Raspberry Pi services &middot; PWA dashboard &middot; prototype v0.5.1</p>
+
+      <p class="mt-5 text-slate-600">ESP32 Intruder Alarm explores whether ordinary 2.4 GHz Wi-Fi signals can become a privacy-preserving intruder alarm. Instead of cameras or microphones, ESP32 receiver nodes read Wi-Fi Channel State Information (CSI): the fine-grained way a radio signal changes as it passes through a room. Movement disturbs the multipath field, and those changes can be scored without recording images, speech, or identity.</p>
+      <p class="mt-4 text-slate-600">The current version is a research-grade prototype, not a finished security product. The repository builds toward two ESP32-S3-WROOM-1U receiver nodes, one ESP32-WROOM-32 dedicated sender, and Raspberry Pi services that poll nodes, fuse movement scores, retain bounded history, expose a local PWA dashboard, and raise alerts only when the system is armed.</p>
+
+      <img src="../images/esp32-alarm-topology.png" width="2200" height="1500" alt="Current and goal topology for the ESP32 Intruder Alarm, showing mobile PWA, Cloudflare Tunnel, Raspberry Pi services, router, ESP32 receiver nodes, and ESP32 sender node" class="mt-6 w-full rounded-xl border border-slate-200 bg-white shadow-sm">
+      <p class="mt-2 text-center text-xs text-slate-400">Repository topology diagram: PWA, Pi web/polling services, home router, receiver nodes, and dedicated sender.</p>
+
+      <h2 class="mt-8 text-xl font-bold">Identified Problem</h2>
+      <p class="mt-3 text-sm text-slate-600">A normal home alarm can detect doors, windows, or PIR movement, but many sensing options are either visually intrusive, blind to parts of a room, or dependent on sensors being installed exactly where movement happens. The project asks whether a small set of cheap Wi-Fi boards can detect movement through disturbances in the radio channel itself, while keeping the sensing local and avoiding camera-style privacy concerns.</p>
+      <p class="mt-3 text-sm text-slate-600">The hard part is reliability. CSI movement detection is environment-specific: doors, pets, fans, neighbours' Wi-Fi, router channel changes, board orientation, and even a nudged antenna can shift the baseline. That is why the repository treats calibration, controlled sender traffic, source-MAC filtering, bounded retention, and clear prototype status as core requirements rather than polish.</p>
+
+      <div class="mt-6 grid gap-3 md:grid-cols-3">
+        <article class="rounded-xl border border-slate-200 bg-slate-50 p-4">
+          <h3 class="text-sm font-bold uppercase tracking-wide text-slate-700">Signal</h3>
+          <p class="mt-2 text-sm text-slate-600">ESP32 CSI exposes amplitude, phase-like behaviour, RSSI, packet rate, and subcarrier changes rather than a single Wi-Fi strength value.</p>
+        </article>
+        <article class="rounded-xl border border-slate-200 bg-slate-50 p-4">
+          <h3 class="text-sm font-bold uppercase tracking-wide text-slate-700">Privacy</h3>
+          <p class="mt-2 text-sm text-slate-600">The sensing target is movement in the radio field, not visible imagery, audio capture, or person identification.</p>
+        </article>
+        <article class="rounded-xl border border-slate-200 bg-slate-50 p-4">
+          <h3 class="text-sm font-bold uppercase tracking-wide text-slate-700">Constraint</h3>
+          <p class="mt-2 text-sm text-slate-600">It must remain honest about false positives, dead spots, static presence limits, and room-by-room calibration.</p>
+        </article>
+      </div>
+
+      <h2 class="mt-8 text-xl font-bold">Product Goals</h2>
+      <ul class="mt-3 space-y-1 text-sm text-slate-600 list-disc list-inside">
+        <li>Capture CSI on ESP32 receiver firmware using ESP-IDF Wi-Fi CSI APIs.</li>
+        <li>Keep the CSI callback lightweight, then process samples through FreeRTOS queues and aggregation tasks.</li>
+        <li>Score movement from rolling features such as amplitude variance, energy delta, trend deviation, RSSI, packet count, and phase proxy.</li>
+        <li>Support idle, boost, and cooldown sensing states so high-rate capture happens only when useful.</li>
+        <li>Persist stillness calibration baselines in NVS so nodes survive reboot without recalibrating during possible movement.</li>
+        <li>Add a dedicated ESP32 sender that emits steady UDP broadcast packets for more repeatable CSI experiments.</li>
+        <li>Let the Pi dashboard manage receiver thresholds, sender start/stop, calibration read/write/delete, source-MAC filtering, and node identity.</li>
+        <li>Provide PWA-level movement history, version-aware updates, VAPID/push plumbing, security settings, audit records, and bounded data retention.</li>
+      </ul>
+
+      <img src="../images/esp32-alarm-dashboard.png" width="1440" height="1700" alt="ESP32 Intruder Alarm PWA dashboard with movement score history charts, sensor comparison, system status, push and security panels" class="mt-6 w-full rounded-xl border border-slate-200 shadow-sm">
+      <p class="mt-2 text-center text-xs text-slate-400">Actual Pi PWA dashboard rendered from the repository: movement history, trigger threshold, system state, push, events, and audit panels.</p>
+
+      <h2 class="mt-8 text-xl font-bold">Build Steps</h2>
+      <div class="mt-3 space-y-3 text-sm text-slate-600">
+        <p><span class="font-semibold text-slate-800">1. Research spike:</span> prove that ESP32 CSI packets can be captured and plotted, and compare quiet-room traces with walking, waving, and door movement.</p>
+        <p><span class="font-semibold text-slate-800">2. Standalone node:</span> add SoftAP Wi-Fi provisioning, NVS credential storage, local HTML dashboard, JSON status/config APIs, rolling feature windows, LED identify mode, and telemetry posting to the Pi.</p>
+        <p><span class="font-semibold text-slate-800">3. Pi services:</span> split responsibilities between a TypeScript PWA/API service and a Python polling/signal worker, with SQLite/SQLCipher planned for persistent users, node state, settings, events, calibration, and push subscriptions.</p>
+        <p><span class="font-semibold text-slate-800">4. Calibration and settings:</span> expose node config, threshold tuning, quiet-baseline capture, persisted calibration editing, and sender source-MAC diagnostics through the Pi dashboard.</p>
+        <p><span class="font-semibold text-slate-800">5. Three-board topology:</span> use two ESP32-S3-WROOM-1U receivers for improved receiver-side stability, with an ESP32-WROOM-32 as a cost-efficient dedicated CSI packet sender.</p>
+        <p><span class="font-semibold text-slate-800">6. Operational hardening:</span> add version-aware PWA refresh, Cloudflare Access-aware error handling, Web Push support, audit logging, retention limits, and explicit degraded-coverage behaviour before treating it as an alarm.</p>
+      </div>
+
+      <img src="../images/esp32-alarm-node-settings.png" width="1440" height="1700" alt="ESP32 node settings modal showing receiver status, device configuration, CSI MAC histogram, source-MAC diagnostics, and calibration controls" class="mt-6 w-full rounded-xl border border-slate-200 shadow-sm">
+      <p class="mt-2 text-center text-xs text-slate-400">Actual node settings modal rendered from the PWA: S3 receiver status, thresholds, source filtering, MAC histogram, and calibration controls.</p>
+
+      <h2 class="mt-8 text-xl font-bold">Current Rendition</h2>
+      <p class="mt-3 text-sm text-slate-600">Version <code class="rounded bg-slate-100 px-1.5 py-0.5">0.5.1</code> adds a separate ESP32-S3-WROOM-1U receiver build while keeping the original ESP32-WROOM-32 receiver and sender targets compatible. The S3 target compiles the same receiver source with an enhanced hardware profile: larger CSI queue, higher idle/boost rate ceilings, a 120 Hz default boost rate, larger task stacks, and board/profile reporting in status/config APIs.</p>
+      <p class="mt-3 text-sm text-slate-600">The present prototype includes receiver and sender firmware, local ESP32 dashboards, Pi-facing telemetry, a TypeScript PWA/API service, movement history charts, trigger controls, node settings modals, persisted calibration forms, source-MAC diagnostics, VAPID/push administration, security setting flags, event/audit panels, and documentation for placement, hardware variants, risks, and milestones.</p>
+
+      <div class="mt-6 rounded-2xl border border-slate-200 bg-slate-50 p-4">
+        <h3 class="text-sm font-bold uppercase tracking-wide text-slate-700">Actual status payload shape</h3>
+        <pre class="mt-3 overflow-x-auto rounded-lg border border-slate-200 bg-white p-4 text-xs text-slate-700"><code>{
+  "device_id": 0,
+  "sample_rate_hz": 80,
+  "movement_score": 0.37,
+  "movement_detected": false,
+  "calibration_persisted": true,
+  "last_packet_ms": 20
+}</code></pre>
+        <p class="mt-3 text-xs text-slate-500">Shortened from the README's candidate JSON shape and implemented API fields; used here to show the kind of machine-readable status the Pi polls.</p>
+      </div>
+
+      <h2 class="mt-8 text-xl font-bold">Stack</h2>
+      <div class="mt-3 grid gap-2 text-sm sm:grid-cols-2 lg:grid-cols-4">
+        <div class="rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-center font-semibold text-slate-700">ESP-IDF / C</div>
+        <div class="rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-center font-semibold text-slate-700">FreeRTOS</div>
+        <div class="rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-center font-semibold text-slate-700">TypeScript PWA</div>
+        <div class="rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-center font-semibold text-slate-700">Python worker</div>
+        <div class="rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-center font-semibold text-slate-700">Fastify</div>
+        <div class="rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-center font-semibold text-slate-700">SQLite / SQLCipher</div>
+        <div class="rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-center font-semibold text-slate-700">Web Push</div>
+        <div class="rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-center font-semibold text-slate-700">Cloudflare Tunnel</div>
+      </div>
+
+      <div class="mt-8 flex flex-wrap gap-3">
+        <a href="https://github.com/jamesjhs/esp32intruderalarm" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 rounded-lg bg-sky-600 px-4 py-2 text-sm font-semibold text-white hover:bg-sky-700">View on GitHub &rarr;</a>
+        <a href="../index.html" class="inline-flex items-center gap-2 rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-semibold text-slate-700 hover:border-slate-400 hover:text-slate-900">Back to portfolio</a>
+      </div>
+    </section>
+  </main>
+</body>
+</html>

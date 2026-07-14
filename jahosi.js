@@ -84,6 +84,7 @@ const SITEMAP_PATHS = [
   "/",
   "/portfolio/hovercraft.html",
   "/portfolio/hamster.html",
+  "/portfolio/esp32-intruder-alarm.html",
   "/portfolio/museum-gallery.html",
   "/portfolio/museum-vms.html",
   "/portfolio/tasker.html",
