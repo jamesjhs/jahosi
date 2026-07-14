@@ -2,7 +2,7 @@
 
 Interactive playpool thermal and cost planner.
 
-## v1.7.0 highlights
+## v1.8.0 highlights
 
 - Adds a first-time-user quick-start overlay with eight guided setup steps and a visible progress bar.
 - Captures location/geolocation, pool dimensions, base/shade, target-temperature preset, season dates, pool use, chemistry, heating system, cover use, and electricity tariff.
