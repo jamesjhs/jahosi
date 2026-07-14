@@ -26,7 +26,7 @@
 <title>splash! Pool Cost & Chemistry Planner | Jahosi</title>
 <script
   src="./version-refresh.js"
-  data-page-version="1.6.8"
+  data-page-version="1.7.0"
   data-version-url="./version.json"
   data-storage-key="splash_app_version"
   data-cache-prefix="pool-calculator-shell-"
@@ -225,6 +225,7 @@ tr.totals td{background:#eef6fc!important;font-weight:700;border-top:2px solid v
   width:13.5rem;text-align:center
 }
 .link-btn{background:#0f766e}
+.action-btn.quick{background:#0f766e}
 .action-btn:disabled{opacity:.65;cursor:wait}
 .status-chip{display:inline-flex;align-items:center;gap:.4rem;padding:.45rem .7rem;border-radius:999px;font-size:.75rem;font-weight:700}
 .status-chip.info{background:#e0f2fe;color:#075985}
@@ -232,6 +233,46 @@ tr.totals td{background:#eef6fc!important;font-weight:700;border-top:2px solid v
 .status-chip.warn{background:#fef3c7;color:#92400e}
 .inline-help{font-size:.75rem;color:var(--muted);line-height:1.5}
 footer{text-align:center;padding:1.5rem;font-size:.72rem;color:var(--muted)}
+
+/* Quick-start overlay */
+.quickstart-backdrop{
+  position:fixed;inset:0;z-index:1600;display:none;align-items:center;justify-content:center;
+  background:rgba(2,30,56,.55);padding:1rem
+}
+.quickstart-backdrop.open{display:flex}
+.quickstart-dialog{
+  width:min(94vw,720px);max-height:min(92dvh,760px);overflow:hidden;
+  background:var(--card);border:1px solid var(--border);border-radius:12px;box-shadow:0 18px 50px rgba(2,30,56,.24);
+  display:grid;grid-template-rows:auto auto 1fr auto
+}
+.quickstart-head{display:flex;align-items:flex-start;justify-content:space-between;gap:1rem;padding:1rem 1.1rem;border-bottom:1px solid var(--border);background:#f8fbff}
+.quickstart-kicker{font-size:.72rem;font-weight:700;color:var(--blue);text-transform:uppercase;letter-spacing:.06em}
+.quickstart-title{font-size:1.05rem;color:var(--text);margin-top:.1rem}
+.quickstart-close{border:0;background:transparent;color:#475569;font-size:1.25rem;line-height:1;cursor:pointer;padding:.2rem}
+.quickstart-progress{padding:.7rem 1.1rem;border-bottom:1px solid var(--border)}
+.quickstart-progress-meta{display:flex;justify-content:space-between;gap:.75rem;font-size:.74rem;color:var(--muted);margin-bottom:.35rem}
+.quickstart-track{height:8px;background:#e2e8f0;border-radius:999px;overflow:hidden}
+.quickstart-bar{height:100%;width:0;background:linear-gradient(90deg,var(--blue),#0f766e);border-radius:999px;transition:width .2s ease}
+.quickstart-body{padding:1rem 1.1rem;overflow:auto}
+.quickstart-copy{font-size:.86rem;line-height:1.65;color:var(--text);margin-bottom:1rem}
+.quickstart-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:.75rem}
+.quickstart-choice{display:grid;gap:.35rem;border:1.5px solid var(--border);border-radius:8px;padding:.7rem;background:#fff;cursor:pointer}
+.quickstart-choice input{margin-right:.35rem}
+.quickstart-choice strong{color:var(--blue)}
+.quickstart-choice span{font-size:.75rem;color:var(--muted);line-height:1.4}
+.quickstart-field{display:grid;gap:.25rem;margin-bottom:.75rem}
+.quickstart-field label{font-size:.78rem;color:var(--muted);font-weight:700}
+.quickstart-field input,.quickstart-field select{
+  width:100%;padding:.48rem .6rem;border:1.5px solid var(--border);border-radius:6px;font-size:.86rem;background:#fff;color:var(--text)
+}
+.quickstart-actions{display:flex;flex-wrap:wrap;gap:.6rem;justify-content:flex-end;padding:.85rem 1.1rem;border-top:1px solid var(--border);background:#fff}
+.quickstart-actions button{border:0;border-radius:8px;padding:.62rem .9rem;font-weight:700;cursor:pointer}
+.quickstart-actions .secondary{background:#e2e8f0;color:#334155}
+.quickstart-actions .primary{background:var(--blue);color:#fff}
+.quickstart-actions .finish{background:#0f766e;color:#fff}
+.quickstart-actions button:disabled{opacity:.55;cursor:wait}
+.quickstart-status{font-size:.76rem;color:var(--muted);line-height:1.45;margin-top:.6rem}
+body.quickstart-open{overflow:hidden}
 
 /* ─── POOL CHEMISTRY ───────────────────────────────────────────────────────── */
 .chem-params-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:1rem;margin-bottom:1rem}
@@ -306,6 +347,7 @@ footer{text-align:center;padding:1.5rem;font-size:.72rem;color:var(--muted)}
   .controls-close-bottom{display:block}
   .chem-chat-toggle{bottom:4.6rem}
   .chem-chat-panel{right:.6rem;left:.6rem;width:auto;bottom:8.1rem}
+  .quickstart-dialog{width:100%;max-height:94dvh}
 }
 </style>
 </head>
@@ -313,7 +355,7 @@ footer{text-align:center;padding:1.5rem;font-size:.72rem;color:var(--muted)}
 
 <header>
   <h1>splash! <em>by Jahosi</em></h1>
-  <p>Cost estimates for your garden pool · v1.6.8</p>
+  <p>Cost estimates for your garden pool · v1.7.0</p>
 </header>
 
 <div class="hero-visual">
@@ -348,6 +390,7 @@ footer{text-align:center;padding:1.5rem;font-size:.72rem;color:var(--muted)}
         <p class="inline-help">2b. Optionally set pool-in and pool-away dates plus your water rate to unlock a season cost summary.</p>
         <p class="inline-help">3. Review the forecast, charts, maths checks, and exports.</p>
         <div class="info-actions">
+          <button id="open-quickstart" type="button" class="action-btn quick">Quick-start guide</button>
           <button id="open-controls" type="button" class="action-btn">⚙️ Edit my pool</button>
           <a class="link-btn" href="./help.htm">Open help guide</a>
           <a class="link-btn" href="#chemistry-sec">Jump to chemistry</a>
@@ -368,6 +411,31 @@ footer{text-align:center;padding:1.5rem;font-size:.72rem;color:var(--muted)}
 
   <button id="floating-options" class="floating-options-btn" type="button">⚙️ Options</button>
   <button id="chem-chat-toggle" class="chem-chat-toggle" type="button" aria-expanded="false" aria-controls="chem-chat-panel">🤖 Chemistry bot</button>
+
+  <section id="quickstart-overlay" class="quickstart-backdrop" aria-hidden="true">
+    <div class="quickstart-dialog" role="dialog" aria-modal="true" aria-labelledby="quickstart-title">
+      <div class="quickstart-head">
+        <div>
+          <div class="quickstart-kicker">Easy setup</div>
+          <h2 id="quickstart-title" class="quickstart-title">Quick-start guide</h2>
+        </div>
+        <button id="quickstart-close" class="quickstart-close" type="button" aria-label="Close quick-start guide">×</button>
+      </div>
+      <div class="quickstart-progress">
+        <div class="quickstart-progress-meta">
+          <span id="quickstart-step-label">Step 1 of 8</span>
+          <span id="quickstart-remaining">7 questions remaining</span>
+        </div>
+        <div class="quickstart-track" aria-hidden="true"><div id="quickstart-bar" class="quickstart-bar"></div></div>
+      </div>
+      <div id="quickstart-body" class="quickstart-body"></div>
+      <div class="quickstart-actions">
+        <button id="quickstart-back" class="secondary" type="button">Back</button>
+        <button id="quickstart-skip" class="secondary" type="button">Skip</button>
+        <button id="quickstart-next" class="primary" type="button">Next</button>
+      </div>
+    </div>
+  </section>
 
   <section id="chem-chat-panel" class="chem-chat-panel" aria-label="Chemistry assistant">
     <div class="chem-chat-resize" id="chem-chat-resize" role="separator" aria-label="Drag to resize"></div>
@@ -838,8 +906,8 @@ Ask about your current chemistry readings and dosing cards.</div>
       </div>
 
       <div class="card" style="margin-bottom:1rem" id="model-review-card">
-        <div class="card-title">Model review in v1.6.8</div>
-        <p class="inline-help">Core daylight-solar and forecast-cap safeguards remain in place. v1.6.8 fixes the local version-refresh script path so the app runs cleanly when `/splash` is served as its own development root. v1.6.7 critically revises chemistry pH guidance: pH dosing is now presented as a scenario-sensitive range rather than a single confident amount, with cover use, aeration/CO₂ outgassing, rainfall exposure, and TA buffering called out explicitly. v1.6.6 fixes PWA data persistence: chemistry readings (FC, TC, TA, pH, CYA, CH, BR) and chlorine-type selection are now saved to localStorage as you type, and selected location coordinates are persisted immediately on dropdown selection, so all settings survive app restarts. v1.6.5 adds dedicated splash-specific hero artwork and preview metadata so shared `/splash` links present the app visually without changing the main Jahosi homepage preview image. v1.6.4 adds a version-manifest-driven HTML refresh path so browser and PWA users are pushed onto the latest shell sooner when a new release lands. Manual forecasts remain planning estimates, not guarantees.</p>
+        <div class="card-title">Model review in v1.7.0</div>
+        <p class="inline-help">v1.7.0 adds an easy quick-start overlay for first-time users: a guided, step-by-step flow captures location, pool dimensions, base/shade, target-temperature preset, season dates, pool use and chemistry, heating setup, and electricity tariff before handing off to the temperature forecast, chemistry guide, and chatbot. Core daylight-solar and forecast-cap safeguards remain in place. v1.6.8 fixes the local version-refresh script path so the app runs cleanly when `/splash` is served as its own development root. v1.6.7 critically revises chemistry pH guidance: pH dosing is now presented as a scenario-sensitive range rather than a single confident amount, with cover use, aeration/CO₂ outgassing, rainfall exposure, and TA buffering called out explicitly. v1.6.6 fixes PWA data persistence: chemistry readings (FC, TC, TA, pH, CYA, CH, BR) and chlorine-type selection are now saved to localStorage as you type, and selected location coordinates are persisted immediately on dropdown selection, so all settings survive app restarts. Manual forecasts remain planning estimates, not guarantees.</p>
       </div>
 
       <div class="card" style="margin-bottom:1rem" id="export-card">
@@ -1249,7 +1317,7 @@ Ask about your current chemistry readings and dosing cards.</div>
 </div><!-- /wrap -->
 
 <footer>
-  splash! &mdash; costing for your playpool · v1.6.8.<br>
+  splash! &mdash; costing for your playpool · v1.7.0.<br>
   Physics model: surface losses combine free-convection, evaporation (dominant) and long-wave radiation; parameterised by shade/shelter.
   Location-aware global climate profiling with fallback baselines. Costs are indicative estimates only. Not for safety-critical application.<br>
   Copyright © jahosi.co.uk 2026
@@ -1285,7 +1353,7 @@ const COVER_TYPES = {
   liquid:  {label:'Liquid solar cover',             surfaceLossFactor:0.65, solarTransmittance:0.98, evaporationReduction:0.40}
 };
 
-const APP_VERSION = '1.6.8';
+const APP_VERSION = '1.7.0';
 const APP_COPYRIGHT = 'Copyright © jahosi.co.uk 2026';
 const TARGET_TEMP_MIN = 18;
 const TARGET_TEMP_MAX = 40;
@@ -1380,6 +1448,15 @@ function sv(id, lblId, unit, dp) {
 function gi(id) { return +document.getElementById(id).value; }
 function gs(id) { return  document.getElementById(id).value; }
 function clamp(v, lo, hi) { return Math.min(hi, Math.max(lo, v)); }
+function escapeHtml(value) {
+  return String(value ?? '').replace(/[&<>"']/g, ch => ({
+    '&': '&amp;',
+    '<': '&lt;',
+    '>': '&gt;',
+    '"': '&quot;',
+    "'": '&#39;'
+  }[ch]));
+}
 
 function parseHHMM(s) { const [h,m] = s.split(':').map(Number); return h + m/60; }
 function opHours(start, end) {
@@ -3003,6 +3080,503 @@ function syncDesiredRangeFromTarget() {
   }
 }
 
+function setInputValue(id, value, labelMeta = null) {
+  const el = document.getElementById(id);
+  if (!el || value == null) return;
+  if (typeof value === 'number' && !Number.isFinite(value)) return;
+  el.value = String(value);
+  if (labelMeta) sv(id, labelMeta.lbl, labelMeta.unit, labelMeta.dp);
+}
+
+function setQuickStartStatus(message, tone = 'info') {
+  const el = document.getElementById('quickstart-status');
+  if (!el) return;
+  el.textContent = message;
+  el.className = `quickstart-status ${tone}`;
+}
+
+const QUICKSTART_STEPS = [
+  {
+    key: 'location',
+    title: 'Start with your location',
+    intro: 'splash! uses location to fetch local air temperature, cloud cover, solar radiation, daylight length, and a monthly climate profile. That makes the temperature forecast, season costs, and chemistry usage estimates much more realistic. Your browser location is only used to fill this planner; you can also type any town or city instead.',
+    render() {
+      const query = sanitizeLocationQuery(document.getElementById('forecast-location-query')?.value);
+      setTimeout(syncQuickStartLocationOptions, 0);
+      return `
+        <p class="quickstart-copy">${this.intro}</p>
+        <div class="quickstart-grid">
+          <div class="quickstart-field">
+            <label for="quickstart-location-query">Town, city, or country</label>
+            <input id="quickstart-location-query" type="text" inputmode="search" autocomplete="off" value="${escapeHtml(query)}" placeholder="e.g. Norwich, Dublin, Tokyo">
+          </div>
+          <div class="quickstart-field">
+            <label for="quickstart-location-results">Matched place</label>
+            <select id="quickstart-location-results"><option value="">Search above to load matches</option></select>
+          </div>
+        </div>
+        <div class="export-actions" style="margin-top:.35rem">
+          <button type="button" class="action-btn" data-quick-action="geolocate">Use my current location</button>
+          <button type="button" class="action-btn" data-quick-action="search-location">Search places</button>
+          <button type="button" class="action-btn" data-quick-action="fetch-weather">Fetch forecast</button>
+        </div>
+        <p id="quickstart-status" class="quickstart-status">You can continue with manual weather values if you prefer not to share location.</p>
+      `;
+    },
+    apply() {
+      const query = document.getElementById('quickstart-location-query')?.value;
+      if (query != null) document.getElementById('forecast-location-query').value = sanitizeLocationQuery(query);
+      const quickSelect = document.getElementById('quickstart-location-results');
+      const mainSelect = document.getElementById('forecast-location-results');
+      if (quickSelect && mainSelect && quickSelect.value !== '') {
+        mainSelect.value = quickSelect.value;
+        const place = selectedSearchPlace();
+        if (place) {
+          applySelectedCoordinates(place);
+          rememberResolvedPlace(place);
+        }
+      }
+    }
+  },
+  {
+    key: 'dimensions',
+    title: 'Pool shape and dimensions',
+    intro: 'The planner needs the water surface area and depth to estimate pool volume, heat stored in the water, solar gain, and how quickly the pool loses heat overnight. A close practical measurement is fine for a quick start.',
+    render() {
+      const shape = gs('pool-shape');
+      return `
+        <p class="quickstart-copy">${this.intro}</p>
+        <div class="quickstart-grid">
+          <label class="quickstart-choice"><span><input type="radio" name="quickstart-shape" value="circular" ${shape === 'rectangular' ? '' : 'checked'}><strong>Round pool</strong></span><span>Use radius and water depth.</span></label>
+          <label class="quickstart-choice"><span><input type="radio" name="quickstart-shape" value="rectangular" ${shape === 'rectangular' ? 'checked' : ''}><strong>Rectangular pool</strong></span><span>Use length, width, and water depth.</span></label>
+        </div>
+        <div class="quickstart-grid" style="margin-top:.75rem">
+          <div class="quickstart-field"><label for="quickstart-radius">Radius (m)</label><input id="quickstart-radius" type="number" min="0.5" max="4" step="0.05" value="${escapeHtml(gs('radius'))}"></div>
+          <div class="quickstart-field"><label for="quickstart-pool-x">Length X (m)</label><input id="quickstart-pool-x" type="number" min="1" max="12" step="0.1" value="${escapeHtml(gs('pool-x'))}"></div>
+          <div class="quickstart-field"><label for="quickstart-pool-y">Width Y (m)</label><input id="quickstart-pool-y" type="number" min="1" max="12" step="0.1" value="${escapeHtml(gs('pool-y'))}"></div>
+          <div class="quickstart-field"><label for="quickstart-depth">Water depth (m)</label><input id="quickstart-depth" type="number" min="0.2" max="1.5" step="0.05" value="${escapeHtml(gs('depth'))}"></div>
+        </div>
+      `;
+    },
+    apply() {
+      const shape = document.querySelector('input[name="quickstart-shape"]:checked')?.value || 'circular';
+      setInputValue('pool-shape', shape);
+      setInputValue('radius', clamp(Number(document.getElementById('quickstart-radius')?.value), 0.5, 4), {lbl:'radius-v', unit:' m', dp:2});
+      setInputValue('pool-x', clamp(Number(document.getElementById('quickstart-pool-x')?.value), 1, 12), {lbl:'pool-x-v', unit:' m', dp:2});
+      setInputValue('pool-y', clamp(Number(document.getElementById('quickstart-pool-y')?.value), 1, 12), {lbl:'pool-y-v', unit:' m', dp:2});
+      setInputValue('depth', clamp(Number(document.getElementById('quickstart-depth')?.value), 0.2, 1.5), {lbl:'depth-v', unit:' m', dp:2});
+      togglePoolDimensionInputs();
+    }
+  },
+  {
+    key: 'base',
+    title: 'Pool base and shade',
+    intro: 'The surface under the pool changes heat loss through the base, while shade changes solar gain and wind exposure. These are simple inputs, but they help explain why two similar pools can behave very differently.',
+    render() {
+      return `
+        <p class="quickstart-copy">${this.intro}</p>
+        <div class="quickstart-grid">
+          <div class="quickstart-field">
+            <label for="quickstart-ground">Ground or base</label>
+            <select id="quickstart-ground">
+              <option value="grass" ${gs('ground') === 'grass' ? 'selected' : ''}>Grass / soil with underlay</option>
+              <option value="clay" ${gs('ground') === 'clay' ? 'selected' : ''}>Clay soil</option>
+              <option value="sand" ${gs('ground') === 'sand' ? 'selected' : ''}>Sandy soil</option>
+              <option value="concrete" ${gs('ground') === 'concrete' ? 'selected' : ''}>Concrete / paving</option>
+              <option value="decking" ${gs('ground') === 'decking' ? 'selected' : ''}>Timber decking</option>
+            </select>
+          </div>
+          <div class="quickstart-field">
+            <label for="quickstart-shade">Typical shade (%)</label>
+            <input id="quickstart-shade" type="number" min="0" max="100" step="5" value="${escapeHtml(gs('shade'))}">
+          </div>
+        </div>
+      `;
+    },
+    apply() {
+      setInputValue('ground', document.getElementById('quickstart-ground')?.value || 'grass');
+      setInputValue('shade', clamp(Number(document.getElementById('quickstart-shade')?.value), 0, 100), {lbl:'shade-v', unit:' %', dp:0});
+    }
+  },
+  {
+    key: 'target',
+    title: 'Target temperature',
+    intro: 'The target temperature drives the heating calculation. Presets give new users a sensible starting point for different use cases; you can still fine-tune the exact temperature afterwards.',
+    render() {
+      return `
+        <p class="quickstart-copy">${this.intro}</p>
+        <div class="quickstart-grid">
+          <div class="quickstart-field">
+            <label for="quickstart-target-preset">Comfort preset</label>
+            <select id="quickstart-target-preset">
+              <option value="">Custom / keep current</option>
+              <option value="22">Unheated garden pool</option>
+              <option value="27">Public swimming comfort</option>
+              <option value="29">Children / learn-to-swim</option>
+              <option value="32">Therapy / hydro</option>
+              <option value="38.5">Hot tub / spa</option>
+            </select>
+          </div>
+          <div class="quickstart-field">
+            <label for="quickstart-target">Target temperature (°C)</label>
+            <input id="quickstart-target" type="number" min="18" max="40" step="0.5" value="${escapeHtml(gs('target'))}">
+          </div>
+        </div>
+      `;
+    },
+    apply() {
+      const presetValue = document.getElementById('quickstart-target-preset')?.value;
+      const preset = presetValue === '' ? NaN : Number(presetValue);
+      const raw = Number.isFinite(preset) ? preset : Number(document.getElementById('quickstart-target')?.value);
+      setInputValue('target', clamp(raw, TARGET_TEMP_MIN, TARGET_TEMP_MAX), {lbl:'target-v', unit:' °C', dp:1});
+      const targetPreset = document.getElementById('target-preset');
+      if (targetPreset) targetPreset.value = '';
+      syncDesiredRangeFromTarget();
+    }
+  },
+  {
+    key: 'season',
+    title: 'Pool season dates',
+    intro: 'Season dates turn the annual model into a more practical temporary-pool cost estimate. They let splash! separate likely electricity cost for the months you actually use the pool from water-fill costs.',
+    render() {
+      return `
+        <p class="quickstart-copy">${this.intro}</p>
+        <div class="quickstart-grid">
+          <div class="quickstart-field"><label for="quickstart-pool-start">Pool in from</label><input id="quickstart-pool-start" type="date" value="${escapeHtml(gs('pool-start'))}"></div>
+          <div class="quickstart-field"><label for="quickstart-pool-end">Pool away by</label><input id="quickstart-pool-end" type="date" value="${escapeHtml(gs('pool-end'))}"></div>
+          <div class="quickstart-field"><label for="quickstart-pool-fills">Fills per season</label><input id="quickstart-pool-fills" type="number" min="1" max="52" step="1" value="${escapeHtml(gs('pool-fills'))}"></div>
+          <div class="quickstart-field"><label for="quickstart-water-rate">Water rate (p/litre)</label><input id="quickstart-water-rate" type="number" min="0" max="10" step="0.01" value="${escapeHtml(gs('water-rate'))}"></div>
+        </div>
+      `;
+    },
+    apply() {
+      setInputValue('pool-start', document.getElementById('quickstart-pool-start')?.value || '');
+      setInputValue('pool-end', document.getElementById('quickstart-pool-end')?.value || '');
+      setInputValue('pool-fills', clamp(Number(document.getElementById('quickstart-pool-fills')?.value), 1, 52));
+      setInputValue('water-rate', clamp(Number(document.getElementById('quickstart-water-rate')?.value), 0, 10));
+    }
+  },
+  {
+    key: 'useChemistry',
+    title: 'Pool use and chemistry',
+    intro: 'Pool mode and chlorine type set the starting chemistry assumptions. Optional test readings make the chemistry guide and chatbot much more useful, but it is fine to leave readings blank until you have a fresh test strip or drop-test result.',
+    render() {
+      return `
+        <p class="quickstart-copy">${this.intro}</p>
+        <div class="quickstart-grid">
+          <div class="quickstart-field">
+            <label for="quickstart-aquatic-mode">Use case</label>
+            <select id="quickstart-aquatic-mode">
+              <option value="pool" ${gs('aquatic-mode') === 'pool' ? 'selected' : ''}>Pool / playpool</option>
+              <option value="hottub" ${gs('aquatic-mode') === 'hottub' ? 'selected' : ''}>Hot tub / spa</option>
+            </select>
+          </div>
+          <div class="quickstart-field">
+            <label for="quickstart-chlorine-type">Primary chlorine product</label>
+            <select id="quickstart-chlorine-type">
+              <option value="dichlor" ${gs('chem-chlorine-type') === 'dichlor' ? 'selected' : ''}>Dichlor granules</option>
+              <option value="trichlor" ${gs('chem-chlorine-type') === 'trichlor' ? 'selected' : ''}>Trichlor tablets/sticks</option>
+            </select>
+          </div>
+          <div class="quickstart-field"><label for="quickstart-chem-fc">Free chlorine ppm (optional)</label><input id="quickstart-chem-fc" type="number" min="0" max="20" step="0.1" value="${escapeHtml(gs('chem-fc'))}"></div>
+          <div class="quickstart-field"><label for="quickstart-chem-ph">pH (optional)</label><input id="quickstart-chem-ph" type="number" min="5" max="10" step="0.1" value="${escapeHtml(gs('chem-ph'))}"></div>
+          <div class="quickstart-field"><label for="quickstart-chem-ta">Total alkalinity ppm (optional)</label><input id="quickstart-chem-ta" type="number" min="0" max="400" step="1" value="${escapeHtml(gs('chem-ta'))}"></div>
+          <div class="quickstart-field"><label for="quickstart-chem-cya">CYA stabiliser ppm (optional)</label><input id="quickstart-chem-cya" type="number" min="0" max="300" step="5" value="${escapeHtml(gs('chem-cya'))}"></div>
+        </div>
+      `;
+    },
+    apply() {
+      setInputValue('aquatic-mode', document.getElementById('quickstart-aquatic-mode')?.value || 'pool');
+      setInputValue('chem-chlorine-type', document.getElementById('quickstart-chlorine-type')?.value || 'dichlor');
+      syncChlorineTypeSelectors('chem-chlorine-type');
+      ['fc', 'ph', 'ta', 'cya'].forEach(key => setInputValue(`chem-${key}`, document.getElementById(`quickstart-chem-${key}`)?.value || ''));
+      syncDesiredRangeFromTarget();
+    }
+  },
+  {
+    key: 'heating',
+    title: 'Pool heating system',
+    intro: 'Heating setup controls how much energy can enter the pool and when. Covers matter too: they often save more heat overnight than a small heater can replace quickly.',
+    render() {
+      return `
+        <p class="quickstart-copy">${this.intro}</p>
+        <div class="quickstart-grid">
+          <div class="quickstart-field">
+            <label for="quickstart-heat-mode">Heating schedule</label>
+            <select id="quickstart-heat-mode">
+              <option value="noactive" ${gs('heat-mode') === 'noactive' ? 'selected' : ''}>No active heating</option>
+              <option value="hours" ${gs('heat-mode') === 'hours' ? 'selected' : ''}>Custom heating hours/day</option>
+              <option value="offpeak" ${gs('heat-mode') === 'offpeak' ? 'selected' : ''}>Off-peak only</option>
+              <option value="noheat" ${gs('heat-mode') === 'noheat' ? 'selected' : ''}>Hot-water tank topups only</option>
+              <option value="kettleonly" ${gs('heat-mode') === 'kettleonly' ? 'selected' : ''}>Kettle topups only</option>
+            </select>
+          </div>
+          <div class="quickstart-field"><label for="quickstart-hpow">Heater power (kW)</label><input id="quickstart-hpow" type="number" min="0.5" max="6" step="0.1" value="${escapeHtml(gs('hpow'))}"></div>
+          <div class="quickstart-field"><label for="quickstart-heff">Heater efficiency / COP (%)</label><input id="quickstart-heff" type="number" min="70" max="400" step="1" value="${escapeHtml(gs('heff'))}"></div>
+          <div class="quickstart-field"><label for="quickstart-heat-hours">Heating hours per day</label><input id="quickstart-heat-hours" type="number" min="0" max="24" step="0.5" value="${escapeHtml(gs('heat-hours'))}"></div>
+          <div class="quickstart-field">
+            <label for="quickstart-cover-type">Thermal cover</label>
+            <select id="quickstart-cover-type">
+              <option value="none" ${gs('cover-type') === 'none' ? 'selected' : ''}>None</option>
+              <option value="bubble" ${gs('cover-type') === 'bubble' ? 'selected' : ''}>Solar bubble cover</option>
+              <option value="fabric" ${gs('cover-type') === 'fabric' ? 'selected' : ''}>Non-bubble fabric cover</option>
+              <option value="thermal" ${gs('cover-type') === 'thermal' ? 'selected' : ''}>Thermal blanket / foam cover</option>
+              <option value="liquid" ${gs('cover-type') === 'liquid' ? 'selected' : ''}>Liquid solar cover</option>
+            </select>
+          </div>
+          <div class="quickstart-field"><label for="quickstart-cover-hours">Cover hours per day</label><input id="quickstart-cover-hours" type="number" min="0" max="24" step="0.5" value="${escapeHtml(gs('cover-hours'))}"></div>
+          <div class="quickstart-field">
+            <label for="quickstart-current-temp-source">Current water temperature</label>
+            <select id="quickstart-current-temp-source">
+              <option value="manual" ${gs('current-temp-source') === 'manual' ? 'selected' : ''}>I measured it</option>
+              <option value="estimate" ${gs('current-temp-source') === 'estimate' ? 'selected' : ''}>Use splash! estimate</option>
+            </select>
+          </div>
+          <div class="quickstart-field"><label for="quickstart-current-temp">Measured temperature (°C)</label><input id="quickstart-current-temp" type="number" min="0" max="45" step="0.1" value="${escapeHtml(gs('current-temp'))}"></div>
+        </div>
+      `;
+    },
+    apply() {
+      setInputValue('heat-mode', document.getElementById('quickstart-heat-mode')?.value || 'noactive');
+      setInputValue('hpow', clamp(Number(document.getElementById('quickstart-hpow')?.value), 0.5, 6), {lbl:'hpow-v', unit:' kW', dp:1});
+      setInputValue('heff', clamp(Number(document.getElementById('quickstart-heff')?.value), 70, 400), {lbl:'heff-v', unit:' %', dp:0});
+      setInputValue('heat-hours', clamp(Number(document.getElementById('quickstart-heat-hours')?.value), 0, 24), {lbl:'heat-hours-v', unit:' h', dp:1});
+      setInputValue('cover-type', document.getElementById('quickstart-cover-type')?.value || 'none');
+      setInputValue('cover-hours', clamp(Number(document.getElementById('quickstart-cover-hours')?.value), 0, 24), {lbl:'cover-hours-v', unit:' h/day', dp:1});
+      setInputValue('current-temp-source', document.getElementById('quickstart-current-temp-source')?.value || 'manual');
+      setInputValue('current-temp', clamp(Number(document.getElementById('quickstart-current-temp')?.value), 0, 45));
+      syncCurrentTempControls('current-temp');
+      updateHeatModeDisplay();
+    }
+  },
+  {
+    key: 'tariff',
+    title: 'Electricity tariff',
+    intro: 'Tariff details convert heater energy into money. Peak and off-peak rates also let splash! compare whether a cheaper overnight schedule can actually hold the target temperature.',
+    render() {
+      return `
+        <p class="quickstart-copy">${this.intro}</p>
+        <div class="quickstart-grid">
+          <div class="quickstart-field"><label for="quickstart-peak">Peak rate (p/kWh)</label><input id="quickstart-peak" type="number" min="1" max="200" step="0.1" value="${escapeHtml(gs('peak'))}"></div>
+          <div class="quickstart-field"><label for="quickstart-offpk">Off-peak rate (p/kWh)</label><input id="quickstart-offpk" type="number" min="0.1" max="100" step="0.1" value="${escapeHtml(gs('offpk'))}"></div>
+          <div class="quickstart-field"><label for="quickstart-op-start">Off-peak starts</label><input id="quickstart-op-start" type="time" value="${escapeHtml(gs('op-start'))}"></div>
+          <div class="quickstart-field"><label for="quickstart-op-end">Off-peak ends</label><input id="quickstart-op-end" type="time" value="${escapeHtml(gs('op-end'))}"></div>
+          <div class="quickstart-field"><label for="quickstart-cost-target">Annual cost target (£)</label><input id="quickstart-cost-target" type="number" min="0" max="50000" step="10" value="${escapeHtml(gs('cost-target'))}"></div>
+        </div>
+      `;
+    },
+    apply() {
+      setInputValue('peak', clamp(Number(document.getElementById('quickstart-peak')?.value), 1, 200));
+      setInputValue('offpk', clamp(Number(document.getElementById('quickstart-offpk')?.value), 0.1, 100));
+      setInputValue('op-start', document.getElementById('quickstart-op-start')?.value || '00:30');
+      setInputValue('op-end', document.getElementById('quickstart-op-end')?.value || '05:30');
+      setInputValue('cost-target', clamp(Number(document.getElementById('quickstart-cost-target')?.value), 0, 50000));
+    }
+  }
+];
+
+let quickStartIndex = 0;
+
+function renderQuickStartStep() {
+  const step = QUICKSTART_STEPS[quickStartIndex];
+  const body = document.getElementById('quickstart-body');
+  const title = document.getElementById('quickstart-title');
+  const stepLabel = document.getElementById('quickstart-step-label');
+  const remaining = document.getElementById('quickstart-remaining');
+  const bar = document.getElementById('quickstart-bar');
+  const backBtn = document.getElementById('quickstart-back');
+  const skipBtn = document.getElementById('quickstart-skip');
+  const nextBtn = document.getElementById('quickstart-next');
+  if (!step || !body || !title) return;
+  title.textContent = step.title;
+  body.innerHTML = step.render();
+  const total = QUICKSTART_STEPS.length;
+  if (stepLabel) stepLabel.textContent = `Step ${quickStartIndex + 1} of ${total}`;
+  if (remaining) {
+    const left = total - quickStartIndex - 1;
+    remaining.textContent = left === 0 ? 'Ready to finish' : `${left} question${left === 1 ? '' : 's'} remaining`;
+  }
+  if (bar) bar.style.width = `${((quickStartIndex + 1) / total) * 100}%`;
+  if (backBtn) backBtn.disabled = quickStartIndex === 0;
+  if (skipBtn) skipBtn.style.display = quickStartIndex === total - 1 ? 'none' : '';
+  if (nextBtn) {
+    nextBtn.textContent = quickStartIndex === total - 1 ? 'Finish setup' : 'Next';
+    nextBtn.className = quickStartIndex === total - 1 ? 'finish' : 'primary';
+  }
+}
+
+function openQuickStartGuide() {
+  const overlay = document.getElementById('quickstart-overlay');
+  if (!overlay) return;
+  quickStartIndex = 0;
+  renderQuickStartStep();
+  overlay.classList.add('open');
+  overlay.setAttribute('aria-hidden', 'false');
+  document.body.classList.add('quickstart-open');
+}
+
+function closeQuickStartGuide() {
+  const overlay = document.getElementById('quickstart-overlay');
+  if (!overlay) return;
+  overlay.classList.remove('open');
+  overlay.setAttribute('aria-hidden', 'true');
+  document.body.classList.remove('quickstart-open');
+}
+
+function finishQuickStartGuide() {
+  closeQuickStartGuide();
+  go();
+  saveConfigToLS();
+  const chatPanel = document.getElementById('chem-chat-panel');
+  const chatToggle = document.getElementById('chem-chat-toggle');
+  if (chatPanel) chatPanel.classList.add('open');
+  if (chatToggle) chatToggle.setAttribute('aria-expanded', 'true');
+  if (typeof chemChatSyncGate === 'function') chemChatSyncGate();
+  document.getElementById('forecast36-card')?.scrollIntoView({behavior:'smooth', block:'start'});
+  window.setTimeout(() => {
+    document.getElementById('chemistry-sec')?.scrollIntoView({behavior:'smooth', block:'start'});
+  }, 850);
+}
+
+async function quickStartUseBrowserLocation(button) {
+  if (!navigator.geolocation) {
+    setQuickStartStatus('This browser does not support location lookup. Type a town or city instead.', 'warn');
+    return;
+  }
+  const original = button?.textContent;
+  if (button) {
+    button.disabled = true;
+    button.textContent = 'Locating...';
+  }
+  setQuickStartStatus('Requesting browser location permission...', 'info');
+  try {
+    const pos = await new Promise((resolve, reject) => {
+      navigator.geolocation.getCurrentPosition(resolve, reject, {
+        enableHighAccuracy: false,
+        timeout: 10000,
+        maximumAge: 900000
+      });
+    });
+    const place = normalizePlace({
+      name: 'Current location',
+      country: 'Browser geolocation',
+      latitude: pos.coords.latitude,
+      longitude: pos.coords.longitude
+    });
+    if (!place) throw new Error('invalid_position');
+    locationSearchResults = [place];
+    renderLocationOptions(document.getElementById('forecast-location-results'), locationSearchResults);
+    document.getElementById('forecast-location-results').value = '0';
+    syncQuickStartLocationOptions();
+    document.getElementById('quickstart-location-results').value = '0';
+    document.getElementById('forecast-location-query').value = placeLabel(place);
+    const quickQuery = document.getElementById('quickstart-location-query');
+    if (quickQuery) quickQuery.value = placeLabel(place);
+    applySelectedCoordinates(place);
+    rememberResolvedPlace(place);
+    setQuickStartStatus('Location set. Fetching forecast and monthly climate profile...', 'info');
+    await fetchForecastFromSelectedLocation();
+    setQuickStartStatus('Forecast loaded from your browser location. You can continue the guide.', 'ok');
+  } catch {
+    setQuickStartStatus('Location was not available. Type a town or city and use Search places instead.', 'warn');
+  } finally {
+    if (button) {
+      button.disabled = false;
+      button.textContent = original;
+    }
+  }
+}
+
+async function handleQuickStartAction(action, button) {
+  if (action === 'geolocate') {
+    await quickStartUseBrowserLocation(button);
+    return;
+  }
+  if (action === 'search-location') {
+    const query = document.getElementById('quickstart-location-query')?.value || '';
+    document.getElementById('forecast-location-query').value = sanitizeLocationQuery(query);
+    await searchLocations();
+    syncQuickStartLocationOptions();
+    setQuickStartStatus(locationSearchResults.length ? 'Choose the closest match, then fetch the forecast.' : 'No matching places found yet.', locationSearchResults.length ? 'ok' : 'warn');
+    return;
+  }
+  if (action === 'fetch-weather') {
+    const quickSelect = document.getElementById('quickstart-location-results');
+    const mainSelect = document.getElementById('forecast-location-results');
+    if (quickSelect && mainSelect && quickSelect.value !== '') mainSelect.value = quickSelect.value;
+    const place = selectedSearchPlace();
+    if (place) {
+      applySelectedCoordinates(place);
+      rememberResolvedPlace(place);
+      document.getElementById('forecast-location-query').value = placeLabel(place);
+    }
+    setQuickStartStatus('Fetching forecast and monthly climate profile...', 'info');
+    await fetchForecastFromSelectedLocation();
+    setQuickStartStatus('Forecast loaded. You can continue the guide.', 'ok');
+  }
+}
+
+function initQuickStartGuide() {
+  const openBtn = document.getElementById('open-quickstart');
+  const overlay = document.getElementById('quickstart-overlay');
+  const closeBtn = document.getElementById('quickstart-close');
+  const backBtn = document.getElementById('quickstart-back');
+  const skipBtn = document.getElementById('quickstart-skip');
+  const nextBtn = document.getElementById('quickstart-next');
+  const body = document.getElementById('quickstart-body');
+  if (!openBtn || !overlay || !body) return;
+  openBtn.addEventListener('click', openQuickStartGuide);
+  closeBtn?.addEventListener('click', closeQuickStartGuide);
+  overlay.addEventListener('click', (event) => {
+    if (event.target === overlay) closeQuickStartGuide();
+  });
+  backBtn?.addEventListener('click', () => {
+    if (quickStartIndex <= 0) return;
+    quickStartIndex -= 1;
+    renderQuickStartStep();
+  });
+  skipBtn?.addEventListener('click', () => {
+    if (quickStartIndex < QUICKSTART_STEPS.length - 1) {
+      quickStartIndex += 1;
+      renderQuickStartStep();
+    }
+  });
+  nextBtn?.addEventListener('click', () => {
+    QUICKSTART_STEPS[quickStartIndex]?.apply();
+    go();
+    saveConfigToLS();
+    if (quickStartIndex >= QUICKSTART_STEPS.length - 1) {
+      finishQuickStartGuide();
+      return;
+    }
+    quickStartIndex += 1;
+    renderQuickStartStep();
+  });
+  body.addEventListener('click', async (event) => {
+    const button = event.target.closest('[data-quick-action]');
+    if (!button) return;
+    await handleQuickStartAction(button.dataset.quickAction, button);
+  });
+  body.addEventListener('change', (event) => {
+    if (event.target?.id === 'quickstart-location-results') {
+      const mainSelect = document.getElementById('forecast-location-results');
+      if (mainSelect) mainSelect.value = event.target.value;
+      const place = selectedSearchPlace();
+      if (place) {
+        applySelectedCoordinates(place);
+        rememberResolvedPlace(place);
+      }
+    }
+    if (event.target?.id === 'quickstart-target-preset' && event.target.value) {
+      const target = document.getElementById('quickstart-target');
+      if (target) target.value = event.target.value;
+    }
+  });
+  window.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape' && overlay.classList.contains('open')) closeQuickStartGuide();
+  });
+}
+
 function initMainForecastButton() {
   const btn = document.getElementById('fetch-weather-main');
   if (!btn) return;
@@ -3858,6 +4432,14 @@ function renderLocationOptions(select, places, emptyText = 'Search above to load
   });
 }
 
+function syncQuickStartLocationOptions() {
+  const quickSelect = document.getElementById('quickstart-location-results');
+  if (!quickSelect) return;
+  renderLocationOptions(quickSelect, locationSearchResults);
+  const mainSelect = document.getElementById('forecast-location-results');
+  quickSelect.value = mainSelect?.value || (locationSearchResults.length ? '0' : '');
+}
+
 function hydrateLocationSelectionFromState() {
   const select = document.getElementById('forecast-location-results');
   const queryField = document.getElementById('forecast-location-query');
@@ -3921,17 +4503,20 @@ async function searchLocations() {
     );
     if (!locationSearchResults.length) {
       renderLocationOptions(select, [], 'No matches found');
+      syncQuickStartLocationOptions();
       setWeatherStatus('No matching locations found. Try adding country/region context (for example “York UK” or “York PA”).', 'warn');
       return;
     }
     renderLocationOptions(select, locationSearchResults);
     select.value = '0';
+    syncQuickStartLocationOptions();
     applySelectedCoordinates(locationSearchResults[0]);
     rememberResolvedPlace(locationSearchResults[0]);
     setWeatherStatus(`Found ${locationSearchResults.length} matching location${locationSearchResults.length === 1 ? '' : 's'}. Select one and fetch weather.`, 'ok');
   } catch {
     locationSearchResults = [];
     renderLocationOptions(select, []);
+    syncQuickStartLocationOptions();
     setWeatherStatus('Location search could not be completed right now; manual forecast entry remains available.', 'warn');
   } finally {
     btn.disabled = false;
@@ -4391,6 +4976,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   reorderControlsByExpertFlow();
   reorderResultsByExpertFlow();
   initControlsDrawer();
+  initQuickStartGuide();
   initMainForecastButton();
   initCharts();
   initExportActions();

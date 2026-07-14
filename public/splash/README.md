@@ -2,6 +2,12 @@
 
 Interactive playpool thermal and cost planner.
 
+## v1.7.0 highlights
+
+- Adds a first-time-user quick-start overlay with eight guided setup steps and a visible progress bar.
+- Captures location/geolocation, pool dimensions, base/shade, target-temperature preset, season dates, pool use, chemistry, heating system, cover use, and electricity tariff.
+- Finishing the guide recalculates the planner, saves browser-local configuration, opens the chemistry bot, and moves the user toward temperature and chemistry resources.
+
 ## v1.6.3 highlights
 
 - The chemistry guide now makes clear that its bands are standard residential outdoor chlorine-pool targets rather than strip-brand-specific normals.

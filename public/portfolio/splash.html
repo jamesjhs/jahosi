@@ -21,7 +21,7 @@
   <title>splash! Pool Cost & Chemistry Planner | Jahosi Portfolio</title>
   <script
     src="../version-refresh.js"
-    data-page-version="1.6.8"
+    data-page-version="1.7.0"
     data-version-url="/splash/version.json"
     data-storage-key="splash_site_version"
   ></script>
@@ -38,40 +38,40 @@
     <section class="mt-4 rounded-3xl border border-slate-200 bg-white/90 p-8 shadow-xl backdrop-blur-sm">
       <p class="text-sm font-semibold uppercase tracking-widest text-cyan-600">Project</p>
       <h1 class="mt-2 text-3xl font-extrabold">splash!</h1>
-      <p class="mt-1 text-sm text-slate-500">Pool/hot-tub thermal-cost-chemistry planner · Global weather inputs · Browser-local exports · v1.6.8</p>
+      <p class="mt-1 text-sm text-slate-500">Pool/hot-tub thermal-cost-chemistry planner · Guided quick start · Global weather inputs · v1.7.0</p>
 
-      <p class="mt-5 text-slate-600">splash! is a planning tool for temporary and lightly installed outdoor pools and hot tubs. It estimates warm-up effort, overnight cooling, likely running cost, and rough maintenance chemistry quantities by combining geometry, heater setup, tariffs, cover assumptions, and location-aware weather context.</p>
+      <p class="mt-5 text-slate-600">splash! is a planning tool for temporary and lightly installed outdoor pools and hot tubs. It estimates warm-up effort, overnight cooling, likely running cost, and rough maintenance chemistry quantities by combining geometry, heater setup, tariffs, cover assumptions, location-aware weather context, and optional chemistry readings.</p>
 
-      <p class="mt-4 text-slate-600">The app was designed to bridge a practical gap: many pool calculators are either too generic or too simplistic. splash! focuses on playpool-specific planning, supports manual inputs at every stage, and blends cost planning with thermodynamic behaviour in one workflow.</p>
+      <p class="mt-4 text-slate-600">The app was designed to bridge a practical gap: many pool calculators are either too generic or too simplistic. splash! now supports two entry paths: a guided quick-start overlay for first-time users, and the full expert control panel for people who want direct access to every variable.</p>
 
       <div class="mt-6 rounded-2xl border border-slate-200 shadow-sm overflow-hidden" aria-hidden="true">
         <div class="grid md:grid-cols-2">
           <div class="p-5 text-white" style="background:linear-gradient(145deg,#023e8a,#0096c7);">
-            <p class="text-xs font-semibold uppercase tracking-[0.16em] text-cyan-100">Live planning flow</p>
+            <p class="text-xs font-semibold uppercase tracking-[0.16em] text-cyan-100">Guided quick-start flow</p>
             <ol class="mt-3 space-y-2 text-sm text-cyan-50">
-              <li><span class="font-bold text-cyan-200">1.</span> Start with location, pool environment, and season/water-price setup</li>
-              <li><span class="font-bold text-cyan-200">2.</span> Choose base chemistry mode, then tune heating/tariff/cover details</li>
-              <li><span class="font-bold text-cyan-200">3.</span> Fetch forecast and review 36-hour + 3-day simulations</li>
-              <li><span class="font-bold text-cyan-200">4.</span> Review rough product quantities and compare annual/season costs</li>
+              <li><span class="font-bold text-cyan-200">1.</span> Explain and capture browser/manual location for weather and climate inputs</li>
+              <li><span class="font-bold text-cyan-200">2.</span> Ask pool shape, dimensions, base, shade, target preset, and season dates</li>
+              <li><span class="font-bold text-cyan-200">3.</span> Collect pool use, chlorine type, optional readings, heating setup, cover use, and tariff</li>
+              <li><span class="font-bold text-cyan-200">4.</span> Recalculate, save locally, then hand off to forecasts, chemistry cards, and chatbot</li>
             </ol>
           </div>
           <div class="p-5 bg-slate-50">
             <p class="text-xs font-semibold uppercase tracking-[0.16em] text-slate-500">Feature snapshot</p>
             <div class="mt-3 grid grid-cols-2 gap-3">
               <div class="rounded-lg border border-slate-200 bg-white p-3">
+                <p class="text-xs text-slate-500">Setup steps</p>
+                <p class="mt-1 text-2xl font-extrabold text-slate-900">8</p>
+              </div>
+              <div class="rounded-lg border border-slate-200 bg-white p-3">
                 <p class="text-xs text-slate-500">Hourly horizon</p>
                 <p class="mt-1 text-2xl font-extrabold text-slate-900">48h</p>
               </div>
-              <div class="rounded-lg border border-slate-200 bg-white p-3">
-                <p class="text-xs text-slate-500">Daily horizon</p>
-                <p class="mt-1 text-2xl font-extrabold text-slate-900">3 days</p>
-              </div>
               <div class="col-span-2 rounded-lg border border-slate-200 bg-white p-3">
-                <p class="text-xs text-slate-500">Model emphasis</p>
+                <p class="text-xs text-slate-500">First-time user path</p>
                 <div class="mt-2 h-2 rounded-full bg-slate-100 overflow-hidden">
                   <div class="h-full w-4/5 bg-gradient-to-r from-sky-500 to-cyan-400"></div>
                 </div>
-                <p class="mt-2 text-xs text-slate-500">Stepped day/night thermal balance + location-aware climate profile</p>
+                <p class="mt-2 text-xs text-slate-500">Progressive overlay with progress bar, explanations, geolocation/search fallback, and direct chatbot hand-off</p>
               </div>
             </div>
           </div>
@@ -83,6 +83,10 @@
 
       <h2 class="mt-8 text-xl font-bold">Key features</h2>
       <ul class="mt-3 space-y-1 text-sm text-slate-600 list-disc list-inside">
+        <li>First-time quick-start overlay with eight guided questions and a visible progress bar.</li>
+        <li>Browser geolocation shortcut with clear explanation, plus manual global place search fallback.</li>
+        <li>Step-by-step setup for pool shape/dimensions, base/shade, target preset, season dates, use case, chemistry, heating system, cover plan, and tariff.</li>
+        <li>Guided completion path that recalculates the planner, saves browser-local config, opens the chemistry bot, and moves the user toward forecast and chemistry resources.</li>
         <li>Expert-flow control order for maintenance planning (location first, deeper controls later).</li>
         <li>Manual forecast workflow that always remains editable.</li>
         <li>Global place search (country/city/town) for weather auto-fill via Open-Meteo geocoding.</li>

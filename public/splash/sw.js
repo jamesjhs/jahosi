@@ -1,6 +1,6 @@
 'use strict';
 
-const CACHE_NAME = 'pool-calculator-shell-v1-6-8';
+const CACHE_NAME = 'pool-calculator-shell-v1-7-0';
 const APP_SHELL = [
   './',
   './index.htm',
