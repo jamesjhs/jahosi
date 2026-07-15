@@ -3730,14 +3730,15 @@
       }
 
       /*
-       * updateNorthPointer() rotates the compass widget so it remains useful as
-       * the player turns. The rotation is the negative of player yaw because the
-       * compass card turns opposite the camera to keep world north readable.
+       * updateNorthPointer() rotates the compass widget so the current facing
+       * direction appears at the top of the circular card. In this coordinate
+       * system yaw 0 faces north/up-map, positive yaw turns left toward west,
+       * and CSS rotation uses the same visual direction for the compass card.
        */
       function updateNorthPointer() {
-        // Rotate the compass opposite the camera yaw so the N label points toward world north.
+        // Rotate the card so the label at the top matches the player's current heading.
         if (!northCard) return;
-        const rot = -player.yaw;
+        const rot = player.yaw;
         northCard.style.transform = "translate(-50%, -50%) rotate(" + rot.toFixed(4) + "rad)";
       }
 
