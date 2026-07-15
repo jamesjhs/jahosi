@@ -737,7 +737,7 @@
             <label class="mode-option"><input type="radio" name="gameMode" value="highScore" />High Score</label>
             <label class="mode-option"><input type="radio" name="gameMode" value="practice" />Practice</label>
           </div>
-          <div id="practiceLevelRow" class="level-select-row" style="display:none;">
+          <div class="level-select-row">
             <label for="practiceLevelInput">Practice level</label>
             <input id="practiceLevelInput" type="number" min="1" max="20" step="1" value="1" />
           </div>
@@ -1145,7 +1145,6 @@
       const viewScoresBtn = document.getElementById("viewScoresBtn");
       const closeScoresBtn = document.getElementById("closeScoresBtn");
       const modeInputs = Array.from(document.querySelectorAll("input[name='gameMode']"));
-      const practiceLevelRow = document.getElementById("practiceLevelRow");
       const practiceLevelInput = document.getElementById("practiceLevelInput");
       const modeHelp = document.getElementById("modeHelp");
 
@@ -1505,9 +1504,6 @@
       function updateModeHelp() {
         const mode = selectedMode();
         lastSelectedMode = mode;
-        if (practiceLevelRow) {
-          practiceLevelRow.style.display = mode === "practice" ? "flex" : "none";
-        }
         if (practiceLevelInput) {
           practiceLevelInput.disabled = mode !== "practice";
         }
@@ -3360,7 +3356,7 @@
        * whether the score belongs on the leaderboard, and renders the score table.
        */
       function onGameOver(reason) {
-        // Finalize the run and reveal name entry for the persistent local board.
+        // Finalize the run and reveal name entry for every scored run.
         gameState = "gameover";
         applyUIState();
 
@@ -3949,11 +3945,15 @@
         });
 
         saveScoreBtn.addEventListener("click", () => {
+          if (!isScoredMode()) {
+            postSaveBlock.textContent = "Practice runs are not scored.";
+            return;
+          }
           const name = (playerNameInput.value || "").trim() || "Anon";
           if (scoreSaved) {
             postSaveBlock.textContent = lastSavedRank
               ? "Score already saved at rank #" + lastSavedRank + "."
-              : "Entry already saved outside the current top 10.";
+              : "Score already saved outside the current top 10.";
             return;
           }
           lastSavedRank = insertScore(name, score, level, currentMode);
