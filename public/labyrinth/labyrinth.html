@@ -323,6 +323,8 @@
     .overlay-actions {
       display: flex;
       justify-content: center;
+      flex-wrap: wrap;
+      gap: 10px;
       margin-top: 14px;
     }
 
@@ -801,7 +803,10 @@
         <h2 id="levelTransitionTitle">Level Cleared</h2>
         <p id="levelTransitionText">Preparing next labyrinth...</p>
         <div id="levelTransitionBarWrap"><div id="levelTransitionBarFill"></div></div>
-        <div class="overlay-actions"><button id="levelContinueBtn">Continue</button></div>
+        <div class="overlay-actions">
+          <button id="levelContinueBtn">Continue</button>
+          <button id="levelMenuBtn" class="ghost">Main Menu</button>
+        </div>
       </div>
     </div>
 
@@ -809,7 +814,10 @@
       <div class="card">
         <h2 id="timeoutTitle">Time Expired</h2>
         <p id="timeoutText">You lost one life. Returning you to the start for another escape attempt.</p>
-        <div class="overlay-actions"><button id="timeoutContinueBtn">Continue</button></div>
+        <div class="overlay-actions">
+          <button id="timeoutContinueBtn">Continue</button>
+          <button id="timeoutMenuBtn" class="ghost">Main Menu</button>
+        </div>
       </div>
     </div>
 
@@ -818,7 +826,10 @@
         <h2 id="levelPreviewTitle">Level 1</h2>
         <p id="levelPreviewText">Study the labyrinth, then start when ready.</p>
         <div class="preview-map-frame"><canvas id="levelPreviewMap"></canvas></div>
-        <div class="overlay-actions"><button id="levelStartBtn">Start</button></div>
+        <div class="overlay-actions">
+          <button id="levelStartBtn">Start</button>
+          <button id="previewMenuBtn" class="ghost">Main Menu</button>
+        </div>
       </div>
     </div>
 
@@ -1129,16 +1140,19 @@
       const levelTransitionText = document.getElementById("levelTransitionText");
       const levelTransitionBarFill = document.getElementById("levelTransitionBarFill");
       const levelContinueBtn = document.getElementById("levelContinueBtn");
+      const levelMenuBtn = document.getElementById("levelMenuBtn");
       const timeoutOverlay = document.getElementById("timeoutOverlay");
       const timeoutTitle = document.getElementById("timeoutTitle");
       const timeoutText = document.getElementById("timeoutText");
       const timeoutContinueBtn = document.getElementById("timeoutContinueBtn");
+      const timeoutMenuBtn = document.getElementById("timeoutMenuBtn");
       const levelPreviewOverlay = document.getElementById("levelPreviewOverlay");
       const levelPreviewTitle = document.getElementById("levelPreviewTitle");
       const levelPreviewText = document.getElementById("levelPreviewText");
       const levelPreviewMap = document.getElementById("levelPreviewMap");
       const levelPreviewCtx = levelPreviewMap.getContext("2d");
       const levelStartBtn = document.getElementById("levelStartBtn");
+      const previewMenuBtn = document.getElementById("previewMenuBtn");
 
       const newRunBtn = document.getElementById("newRunBtn");
       const continueBtn = document.getElementById("continueBtn");
@@ -2878,6 +2892,13 @@
             }
           });
         }
+
+        [levelMenuBtn, timeoutMenuBtn, previewMenuBtn].forEach((btn) => {
+          if (!btn) return;
+          btn.addEventListener("click", () => {
+            escapeToMenuAndScores();
+          });
+        });
       }
 
       /*
@@ -3344,6 +3365,11 @@
           showOverlay(timeoutOverlay, true);
 
           await waitForTimeoutContinue();
+          if (gameState !== "playing") {
+            showOverlay(timeoutOverlay, false);
+            isTimeoutTransition = false;
+            return;
+          }
 
           showOverlay(timeoutOverlay, false);
           onLifeLost();
