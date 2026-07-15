@@ -599,8 +599,72 @@
       flex-wrap: wrap;
     }
 
+    .mode-panel {
+      display: grid;
+      gap: 10px;
+      margin-top: 14px;
+      padding: 12px;
+      border: 1px solid rgba(120, 170, 255, 0.28);
+      border-radius: 8px;
+      background: rgba(6, 10, 24, 0.28);
+    }
+
+    .mode-options {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 8px;
+    }
+
+    .mode-option {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 42px;
+      border: 1px solid rgba(120, 170, 255, 0.55);
+      border-radius: 8px;
+      background: rgba(11, 18, 45, 0.72);
+      color: #dbeaff;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      text-align: center;
+    }
+
+    .mode-option input {
+      position: absolute;
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .mode-option:has(input:checked) {
+      border-color: rgba(255, 231, 112, 0.88);
+      color: #fff8cb;
+      box-shadow: inset 0 0 16px rgba(255, 231, 112, 0.14);
+    }
+
+    .level-select-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      flex-wrap: wrap;
+      font-size: 13px;
+      color: #d2e4ff;
+    }
+
     input[type="text"] {
       width: min(100%, 220px);
+      border-radius: 8px;
+      border: 1px solid rgba(120, 170, 255, 0.6);
+      background: rgba(6, 10, 24, 0.7);
+      color: #ecf6ff;
+      padding: 8px 10px;
+      font-size: 14px;
+      outline: none;
+    }
+
+    input[type="number"] {
+      width: 88px;
       border-radius: 8px;
       border: 1px solid rgba(120, 170, 255, 0.6);
       background: rgba(6, 10, 24, 0.7);
@@ -667,8 +731,20 @@
           <li>Look: right thumb joystick or mouse.</li>
           <li>Hints reset each level.</li>
         </ul>
+        <div class="mode-panel">
+          <div class="mode-options" aria-label="Game mode">
+            <label class="mode-option"><input type="radio" name="gameMode" value="timed" checked />Timed Run</label>
+            <label class="mode-option"><input type="radio" name="gameMode" value="highScore" />High Score</label>
+            <label class="mode-option"><input type="radio" name="gameMode" value="practice" />Practice</label>
+          </div>
+          <div class="level-select-row">
+            <label for="practiceLevelInput">Practice level</label>
+            <input id="practiceLevelInput" type="number" min="1" max="20" step="1" value="1" />
+          </div>
+          <div id="modeHelp" class="small">Timed Run uses countdowns, lives, and level progression.</div>
+        </div>
         <div class="btn-row">
-          <button id="newRunBtn">New Run</button>
+          <button id="newRunBtn">Start</button>
           <button id="continueBtn" class="ghost">Continue</button>
           <button id="viewScoresBtn" class="ghost">Top 10</button>
         </div>
@@ -693,7 +769,7 @@
 
         <table class="score-table" id="scoreTable">
           <thead>
-            <tr><th>#</th><th>Name</th><th>Score</th><th>Level</th></tr>
+            <tr><th>#</th><th>Name</th><th>Score</th><th>Level</th><th>Mode</th></tr>
           </thead>
           <tbody></tbody>
         </table>
@@ -710,7 +786,7 @@
         <h2 class="title" style="font-size: clamp(22px, 5vw, 34px);">Top 10</h2>
         <table class="score-table" id="scoreTableOnly">
           <thead>
-            <tr><th>#</th><th>Name</th><th>Score</th><th>Level</th></tr>
+            <tr><th>#</th><th>Name</th><th>Score</th><th>Level</th><th>Mode</th></tr>
           </thead>
           <tbody></tbody>
         </table>
@@ -753,6 +829,7 @@
         <div class="pill">Lives <strong id="livesEl">3</strong></div>
         <div class="pill">Hints <strong id="hintsEl">2</strong></div>
         <div class="pill">Score <strong id="scoreEl">0</strong></div>
+        <div class="pill">Mode <strong id="modeEl">Timed</strong></div>
       </div>
     </div>
 
@@ -1067,6 +1144,9 @@
       const continueBtn = document.getElementById("continueBtn");
       const viewScoresBtn = document.getElementById("viewScoresBtn");
       const closeScoresBtn = document.getElementById("closeScoresBtn");
+      const modeInputs = Array.from(document.querySelectorAll("input[name='gameMode']"));
+      const practiceLevelInput = document.getElementById("practiceLevelInput");
+      const modeHelp = document.getElementById("modeHelp");
 
       const playAgainBtn = document.getElementById("playAgainBtn");
       const goMenuBtn = document.getElementById("goMenuBtn");
@@ -1085,6 +1165,7 @@
       const livesEl = document.getElementById("livesEl");
       const hintsEl = document.getElementById("hintsEl");
       const scoreEl = document.getElementById("scoreEl");
+      const modeEl = document.getElementById("modeEl");
       const hintBtn = document.getElementById("hintBtn");
       const escapeBtn = document.getElementById("escapeBtn");
       const actions = document.getElementById("actions");
@@ -1134,6 +1215,10 @@
       let hintsLeft = 3;
       let score = 0;
       let timer = 0;
+      let levelStartedAt = 0;
+      let levelElapsed = 0;
+      let currentMode = "timed";
+      let lastSelectedMode = "timed";
 
       let maze = null;
       let exitCell = null;
@@ -1168,6 +1253,7 @@
       let hintPathSegment = [];
       let fullHintPath = [];
       let lastSavedRank = null;
+      let scoreSaved = false;
       let minimapLastFrameAt = 0;
       let toastUntil = 0;
       let isLevelTransition = false;
@@ -1392,6 +1478,45 @@
         return Math.atan2(from.x - to.x, from.z - to.z);
       }
 
+      function modeLabel(mode) {
+        if (mode === "practice") return "Practice";
+        if (mode === "highScore") return "High Score";
+        return "Timed";
+      }
+
+      function selectedMode() {
+        const picked = modeInputs.find((input) => input.checked);
+        return picked ? picked.value : "timed";
+      }
+
+      function selectedPracticeLevel() {
+        return clamp(Math.floor(Number(practiceLevelInput.value) || 1), 1, 20);
+      }
+
+      function isScoredMode() {
+        return currentMode !== "practice";
+      }
+
+      function hasCountdownTimer() {
+        return currentMode === "timed";
+      }
+
+      function updateModeHelp() {
+        const mode = selectedMode();
+        lastSelectedMode = mode;
+        if (practiceLevelInput) {
+          practiceLevelInput.disabled = mode !== "practice";
+        }
+        if (!modeHelp) return;
+        if (mode === "practice") {
+          modeHelp.textContent = "Practice has level selection, no score, and no countdown.";
+        } else if (mode === "highScore") {
+          modeHelp.textContent = "High Score runs indefinitely and awards speed-based points each level.";
+        } else {
+          modeHelp.textContent = "Timed Run uses countdowns, lives, and level progression.";
+        }
+      }
+
       /*
        * loadProgress() reads the highest unlocked level from localStorage.
        * Because localStorage can be missing, blocked, or edited by the user, the
@@ -1445,6 +1570,7 @@
               name: String(it.name || "Anon").slice(0, 16),
               score: Number(it.score) || 0,
               level: Number(it.level) || 1,
+              mode: it.mode === "highScore" ? "highScore" : (it.mode === "practice" ? "practice" : "timed"),
             }))
             .sort((a, b) => b.score - a.score)
             .slice(0, 10);
@@ -1485,18 +1611,21 @@
        * The name is trimmed and shortened so one very long name cannot break the
        * score layout on small screens.
        */
-      function insertScore(name, value, lvl) {
+      function insertScore(name, value, lvl, mode) {
         // Names are trimmed to 16 characters so the score table remains readable on phones.
+        const cleanName = String(name || "Anon").trim().slice(0, 16) || "Anon";
         const list = loadScores();
         list.push({
-          name: String(name || "Anon").trim().slice(0, 16) || "Anon",
+          name: cleanName,
           score: value,
           level: lvl,
+          mode: mode === "highScore" ? "highScore" : (mode === "practice" ? "practice" : "timed"),
         });
         list.sort((a, b) => b.score - a.score);
         const trimmed = list.slice(0, 10);
         saveScores(trimmed);
-        const rank = trimmed.findIndex((s) => s.name === name && s.score === value && s.level === lvl);
+        const cleanMode = mode === "highScore" ? "highScore" : (mode === "practice" ? "practice" : "timed");
+        const rank = trimmed.findIndex((s) => s.name === cleanName && s.score === value && s.level === lvl && s.mode === cleanMode);
         return rank >= 0 ? rank + 1 : null;
       }
 
@@ -1520,20 +1649,24 @@
           const name = document.createElement("td");
           const scoreCell = document.createElement("td");
           const lvl = document.createElement("td");
+          const mode = document.createElement("td");
           rank.textContent = String(i + 1);
           if (rec) {
             name.textContent = rec.name;
-            scoreCell.textContent = String(rec.score);
+            scoreCell.textContent = rec.mode === "practice" ? "-" : String(rec.score);
             lvl.textContent = String(rec.level);
+            mode.textContent = modeLabel(rec.mode);
           } else {
             name.textContent = "-";
             scoreCell.textContent = "-";
             lvl.textContent = "-";
+            mode.textContent = "-";
           }
           row.appendChild(rank);
           row.appendChild(name);
           row.appendChild(scoreCell);
           row.appendChild(lvl);
+          row.appendChild(mode);
           tbody.appendChild(row);
         }
       }
@@ -1913,10 +2046,13 @@
       function updateHUD() {
         // HUD values are derived from game state each frame instead of maintained separately.
         levelEl.textContent = String(level);
-        timeEl.textContent = String(Math.max(0, Math.ceil(timer)));
-        livesEl.textContent = String(lives);
+        timeEl.textContent = hasCountdownTimer()
+          ? String(Math.max(0, Math.ceil(timer)))
+          : (currentMode === "highScore" ? String(Math.floor(levelElapsed)) : "Free");
+        livesEl.textContent = hasCountdownTimer() ? String(lives) : "-";
         hintsEl.textContent = String(hintsLeft);
-        scoreEl.textContent = String(score);
+        scoreEl.textContent = isScoredMode() ? String(score) : "-";
+        modeEl.textContent = modeLabel(currentMode);
         hintBtn.textContent = "Hint (" + hintsLeft + ")";
         hintBtn.disabled = hintsLeft <= 0 || gameState !== "playing";
       }
@@ -1968,7 +2104,7 @@
        * background after the player escapes to the menu.
        */
       function escapeToMenuAndScores() {
-        // Escape acts as a safe pause/quit: it exits transitions, pointer lock, and shows scores.
+        // Escape acts as a safe run end: it exits transitions, pointer lock, and shows the summary board.
         if (gameState === "boot") return;
 
         // Unblock any pending transition awaiters before resetting state.
@@ -1992,6 +2128,11 @@
         isTimeoutTransition = false;
         document.exitPointerLock?.();
 
+        if (gameState === "playing" || gameState === "preview") {
+          onGameOver("Quit");
+          return;
+        }
+
         openMenu();
         renderScoresInto("scoreTableOnly");
         showOverlay(scoresOverlay, true);
@@ -2009,6 +2150,17 @@
           + lvl * CFG.SCORE_LEVEL_SCALE
           + Math.max(0, Math.floor(timeLeft)) * CFG.SCORE_TIME_MULT
           + livesLeft * CFG.SCORE_LIFE_BONUS
+        );
+      }
+
+      function speedClearBonus(lvl, elapsedSeconds) {
+        const target = Math.max(1, timerFromOptimalRoute());
+        const elapsed = Math.max(1, elapsedSeconds);
+        const pace = clamp(target / elapsed, 0.25, 3);
+        return Math.floor(
+          CFG.SCORE_LEVEL_BASE
+          + lvl * CFG.SCORE_LEVEL_SCALE
+          + pace * CFG.SCORE_TIME_MULT * 20
         );
       }
 
@@ -2829,10 +2981,12 @@
        * clears the score, prepares the first maze, and shows the level preview.
        * The timer and movement begin later, after the player presses Start.
        */
-      function startRun(startLevel) {
+      function startRun(startLevel, mode) {
         // Begin a fresh score run from the requested level.
+        currentMode = mode || selectedMode();
         level = Math.max(1, startLevel || 1);
         score = 0;
+        levelElapsed = 0;
         prepareLevel(level, true);
         void showLevelPreview();
       }
@@ -2845,8 +2999,10 @@
        */
       function continueRun() {
         // Continue starts at the highest unlocked level and estimates score from previous clears.
+        currentMode = "timed";
         level = Math.max(1, progressData.highestLevel || 1);
         score = cumulativeScoreUntilLevel(level - 1);
+        levelElapsed = 0;
         prepareLevel(level, true);
         void showLevelPreview();
       }
@@ -2878,6 +3034,8 @@
         startCell = generated.start;
         exitCell = generated.exit;
         timer = timerFromOptimalRoute();
+        levelElapsed = 0;
+        levelStartedAt = 0;
 
         player.cellX = startCell.x;
         player.cellY = startCell.y;
@@ -2895,7 +3053,9 @@
 
         buildWorld();
         updateHUD();
-        updateProgressIfNeeded();
+        if (currentMode !== "practice") {
+          updateProgressIfNeeded();
+        }
       }
 
       /*
@@ -3079,22 +3239,36 @@
         if (isLevelTransition || gameState !== "playing") return;
         isLevelTransition = true;
 
-        const bonus = levelClearBonus(level, timer, lives);
-        score += bonus;
-        levelToast.textContent = "ESCAPED +" + bonus + "";
+        const completedElapsed = levelElapsed || Math.max(0, (performance.now() - levelStartedAt) / 1000);
+        const bonus = currentMode === "timed"
+          ? levelClearBonus(level, timer, lives)
+          : (currentMode === "highScore" ? speedClearBonus(level, completedElapsed) : 0);
+        if (isScoredMode()) {
+          score += bonus;
+        }
+        levelToast.textContent = isScoredMode() ? "ESCAPED +" + bonus : "PRACTICE CLEAR";
         toastUntil = performance.now() + 1800;
         const nextLevel = level + 1;
 
         (async () => {
           showOverlay(levelTransitionOverlay, true);
-          levelTransitionTitle.textContent = "Labyrinth Escaped";
-          levelTransitionText.textContent = "Bonus +" + bonus + " | Prepare for Level " + nextLevel;
+          levelTransitionTitle.textContent = currentMode === "practice" ? "Practice Complete" : "Labyrinth Escaped";
+          levelTransitionText.textContent = currentMode === "practice"
+            ? "Level " + level + " complete. Press continue to view the scoreboard."
+            : "Bonus +" + bonus + " | Prepare for Level " + nextLevel;
           levelTransitionBarFill.style.width = "100%";
 
           await waitForLevelContinue();
           if (gameState !== "playing") {
             isLevelTransition = false;
             showOverlay(levelTransitionOverlay, false);
+            return;
+          }
+
+          if (currentMode === "practice") {
+            showOverlay(levelTransitionOverlay, false);
+            isLevelTransition = false;
+            onGameOver("Practice Complete");
             return;
           }
 
@@ -3124,7 +3298,7 @@
         // Losing a life keeps the same maze so the player can learn from the previous attempt.
         lives -= 1;
         if (lives <= 0) {
-          onGameOver();
+          onGameOver("Time Expired");
           return;
         }
 
@@ -3158,6 +3332,7 @@
        */
       function onTimerExpired() {
         // Timeout is separated from life loss so the player can read the message before being reset.
+        if (!hasCountdownTimer()) return;
         if (isTimeoutTransition || isLevelTransition || gameState !== "playing") return;
         isTimeoutTransition = true;
 
@@ -3180,23 +3355,29 @@
        * onGameOver() switches to the game-over screen, summarizes the run, checks
        * whether the score belongs on the leaderboard, and renders the score table.
        */
-      function onGameOver() {
-        // Finalize the run and reveal name entry only when the score can appear on the top-10 board.
+      function onGameOver(reason) {
+        // Finalize the run and reveal name entry for the persistent local board.
         gameState = "gameover";
         applyUIState();
 
-        summaryText.textContent = "Final score " + score + " | Highest level reached " + level;
+        const endReason = reason || "Run Over";
+        summaryText.textContent = isScoredMode()
+          ? endReason + " | " + modeLabel(currentMode) + " score " + score + " | Highest level reached " + level
+          : endReason + " | Practice level " + level + " ended without score or timer.";
 
-        const qualifies = qualifiesForTop10(score);
         lastSavedRank = null;
+        scoreSaved = false;
         playerNameInput.value = "";
         postSaveBlock.textContent = "";
 
-        if (qualifies) {
-          nameEntryBlock.style.display = "block";
+        nameEntryBlock.style.display = "block";
+        if (currentMode === "practice") {
+          postSaveBlock.textContent = "Practice entries are saved without points.";
         } else {
-          nameEntryBlock.style.display = "none";
-          postSaveBlock.textContent = "This run did not enter the top 10.";
+          const qualifies = qualifiesForTop10(score);
+          postSaveBlock.textContent = qualifies
+            ? "This run can enter the local top 10."
+            : "You can save this run, though it is currently outside the visible top 10.";
         }
 
         renderScoresInto("scoreTable");
@@ -3497,8 +3678,14 @@
        */
       async function showLevelPreview() {
         gameState = "preview";
-        levelPreviewTitle.textContent = "Level " + level;
-        levelPreviewText.textContent = "Study the labyrinth. Timer starts when you press Start.";
+        levelPreviewTitle.textContent = modeLabel(currentMode) + " - Level " + level;
+        if (currentMode === "practice") {
+          levelPreviewText.textContent = "Study the labyrinth. No score or timer will run.";
+        } else if (currentMode === "highScore") {
+          levelPreviewText.textContent = "Study the labyrinth. Elapsed time starts when you press Start.";
+        } else {
+          levelPreviewText.textContent = "Study the labyrinth. Timer starts when you press Start.";
+        }
         levelStartBtn.disabled = false;
         applyUIState();
 
@@ -3512,6 +3699,8 @@
         await waitForLevelStart();
         if (gameState !== "preview") return;
         showOverlay(levelPreviewOverlay, false);
+        levelStartedAt = performance.now();
+        levelElapsed = 0;
         gameState = "playing";
         applyUIState();
       }
@@ -3646,10 +3835,14 @@
 
         if (gameState === "playing") {
           if (!isLevelTransition && !isTimeoutTransition) {
-            timer -= dt;
-            if (timer <= 0) {
-              timer = 0;
-              onTimerExpired();
+            if (hasCountdownTimer()) {
+              timer -= dt;
+              if (timer <= 0) {
+                timer = 0;
+                onTimerExpired();
+              }
+            } else {
+              levelElapsed += dt;
             }
             updatePlayer(dt);
           }
@@ -3717,8 +3910,14 @@
        */
       function setupUIEvents() {
         // Button handlers connect menu and score overlays to the game-state functions above.
+        modeInputs.forEach((input) => {
+          input.addEventListener("change", updateModeHelp);
+        });
+
         newRunBtn.addEventListener("click", () => {
-          startRun(1);
+          const mode = selectedMode();
+          const startLevel = mode === "practice" ? selectedPracticeLevel() : 1;
+          startRun(startLevel, mode);
         });
 
         continueBtn.addEventListener("click", () => {
@@ -3741,21 +3940,27 @@
         });
 
         playAgainBtn.addEventListener("click", () => {
-          startRun(1);
+          const startLevel = currentMode === "practice" ? selectedPracticeLevel() : 1;
+          startRun(startLevel, currentMode);
         });
 
         saveScoreBtn.addEventListener("click", () => {
           const name = (playerNameInput.value || "").trim() || "Anon";
-          if (lastSavedRank !== null) {
-            postSaveBlock.textContent = "Score already saved at rank #" + lastSavedRank + ".";
+          if (scoreSaved) {
+            postSaveBlock.textContent = lastSavedRank
+              ? "Score already saved at rank #" + lastSavedRank + "."
+              : "Entry already saved outside the current top 10.";
             return;
           }
-          lastSavedRank = insertScore(name, score, level);
+          lastSavedRank = insertScore(name, score, level, currentMode);
+          scoreSaved = true;
           renderScoresInto("scoreTable");
           postSaveBlock.textContent =
-            lastSavedRank ? "Saved at rank #" + lastSavedRank + "." : "Saved.";
+            lastSavedRank ? "Saved at rank #" + lastSavedRank + "." : "Saved, but outside the current top 10.";
           nameEntryBlock.style.display = "none";
         });
+
+        updateModeHelp();
       }
 
       /*
