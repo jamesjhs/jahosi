@@ -737,7 +737,7 @@
             <label class="mode-option"><input type="radio" name="gameMode" value="highScore" />High Score</label>
             <label class="mode-option"><input type="radio" name="gameMode" value="practice" />Practice</label>
           </div>
-          <div class="level-select-row">
+          <div id="practiceLevelRow" class="level-select-row" style="display:none;">
             <label for="practiceLevelInput">Practice level</label>
             <input id="practiceLevelInput" type="number" min="1" max="20" step="1" value="1" />
           </div>
@@ -1145,6 +1145,7 @@
       const viewScoresBtn = document.getElementById("viewScoresBtn");
       const closeScoresBtn = document.getElementById("closeScoresBtn");
       const modeInputs = Array.from(document.querySelectorAll("input[name='gameMode']"));
+      const practiceLevelRow = document.getElementById("practiceLevelRow");
       const practiceLevelInput = document.getElementById("practiceLevelInput");
       const modeHelp = document.getElementById("modeHelp");
 
@@ -1504,6 +1505,9 @@
       function updateModeHelp() {
         const mode = selectedMode();
         lastSelectedMode = mode;
+        if (practiceLevelRow) {
+          practiceLevelRow.style.display = mode === "practice" ? "flex" : "none";
+        }
         if (practiceLevelInput) {
           practiceLevelInput.disabled = mode !== "practice";
         }
