@@ -4,6 +4,63 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no" />
   <title>Life Runner</title>
+  <script>
+    (() => {
+      const LABYRINTH_VERSION = "0.5.1";
+      const VERSION_URL = "/api/labyrinth/version";
+      const STORAGE_KEY = "life_runner_app_version";
+      const RELOAD_PARAM = "__lr_reload";
+      const VERSION_PARAM = "labyrinthv";
+
+      async function clearLabyrinthCaches() {
+        try {
+          if ("caches" in window) {
+            const keys = await caches.keys();
+            await Promise.all(
+              keys
+                .filter((key) => key.toLowerCase().includes("labyrinth") || key.toLowerCase().includes("life-runner"))
+                .map((key) => caches.delete(key))
+            );
+          }
+        } catch (_) {
+          // Cache cleanup is best-effort; the cache-busting reload is the important part.
+        }
+      }
+
+      async function checkLabyrinthVersion() {
+        try {
+          const response = await fetch(VERSION_URL, { cache: "no-store" });
+          if (!response.ok) return false;
+          const payload = await response.json();
+          const serverVersion = typeof payload.version === "string" ? payload.version.trim() : "";
+          if (!serverVersion) return false;
+          if (serverVersion === LABYRINTH_VERSION) {
+            try {
+              localStorage.setItem(STORAGE_KEY, serverVersion);
+            } catch (_) {}
+            return false;
+          }
+
+          const next = new URL(window.location.href);
+          const reloadCount = Number.parseInt(next.searchParams.get(RELOAD_PARAM) || "0", 10);
+          if (Number.isFinite(reloadCount) && reloadCount >= 2) return false;
+
+          await clearLabyrinthCaches();
+          try {
+            localStorage.setItem(STORAGE_KEY, serverVersion);
+          } catch (_) {}
+          next.searchParams.set(VERSION_PARAM, serverVersion);
+          next.searchParams.set(RELOAD_PARAM, String(Number.isFinite(reloadCount) ? reloadCount + 1 : 1));
+          window.location.replace(next.toString());
+          return true;
+        } catch (_) {
+          return false;
+        }
+      }
+
+      window.__labyrinthVersionRefreshPromise = checkLabyrinthVersion();
+    })();
+  </script>
   <style>
     :root {
       --safe-top: 56px;
@@ -764,7 +821,7 @@
             <input id="playerNameInput" type="text" maxlength="16" placeholder="Your alias" />
             <button id="saveScoreBtn">Save Score</button>
           </div>
-          <div class="small">Top 10 scores are stored locally on this device.</div>
+          <div class="small">Top 10 scores are saved to the global board when the server validates the run.</div>
         </div>
 
         <div id="postSaveBlock" class="small" style="margin-top:8px;"></div>
@@ -1233,6 +1290,11 @@
       let levelElapsed = 0;
       let currentMode = "timed";
       let lastSelectedMode = "timed";
+      let globalScores = null;
+      let globalScoresLoaded = false;
+      let currentRunToken = "";
+      let currentRunTokenMode = "";
+      let lastScoreSaveError = "";
 
       let maze = null;
       let exitCell = null;
@@ -1573,6 +1635,13 @@
        * saved data is old, broken, or manually edited.
        */
       function loadScores() {
+        if (globalScoresLoaded && Array.isArray(globalScores)) {
+          return globalScores.slice(0, 10);
+        }
+        return loadLocalScores();
+      }
+
+      function loadLocalScores() {
         // Stored score data is sanitized because localStorage is user-editable text.
         try {
           const raw = localStorage.getItem(CFG.STORAGE_SCORES);
@@ -1607,6 +1676,81 @@
         }
       }
 
+      async function refreshScoresFromApi(tableId) {
+        try {
+          const res = await fetch("/api/labyrinth/scores", {
+            method: "GET",
+            headers: { "Accept": "application/json" },
+            cache: "no-store",
+          });
+          if (!res.ok) return false;
+          const data = await res.json();
+          if (!Array.isArray(data.scores)) return false;
+          globalScores = data.scores
+            .map((it) => ({
+              name: String(it.name || "Anon").slice(0, 16),
+              score: Number(it.score) || 0,
+              level: Number(it.level) || 1,
+              mode: it.mode === "highScore" ? "highScore" : "timed",
+            }))
+            .sort((a, b) => b.score - a.score)
+            .slice(0, 10);
+          globalScoresLoaded = true;
+          saveScores(globalScores);
+          if (tableId) {
+            renderScoresInto(tableId, true);
+          }
+          return true;
+        } catch (_) {
+          return false;
+        }
+      }
+
+      async function beginScoreRunSession(mode, startLevel) {
+        currentRunToken = "";
+        currentRunTokenMode = "";
+        if (mode === "practice") return;
+        try {
+          const res = await fetch("/api/labyrinth/runs", {
+            method: "POST",
+            headers: {
+              "Accept": "application/json",
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              mode,
+              startLevel: Math.max(1, Math.floor(Number(startLevel) || 1)),
+            }),
+          });
+          if (!res.ok) return;
+          const data = await res.json();
+          if (typeof data.runToken === "string" && data.runToken) {
+            currentRunToken = data.runToken;
+            currentRunTokenMode = mode;
+          }
+        } catch (_) {
+          // Local fallback still works if the global score API is unavailable.
+        }
+      }
+
+      function scoreErrorMessage(code) {
+        const messages = {
+          name_too_long: "Alias must be 16 characters or fewer.",
+          name_unsafe: "Alias cannot contain code-like punctuation.",
+          name_url: "Alias cannot contain a URL.",
+          name_email: "Alias cannot contain an email address.",
+          name_handle: "Alias cannot contain a social handle.",
+          name_chars: "Alias can use letters, numbers, spaces, underscores, and hyphens.",
+          name_blocked: "Alias was blocked by the name filter.",
+          invalid_run: "This run token is no longer valid. Start a new run before saving globally.",
+          run_expired: "This run is too old to save globally.",
+          too_fast: "That run finished too quickly to save globally.",
+          impossible_frequency: "That level progression is too fast to save globally.",
+          impossible_score: "That score is outside the server validation range.",
+        };
+        return messages[code] || "The global scoreboard rejected this entry.";
+      }
+
       /*
        * qualifiesForTop10() decides whether a finished run deserves name entry.
        * If the board has fewer than 10 scores, any score qualifies. Otherwise the
@@ -1625,7 +1769,7 @@
        * The name is trimmed and shortened so one very long name cannot break the
        * score layout on small screens.
        */
-      function insertScore(name, value, lvl, mode) {
+      function insertLocalScore(name, value, lvl, mode) {
         // Names are trimmed to 16 characters so the score table remains readable on phones.
         const cleanName = String(name || "Anon").trim().slice(0, 16) || "Anon";
         const list = loadScores();
@@ -1643,12 +1787,58 @@
         return rank >= 0 ? rank + 1 : null;
       }
 
+      async function insertScore(name, value, lvl, mode) {
+        lastScoreSaveError = "";
+        if (currentRunToken && currentRunTokenMode === mode) {
+          try {
+            const res = await fetch("/api/labyrinth/scores", {
+              method: "POST",
+              headers: {
+                "Accept": "application/json",
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({
+                runToken: currentRunToken,
+                name,
+                score: value,
+                level: lvl,
+                mode,
+              }),
+            });
+            const data = await res.json().catch(() => ({}));
+            if (!res.ok) {
+              lastScoreSaveError = scoreErrorMessage(data.error);
+              return null;
+            }
+            if (Array.isArray(data.scores)) {
+              globalScores = data.scores
+                .map((it) => ({
+                  name: String(it.name || "Anon").slice(0, 16),
+                  score: Number(it.score) || 0,
+                  level: Number(it.level) || 1,
+                  mode: it.mode === "highScore" ? "highScore" : "timed",
+                }))
+                .sort((a, b) => b.score - a.score)
+                .slice(0, 10);
+              globalScoresLoaded = true;
+              saveScores(globalScores);
+            }
+            currentRunToken = "";
+            currentRunTokenMode = "";
+            return Number(data.rank) || null;
+          } catch (_) {
+            // Fall through to local storage if the API cannot be reached.
+          }
+        }
+        return insertLocalScore(name, value, lvl, mode);
+      }
+
       /*
        * renderScoresInto() fills a score table in the page. It always creates 10
        * rows, using dashes for empty places, so the table has a predictable shape
        * before and after new scores are added.
        */
-      function renderScoresInto(tableId) {
+      function renderScoresInto(tableId, skipApiRefresh) {
         // The table is always rendered with 10 rows so the UI does not jump as scores are added.
         const table = document.getElementById(tableId);
         if (!table) return;
@@ -1682,6 +1872,9 @@
           row.appendChild(lvl);
           row.appendChild(mode);
           tbody.appendChild(row);
+        }
+        if (!skipApiRefresh) {
+          void refreshScoresFromApi(tableId);
         }
       }
 
@@ -3006,6 +3199,7 @@
         // Begin a fresh score run from the requested level.
         currentMode = mode || selectedMode();
         level = Math.max(1, startLevel || 1);
+        void beginScoreRunSession(currentMode, level);
         score = 0;
         levelElapsed = 0;
         prepareLevel(level, true);
@@ -3022,6 +3216,7 @@
         // Continue starts at the highest unlocked level and estimates score from previous clears.
         currentMode = "timed";
         level = Math.max(1, progressData.highestLevel || 1);
+        void beginScoreRunSession(currentMode, level);
         score = cumulativeScoreUntilLevel(level - 1);
         levelElapsed = 0;
         prepareLevel(level, true);
@@ -3402,7 +3597,7 @@
         } else {
           const qualifies = qualifiesForTop10(score);
           postSaveBlock.textContent = qualifies
-            ? "This run can enter the local top 10."
+            ? "This run can enter the global top 10 if the server validates it."
             : "You can save this run, though it is currently outside the visible top 10.";
         }
 
@@ -3971,7 +4166,7 @@
           startRun(startLevel, currentMode);
         });
 
-        saveScoreBtn.addEventListener("click", () => {
+        saveScoreBtn.addEventListener("click", async () => {
           if (!isScoredMode()) {
             postSaveBlock.textContent = "Practice runs are not scored.";
             return;
@@ -3983,7 +4178,14 @@
               : "Score already saved outside the current top 10.";
             return;
           }
-          lastSavedRank = insertScore(name, score, level, currentMode);
+          saveScoreBtn.disabled = true;
+          postSaveBlock.textContent = "Saving score...";
+          lastSavedRank = await insertScore(name, score, level, currentMode);
+          saveScoreBtn.disabled = false;
+          if (lastScoreSaveError) {
+            postSaveBlock.textContent = lastScoreSaveError;
+            return;
+          }
           scoreSaved = true;
           renderScoresInto("scoreTable");
           postSaveBlock.textContent =
@@ -4010,6 +4212,7 @@
          * opens the menu, hides the loader, and starts the animation loop.
          */
         try {
+          if (await (window.__labyrinthVersionRefreshPromise || Promise.resolve(false))) return;
           detectQualityProfile();
           try {
             await loadThreeWithProgress();

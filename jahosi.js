@@ -124,6 +124,31 @@ const contactSubmitRateLimit = rateLimit({
     res.redirect(`${CONTACT_PAGE_PATH}?error=blocked`);
   },
 });
+const labyrinthReadRateLimit = rateLimit({
+  windowMs: 60 * 1000,
+  limit: 90,
+  standardHeaders: false,
+  legacyHeaders: false,
+  handler: (_req, res) => {
+    res.status(429).json({ error: "rate_limited" });
+  },
+});
+const labyrinthWriteRateLimit = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  limit: 20,
+  standardHeaders: false,
+  legacyHeaders: false,
+  handler: (_req, res) => {
+    res.status(429).json({ error: "rate_limited" });
+  },
+});
+const LABYRINTH_SCORE_FILE = path.join(__dirname, "data", "labyrinth-scores.json");
+const LABYRINTH_VERSION = "0.5.1";
+const LABYRINTH_RUN_TTL_MS = 2 * 60 * 60 * 1000;
+const LABYRINTH_MAX_SCORES = 100;
+const LABYRINTH_VISIBLE_SCORES = 10;
+const LABYRINTH_RUNS = new Map();
+let labyrinthScoreWriteQueue = Promise.resolve();
 const SPLASH_CHAT_GUIDELINES = [
   "You are a pool assistant for splash!, helping users with general pool problems including water chemistry, heating, water quality, and water colour.",
   "NEVER perform, estimate, or suggest any numerical dosing calculations — no chemical quantities, no substituted formulas, no arithmetic, and no worked numerical examples.",
@@ -422,6 +447,199 @@ function setPublicFileHeaders(res, filePath) {
   }
 }
 
+function cleanLabyrinthRuns() {
+  const now = Date.now();
+  for (const [token, run] of LABYRINTH_RUNS.entries()) {
+    if (!run || now - run.createdAt > LABYRINTH_RUN_TTL_MS) {
+      LABYRINTH_RUNS.delete(token);
+    }
+  }
+}
+
+function normalizeLabyrinthMode(value) {
+  return value === "highScore" ? "highScore" : value === "timed" ? "timed" : "";
+}
+
+function publicLabyrinthScore(score) {
+  return {
+    name: String(score.name || "Anon").slice(0, 16),
+    score: Math.max(0, Math.floor(Number(score.score) || 0)),
+    level: Math.max(1, Math.floor(Number(score.level) || 1)),
+    mode: normalizeLabyrinthMode(score.mode) || "timed",
+    createdAt: String(score.createdAt || new Date().toISOString()).slice(0, 40),
+  };
+}
+
+async function readLabyrinthScores() {
+  try {
+    const raw = await fs.promises.readFile(LABYRINTH_SCORE_FILE, "utf8");
+    const parsed = JSON.parse(raw);
+    if (!Array.isArray(parsed)) return [];
+    return parsed
+      .map(publicLabyrinthScore)
+      .filter((score) => score.score > 0)
+      .sort((a, b) => b.score - a.score || new Date(a.createdAt) - new Date(b.createdAt))
+      .slice(0, LABYRINTH_MAX_SCORES);
+  } catch (err) {
+    if (err && err.code === "ENOENT") return [];
+    console.error("Labyrinth score read failed:", err);
+    return [];
+  }
+}
+
+async function writeLabyrinthScores(scores) {
+  const safeScores = scores
+    .map(publicLabyrinthScore)
+    .filter((score) => score.score > 0)
+    .sort((a, b) => b.score - a.score || new Date(a.createdAt) - new Date(b.createdAt))
+    .slice(0, LABYRINTH_MAX_SCORES);
+  await fs.promises.mkdir(path.dirname(LABYRINTH_SCORE_FILE), { recursive: true });
+  const tmpPath = `${LABYRINTH_SCORE_FILE}.${process.pid}.${Date.now()}.tmp`;
+  await fs.promises.writeFile(tmpPath, `${JSON.stringify(safeScores, null, 2)}\n`, "utf8");
+  await fs.promises.rename(tmpPath, LABYRINTH_SCORE_FILE);
+  return safeScores;
+}
+
+function queueLabyrinthScoreWrite(work) {
+  const next = labyrinthScoreWriteQueue.then(work, work);
+  labyrinthScoreWriteQueue = next.catch(() => {});
+  return next;
+}
+
+function normalizeLabyrinthNameForChecks(value) {
+  return String(value || "")
+    .normalize("NFKD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase()
+    .replace(/[@4]/g, "a")
+    .replace(/[!1|]/g, "i")
+    .replace(/0/g, "o")
+    .replace(/[5$]/g, "s")
+    .replace(/3/g, "e")
+    .replace(/7/g, "t")
+    .replace(/[^a-z0-9]+/g, "");
+}
+
+function levenshteinDistance(a, b) {
+  if (a === b) return 0;
+  if (!a) return b.length;
+  if (!b) return a.length;
+  const prev = Array.from({ length: b.length + 1 }, (_, i) => i);
+  const curr = new Array(b.length + 1);
+  for (let i = 1; i <= a.length; i++) {
+    curr[0] = i;
+    for (let j = 1; j <= b.length; j++) {
+      const cost = a[i - 1] === b[j - 1] ? 0 : 1;
+      curr[j] = Math.min(curr[j - 1] + 1, prev[j] + 1, prev[j - 1] + cost);
+    }
+    for (let j = 0; j <= b.length; j++) prev[j] = curr[j];
+  }
+  return prev[b.length];
+}
+
+function containsBlockedLabyrinthName(value) {
+  const compact = normalizeLabyrinthNameForChecks(value);
+  if (!compact) return false;
+  const blockedTerms = [
+    "admin",
+    "moderator",
+    "owner",
+    "staff",
+    "support",
+    "fuck",
+    "shit",
+    "bitch",
+    "bastard",
+    "cunt",
+    "dick",
+    "piss",
+    "wank",
+    "slut",
+    "whore",
+    "nazi",
+    "hitler",
+    "racist",
+    "rape",
+    "rapist",
+    "kill",
+    "suicide",
+  ];
+  return blockedTerms.some((term) => {
+    if (compact.includes(term)) return true;
+    if (term.length < 5) return false;
+    for (let i = 0; i <= compact.length - term.length; i++) {
+      if (levenshteinDistance(compact.slice(i, i + term.length), term) <= 1) return true;
+    }
+    return Math.abs(compact.length - term.length) <= 1 && levenshteinDistance(compact, term) <= 1;
+  });
+}
+
+function sanitizeLabyrinthPlayerName(value) {
+  const raw = String(value || "").trim();
+  if (!raw) return { ok: true, name: "Anon" };
+  if (raw.length > 16) return { ok: false, error: "name_too_long" };
+  if (/[<>{}\[\]()`"'\\;/]/.test(raw)) return { ok: false, error: "name_unsafe" };
+  if (/(?:https?:\/\/|www\.|[a-z0-9-]+\.[a-z]{2,})/i.test(raw)) return { ok: false, error: "name_url" };
+  if (/[^\s@]+@[^\s@]+\.[^\s@]+/.test(raw)) return { ok: false, error: "name_email" };
+  if (/(^|\s)@[a-z0-9_.-]{2,}/i.test(raw) || /#[a-z0-9_-]{3,}/i.test(raw)) return { ok: false, error: "name_handle" };
+  if (!/^[A-Za-z0-9 _-]{1,16}$/.test(raw)) return { ok: false, error: "name_chars" };
+  if (containsBlockedLabyrinthName(raw)) return { ok: false, error: "name_blocked" };
+  return { ok: true, name: raw.replace(/\s+/g, " ").slice(0, 16) };
+}
+
+function labyrinthLevelSize(lvl) {
+  return Math.min(15, 6 + Math.max(1, Math.floor(lvl)) - 1);
+}
+
+function labyrinthMaxTimedScoreForLevel(lvl) {
+  const size = labyrinthLevelSize(lvl);
+  const timer = Math.floor((4 * (size * size) * 4) / 5.5);
+  return 220 + lvl * 42 + timer * 6 + 3 * 110;
+}
+
+function labyrinthMaxHighScoreForLevel(lvl) {
+  return 220 + lvl * 42 + 3 * 6 * 20;
+}
+
+function labyrinthCarryScoreUntilLevel(lvl) {
+  let total = 0;
+  for (let i = 1; i <= lvl; i++) {
+    total += 220 + i * 42;
+  }
+  return Math.floor(total);
+}
+
+function validateLabyrinthScorePayload(body, run) {
+  const mode = normalizeLabyrinthMode(body.mode);
+  const score = Math.floor(Number(body.score));
+  const level = Math.floor(Number(body.level));
+  if (!mode || mode !== run.mode) return { ok: false, error: "invalid_mode" };
+  if (!Number.isFinite(score) || score <= 0) return { ok: false, error: "invalid_score" };
+  if (!Number.isFinite(level) || level < run.startLevel || level > 60) return { ok: false, error: "invalid_level" };
+
+  const now = Date.now();
+  const elapsedMs = now - run.createdAt;
+  if (elapsedMs < 2500) return { ok: false, error: "too_fast" };
+  if (elapsedMs > LABYRINTH_RUN_TTL_MS) return { ok: false, error: "run_expired" };
+
+  const completedLevels = Math.max(0, level - run.startLevel);
+  if (completedLevels > 0 && elapsedMs < completedLevels * 1000) {
+    return { ok: false, error: "impossible_frequency" };
+  }
+
+  let maxScore = run.startLevel > 1 ? labyrinthCarryScoreUntilLevel(run.startLevel - 1) : 0;
+  for (let lvl = run.startLevel; lvl < level; lvl++) {
+    maxScore += mode === "timed" ? labyrinthMaxTimedScoreForLevel(lvl) : labyrinthMaxHighScoreForLevel(lvl);
+  }
+
+  const tolerance = Math.max(250, Math.ceil(maxScore * 0.08));
+  if (score > maxScore + tolerance) {
+    return { ok: false, error: "impossible_score" };
+  }
+
+  return { ok: true, score, level, mode };
+}
+
 const SOCIAL_QA_LOCAL_SEARCH_TERMS = [
   "adult social care",
   "care and support",
@@ -541,6 +759,7 @@ app.get("/robots.txt", (req, res) => {
     "Allow: /",
     `Disallow: ${CONTACT_PAGE_PATH}`,
     "Disallow: /api/contact/submit",
+    "Disallow: /api/labyrinth/",
     `Sitemap: ${baseUrl}/sitemap.xml`,
   ].join("\n");
   res.type("text/plain").send(`${robotsTxt}\n`);
@@ -1256,6 +1475,92 @@ app.post("/socialQA/chat", splashChatRateLimit, express.json({ limit: "50kb" }),
     return res.json(response);
   } catch {
     return res.status(502).json({ error: "upstream_unreachable" });
+  }
+});
+
+app.get("/api/labyrinth/scores", labyrinthReadRateLimit, async (_req, res) => {
+  const scores = await readLabyrinthScores();
+  res.json({ scores: scores.slice(0, LABYRINTH_VISIBLE_SCORES) });
+});
+
+app.get("/api/labyrinth/version", labyrinthReadRateLimit, (_req, res) => {
+  setNoCacheHeaders(res);
+  res.json({ version: LABYRINTH_VERSION });
+});
+
+app.post("/api/labyrinth/runs", labyrinthWriteRateLimit, express.json({ limit: "8kb" }), (req, res) => {
+  cleanLabyrinthRuns();
+  const body = req.body && typeof req.body === "object" ? req.body : {};
+  const mode = normalizeLabyrinthMode(body.mode);
+  const startLevel = Math.max(1, Math.min(60, Math.floor(Number(body.startLevel) || 1)));
+  if (!mode) {
+    return res.status(400).json({ error: "invalid_mode" });
+  }
+
+  const token = crypto.randomBytes(32).toString("base64url");
+  LABYRINTH_RUNS.set(token, {
+    token,
+    mode,
+    startLevel,
+    createdAt: Date.now(),
+    ip: req.ip || req.socket.remoteAddress || "",
+    used: false,
+  });
+  res.json({ runToken: token, expiresInSeconds: Math.floor(LABYRINTH_RUN_TTL_MS / 1000) });
+});
+
+app.post("/api/labyrinth/scores", labyrinthWriteRateLimit, express.json({ limit: "8kb" }), async (req, res) => {
+  cleanLabyrinthRuns();
+  const body = req.body && typeof req.body === "object" ? req.body : {};
+  const runToken = typeof body.runToken === "string" ? body.runToken.trim() : "";
+  const run = runToken ? LABYRINTH_RUNS.get(runToken) : null;
+  if (!run || run.used) {
+    return res.status(403).json({ error: "invalid_run" });
+  }
+
+  const nameResult = sanitizeLabyrinthPlayerName(body.name);
+  if (!nameResult.ok) {
+    return res.status(400).json({ error: nameResult.error });
+  }
+
+  const scoreResult = validateLabyrinthScorePayload(body, run);
+  if (!scoreResult.ok) {
+    return res.status(400).json({ error: scoreResult.error });
+  }
+
+  run.used = true;
+  LABYRINTH_RUNS.delete(runToken);
+
+  try {
+    const saved = await queueLabyrinthScoreWrite(async () => {
+      const current = await readLabyrinthScores();
+      const entry = {
+        name: nameResult.name,
+        score: scoreResult.score,
+        level: scoreResult.level,
+        mode: scoreResult.mode,
+        createdAt: new Date().toISOString(),
+      };
+      current.push(entry);
+      const scores = await writeLabyrinthScores(current);
+      const rank = scores.findIndex(
+        (item) =>
+          item.name === entry.name &&
+          item.score === entry.score &&
+          item.level === entry.level &&
+          item.mode === entry.mode &&
+          item.createdAt === entry.createdAt
+      );
+      return { scores, rank: rank >= 0 ? rank + 1 : null };
+    });
+
+    res.json({
+      rank: saved.rank && saved.rank <= LABYRINTH_VISIBLE_SCORES ? saved.rank : null,
+      scores: saved.scores.slice(0, LABYRINTH_VISIBLE_SCORES),
+    });
+  } catch (err) {
+    console.error("Labyrinth score save failed:", err);
+    res.status(500).json({ error: "save_failed" });
   }
 });
 
