@@ -2213,6 +2213,7 @@
           // Ensure overlays remain interactive on desktop when mouse was previously captured.
           if (document.pointerLockElement) {
             document.exitPointerLock?.();
+            pointerLocked = false;
           }
           el.classList.add("show");
         } else {
@@ -2944,9 +2945,58 @@
 
         clock = new THREE.Clock();
 
-        renderer.domElement.addEventListener("click", () => {
-          if (gameState !== "playing") return;
+        function isGameplayOverlayVisible() {
+          return startOverlay.classList.contains("show")
+            || gameOverOverlay.classList.contains("show")
+            || levelTransitionOverlay.classList.contains("show")
+            || levelPreviewOverlay.classList.contains("show")
+            || timeoutOverlay.classList.contains("show");
+        }
+
+        function attemptPointerLock() {
+          if (gameState !== "playing" || pointerLocked || isGameplayOverlayVisible()) return;
           renderer.domElement.requestPointerLock?.();
+        }
+
+        renderer.domElement.addEventListener("click", attemptPointerLock);
+
+        document.addEventListener("click", (e) => {
+          if (gameState !== "playing" || pointerLocked || isGameplayOverlayVisible()) return;
+
+          const rect = renderer.domElement.getBoundingClientRect();
+          if (e.clientX >= rect.left && e.clientX <= rect.right
+            && e.clientY >= rect.top && e.clientY <= rect.bottom) {
+            attemptPointerLock();
+          }
+        }, { capture: true });
+
+        document.addEventListener("pointerlockerror", () => {
+          console.warn("[Labyrinth] Pointer lock request was denied or failed.");
+        });
+
+        window.addEventListener("blur", () => {
+          pointerLocked = false;
+        });
+
+        function requestPointerLockAfterReturn() {
+          if (gameState !== "playing" || pointerLocked || document.pointerLockElement !== null || isGameplayOverlayVisible()) {
+            return;
+          }
+
+          setTimeout(() => {
+            if (gameState === "playing"
+              && !pointerLocked
+              && document.pointerLockElement === null
+              && !isGameplayOverlayVisible()) {
+              renderer.domElement.requestPointerLock?.();
+            }
+          }, 50);
+        }
+
+        window.addEventListener("focus", requestPointerLockAfterReturn);
+
+        document.addEventListener("visibilitychange", () => {
+          if (!document.hidden) requestPointerLockAfterReturn();
         });
 
         document.addEventListener("pointerlockchange", () => {
