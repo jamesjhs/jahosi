@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Spherify is a local-first Android app prototype for creating PhotoSphere and Tiny Planet images with ARCore-guided capture and OpenCV stitching direction.">
+  <meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1">
+  <link rel="canonical" href="https://jahosi.co.uk/portfolio/spherify.html">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Spherify | Jahosi Portfolio">
+  <meta property="og:description" content="Android 360 image and Tiny Planet prototype with local library, GPU viewers, ARCore SharedCamera capture direction, graph-backed validation, and OpenCV stitching work.">
+  <meta property="og:url" content="https://jahosi.co.uk/portfolio/spherify.html">
+  <meta property="og:site_name" content="Dr James Rowson Portfolio">
+  <meta property="og:image" content="https://jahosi.co.uk/images/spherify-tinyplanet.jpg">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Spherify | Jahosi Portfolio">
+  <meta name="twitter:description" content="Local-first Android PhotoSphere and Tiny Planet prototype with ARCore and OpenCV direction.">
+  <meta name="twitter:image" content="https://jahosi.co.uk/images/spherify-tinyplanet.jpg">
+  <title>Spherify | Jahosi Portfolio</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&display=swap');
+    body { font-family: "Manrope", sans-serif; }
+  </style>
+</head>
+<body class="min-h-screen text-slate-900" style="background:radial-gradient(900px 360px at 12% -8%,#ccfbf1,transparent 55%),radial-gradient(820px 340px at 88% 0%,#bfdbfe,transparent 52%),#f8fafc;">
+  <main class="mx-auto max-w-4xl px-4 py-10 sm:px-6">
+    <a href="../index.html" class="text-sm font-semibold text-sky-700 hover:text-sky-900">&larr; Back to portfolio</a>
+
+    <section class="mt-4 rounded-3xl border border-slate-200 bg-white/90 p-8 shadow-xl backdrop-blur-sm">
+      <p class="text-sm font-semibold uppercase tracking-widest text-teal-700">Repository</p>
+      <h1 class="mt-2 text-3xl font-extrabold">Spherify</h1>
+      <p class="mt-1 text-sm text-slate-500">Android 360 image app &middot; PhotoSphere and Tiny Planet &middot; ARCore SharedCamera &middot; OpenCV direction &middot; version 0.4.2</p>
+
+      <p class="mt-5 text-slate-600">Spherify is an Android app prototype for creating 360-degree PhotoSphere and Tiny Planet images from a phone camera, motion sensors, optional location metadata, and local storage. The product promise is intentionally local-first: capture, view, reshape, save, export, share, and manage images without making cloud publishing the reason the app exists.</p>
+      <p class="mt-4 text-slate-600">The repository has gone through a useful reset. The older sweep-and-force-capture path was removed from production because it could create interesting visuals but could not honestly prove the geometry needed for a reliable spherical panorama. The current direction is stricter: ARCore SharedCamera plus Camera2 metadata for capture evidence, graph-backed overlap validation, and OpenCV-style global stitching before anything is labelled map-ready.</p>
+
+      <div class="mt-6 grid gap-4 md:grid-cols-[1.25fr_.75fr]">
+        <img src="../images/spherify-tinyplanet.jpg" width="2048" height="2048" alt="Spherify Tiny Planet image output used as the app's product-derived portfolio visual" class="h-full w-full rounded-xl border border-slate-200 object-cover shadow-sm">
+        <div class="rounded-xl border border-slate-200 bg-slate-950 p-5 text-white shadow-sm">
+          <img src="../images/spherify-icon.png" width="144" height="144" alt="Spherify app icon" class="h-16 w-16 rounded-2xl border border-white/20">
+          <p class="mt-5 text-xs font-bold uppercase tracking-widest text-teal-200">Capture Evidence</p>
+          <div class="mt-3 space-y-3 text-sm">
+            <div class="rounded-lg border border-white/15 bg-white/10 p-3">ARCore pose + tracking</div>
+            <div class="rounded-lg border border-white/15 bg-white/10 p-3">Camera2 metadata pairing</div>
+            <div class="rounded-lg border border-white/15 bg-white/10 p-3">Validated overlap graph</div>
+            <div class="rounded-lg border border-white/15 bg-white/10 p-3">OpenCV detail stitcher</div>
+          </div>
+        </div>
+      </div>
+      <p class="mt-2 text-center text-xs text-slate-400">Product-derived visuals: bundled Tiny Planet image and app icon from the Spherify repository.</p>
+
+      <h2 class="mt-8 text-xl font-bold">Idea / Need Identification</h2>
+      <p class="mt-3 text-sm text-slate-600">The original product thought was simple: a phone should be enough to stand in one place, turn slowly, make a convincing spherical image, and keep the result locally. Early versions proved the library, import, export, sharing, GPU-backed PhotoSphere viewer, Tiny Planet projection, thumbnails, metadata, and basic image management could work as a normal Android app.</p>
+      <p class="mt-3 text-sm text-slate-600">Testing then exposed the deeper need. A good PhotoSphere is not just a pretty wrap around flat images; it needs capture evidence: camera pose, intrinsics, overlap, parallax control, exposure state, graph connectivity, and honest metadata. Spherify now treats capture as part of the measurement instrument, not just a way to collect pixels.</p>
+
+      <h2 class="mt-8 text-xl font-bold">Development Aims And Stages</h2>
+      <div class="mt-3 grid gap-3 md:grid-cols-3">
+        <article class="rounded-xl border border-slate-200 bg-slate-50 p-4">
+          <h3 class="text-sm font-bold uppercase tracking-wide text-slate-700">Local Library</h3>
+          <p class="mt-2 text-sm text-slate-600">Keep masters, variants, thumbnails, imports, exports, metadata, delete, share, and viewer workflows available without broad photo-library permission.</p>
+        </article>
+        <article class="rounded-xl border border-slate-200 bg-slate-50 p-4">
+          <h3 class="text-sm font-bold uppercase tracking-wide text-slate-700">Guided Capture</h3>
+          <p class="mt-2 text-sm text-slate-600">Use ARCore visual-inertial tracking, Camera2 metadata, reticle targets, horizon guidance, feature confidence, and graph validation.</p>
+        </article>
+        <article class="rounded-xl border border-slate-200 bg-slate-50 p-4">
+          <h3 class="text-sm font-bold uppercase tracking-wide text-slate-700">Honest Output</h3>
+          <p class="mt-2 text-sm text-slate-600">Only create 2:1 equirectangular PhotoSphere masters with GPano metadata when coverage, seams, poles, residuals, and readback support the claim.</p>
+        </article>
+      </div>
+      <ol class="mt-5 space-y-3 text-sm text-slate-600">
+        <li><span class="font-semibold text-slate-900">1. Technology proof:</span> load a bundled equirectangular image, view it as a PhotoSphere, transform it into Tiny Planet, and save variants.</li>
+        <li><span class="font-semibold text-slate-900">2. Local library:</span> persist images, thumbnails, metadata, imports, exports, shares, deletes, and flat-image workflows.</li>
+        <li><span class="font-semibold text-slate-900">3. Sensor and capture readiness:</span> camera, optional location, motion sensors, recoverable sessions, and debug diagnostics.</li>
+        <li><span class="font-semibold text-slate-900">4. Guided PhotoSphere reset:</span> replace loose capture with ARCore SharedCamera, Camera2 metadata, target lattice guidance, accepted-frame graph nodes, and validated overlap edges.</li>
+        <li><span class="font-semibold text-slate-900">5. Solver and certification:</span> tune OpenCV feature matching, camera estimation, bundle adjustment, spherical warping, exposure compensation, graph-cut seams, multiband blending, and GPano validation.</li>
+      </ol>
+
+      <h2 class="mt-8 text-xl font-bold">Project Progress</h2>
+      <p class="mt-3 text-sm text-slate-600">Current version is <span class="font-semibold text-slate-900">0.4.2</span>, with application ID <code class="rounded bg-slate-100 px-1.5 py-0.5">com.spherify.app</code>, compile and target SDK 36, and minimum SDK 26. The local library, flat-image import, GPU-backed viewers, adjustment controls, saved variants, thumbnails, metadata display, export, share, delete, debug diagnostics, and basic library management remain operational.</p>
+      <p class="mt-3 text-sm text-slate-600">Production Spherify master export is still blocked until the full Android OpenCV dependency path exposes the stitching/detail symbols needed for the intended solver. Direct Google Maps publishing is not implemented, and the repository explicitly warns against claiming it until the exact workflow is built, tested, and visible to users.</p>
+
+      <div class="mt-6 grid gap-2 text-sm sm:grid-cols-2 lg:grid-cols-4">
+        <div class="rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-center font-semibold text-slate-700">Java / Android</div>
+        <div class="rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-center font-semibold text-slate-700">ARCore</div>
+        <div class="rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-center font-semibold text-slate-700">Camera2</div>
+        <div class="rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-center font-semibold text-slate-700">OpenCV Native</div>
+      </div>
+
+      <div class="mt-8 flex flex-wrap gap-3">
+        <a href="https://github.com/jamesjhs/Spherify" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 rounded-lg bg-teal-700 px-4 py-2 text-sm font-semibold text-white hover:bg-teal-800">View on GitHub &rarr;</a>
+        <a href="../index.html" class="inline-flex items-center gap-2 rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-semibold text-slate-700 hover:border-slate-400 hover:text-slate-900">Back to portfolio</a>
+      </div>
+    </section>
+  </main>
+</body>
+</html>

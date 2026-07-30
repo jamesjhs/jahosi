@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="RailwayController is an ESP32-hosted PWA and hardware architecture for a safe educational OO-gauge model railway PWM controller.">
+  <meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1">
+  <link rel="canonical" href="https://jahosi.co.uk/portfolio/railway-controller.html">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="RailwayController | Jahosi Portfolio">
+  <meta property="og:description" content="Self-hosted ESP32 PWM railway controller concept with four channels, physical controls, PWA operation, KiCad planning, and safety-first educational documentation.">
+  <meta property="og:url" content="https://jahosi.co.uk/portfolio/railway-controller.html">
+  <meta property="og:site_name" content="Dr James Rowson Portfolio">
+  <meta property="og:image" content="https://jahosi.co.uk/images/railway-controller-circuit.png">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="RailwayController | Jahosi Portfolio">
+  <meta name="twitter:description" content="ESP32-hosted PWA and hardware architecture for an educational OO-gauge model railway controller.">
+  <meta name="twitter:image" content="https://jahosi.co.uk/images/railway-controller-circuit.png">
+  <title>RailwayController | Jahosi Portfolio</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&display=swap');
+    body { font-family: "Manrope", sans-serif; }
+  </style>
+</head>
+<body class="min-h-screen text-slate-900" style="background:radial-gradient(900px 360px at 12% -8%,#dcfce7,transparent 55%),radial-gradient(780px 340px at 88% 0%,#fde68a,transparent 50%),#f8fafc;">
+  <main class="mx-auto max-w-4xl px-4 py-10 sm:px-6">
+    <a href="../index.html" class="text-sm font-semibold text-sky-700 hover:text-sky-900">&larr; Back to portfolio</a>
+
+    <section class="mt-4 rounded-3xl border border-slate-200 bg-white/90 p-8 shadow-xl backdrop-blur-sm">
+      <p class="text-sm font-semibold uppercase tracking-widest text-emerald-700">Repository</p>
+      <h1 class="mt-2 text-3xl font-extrabold">RailwayController</h1>
+      <p class="mt-1 text-sm text-slate-500">ESP32 local PWA &middot; OO-gauge DC/PWM control &middot; four-channel hardware architecture &middot; KiCad planning</p>
+
+      <p class="mt-5 text-slate-600">RailwayController is a bi-directional, short-circuit-aware controller concept for a two-rail OO-gauge model railway. The product idea is deliberately practical: an ESP32 hosts a fast local PWA, physical controls remain usable at the panel, and the hardware design teaches real electronics rather than hiding everything behind a sealed controller box.</p>
+      <p class="mt-4 text-slate-600">The repository is currently research and architecture work rather than a build-ready product. That matters because the project touches power electronics, old and modern model railway motors, fusing, current limits, inrush, heat, derailment shorts, and safe educational construction. The portfolio case therefore presents the actual design evidence and the remaining validation work plainly.</p>
+
+      <img src="../images/railway-controller-circuit.png" width="2200" height="1700" alt="RailwayController generated top-level circuit diagram showing transformer, rectifier, logic power, ESP32 control, I2C IO, panel controls, and track channels" class="mt-6 w-full rounded-xl border border-slate-200 bg-white shadow-sm">
+      <p class="mt-2 text-center text-xs text-slate-400">Generated circuit diagram from the repository: low-voltage power path, ESP32 control, I2C expansion, panel controls, and repeated track channel architecture.</p>
+
+      <h2 class="mt-8 text-xl font-bold">Idea / Need Identification</h2>
+      <p class="mt-3 text-sm text-slate-600">The project grew from the limits of children’s model railway controller options: cost, adaptability, build quality, remote control, and the desire for something that can be understood and modified. A local ESP32-hosted controller keeps the railway as a toy and learning platform while adding phone, tablet, desktop, and physical control paths.</p>
+      <p class="mt-3 text-sm text-slate-600">The need is not simply remote speed control. It is a safe, inspectable product design for older Tri-ang and Hornby Tri-ang locomotives, Mainline engines, and modern Hornby motors, with per-channel profiles, visible power/fault states, current telemetry, and fail-safe behaviour when anything goes wrong.</p>
+
+      <h2 class="mt-8 text-xl font-bold">Development Aims And Stages</h2>
+      <div class="mt-3 grid gap-3 md:grid-cols-3">
+        <article class="rounded-xl border border-slate-200 bg-slate-50 p-4">
+          <h3 class="text-sm font-bold uppercase tracking-wide text-slate-700">Control</h3>
+          <p class="mt-2 text-sm text-slate-600">Four independent PWM channels with forward, reverse, neutral, ramp profiles, emergency stop, and physical/PWA command arbitration.</p>
+        </article>
+        <article class="rounded-xl border border-slate-200 bg-slate-50 p-4">
+          <h3 class="text-sm font-bold uppercase tracking-wide text-slate-700">Safety</h3>
+          <p class="mt-2 text-sm text-slate-600">Low-voltage transformer boundary, fusing, protected H-bridges, TVS protection, current sensing, thermal validation, and visible fault states.</p>
+        </article>
+        <article class="rounded-xl border border-slate-200 bg-slate-50 p-4">
+          <h3 class="text-sm font-bold uppercase tracking-wide text-slate-700">Learning</h3>
+          <p class="mt-2 text-sm text-slate-600">Beginner-readable documentation that still explains real ESP32, PWA, ADC, debounce, motor-driver, and railway-electrical decisions.</p>
+        </article>
+      </div>
+      <ol class="mt-5 space-y-3 text-sm text-slate-600">
+        <li><span class="font-semibold text-slate-900">1. Repository foundation:</span> aims, background, trusted references, safety boundary, hardware direction, and development log.</li>
+        <li><span class="font-semibold text-slate-900">2. Research and architecture:</span> component classes, pin plan, centre-biased throttle model, current-limit strategy, KiCad-ready schematic specification, and risk review.</li>
+        <li><span class="font-semibold text-slate-900">3. PWA prototype:</span> installable local interface, four simulated channel controls, locomotive profiles, service worker, reconnect warnings, and fail-safe stop handling.</li>
+        <li><span class="font-semibold text-slate-900">4. Firmware prototype:</span> ESP32 web server, LEDC PWM, ADC throttle reads, I2C current/fault telemetry, profile persistence, watchdog and brownout safety.</li>
+        <li><span class="font-semibold text-slate-900">5. Bench and railway tests:</span> validate dummy loads first, then measured old and modern locomotives before any reproducible build guide is published.</li>
+      </ol>
+
+      <h2 class="mt-8 text-xl font-bold">Project Progress</h2>
+      <p class="mt-3 text-sm text-slate-600">As of 29 July 2026, Phase 0 is complete and Phase 1 is in progress. The repository includes GPL-3.0 licensing, a source-backed architecture, circuit documentation, a draft component list, a KiCad schematic scaffold, a generated top-level diagram, and explicit notes that the design is not yet validated as build-ready.</p>
+      <p class="mt-3 text-sm text-slate-600">Remaining Phase 1 work includes final driver configuration, current-limit and current-sense calculations, exact TVS/fuse/inrush/switch/transformer part selection after measurements, a formal risk register, and a schematic-ready design. Firmware, PWA implementation, bench electronics, railway testing, and release documentation have not started.</p>
+
+      <div class="mt-6 grid gap-2 text-sm sm:grid-cols-2 lg:grid-cols-4">
+        <div class="rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-center font-semibold text-slate-700">ESP32 WROOM</div>
+        <div class="rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-center font-semibold text-slate-700">Local PWA</div>
+        <div class="rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-center font-semibold text-slate-700">KiCad</div>
+        <div class="rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-center font-semibold text-slate-700">Protected H-Bridge</div>
+      </div>
+
+      <div class="mt-8 flex flex-wrap gap-3">
+        <a href="https://github.com/jamesjhs/RailwayController" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 rounded-lg bg-emerald-700 px-4 py-2 text-sm font-semibold text-white hover:bg-emerald-800">View on GitHub &rarr;</a>
+        <a href="../index.html" class="inline-flex items-center gap-2 rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-semibold text-slate-700 hover:border-slate-400 hover:text-slate-900">Back to portfolio</a>
+      </div>
+    </section>
+  </main>
+</body>
+</html>

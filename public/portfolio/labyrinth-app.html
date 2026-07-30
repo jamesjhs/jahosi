@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="LabyrinthApp is the native Android roadmap and skeleton for turning the Jahosi Labyrinth web game into an offline Kotlin game for Play Store release.">
+  <meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1">
+  <link rel="canonical" href="https://jahosi.co.uk/portfolio/labyrinth-app.html">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="LabyrinthApp | Jahosi Portfolio">
+  <meta property="og:description" content="Native Android foundation for Labyrinth: offline Kotlin game architecture, Compose shell, Play-ready discipline, and a staged route from web-game parity to polished mobile release.">
+  <meta property="og:url" content="https://jahosi.co.uk/portfolio/labyrinth-app.html">
+  <meta property="og:site_name" content="Dr James Rowson Portfolio">
+  <meta property="og:image" content="https://jahosi.co.uk/images/labyrinth-gameplay-hint.png">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="LabyrinthApp | Jahosi Portfolio">
+  <meta name="twitter:description" content="Native Android foundation for turning the Labyrinth browser game into an offline Kotlin game.">
+  <meta name="twitter:image" content="https://jahosi.co.uk/images/labyrinth-gameplay-hint.png">
+  <title>LabyrinthApp | Jahosi Portfolio</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&display=swap');
+    body { font-family: "Manrope", sans-serif; }
+    .labyrinth-grid {
+      background:
+        linear-gradient(90deg, rgba(14,165,233,.18) 1px, transparent 1px),
+        linear-gradient(0deg, rgba(56,189,248,.18) 1px, transparent 1px),
+        radial-gradient(circle at 50% 48%, rgba(34,211,238,.28), transparent 44%),
+        #07111f;
+      background-size: 34px 34px, 34px 34px, auto, auto;
+    }
+  </style>
+</head>
+<body class="min-h-screen text-slate-900" style="background:radial-gradient(900px 360px at 10% -8%,#bae6fd,transparent 55%),radial-gradient(760px 340px at 88% 0%,#c4b5fd,transparent 52%),#f8fafc;">
+  <main class="mx-auto max-w-4xl px-4 py-10 sm:px-6">
+    <a href="../index.html" class="text-sm font-semibold text-sky-700 hover:text-sky-900">&larr; Back to portfolio</a>
+
+    <section class="mt-4 rounded-3xl border border-slate-200 bg-white/90 p-8 shadow-xl backdrop-blur-sm">
+      <p class="text-sm font-semibold uppercase tracking-widest text-sky-600">Repository</p>
+      <h1 class="mt-2 text-3xl font-extrabold">LabyrinthApp</h1>
+      <p class="mt-1 text-sm text-slate-500">Native Android game foundation &middot; Kotlin &middot; Jetpack Compose &middot; offline-first &middot; version 0.1.1</p>
+
+      <p class="mt-5 text-slate-600">LabyrinthApp is the dedicated Android repository for turning the existing Jahosi Labyrinth browser game into a proper native mobile game. It is deliberately not a WebView wrapper. The goal is an offline Kotlin app with native rendering, Android lifecycle resilience, local score persistence, touch-first controls, haptics, audio, accessibility settings, and Play Store-ready release discipline.</p>
+      <p class="mt-4 text-slate-600">The current repository is at foundation stage: a launchable Android skeleton with Compose, a temporary neon/dark launch screen, clean permissions, debug and release build types, and a roadmap that keeps the later gameplay port honest about testing, performance, and device behaviour.</p>
+
+      <div class="mt-6 overflow-hidden rounded-2xl border border-slate-200 bg-slate-950 shadow-sm">
+        <div class="labyrinth-grid relative aspect-video">
+          <div class="absolute inset-x-8 top-8 h-16 rounded-xl border border-cyan-300/40 bg-slate-950/70 p-4 text-cyan-100 shadow-lg">
+            <div class="flex items-center justify-between text-xs font-bold uppercase tracking-widest">
+              <span>Native Android Shell</span>
+              <span>0.1.1</span>
+            </div>
+            <div class="mt-3 h-1.5 rounded-full bg-cyan-950">
+              <div class="h-full w-[16%] rounded-full bg-cyan-300"></div>
+            </div>
+          </div>
+          <img src="../images/labyrinth-gameplay-hint.png" alt="Labyrinth web game reference capture with HUD and maze view" class="absolute bottom-0 right-0 h-[72%] w-[78%] rounded-tl-2xl border border-white/15 object-cover object-top opacity-90 shadow-2xl">
+        </div>
+      </div>
+      <p class="mt-2 text-center text-xs text-slate-400">Product-derived visual: the existing Labyrinth gameplay capture framed as the source reference for the native Android build.</p>
+
+      <h2 class="mt-8 text-xl font-bold">Idea / Need Identification</h2>
+      <p class="mt-3 text-sm text-slate-600">The browser version proved the game loop: procedural mazes, first-person movement, hints, lives, timers, high scores, and touch controls can fit inside a compact self-contained experience. The need for LabyrinthApp is different: mobile players expect native performance, reliable lifecycle handling, device-friendly controls, accessible settings, haptics, sound, and an app that keeps working without a server or browser cache assumptions.</p>
+      <p class="mt-3 text-sm text-slate-600">The repository also answers a product risk early. A quick HTML shell would be easy, but it would carry the browser game's constraints into a place where Android can do better. LabyrinthApp therefore treats the port as a real Android game project from the start.</p>
+
+      <h2 class="mt-8 text-xl font-bold">Development Aims And Stages</h2>
+      <div class="mt-3 grid gap-3 md:grid-cols-3">
+        <article class="rounded-xl border border-slate-200 bg-slate-50 p-4">
+          <h3 class="text-sm font-bold uppercase tracking-wide text-slate-700">Parity</h3>
+          <p class="mt-2 text-sm text-slate-600">Port maze generation, pathfinding, practice, timed run, high score, hints, lives, minimap, level preview, and score tables into testable Kotlin systems.</p>
+        </article>
+        <article class="rounded-xl border border-slate-200 bg-slate-50 p-4">
+          <h3 class="text-sm font-bold uppercase tracking-wide text-slate-700">Native Feel</h3>
+          <p class="mt-2 text-sm text-slate-600">Use Android rendering, Compose overlays, touch controls, audio, haptics, and performance controls to make the game feel intentionally mobile.</p>
+        </article>
+        <article class="rounded-xl border border-slate-200 bg-slate-50 p-4">
+          <h3 class="text-sm font-bold uppercase tracking-wide text-slate-700">Release Discipline</h3>
+          <p class="mt-2 text-sm text-slate-600">Keep privacy, permissions, Play target SDK, versioning, accessibility, asset licensing, and real-device QA visible through every phase.</p>
+        </article>
+      </div>
+      <ol class="mt-5 space-y-3 text-sm text-slate-600">
+        <li><span class="font-semibold text-slate-900">1. Native skeleton:</span> launchable Kotlin/Compose app, temporary icons, no unnecessary permissions, and a clear placeholder screen.</li>
+        <li><span class="font-semibold text-slate-900">2. Core game logic:</span> deterministic maze generation, shortest-path hints, scoring, timers, modes, and replayable seeds.</li>
+        <li><span class="font-semibold text-slate-900">3. Persistence and lifecycle:</span> DataStore or Room-backed progress, local scores, settings, and run recovery across pause, restart, and rotation.</li>
+        <li><span class="font-semibold text-slate-900">4. Native rendering and playability:</span> maze drawing, movement, camera, collision, touch and external input, HUD, minimap, and overlays.</li>
+        <li><span class="font-semibold text-slate-900">5. Polish and release:</span> textures, audio, haptics, accessibility, diagnostics, performance profiling, monetization decision, and Play-ready release notes.</li>
+      </ol>
+
+      <h2 class="mt-8 text-xl font-bold">Project Progress</h2>
+      <p class="mt-3 text-sm text-slate-600">Current status is <span class="font-semibold text-slate-900">Phase 1, version 0.1.1</span>. The Android skeleton builds as a native app with package <code class="rounded bg-slate-100 px-1.5 py-0.5">com.jahosi.labyrinth</code>, compile and target SDK 36, minimum SDK 26, and a clean no-permissions baseline. A startup crash found during real-device testing was fixed before the skeleton was described as stable.</p>
+      <p class="mt-3 text-sm text-slate-600">Gameplay itself is not claimed yet. That is a strength of the repository rather than a gap in the story: it has a staged path from proof-of-concept web game to a native Android release candidate, with tests and exit criteria attached to each phase.</p>
+
+      <img src="../images/labyrinth-maze-overlay.png" width="518" height="665" alt="Labyrinth web game level preview overlay used as a feature baseline for the Android port" class="mt-6 w-full rounded-xl border border-slate-200 shadow-sm">
+      <p class="mt-2 text-center text-xs text-slate-400">Existing web-game level preview: one of the concrete features the Android app is planned to port natively.</p>
+
+      <div class="mt-8 flex flex-wrap gap-3">
+        <a href="https://github.com/jamesjhs/LabyrinthApp" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 rounded-lg bg-sky-600 px-4 py-2 text-sm font-semibold text-white hover:bg-sky-700">View on GitHub &rarr;</a>
+        <a href="/portfolio/labyrinth.html" class="inline-flex items-center gap-2 rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-semibold text-slate-700 hover:border-slate-400 hover:text-slate-900">Web game case</a>
+      </div>
+    </section>
+  </main>
+</body>
+</html>
