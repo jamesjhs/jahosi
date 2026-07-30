@@ -8,6 +8,7 @@
     "start": "node jahosi.js"
   },
   "dependencies": {
+    "better-sqlite3": "^11.10.0",
     "dotenv": "^17.3.1",
     "express": "^4.21.2",
     "express-rate-limit": "^8.5.2",

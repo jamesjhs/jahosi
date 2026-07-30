@@ -5,6 +5,7 @@ const rateLimit = require("express-rate-limit");
 const nodemailer = require("nodemailer");
 const path = require("path");
 const packageJson = require("./package.json");
+const { initAnalytics, analyticsTrackingMiddleware, registerAnalyticsRoutes } = require("./analytics");
 
 const fs = require("fs");
 
@@ -61,6 +62,8 @@ const CF_ACCESS_CLIENT_SECRET = process.env["CF-Access-Client-Secret"] || "";
 const SITE_URL = (process.env.SITE_URL || "https://jahosi.co.uk").replace(/\/+$/, "");
 const SERVICE_NAME = process.env.SERVICE_NAME || "jahosi";
 const SERVICE_VERSION = process.env.APP_VERSION || packageJson.version;
+const ANALYTICS_ENABLED = process.env.ANALYTICS_ENABLED || "true";
+const ANALYTICS_DB_PATH = process.env.ANALYTICS_DB_PATH || path.join(__dirname, "data", "jahosi.sqlite");
 const SPLASH_OPENAI_HOST = (() => {
   try {
     return new URL(SPLASH_OPENAI_BASE_URL).hostname;
@@ -400,6 +403,15 @@ const SOCIAL_QA_CHAT_GUIDELINES = [
 ].join("\n");
 
 app.use(express.urlencoded({ extended: false }));
+initAnalytics({ dbPath: ANALYTICS_DB_PATH });
+app.use(
+  analyticsTrackingMiddleware({
+    enabled: ANALYTICS_ENABLED,
+    siteUrl: SITE_URL,
+    respectDnt: process.env.ANALYTICS_RESPECT_DNT || "true",
+  })
+);
+registerAnalyticsRoutes(app);
 
 const INDEX_HTML_TEMPLATE = fs.readFileSync(path.join(__dirname, "public", "index.html"), "utf8");
 const INDEX_HTML = INDEX_HTML_TEMPLATE.replaceAll("__CONTACT_PAGE_PATH__", CONTACT_PAGE_PATH);
@@ -761,6 +773,7 @@ app.get("/robots.txt", (req, res) => {
     "User-agent: *",
     "Allow: /",
     `Disallow: ${CONTACT_PAGE_PATH}`,
+    "Disallow: /analytics/",
     "Disallow: /api/contact/submit",
     "Disallow: /api/labyrinth/",
     `Sitemap: ${baseUrl}/sitemap.xml`,

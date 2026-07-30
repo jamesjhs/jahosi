@@ -47,6 +47,33 @@ Crawler endpoints served by the app:
 - `/sitemap.xml` (XML sitemap for public pages)
 - `/robots.txt` (crawler rules + sitemap reference)
 
+## Analytics
+
+The app includes a lightweight first-party analytics area at `/analytics/`.
+It is designed to be protected outside the app, for example with a Cloudflare Access policy on `/analytics/*`.
+No Cloudflare Access credentials or JWT checks are hardwired into Jahosi.
+
+Analytics are stored in SQLite, defaulting to `./data/jahosi.sqlite`.
+The tracker records public page `GET` requests only, skips assets/API/health/crawler routes, excludes obvious bot user agents, respects `DNT: 1` by default, stores no IP address, and uses anonymous first-party visitor/session cookies for session and returning-visitor metrics.
+
+Optional environment variables:
+
+- `ANALYTICS_ENABLED` (defaults to `true`; set `false` to disable collection)
+- `ANALYTICS_DB_PATH` (defaults to `./data/jahosi.sqlite`)
+- `ANALYTICS_RESPECT_DNT` (defaults to `true`)
+
+Dashboard features:
+
+- KPI cards for views, sessions, visitors, engagement, bounce, returning visitors, search/direct split, and pages per session
+- Daily trend
+- Top pages, landing pages, exit pages
+- Sources, referrers, devices, browser/OS, locales
+- Recent sessions
+- CSV export at `/analytics/export.csv`
+
+For Cloudflare reliability, keep `/analytics/*` uncached and protected by Access.
+If Cloudflare later serves cached HTML without touching the origin, origin-side analytics will undercount those pageviews; use a first-party beacon endpoint or Cloudflare edge analytics if exact cached-hit accounting becomes important.
+
 ## splash! notes
 
 - `/splash` now supports global location search (country/city/town) for weather auto-fill.
