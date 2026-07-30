@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex,nofollow,noarchive">
+  <title>Jahosi Monetization Appraisal</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&display=swap');
+    :root {
+      --ink: #10201d;
+      --muted: #52625f;
+      --line: #d7e2df;
+      --paper: #ffffff;
+      --bg: #f5f7f6;
+      --green: #0f766e;
+      --blue: #2563eb;
+      --amber: #b45309;
+      --rose: #be123c;
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      font-family: "Manrope", system-ui, sans-serif;
+      color: var(--ink);
+      background:
+        radial-gradient(900px 360px at 8% -8%, #c7f9ee 0%, transparent 55%),
+        radial-gradient(780px 340px at 92% 0%, #dbeafe 0%, transparent 50%),
+        var(--bg);
+    }
+    a { color: #0f5ea8; font-weight: 700; }
+    .wrap { max-width: 1180px; margin: 0 auto; padding: 28px 18px 64px; }
+    .hero {
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,.88);
+      box-shadow: 0 24px 60px rgba(15, 23, 42, .10);
+      border-radius: 18px;
+      padding: 34px;
+      backdrop-filter: blur(14px);
+    }
+    .eyebrow {
+      margin: 0 0 10px;
+      color: var(--green);
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: .16em;
+      text-transform: uppercase;
+    }
+    h1 { margin: 0; font-size: clamp(2rem, 5vw, 4.4rem); line-height: 1; letter-spacing: 0; }
+    h2 { margin: 0 0 14px; font-size: 1.55rem; line-height: 1.15; }
+    h3 { margin: 0 0 8px; font-size: 1.05rem; }
+    p { line-height: 1.65; }
+    .lede { max-width: 860px; margin: 18px 0 0; color: var(--muted); font-size: 1.08rem; }
+    .grid { display: grid; gap: 16px; }
+    .score-grid { grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); }
+    .project-grid { grid-template-columns: repeat(auto-fit, minmax(290px, 1fr)); }
+    .panel {
+      border: 1px solid var(--line);
+      background: var(--paper);
+      border-radius: 12px;
+      padding: 20px;
+      box-shadow: 0 10px 28px rgba(15, 23, 42, .06);
+    }
+    .section { margin-top: 24px; }
+    .metric { font-size: 2rem; font-weight: 800; line-height: 1; }
+    .muted { color: var(--muted); }
+    .tag-row { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px; }
+    .tag {
+      border: 1px solid var(--line);
+      background: #f8fafc;
+      border-radius: 999px;
+      padding: 6px 10px;
+      color: #334155;
+      font-size: .82rem;
+      font-weight: 700;
+    }
+    .verdict {
+      display: inline-flex;
+      border-radius: 999px;
+      padding: 5px 10px;
+      color: #fff;
+      font-size: .75rem;
+      font-weight: 800;
+      letter-spacing: .04em;
+      text-transform: uppercase;
+    }
+    .strong { background: var(--green); }
+    .medium { background: var(--blue); }
+    .weak { background: var(--amber); }
+    .avoid { background: var(--rose); }
+    .project {
+      border-top: 5px solid var(--line);
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .project.strong-border { border-top-color: var(--green); }
+    .project.medium-border { border-top-color: var(--blue); }
+    .project.weak-border { border-top-color: var(--amber); }
+    .project.avoid-border { border-top-color: var(--rose); }
+    ul, ol { margin: 10px 0 0; padding-left: 1.25rem; }
+    li { margin: 6px 0; line-height: 1.55; }
+    table { width: 100%; border-collapse: collapse; font-size: .94rem; }
+    th, td { border-bottom: 1px solid var(--line); padding: 10px 8px; text-align: left; vertical-align: top; }
+    th { color: #334155; background: #f8fafc; font-size: .8rem; text-transform: uppercase; letter-spacing: .08em; }
+    .timeline { counter-reset: phase; display: grid; gap: 14px; }
+    .phase { position: relative; padding-left: 52px; }
+    .phase::before {
+      counter-increment: phase;
+      content: counter(phase);
+      position: absolute;
+      left: 16px;
+      top: 18px;
+      display: grid;
+      place-items: center;
+      width: 24px;
+      height: 24px;
+      border-radius: 999px;
+      background: var(--green);
+      color: white;
+      font-size: .8rem;
+      font-weight: 800;
+    }
+    .small { font-size: .9rem; }
+    @media (max-width: 720px) {
+      .hero, .panel { padding: 18px; }
+      table { display: block; overflow-x: auto; white-space: nowrap; }
+      .phase { padding-left: 20px; }
+      .phase::before { display: none; }
+    }
+  </style>
+</head>
+<body>
+  <main class="wrap">
+    <section class="hero">
+      <p class="eyebrow">Private strategy note, not linked from the site</p>
+      <h1>Jahosi Monetization Appraisal</h1>
+      <p class="lede">A candid product and revenue review of the Jahosi portfolio as of 30 July 2026. The core question is not "can this make money?" Almost anything can make a few pounds with enough luck. The useful question is "which projects could realistically pay for their own hosting, and which ones justify serious product effort?"</p>
+      <div class="tag-row">
+        <span class="tag">Portfolio audit</span>
+        <span class="tag">Hobbyist-to-revenue route</span>
+        <span class="tag">UK-aware assumptions</span>
+        <span class="tag">No links added elsewhere</span>
+      </div>
+    </section>
+
+    <section class="section grid score-grid">
+      <article class="panel">
+        <h2>Best Bet</h2>
+        <p class="metric">Qglimpse</p>
+        <p class="muted">Most credible paid product: a clear buyer, a known pain, repeat value, and a manageable niche.</p>
+      </article>
+      <article class="panel">
+        <h2>Second Bet</h2>
+        <p class="metric">Museum VMS</p>
+        <p class="muted">Worth pursuing as paid pilots or managed installs, especially for volunteer-led heritage organisations.</p>
+      </article>
+      <article class="panel">
+        <h2>Best Hosting Offset</h2>
+        <p class="metric">splash!</p>
+        <p class="muted">Seasonal SEO plus pool-product affiliate links could cover modest infrastructure if traffic grows.</p>
+      </article>
+      <article class="panel">
+        <h2>Biggest Trap</h2>
+        <p class="metric">Generic Apps</p>
+        <p class="muted">Taskit, TLS, Leccy, Spherify and Labyrinth face crowded markets unless repositioned very narrowly.</p>
+      </article>
+    </section>
+
+    <section class="section panel">
+      <h2>Benchmark Assumptions Used</h2>
+      <p class="muted">These are deliberately conservative. They are not forecasts; they are planning ranges for deciding where effort is rational.</p>
+      <table>
+        <thead><tr><th>Area</th><th>Useful benchmark</th><th>How it affects Jahosi</th></tr></thead>
+        <tbody>
+          <tr><td>Display ads</td><td>Google defines RPM as estimated earnings divided by views or impressions, multiplied by 1,000. Public publisher estimates vary wildly, often roughly USD 0.20 to USD 2.50 per 1,000 page views for ordinary AdSense traffic, with specialist niches doing better.</td><td>Ads alone are not a plan unless a project reaches tens of thousands of monthly page views.</td></tr>
+          <tr><td>SaaS conversion</td><td>ChartMogul reports an 8% median free-to-paid conversion across products, while Stripe warns that freemium usually needs high volume because conversion can sit in low single digits.</td><td>Small Jahosi products should avoid large free tiers unless the free user also creates SEO, referrals, or leads.</td></tr>
+          <tr><td>App stores</td><td>Apple Developer Program is USD 99 per year; Apple Small Business Program can reduce commission to 15%. Google Play has a USD 25 one-time registration fee and a 15% service fee on the first USD 1M annual earnings for digital goods.</td><td>Android-first experiments are cheap to publish; iOS needs stronger confidence before paying annual fees.</td></tr>
+          <tr><td>Payments</td><td>Stripe UK card processing is commonly around 1.5% plus 20p for standard UK cards, with higher rates for EEA/international cards and currency conversion.</td><td>Micro-prices under GBP 2 are awkward unless batched into subscriptions, annual plans, or app-store payments.</td></tr>
+          <tr><td>Hosting</td><td>Vercel Hobby is free for personal projects; Pro starts at USD 20/month. Cloudflare, static hosting, and low-end VPS routes can keep a hobby portfolio cheap until dynamic usage grows.</td><td>The first revenue milestone should be modest: GBP 10-50/month to cover domains, email, VPS, APIs and backups.</td></tr>
+          <tr><td>Compliance</td><td>ICO says UK organisations and sole traders using personal information normally need to pay a data protection fee unless exempt; GOV.UK lists GBP 52 or GBP 78 for most small organisations.</td><td>Anything with accounts, health, safety, care, children, location or messaging needs privacy paperwork before charging.</td></tr>
+        </tbody>
+      </table>
+      <p class="small muted">Main sources: <a href="https://support.google.com/adsense/answer/190515?hl=en">Google AdSense RPM</a>, <a href="https://chartmogul.com/reports/saas-conversion-report/">ChartMogul SaaS Conversion Report</a>, <a href="https://stripe.com/resources/more/freemium-pricing-explained">Stripe on freemium</a>, <a href="https://developer.apple.com/support/compare-memberships/">Apple Developer membership</a>, <a href="https://developer.apple.com/app-store/small-business-program/">Apple Small Business Program</a>, <a href="https://support.google.com/googleplay/android-developer/answer/6112435?hl=en">Google Play registration</a>, <a href="https://support.google.com/googleplay/android-developer/answer/10632485?hl=en">Google Play service fee</a>, <a href="https://stripe.com/pricing">Stripe pricing</a>, <a href="https://vercel.com/pricing">Vercel pricing</a>, <a href="https://ico.org.uk/for-organisations/data-protection-fee/data-protection-fee/">ICO fee guide</a>, <a href="https://charitydigital.org.uk/topics/a-complete-guide-to-volunteer-management-systems-9021">Charity Digital volunteer management pricing examples</a>, <a href="https://affiliate-program.amazon.com/">Amazon Associates</a>.</p>
+    </section>
+
+    <section class="section grid project-grid">
+      <article class="panel project medium-border">
+        <div><span class="verdict medium">Medium</span></div>
+        <h3>James' Hovercraft Site</h3>
+        <p>A rare long-running archive has more value than a normal hobby blog because it has history, backlinks potential, specialist search intent and emotional legitimacy. The weak point is that monetization must not damage trust with enthusiasts and donors.</p>
+        <p><strong>Best route:</strong> donations, sponsorship from museums/events, careful Amazon or specialist affiliate links for books, models, trips and tools, plus image licensing enquiries where rights allow.</p>
+        <p><strong>Likely figures:</strong> GBP 5-40/month at low traffic; GBP 50-200/month if SEO and archive pages reach 20k-50k monthly page views; occasional GBP 25-250 image/licensing or research-support payments are more realistic than recurring ad income.</p>
+        <p><strong>Worth it?</strong> Yes, but as heritage infrastructure first and revenue second. Add "support the archive" and structured sponsorship before plastering the site with ads.</p>
+      </article>
+
+      <article class="panel project weak-border">
+        <div><span class="verdict weak">Weak</span></div>
+        <h3>Hamster Activity Logger</h3>
+        <p>Charming, distinctive and shareable, but the addressable market is tiny unless converted into a broader "pet telemetry" story. It is better as a portfolio proof of hardware creativity than a product.</p>
+        <p><strong>Best route:</strong> build guide, parts list affiliate links, GitHub sponsorship, short-form content, and maybe a downloadable printable build plan.</p>
+        <p><strong>Likely figures:</strong> GBP 0-20/month normally; GBP 50-150/month only if a video or blog post catches search/social traffic.</p>
+        <p><strong>Worth it?</strong> Not as a business. Worth keeping because it makes the whole portfolio feel human and inventive.</p>
+      </article>
+
+      <article class="panel project weak-border">
+        <div><span class="verdict weak">Weak</span></div>
+        <h3>ESP32 Intruder Alarm</h3>
+        <p>The privacy angle is good, but selling an alarm is a liability magnet. False negatives, false positives, compliance expectations and security claims make direct consumer monetization risky.</p>
+        <p><strong>Best route:</strong> open-source research kit, paid documentation, consulting for makers, educational workshops, or a "CSI sensing lab" rather than a home security product.</p>
+        <p><strong>Likely figures:</strong> GBP 0-50/month from sponsorship or guides; GBP 200-1,000 per workshop or bespoke install if positioned honestly as experimental sensing.</p>
+        <p><strong>Worth it?</strong> Only if you avoid "protect your home" claims. Treat it as learning hardware, not security hardware.</p>
+      </article>
+
+      <article class="panel project medium-border">
+        <div><span class="verdict medium">Medium</span></div>
+        <h3>Aviation Museum Archives and Gallery</h3>
+        <p>This has a real service-market shape: small museums have old databases, image folders, limited budgets and a need to make archives searchable. The buyer may not want SaaS; they may want migration and a maintained install.</p>
+        <p><strong>Best route:</strong> productised service: "I will turn your exported collection into a searchable web archive." Charge setup plus hosting/support.</p>
+        <p><strong>Likely figures:</strong> GBP 500-3,000 setup for small institutions, plus GBP 20-100/month for hosting, backups and support. A tiny client base could cover Jahosi costs.</p>
+        <p><strong>Worth it?</strong> Yes if you enjoy client work. The work is less scalable than SaaS but more monetizable than consumer apps.</p>
+      </article>
+
+      <article class="panel project strong-border">
+        <div><span class="verdict strong">Strong</span></div>
+        <h3>Museum Volunteer Management System</h3>
+        <p>This is one of the strongest candidates because the problem is operational, repeat-use and budget-adjacent. Charity Digital lists volunteer management pricing examples from around GBP 168/year for small volunteer bases to GBP 624/year and above for larger ones, showing buyers already understand paying for this category.</p>
+        <p><strong>Best route:</strong> low-touch SaaS or managed single-tenant installs for museums, heritage railways, community venues and volunteer-led groups.</p>
+        <p><strong>Likely figures:</strong> GBP 15-60/month per organisation at entry level; GBP 500-1,500 setup for migration and training; 10 paying organisations could mean GBP 150-600/month before support costs.</p>
+        <p><strong>Worth it?</strong> Yes, but only with boring excellence: onboarding, roles, audit logs, exports, backups, support boundaries and data protection documents.</p>
+      </article>
+
+      <article class="panel project medium-border">
+        <div><span class="verdict medium">Medium</span></div>
+        <h3>Tasker</h3>
+        <p>Tasker is more promising than it first looks because it measures hidden admin demand. The hard part is selling into workplaces without triggering procurement, HR, surveillance or clinical-governance anxiety.</p>
+        <p><strong>Best route:</strong> sell it as an anonymous workload audit, not generic time tracking. Package a 30-day study plus report for GP surgeries, clinics, charities or small teams.</p>
+        <p><strong>Likely figures:</strong> GBP 199-750 per audit; GBP 20-100/month/site if teams want continuous reporting. Conversion will depend on one strong case study.</p>
+        <p><strong>Worth it?</strong> Yes as a niche consultancy-led tool. Do not compete with Toggl; compete with "we have no evidence for staffing pressure."</p>
+      </article>
+
+      <article class="panel project weak-border">
+        <div><span class="verdict weak">Weak</span></div>
+        <h3>Taskit</h3>
+        <p>Taskit is competent, but task management is brutally crowded. The self-hosted, encrypted, small-group angle is not enough by itself unless attached to a specific niche.</p>
+        <p><strong>Best route:</strong> use it as a platform module behind other products, or reposition it for one audience: volunteer committees, families with care responsibilities, or self-hosted privacy users.</p>
+        <p><strong>Likely figures:</strong> GBP 0-50/month as a general task app; GBP 5-8/user/month only if it becomes niche-specific and solves one painful workflow better than larger tools.</p>
+        <p><strong>Worth it?</strong> Not as a standalone generic product. Worth mining for authentication, reminders, groups and calendar-feed code.</p>
+      </article>
+
+      <article class="panel project weak-border">
+        <div><span class="verdict weak">Weak</span></div>
+        <h3>Leccy</h3>
+        <p>The need is real, but EV owners already have charger apps, car apps, spreadsheets, energy supplier tools and comparison sites. A subscription is unlikely unless Leccy saves users clear money or effort.</p>
+        <p><strong>Best route:</strong> SEO pages around EV tariffs, charging cost calculators, battery/range explainers, and affiliate referrals to accessories or tariff comparison partners where compliant.</p>
+        <p><strong>Likely figures:</strong> GBP 0-30/month at hobby traffic; GBP 50-250/month if search pages bring qualified EV traffic and affiliate links convert.</p>
+        <p><strong>Worth it?</strong> Maybe for content-led affiliate revenue. Not worth building as a paid SaaS unless it gets automatic charger/car imports.</p>
+      </article>
+
+      <article class="panel project medium-border">
+        <div><span class="verdict medium">Medium</span></div>
+        <h3>splash!</h3>
+        <p>splash! has one of the clearest consumer-search shapes: people ask practical questions before spending money on heating, covers, chemicals and running costs. It is seasonal, but commercial intent is strong.</p>
+        <p><strong>Best route:</strong> free calculator plus affiliate links to pool covers, heaters, test kits and chemicals; optional GBP 4-9/year "saved scenarios/export pack"; sponsored guide pages if traffic justifies it.</p>
+        <p><strong>Likely figures:</strong> GBP 10-80/month in season with early SEO; GBP 100-500/month if it ranks for specific pool-heating and hot-tub running-cost queries. AI chat can erase margin, so gate it carefully.</p>
+        <p><strong>Worth it?</strong> Yes as the best near-term hosting-offset project. Build content around the calculator, not just the calculator itself.</p>
+      </article>
+
+      <article class="panel project avoid-border">
+        <div><span class="verdict avoid">Avoid</span></div>
+        <h3>Project AI</h3>
+        <p>This is a visual experiment and a useful portfolio artefact, but not a product. The market has no reason to pay for it unless it becomes a template pack, course example or component library.</p>
+        <p><strong>Best route:</strong> portfolio proof only. Use it to demonstrate front-end range.</p>
+        <p><strong>Likely figures:</strong> GBP 0/month directly.</p>
+        <p><strong>Worth it?</strong> No monetization effort. Keep it as a playful showpiece.</p>
+      </article>
+
+      <article class="panel project avoid-border">
+        <div><span class="verdict avoid">Avoid</span></div>
+        <h3>TLS Secure Messaging</h3>
+        <p>Private messaging is a trust, cryptography, abuse and moderation problem wearing a nice UI coat. Charging people for security means you inherit heavy expectations, and mature competitors are everywhere.</p>
+        <p><strong>Best route:</strong> keep as open-source/private-use portfolio evidence. If monetized, sell implementation help for private groups, never mass-market secure messaging.</p>
+        <p><strong>Likely figures:</strong> GBP 0-25/month from sponsorship; GBP 300-1,500 per bespoke private deployment if you are willing to support it.</p>
+        <p><strong>Worth it?</strong> Not as a public paid product. The support and liability tail is too long.</p>
+      </article>
+
+      <article class="panel project strong-border">
+        <div><span class="verdict strong">Strong</span></div>
+        <h3>Qglimpse</h3>
+        <p>Qglimpse has the cleanest business shape: institutions need visitor feedback, kiosk capture has a clear operational setting, and analytics creates recurring value. It is narrow enough to sell and broad enough to reuse.</p>
+        <p><strong>Best route:</strong> B2B SaaS with a free demo institution, GBP 29-99/month/site, and GBP 300-1,500 setup for kiosk configuration, branding, training and first report.</p>
+        <p><strong>Likely figures:</strong> 5 sites at GBP 49/month = GBP 245/month; 20 sites at GBP 49/month = GBP 980/month; setup projects could bring intermittent cash earlier than subscriptions.</p>
+        <p><strong>Worth it?</strong> Yes. This is the most viable product if you can stomach sales calls and support tickets.</p>
+      </article>
+
+      <article class="panel project avoid-border">
+        <div><span class="verdict avoid">Avoid</span></div>
+        <h3>pingme.help</h3>
+        <p>The mission is valuable, but monetizing safety check-ins is ethically and legally delicate. If users rely on it in urgent situations, uptime, escalation wording, liability, safeguarding and abuse controls matter more than features.</p>
+        <p><strong>Best route:</strong> closed pilot with a community group, charity or family-care niche; charge organisations only after legal/privacy review and strict disclaimers.</p>
+        <p><strong>Likely figures:</strong> GBP 0-50/month consumer; GBP 20-100/month per closed group if a real organisation owns the use case.</p>
+        <p><strong>Worth it?</strong> Not as a consumer subscription. Maybe as a social-good pilot once operational risks are written down.</p>
+      </article>
+
+      <article class="panel project medium-border">
+        <div><span class="verdict medium">Medium</span></div>
+        <h3>SocialQA</h3>
+        <p>SocialQA addresses a painful, high-intent information problem. The monetization challenge is trust: ads, lead-gen and financial-adviser referrals can look grubby unless the governance is very clean.</p>
+        <p><strong>Best route:</strong> free public tool; monetise through sponsored-but-labelled source packs, professional training workshops, printable packs, or white-label internal versions for advice charities and care navigators.</p>
+        <p><strong>Likely figures:</strong> GBP 0-100/month from donations initially; GBP 500-2,000 per workshop or commissioned white-label adaptation if credibility is built. Avoid unvetted referral commissions in care-fee advice.</p>
+        <p><strong>Worth it?</strong> Yes for reputation and possible professional services. Be more conservative here than anywhere else.</p>
+      </article>
+
+      <article class="panel project weak-border">
+        <div><span class="verdict weak">Weak</span></div>
+        <h3>Labyrinth Web Game</h3>
+        <p>A fun game can earn money, but web games need either huge traffic or a platform/community hook. Labyrinth is currently better as a companion/reward mechanic for Taskit than as a standalone earner.</p>
+        <p><strong>Best route:</strong> keep free, add optional donation, use as demo material, and connect it to the Android version if that becomes polished.</p>
+        <p><strong>Likely figures:</strong> GBP 0-20/month unless embedded in a larger product or shared widely.</p>
+        <p><strong>Worth it?</strong> Not for revenue by itself. Worth continuing if it gives joy and improves the Android candidate.</p>
+      </article>
+
+      <article class="panel project weak-border">
+        <div><span class="verdict weak">Weak</span></div>
+        <h3>LabyrinthApp</h3>
+        <p>Publishing on Android is cheap, but mobile games are brutally discovery-driven. Ads can work only with regular sessions and substantial downloads; paid games need polish, store art, reviews and a reason to choose this over thousands of free maze games.</p>
+        <p><strong>Best route:</strong> Android-first, no iOS until traction. Try GBP 0.99-1.99 paid, or free with one tasteful rewarded ad for continues/hints after player testing.</p>
+        <p><strong>Likely figures:</strong> GBP 0-50/month for a hobby release; GBP 100-300/month if it finds a small niche and has polished store assets. Do not assume more without marketing.</p>
+        <p><strong>Worth it?</strong> Worth finishing as craft. Revenue is upside, not the business case.</p>
+      </article>
+
+      <article class="panel project weak-border">
+        <div><span class="verdict weak">Weak</span></div>
+        <h3>RailwayController</h3>
+        <p>The model railway niche has willingness to pay, but physical electronics bring UKCA/CE, product liability, safety testing, returns and support. Selling plans or kits is easier than selling a finished controller.</p>
+        <p><strong>Best route:</strong> educational build guide, PCB files, Patreon/GitHub sponsorship, affiliate links for parts, and possibly small-batch kits after bench validation.</p>
+        <p><strong>Likely figures:</strong> GBP 0-30/month as content; GBP 10-40 profit per kit only after validation, documentation and support planning. Workshops could earn more than product sales.</p>
+        <p><strong>Worth it?</strong> Only if you genuinely want hardware support. Keep commercial claims cautious until validated.</p>
+      </article>
+
+      <article class="panel project weak-border">
+        <div><span class="verdict weak">Weak</span></div>
+        <h3>Spherify</h3>
+        <p>The local-first angle is good, but PhotoSphere and Tiny Planet apps face a mature market and high user expectations. The current blocker around robust stitching means monetization should wait.</p>
+        <p><strong>Best route:</strong> free Android beta, then GBP 2.99-4.99 pro export pack if capture quality is genuinely reliable; avoid paid launch before the stitching pipeline is proven.</p>
+        <p><strong>Likely figures:</strong> GBP 0-100/month as a niche app; more only with exceptional output quality and store visibility.</p>
+        <p><strong>Worth it?</strong> Worth technically if you enjoy imaging. Not a first revenue bet.</p>
+      </article>
+    </section>
+
+    <section class="section panel">
+      <h2>Priority Ranking</h2>
+      <table>
+        <thead><tr><th>Rank</th><th>Project</th><th>Why</th><th>Revenue target worth testing</th></tr></thead>
+        <tbody>
+          <tr><td>1</td><td>Qglimpse</td><td>Clear B2B buyer, repeat use, analytics value, good fit for demos and pilots.</td><td>First 3 paid pilots at GBP 300 setup plus GBP 49/month.</td></tr>
+          <tr><td>2</td><td>Museum VMS</td><td>Known paid category, local credibility, adjacent to an existing real need.</td><td>2 managed installs at GBP 500-1,000 plus GBP 30/month.</td></tr>
+          <tr><td>3</td><td>splash!</td><td>Strong seasonal search intent and natural affiliate path.</td><td>GBP 50/month seasonal by next summer.</td></tr>
+          <tr><td>4</td><td>Tasker</td><td>Could sell as evidence-gathering rather than software.</td><td>One GBP 300-750 workload audit.</td></tr>
+          <tr><td>5</td><td>SocialQA</td><td>High-value need, but monetization must preserve trust.</td><td>One paid workshop/white-label enquiry, not ads first.</td></tr>
+          <tr><td>6</td><td>Hovercraft Site</td><td>Archive and niche authority can attract donations/sponsors.</td><td>GBP 20/month support-the-archive baseline.</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="section panel">
+      <h2>Timeline And Hoops</h2>
+      <div class="timeline">
+        <article class="panel phase">
+          <h3>Weeks 1-2: Measurement before money</h3>
+          <ul>
+            <li>Add privacy-respecting analytics to all public projects: page views, referrers, CTA clicks, outbound clicks, returning visitors and device split.</li>
+            <li>Create a tiny monthly cost ledger: domains, hosting, email, AI API spend, storage, backups and app-store fees.</li>
+            <li>Define success thresholds: "pays hosting" at GBP 25/month, "worth maintaining" at GBP 100/month, "real product" at GBP 500/month or 3 paying organisations.</li>
+          </ul>
+        </article>
+        <article class="panel phase">
+          <h3>Weeks 3-6: Offer pages without overbuilding</h3>
+          <ul>
+            <li>Create hidden or direct-link pilot pages for Qglimpse, Museum VMS and Tasker with pricing, screenshots, data-protection stance and a contact form.</li>
+            <li>Add direct "support the archive" and donation routes only where appropriate: Hovercraft, splash!, SocialQA and maybe Labyrinth.</li>
+            <li>Write three SEO articles for splash! and Leccy each, aimed at specific problems rather than generic app names.</li>
+          </ul>
+        </article>
+        <article class="panel phase">
+          <h3>Months 2-3: First paid pilots</h3>
+          <ul>
+            <li>Pitch Qglimpse to 10 small museums, galleries, visitor centres or community venues. Target 2 pilots, even if discounted.</li>
+            <li>Pitch Museum VMS to 5 volunteer-led organisations with a concrete migration/setup offer.</li>
+            <li>Run one Tasker pilot as a time-limited anonymous workload study and produce a simple PDF report.</li>
+          </ul>
+        </article>
+        <article class="panel phase">
+          <h3>Months 3-4: Compliance and trust polish</h3>
+          <ul>
+            <li>Register/pay ICO fee if required before taking paid users with personal data; publish privacy notices for each paid product.</li>
+            <li>Add export/delete workflows, backups, incident contact, uptime notes and support boundaries.</li>
+            <li>For SocialQA and pingme.help, write explicit risk registers before monetization. These projects touch sensitive decisions and should move slower.</li>
+          </ul>
+        </article>
+        <article class="panel phase">
+          <h3>Months 4-6: Payment experiments</h3>
+          <ul>
+            <li>Add Stripe payment links or invoices for B2B pilots rather than building subscription plumbing too early.</li>
+            <li>For splash!, add affiliate links and clearly labelled product recommendations only after tracking outbound intent.</li>
+            <li>For LabyrinthApp, publish Android closed testing first. Pay Google Play's USD 25 once; defer Apple until the game has traction because Apple costs USD 99/year.</li>
+          </ul>
+        </article>
+        <article class="panel phase">
+          <h3>Months 6-9: Decide what deserves a product push</h3>
+          <ul>
+            <li>If Qglimpse has 3 paying or serious pilot organisations, harden it into the flagship product.</li>
+            <li>If Museum VMS has demand but heavy custom needs, sell it as managed implementation, not SaaS.</li>
+            <li>If splash! reaches meaningful seasonal search traffic, build more calculators and supplier-neutral buying guides.</li>
+          </ul>
+        </article>
+        <article class="panel phase">
+          <h3>Months 9-18: Scale only the winners</h3>
+          <ul>
+            <li>Choose at most two serious commercial tracks. Recommended: Qglimpse plus either Museum VMS or splash!.</li>
+            <li>Add case studies, testimonials, onboarding videos, demo data, admin documentation and a support SLA only for paying products.</li>
+            <li>Sunset or freeze monetization work on weak candidates unless traffic or enquiries prove otherwise.</li>
+          </ul>
+        </article>
+      </div>
+    </section>
+
+    <section class="section panel">
+      <h2>Blunt Conclusion</h2>
+      <p>The portfolio already has enough practical product thinking to cover its own hosting, but not by treating every project as a startup. The likely path is mixed: one B2B product, one service-led heritage/volunteer offering, and one or two content-led tools that earn through donations or affiliates.</p>
+      <p>The strongest commercial move is to stop asking "which app is coolest?" and start asking "who has a budget, a recurring pain, and a reason to trust James specifically?" By that test, Qglimpse, Museum VMS, Tasker, splash! and the Hovercraft archive deserve the first monetization experiments. The rest should remain portfolio, learning, open-source, or future options until evidence says otherwise.</p>
+    </section>
+  </main>
+</body>
+</html>
