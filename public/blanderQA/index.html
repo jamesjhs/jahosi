@@ -5,36 +5,79 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="theme-color" content="#0f766e">
 <meta name="application-name" content="BlanderQA">
-<meta name="description" content="BlanderQA is a plain-English Q&A page for navigating Blender 4.0 modeling, shading, animation, rendering and troubleshooting using official Blender sources only.">
+<meta name="description" content="BlanderQA helps Blender 4.0 users ask plain-English questions, compare modeling, Geometry Nodes, shading, animation, rendering and troubleshooting workflows, and check official Blender sources.">
+<meta name="keywords" content="BlanderQA, Blender 4.0 help, Blender Q&A, Blender tutorial assistant, Blender modeling help, Geometry Nodes help, Blender shading, Blender animation, Blender rendering, Blender troubleshooting, Blender Python API">
 <meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1">
 <link rel="canonical" href="https://jahosi.co.uk/blanderQA/">
 <meta property="og:type" content="website">
-<meta property="og:title" content="BlanderQA | Adult Social Care Funding Q&A">
-<meta property="og:description" content="Ask plain-English questions about Blender 4.0 modeling, shading, animation, rendering and troubleshooting. Answers must cite validated official and professional sources.">
+<meta property="og:title" content="BlanderQA | Blender 4.0 Workflow Q&A">
+<meta property="og:description" content="Ask Blender 4.0 questions in plain English, compare official workflows, find manual pages, and troubleshoot modeling, Geometry Nodes, shading, animation, rendering and Python tasks.">
 <meta property="og:url" content="https://jahosi.co.uk/blanderQA/">
 <meta property="og:site_name" content="BlanderQA">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="BlanderQA | Adult Social Care Funding Q&A">
-<meta name="twitter:description" content="Plain-English adult social care funding Q&A using validated official and professional sources only.">
-<title>BlanderQA | Adult Social Care Funding Q&A</title>
+<meta name="twitter:title" content="BlanderQA | Blender 4.0 Workflow Q&A">
+<meta name="twitter:description" content="Plain-English Blender 4.0 help for comparing workflows, finding official sources, and troubleshooting creative projects.">
+<title>BlanderQA | Blender 4.0 Workflow Q&A</title>
 <script src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit" async defer></script>
 <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js" defer></script>
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
-  "@type": "WebPage",
+  "@type": "WebApplication",
   "name": "BlanderQA",
+  "alternateName": "BlanderQA by Jahosi",
   "url": "https://jahosi.co.uk/blanderQA/",
-  "description": "Plain-English Q&A for Blender 4.0 modeling, shading, animation, rendering and troubleshooting in England, using validated official and professional sources only.",
+  "applicationCategory": "EducationalApplication",
+  "operatingSystem": "Any",
+  "browserRequirements": "Requires a modern web browser with JavaScript enabled.",
+  "description": "Plain-English Blender 4.0 Q&A tool for comparing modeling, modifiers, Geometry Nodes, shading, animation, rendering, troubleshooting and Python workflows using official Blender sources.",
+  "audience": {
+    "@type": "Audience",
+    "audienceType": "Blender learners, hobbyist 3D artists, digital artists, animators and technical artists"
+  },
   "about": [
-    "Adult social care",
-    "Care home funding",
-    "Nursing home funding",
-    "NHS Continuing Healthcare",
-    "NHS-funded nursing care"
+    {"@type": "Thing", "name": "Blender 4.0"},
+    {"@type": "Thing", "name": "3D modeling"},
+    {"@type": "Thing", "name": "Geometry Nodes"},
+    {"@type": "Thing", "name": "Shading and materials"},
+    {"@type": "Thing", "name": "Animation and rigging"},
+    {"@type": "Thing", "name": "Rendering and compositing"},
+    {"@type": "Thing", "name": "Blender troubleshooting"},
+    {"@type": "Thing", "name": "Blender Python API"}
   ],
+  "mainEntity": {
+    "@type": "FAQPage",
+    "name": "BlanderQA common Blender 4.0 questions",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "Should I use direct modeling, modifiers or Geometry Nodes in Blender 4.0?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "BlanderQA helps users compare official Blender 4.0 modeling routes so they can choose between direct mesh editing, modifier stacks and Geometry Nodes based on the task."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "How can I troubleshoot Blender 4.0 startup, GPU or crash problems?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "BlanderQA points users toward official Blender troubleshooting sources for startup state, add-ons, graphics hardware, crashes and file recovery."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Can BlanderQA replace the Blender manual?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "No. BlanderQA is an AI-assisted explanation and navigation layer. Users should check the cited official Blender 4.0 manual, release notes or API documentation before relying on an answer."
+        }
+      }
+    ]
+  },
   "isAccessibleForFree": true,
-  "inLanguage": "en-GB"
+  "inLanguage": "en-GB",
+  "dateModified": "2026-09-14"
 }
 </script>
 <style>
@@ -677,7 +720,7 @@ body.high-contrast footer{color:#fff}
     <p>If Blender will not open, crashes repeatedly, or shows a graphics problem, start with the Troubleshooting section in the official manual. Check add-ons, startup state, GPU/driver details and recovery options before assuming the project file is broken.</p>
   </section>
 
-  <details id="start-tool" class="panel start-tool collapsible-tool" open>
+  <details id="start-tool" class="panel start-tool collapsible-tool">
     <summary>Start here</summary>
     <div class="collapsible-tool-body">
       <p class="source-scope">Choose the workflow that is closest to your task. Each starter question points at an official Blender 4.0 route and nudges you toward alternate methods where that makes sense.</p>
@@ -716,40 +759,6 @@ body.high-contrast footer{color:#fff}
     </div>
   </details>
 
-  <details class="panel local-tool collapsible-tool">
-    <summary>Find Blender resources by topic</summary>
-    <div class="collapsible-tool-body">
-      <p class="source-scope">Enter a topic such as modeling, shading, animation, troubleshooting or Python to pull together the most relevant official Blender 4.0 resources.</p>
-      <p class="source-scope">This is intentionally version-specific. If you want later-release details, say so explicitly and check the relevant Blender 4.x manual page too.</p>
-      <form id="postcode-form" class="postcode-form">
-        <label for="postcode-input">
-          Topic
-          <input id="postcode-input" name="postcode" type="text" autocomplete="off" maxlength="40" placeholder="For example shading or Geometry Nodes">
-        </label>
-        <button id="postcode-submit" type="submit">Find resources</button>
-      </form>
-      <div id="local-results" class="local-results" hidden aria-live="polite"></div>
-    </div>
-  </details>
-
-  <details class="panel local-tool collapsible-tool">
-    <summary>Common questions</summary>
-    <div class="collapsible-tool-body">
-      <div class="question-grid">
-        <button class="question-card" type="button" data-question="What is the Blender 4.0 manual's official way to get started, and which sections matter most for an artist coming from an illustration or 2D background?">Getting started</button>
-        <button class="question-card" type="button" data-question="How do I decide between manual mesh editing, modifiers and Geometry Nodes in Blender 4.0?">Modeling methods</button>
-        <button class="question-card" type="button" data-question="What changed in the Blender 4.0 Principled BSDF and how should I think about coat, sheen and color management?">Principled BSDF</button>
-        <button class="question-card" type="button" data-question="When should I use EEVEE, Cycles or the compositor while developing a look in Blender 4.0?">Render workflow</button>
-        <button class="question-card" type="button" data-question="When is it better to use constraints, drivers, keyframes or shape keys in Blender 4.0?">Animation choices</button>
-        <button class="question-card" type="button" data-question="What is the official Blender 4.0 troubleshooting path for startup, GPU, crash and recovery problems?">Troubleshooting path</button>
-        <button class="question-card" type="button" data-question="How do I search menus, use snapping and work faster in Blender 4.0 without memorising everything?">Menu search and snapping</button>
-        <button class="question-card" type="button" data-question="What can add-ons, Python and the Blender API do in Blender 4.0, and what should stay in the manual first?">Add-ons and Python</button>
-        <button class="question-card" type="button" data-question="How does Blender 4.0 handle assets, blend files and data-blocks, and why does that matter for a tidy project?">Files and assets</button>
-        <button class="question-card" type="button" data-question="How do I compare a direct workflow against a more procedural one when building something in Blender 4.0?">Compare workflows</button>
-      </div>
-    </div>
-  </details>
-
   <div class="chat-wrap">
     <section id="ask" class="panel chat-panel" aria-labelledby="qa-title">
       <div class="chat-head">
@@ -784,6 +793,40 @@ body.high-contrast footer{color:#fff}
     </section>
   </div>
   <button id="back-to-chat" class="back-to-chat" type="button" hidden>Back to chat</button>
+
+  <details class="panel local-tool collapsible-tool">
+    <summary>Find Blender resources by topic</summary>
+    <div class="collapsible-tool-body">
+      <p class="source-scope">Enter a topic such as modeling, shading, animation, troubleshooting or Python to pull together the most relevant official Blender 4.0 resources.</p>
+      <p class="source-scope">This is intentionally version-specific. If you want later-release details, say so explicitly and check the relevant Blender 4.x manual page too.</p>
+      <form id="postcode-form" class="postcode-form">
+        <label for="postcode-input">
+          Topic
+          <input id="postcode-input" name="postcode" type="text" autocomplete="off" maxlength="40" placeholder="e.g., shading or Geometry Nodes">
+        </label>
+        <button id="postcode-submit" type="submit">Find resources</button>
+      </form>
+      <div id="local-results" class="local-results" hidden aria-live="polite"></div>
+    </div>
+  </details>
+
+  <details class="panel local-tool collapsible-tool">
+    <summary>Common questions</summary>
+    <div class="collapsible-tool-body">
+      <div class="question-grid">
+        <button class="question-card" type="button" data-question="What is the Blender 4.0 manual's official way to get started, and which sections matter most for an artist coming from an illustration or 2D background?">Getting started</button>
+        <button class="question-card" type="button" data-question="How do I decide between manual mesh editing, modifiers and Geometry Nodes in Blender 4.0?">Modeling methods</button>
+        <button class="question-card" type="button" data-question="What changed in the Blender 4.0 Principled BSDF and how should I think about coat, sheen and color management?">Principled BSDF</button>
+        <button class="question-card" type="button" data-question="When should I use EEVEE, Cycles or the compositor while developing a look in Blender 4.0?">Render workflow</button>
+        <button class="question-card" type="button" data-question="When is it better to use constraints, drivers, keyframes or shape keys in Blender 4.0?">Animation choices</button>
+        <button class="question-card" type="button" data-question="What is the official Blender 4.0 troubleshooting path for startup, GPU, crash and recovery problems?">Troubleshooting path</button>
+        <button class="question-card" type="button" data-question="How do I search menus, use snapping and work faster in Blender 4.0 without memorising everything?">Menu search and snapping</button>
+        <button class="question-card" type="button" data-question="What can add-ons, Python and the Blender API do in Blender 4.0, and what should stay in the manual first?">Add-ons and Python</button>
+        <button class="question-card" type="button" data-question="How does Blender 4.0 handle assets, blend files and data-blocks, and why does that matter for a tidy project?">Files and assets</button>
+        <button class="question-card" type="button" data-question="How do I compare a direct workflow against a more procedural one when building something in Blender 4.0?">Compare workflows</button>
+      </div>
+    </div>
+  </details>
 
   <section class="panel panel-pad guided-section" aria-labelledby="packs-title">
     <h2 id="packs-title">Question packs</h2>
@@ -834,8 +877,8 @@ body.high-contrast footer{color:#fff}
     </div>
   </section>
 
-  <section class="notice disclaimer" aria-labelledby="disclaimer-title">
-    <h2 id="disclaimer-title">Important disclaimer</h2>
+  <section class="notice" aria-labelledby="disclaimer-title">
+    <h2 id="disclaimer-title">Disclaimer</h2>
     <p>BlanderQA is an experimental AI-assisted Blender help page. AI responses can be incomplete, outdated, misread the manual or overstate a workflow. Do not rely on an answer as the only basis for a production decision.</p>
     <ul>
       <li>Always open the cited Blender 4.0 manual pages or release notes and check the original wording.</li>
@@ -847,10 +890,6 @@ body.high-contrast footer{color:#fff}
     </ul>
   </section>
 
-  <section class="notice" aria-labelledby="choice-limits-title">
-    <h2 id="choice-limits-title">Workflow choice limits</h2>
-    <p>BlanderQA can help you check official Blender sources and compare workflows, but it must not invent shortcuts, settings or release changes. If a task can be approached several ways, it should explain the trade-offs instead of pretending there is only one right answer.</p>
-  </section>
 
   <section class="panel panel-pad guided-section" aria-labelledby="glossary-title">
     <h2 id="glossary-title">Plain-English glossary</h2>
@@ -1135,12 +1174,12 @@ body.high-contrast footer{color:#fff}
   function renderLocalResults(data){
     clearElement(localResults);
     const heading = document.createElement("h3");
-    heading.textContent = "Local signposts";
+    heading.textContent = data.title || "Blender 4.0 official resources";
     localResults.appendChild(heading);
 
     const intro = document.createElement("p");
     intro.className = "result-note";
-    intro.textContent = "Use these links to check local policies, local contact routes and local care availability. The national BlanderQA answer may not cover local details.";
+    intro.textContent = data.summary || "Use these official Blender links to check the source material before relying on an AI answer.";
     localResults.appendChild(intro);
 
     const list = document.createElement("ul");
@@ -1149,68 +1188,50 @@ body.high-contrast footer{color:#fff}
         if (!link || !link.label || !link.href) return;
         appendLocalLink(list, link.label, link.href, link.note || "");
       });
-    } else if (Array.isArray(data.authorities)) {
-      data.authorities.forEach(function(authority){
-        if (!authority || !authority.homepage_url) return;
-        const tier = authority.tier ? authority.tier + " authority" : "local authority";
-        appendLocalLink(list, authority.name + " website", authority.homepage_url, tier + ". Search this site for adult social care, financial assessment, charging policy, care homes and safeguarding.");
-      });
-      appendLocalLink(list, "GOV.UK find your local council", data.govFindCouncilUrl || "https://www.gov.uk/find-local-council", "Use this if the council result looks wrong or the postcode crosses boundaries.");
-      appendLocalLink(list, "CQC find care services", data.cqcCareSearchUrl || "https://www.cqc.org.uk/care-services", "Search by postcode for care homes, nursing homes and inspection ratings.");
-      appendLocalLink(list, "NHS find your local integrated care board", data.nhsIcbSearchUrl || "https://www.nhs.uk/nhs-services/find-your-local-integrated-care-board/", "Use for local NHS commissioning and NHS Continuing Healthcare routes.");
-      appendLocalLink(list, "NHS England ICB contact guidance", data.nhsEnglandIcbContactUrl || "https://www.england.nhs.uk/contact-us/about-nhs-services/contact-your-local-integrated-care-board-icb/", "NHS England explains how to identify and contact the relevant ICB.");
     }
     localResults.appendChild(list);
 
-    if (Array.isArray(data.localDirectorySearchTerms) && data.localDirectorySearchTerms.length) {
-      const terms = document.createElement("p");
-      terms.className = "result-note";
-      terms.textContent = "On the council site, try these official-directory search terms: " + data.localDirectorySearchTerms.join(", ") + ".";
-      localResults.appendChild(terms);
-    }
-
-    if (data.localDirectoryNote) {
-      const note = document.createElement("p");
-      note.className = "result-note";
-      note.textContent = data.localDirectoryNote;
-      localResults.appendChild(note);
+    if (Array.isArray(data.followUps) && data.followUps.length) {
+      const followUpHeading = document.createElement("p");
+      followUpHeading.className = "result-note";
+      followUpHeading.textContent = "Useful follow-up prompts:";
+      localResults.appendChild(followUpHeading);
+      const followUpList = document.createElement("ul");
+      data.followUps.forEach(function(prompt){
+        const item = document.createElement("li");
+        item.textContent = prompt;
+        followUpList.appendChild(item);
+      });
+      localResults.appendChild(followUpList);
     }
     localChatContext = buildLocalChatContext(data);
     localResults.hidden = false;
   }
-  async function lookupLocalSources(postcode){
-    if (!postcode) {
-      showLocalMessage("Enter a postcode", "Enter a full UK postcode so the page can look for local signposts.", []);
+  async function lookupLocalSources(topic){
+    if (!topic) {
+      showLocalMessage("Enter a topic", "Enter a Blender topic such as modeling, shading, animation, troubleshooting or Python.", []);
       return;
     }
     setPostcodeBusy(true);
     try{
-      const res = await fetch("/blanderQA/local-info?postcode=" + encodeURIComponent(postcode), {
+      const res = await fetch("/blanderQA/resource-info?topic=" + encodeURIComponent(topic), {
         headers: {"Accept":"application/json"}
       });
       const data = await res.json().catch(function(){return {};});
-      if (data.ambiguous) {
-        showLocalMessage("Choose the exact address on GOV.UK", data.message || "This postcode may cross more than one local authority boundary.", [
-          {label:"GOV.UK find your local council", href:data.govFindCouncilUrl || "https://www.gov.uk/find-local-council", note:"Use the exact address to confirm the local authority."},
-          {label:"CQC find care services", href:"https://www.cqc.org.uk/care-services", note:"Search by postcode for care services and ratings."},
-          {label:"NHS find your local integrated care board", href:"https://www.nhs.uk/nhs-services/find-your-local-integrated-care-board/", note:"Use for local NHS commissioning and CHC routes."}
-        ]);
-        return;
-      }
       if (!res.ok) {
-        showLocalMessage("Lookup problem", data.message || "The postcode lookup could not be completed.", [
-          {label:"GOV.UK find your local council", href:data.govFindCouncilUrl || "https://www.gov.uk/find-local-council", note:"Try the official GOV.UK lookup directly."},
-          {label:"CQC find care services", href:"https://www.cqc.org.uk/care-services", note:"Search by postcode for care services and ratings."},
-          {label:"NHS find your local integrated care board", href:"https://www.nhs.uk/nhs-services/find-your-local-integrated-care-board/", note:"Use for local NHS commissioning and CHC routes."}
+        showLocalMessage("Resource lookup problem", data.message || "The resource lookup could not be completed.", [
+          {label:"Blender 4.0 Reference Manual", href:"https://docs.blender.org/manual/en/4.0/", note:"Start with the official manual."},
+          {label:"Blender 4.0 release page", href:"https://www.blender.org/download/releases/4-0/", note:"Check official version-specific release notes."},
+          {label:"Blender Python API 4.0", href:"https://docs.blender.org/api/4.0/", note:"Use for scripting and add-on questions."}
         ]);
         return;
       }
       renderLocalResults(data);
     }catch{
-      showLocalMessage("Lookup unavailable", "The local lookup is temporarily unavailable. Use these official links directly.", [
-        {label:"GOV.UK find your local council", href:"https://www.gov.uk/find-local-council", note:"Find the relevant council by postcode."},
-        {label:"CQC find care services", href:"https://www.cqc.org.uk/care-services", note:"Search by postcode for care services and ratings."},
-        {label:"NHS find your local integrated care board", href:"https://www.nhs.uk/nhs-services/find-your-local-integrated-care-board/", note:"Use for local NHS commissioning and CHC routes."}
+      showLocalMessage("Lookup unavailable", "The Blender resource lookup is temporarily unavailable. Use these official links directly.", [
+        {label:"Blender 4.0 Reference Manual", href:"https://docs.blender.org/manual/en/4.0/", note:"Start with the official manual."},
+        {label:"Blender 4.0 release page", href:"https://www.blender.org/download/releases/4-0/", note:"Check official version-specific release notes."},
+        {label:"Blender Python API 4.0", href:"https://docs.blender.org/api/4.0/", note:"Use for scripting and add-on questions."}
       ]);
     }finally{
       setPostcodeBusy(false);
@@ -1262,14 +1283,14 @@ body.high-contrast footer{color:#fff}
     const generatedAt = new Date().toLocaleString("en-GB", {dateStyle:"medium", timeStyle:"short"});
     const siteUrl = "https://jahosi.co.uk/blanderQA/";
     const disclaimer = [
-      "BlanderQA is an experimental AI-assisted information page. AI responses can be incomplete, outdated, misread a source, or phrase something too strongly. Do not rely on an answer as the sole basis for a care, funding, legal, financial or medical decision.",
+      "BlanderQA is an experimental AI-assisted Blender 4.0 information page. AI responses can be incomplete, outdated, misread a source, or phrase something too strongly. Do not rely on an answer as the sole basis for a production workflow or project decision.",
       "Always open the cited references and check the original official wording yourself.",
-      "Local variations can significantly affect practical outcomes, including care availability, local authority charging policies, financial assessment decisions, care home fees, top-up arrangements, NHS integrated care board processes and complaint routes.",
-      "For a specific situation, check local authority information and local NHS information before acting.",
-      "BlanderQA must not give opinions, reviews, rankings or recommendations about specific care homes, care agencies, nursing homes, day care centres, healthcare services or named people involved in care.",
-      "Confirm important decisions with the relevant local authority, NHS integrated care board, care provider, regulator, ombudsman, qualified adviser or professional representative.",
-      "Jahosi.co.uk cannot accept responsibility for decisions, losses, delays, disputes or other consequences arising from AI answers or from use of this page without independent fact checking.",
-      "Do not enter sensitive personal, medical, financial or identification details into the chat."
+      "Blender workflows can vary by scene setup, render engine, add-ons, operating system, hardware, project scale and exact Blender version.",
+      "For production-critical work, test the workflow in a copy of your own file and check the relevant Blender manual, release notes or API documentation before acting.",
+      "BlanderQA must not invent shortcuts, settings, version changes, node sockets, tool names or unsupported third-party recommendations.",
+      "Confirm important technical decisions with official Blender documentation, project tests, studio review or a qualified Blender trainer where appropriate.",
+      "Jahosi.co.uk cannot accept responsibility for project issues, losses, delays or other consequences arising from AI answers or from use of this page without independent fact checking.",
+      "Do not enter personal, confidential studio, client, account or unreleased project details into the chat."
     ];
     const references = Array.from(document.querySelectorAll(".references .source-list li")).map(function(item){
       const link = item.querySelector("a");
@@ -1281,7 +1302,7 @@ body.high-contrast footer{color:#fff}
       ].filter(Boolean).join(" - ");
     });
     let y = 18;
-    doc.setProperties({title:"BlanderQA chat export", subject:"Adult social care funding Q&A"});
+    doc.setProperties({title:"BlanderQA chat export", subject:"Blender 4.0 workflow Q&A"});
     doc.setFont("helvetica", "bold");
     doc.setFontSize(18);
     doc.text("BlanderQA chat export", 14, y);
