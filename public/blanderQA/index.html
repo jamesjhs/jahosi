@@ -545,15 +545,6 @@ h1{
   color:#fff;
   font-size:1.25rem;
 }
-.chat-head p{
-  margin:.35rem 0 0;
-  color:#cbd8e8;
-}
-.chat-status{
-  margin:.45rem 0 0;
-  color:#cbd8e8;
-  font-size:.94rem;
-}
 .thread{
   overflow:auto;
   padding:1rem;
@@ -811,8 +802,6 @@ body.high-contrast .hero-visual{
 body.high-contrast .lede,
 body.high-contrast .kicker,
 body.high-contrast .signal-chip,
-body.high-contrast .chat-head p,
-body.high-contrast .chat-status,
 body.high-contrast .notice h2{
   color:#000;
 }
@@ -913,15 +902,8 @@ body.high-contrast .resource-form input{
 <header>
   <div class="header-inner">
     <div class="header-copy">
-      <p class="kicker">Official-source Blender 4.0 assistant</p>
+      <p class="kicker">Blender 4.0 assistant from official sources</p>
       <h1>BlanderQA <span class="byline">by Jahosi</span></h1>
-      <p class="lede">A Blender 4.0 Q&A space for enthusiast-level artists, making the official manual easier to use and showing more than one way to solve a task.</p>
-      <div class="signal-row" aria-label="BlanderQA focus areas">
-        <span class="signal-chip">Modeling</span>
-        <span class="signal-chip">Geometry Nodes</span>
-        <span class="signal-chip">Shading</span>
-        <span class="signal-chip">Troubleshooting</span>
-      </div>
     </div>
 
     
@@ -981,7 +963,6 @@ body.high-contrast .resource-form input{
     <section id="ask" class="panel chat-panel" aria-labelledby="qa-title">
       <div class="chat-head">
         <h2 id="qa-title">Ask the BlanderQA bot a question</h2>
-        <p id="chat-status" class="chat-status">Answers from starter prompts and common questions appear here, with official Blender 4.0 references.</p>
       </div>
       <div id="chat-thread" class="thread" aria-live="polite" aria-label="Q&A conversation">
         <div class="message bot"><strong>BlanderQA</strong>Ask about Blender 4.0 workflows, not personal data. If there are several valid ways to solve a problem, I should compare them and flag trade-offs. I can point you to official manual pages, release notes and API docs, then suggest a different route if that may be cleaner.</div>
@@ -1174,7 +1155,6 @@ body.high-contrast .resource-form input{
   const send = document.getElementById("chat-send");
   const exportPdf = document.getElementById("export-pdf");
   const chatPanel = document.getElementById("ask");
-  const chatStatus = document.getElementById("chat-status");
   const formNote = document.getElementById("form-note");
   const backToChat = document.getElementById("back-to-chat");
   const resourceForm = document.getElementById("resource-form");
@@ -1233,9 +1213,6 @@ body.high-contrast .resource-form input{
   function setGateMessage(message){
     if (gateNote) gateNote.textContent = message;
   }
-  function setChatStatus(message){
-    if (chatStatus) chatStatus.textContent = message;
-  }
   function setFormNote(message){
     if (!formNote) return;
     formNote.textContent = message || "";
@@ -1261,7 +1238,6 @@ body.high-contrast .resource-form input{
   }
   function revealFormProblem(message, element){
     setFormNote(message);
-    setChatStatus(message);
     revealChat("center");
     window.setTimeout(function(){
       if (element && typeof element.focus === "function") element.focus({preventScroll:true});
@@ -1633,7 +1609,6 @@ body.high-contrast .resource-form input{
       return;
     }
     setFormNote("");
-    setChatStatus("Checking official sources...");
     revealChat("start");
     appendMessage("user", question);
     history.push({role:"user", content:question});
@@ -1684,7 +1659,6 @@ body.high-contrast .resource-form input{
       removeThinkingMessage(thinkingMessage);
       const replyMessage = appendMessage("assistant", reply.trim());
       revealNewMessage(replyMessage);
-      setChatStatus("Answer added. Check the references in the response before acting.");
       history.push({role:"assistant", content:reply.trim()});
       history = history.slice(-8);
       storeHistory();
@@ -1693,7 +1667,6 @@ body.high-contrast .resource-form input{
       removeThinkingMessage(thinkingMessage);
       const errorMessage = appendMessage("assistant", "I could not complete that request. Please try again, and use the References links directly if the question is urgent.");
       revealNewMessage(errorMessage);
-      setChatStatus("The request could not be completed.");
     }finally{
       setBusy(false);
     }
@@ -1744,7 +1717,6 @@ body.high-contrast .resource-form input{
   document.querySelectorAll("[data-question]").forEach(function(button){
     button.addEventListener("click", function(){
       input.value = button.getAttribute("data-question") || "";
-      setChatStatus("Common question selected. The answer will appear here.");
       revealChat("start");
       input.focus({preventScroll:true});
       askQuestion(input.value.trim());
@@ -1754,7 +1726,6 @@ body.high-contrast .resource-form input{
     button.addEventListener("click", function(){
       input.value = button.getAttribute("data-prompt") || "";
       if (startTool) startTool.open = false;
-      setChatStatus("Starter question selected. The answer will appear here.");
       revealChat("start");
       input.focus({preventScroll:true});
       askQuestion(input.value.trim());
