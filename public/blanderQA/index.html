@@ -376,8 +376,9 @@ h1{
   margin:0 auto 1rem;
   scroll-margin-top:1rem;
 }
-.local-tool,.start-tool{
-  max-width:920px;
+.collapsible-tool{
+  width:100%;
+  max-width:980px;
   margin:0 auto 1rem;
   scroll-margin-top:1rem;
 }
@@ -601,20 +602,14 @@ h1{
   outline-offset:2px;
 }
 .chat-gate{
-  border-top:1px solid var(--line);
-  background:rgba(8,13,22,.92);
-  padding:.85rem 1rem;
-  display:grid;
-  gap:.55rem;
+  display:flex;
+  justify-content:flex-end;
+  min-height:65px;
+  max-width:100%;
+  overflow:hidden;
 }
 .chat-gate[hidden]{display:none}
-.gate-copy{font-weight:800;color:#fff}
-.chat-turnstile{overflow:hidden}
-.gate-note{
-  margin:0;
-  color:var(--muted);
-  font-size:.92rem;
-}
+.chat-turnstile{max-width:100%;overflow:hidden}
 .chat-form{
   border-top:1px solid var(--line);
   padding:1rem;
@@ -747,9 +742,18 @@ body.high-contrast .export-btn:hover{background:transparent;color:#003078}
 .back-to-chat{
   position:fixed;
   right:1rem;
-  bottom:1rem;
+  bottom:calc(1rem + env(safe-area-inset-bottom));
   z-index:15;
-  box-shadow:0 16px 40px rgba(0,0,0,.36);
+  width:auto;
+  min-width:0;
+  max-width:11rem;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  border-radius:999px;
+  padding:.68rem .95rem;
+  white-space:nowrap;
+  box-shadow:0 16px 40px rgba(0,0,0,.36), 0 0 0 1px rgba(255,255,255,.10);
 }
 .back-to-chat[hidden]{display:none}
 .references h2{
@@ -780,7 +784,7 @@ body.high-contrast .export-btn:hover{background:transparent;color:#003078}
   color:var(--muted);
   font-size:.92rem;
 }
-.guided-section{margin-top:1rem}
+.guided-section{margin-top:0}
 .references{margin-top:1rem}
 .references .source-list{
   grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
@@ -901,6 +905,11 @@ body.high-contrast .resource-form input{
   .resource-form{grid-template-columns:1fr}
   .input-row{display:block}
   button{width:100%}
+  .back-to-chat{
+    width:auto;
+    right:.75rem;
+    bottom:calc(.75rem + env(safe-area-inset-bottom));
+  }
   .toggle-btn,.export-btn{width:auto}
   .chat-actions{align-items:stretch}
   .ask-row{
@@ -940,17 +949,15 @@ body.high-contrast .resource-form input{
       <div id="chat-thread" class="thread" aria-live="polite" aria-label="Q&A conversation">
         <div class="message bot"><strong>BlanderQA</strong>What would you like to learn today?</div>
       </div>
-      <div id="chat-gate" class="chat-gate" hidden>
-        <div class="gate-copy">Complete the Turnstile check to start chatting.</div>
-        <div id="chat-turnstile" class="chat-turnstile"></div>
-        <p id="chat-gate-note" class="gate-note">Your chat session stays temporary and in-memory only.</p>
-      </div>
       <form id="chat-form" class="chat-form">
         <label for="chat-input">Your question</label>
-        <textarea id="chat-input" maxlength="1000" autocomplete="off" placeholder="For example: Should I use modifiers or Geometry Nodes for this Blender 4.0 modeling task?"></textarea>
+        <textarea id="chat-input" maxlength="1000" autocomplete="off" placeholder="Ask a Blender 4.0 workflow question..."></textarea>
         <div class="input-row">
           <div class="chat-actions">
             <div class="ask-row">
+              <div id="chat-gate" class="chat-gate" hidden>
+                <div id="chat-turnstile" class="chat-turnstile"></div>
+              </div>
               <button id="chat-send" type="submit">Ask</button>
             </div>
             <button id="export-pdf" class="export-btn" type="button">Export PDF</button>
@@ -1038,10 +1045,11 @@ body.high-contrast .resource-form input{
     </div>
   </details>
 
-  <section class="panel panel-pad guided-section" aria-labelledby="packs-title">
-    <h2 id="packs-title">Workflow question packs</h2>
-    <p class="source-scope">Expand a pack and choose a question. Each one sends BlanderQA a little context about the workflow area, so the answer can behave more like a tutor than a search result.</p>
-    <div class="question-pack-grid">
+  <details class="panel guided-section collapsible-tool" open>
+    <summary id="packs-title">Workflow question packs</summary>
+    <div class="collapsible-tool-body">
+      <p class="source-scope">Expand a pack and choose a question. Each one sends BlanderQA a little context about the workflow area, so the answer can behave more like a tutor than a search result.</p>
+      <div class="question-pack-grid">
       <details class="question-pack">
         <summary>Interface, scene setup and working faster</summary>
         <div class="question-pack-body">
@@ -1130,8 +1138,9 @@ body.high-contrast .resource-form input{
           </ol>
         </div>
       </details>
+      </div>
     </div>
-  </section>
+  </details>
 
 
   <section class="panel panel-pad guided-section" aria-labelledby="glossary-title">
@@ -1207,7 +1216,6 @@ body.high-contrast .resource-form input{
   const localResults = document.getElementById("local-results");
   const startTool = document.getElementById("start-tool");
   const gate = document.getElementById("chat-gate");
-  const gateNote = document.getElementById("chat-gate-note");
   const contrastToggle = document.getElementById("contrast-toggle");
   const fontToggle = document.getElementById("font-toggle");
 
@@ -1235,6 +1243,18 @@ body.high-contrast .resource-form input{
       link.rel = "noopener noreferrer";
     });
   }
+  function randomizeQuestionPlaceholder(){
+    if (!input || input.value.trim() || history.length) return;
+    const questions = Array.from(document.querySelectorAll(".pack-question-btn[data-question]"))
+      .map(function(button){return button.getAttribute("data-question") || "";})
+      .map(function(question){
+        return question.replace(/^In the [^:]+ question pack:\s*/i, "").trim();
+      })
+      .filter(Boolean);
+    if (!questions.length) return;
+    const selected = questions[Math.floor(Math.random() * questions.length)];
+    input.placeholder = "For example: " + selected;
+  }
 
   function getSessionToken(){
     try{return sessionStorage.getItem(CHAT_SESSION_STORAGE_KEY) || "";}catch{return "";}
@@ -1253,9 +1273,6 @@ body.high-contrast .resource-form input{
   }
   function storeHistory(){
     try{sessionStorage.setItem(CHAT_HISTORY_STORAGE_KEY, JSON.stringify(history.slice(-8)));}catch{}
-  }
-  function setGateMessage(message){
-    if (gateNote) gateNote.textContent = message;
   }
   function setFormNote(message){
     if (!formNote) return;
@@ -1597,9 +1614,10 @@ body.high-contrast .resource-form input{
     return TURNSTILE_ENABLED && !getSessionToken() && !turnstileToken;
   }
   function updateGate(){
-    if (!gate) return;
-    gate.hidden = !needsGate();
-    if (needsGate()) ensureTurnstileWidget();
+    const shouldShowGate = needsGate();
+    if (gate) gate.hidden = !shouldShowGate;
+    if (send) send.hidden = shouldShowGate;
+    if (shouldShowGate) ensureTurnstileWidget();
   }
   function resetTurnstile(){
     turnstileToken = "";
@@ -1619,12 +1637,10 @@ body.high-contrast .resource-form input{
       },
       "expired-callback": function(){
         turnstileToken = "";
-        setGateMessage("Verification expired. Please complete it again.");
         updateGate();
       },
       "error-callback": function(code){
         turnstileToken = "";
-        setGateMessage("Verification could not load (code " + String(code || "unknown") + ").");
         updateGate();
       }
     });
@@ -1648,8 +1664,7 @@ body.high-contrast .resource-form input{
     }
     if (needsGate() && !turnstileToken) {
       updateGate();
-      setGateMessage("Complete the Turnstile check to start chatting.");
-      revealFormProblem("Complete the Turnstile check to start chatting.", gate || input);
+      revealChat("center");
       return;
     }
     setFormNote("");
@@ -1680,8 +1695,7 @@ body.high-contrast .resource-form input{
         removeThinkingMessage(thinkingMessage);
         clearSessionToken();
         updateGate();
-        setGateMessage("Complete the Turnstile check to start chatting.");
-        revealFormProblem("Complete the Turnstile check to start chatting.", gate || input);
+        revealChat("center");
         return;
       }
       if (res.status === 403 && data && data.error === "turnstile_failed") {
@@ -1689,8 +1703,7 @@ body.high-contrast .resource-form input{
         clearSessionToken();
         resetTurnstile();
         updateGate();
-        setGateMessage("Verification failed. Please try again.");
-        revealFormProblem("Verification failed. Please try again.", gate || input);
+        revealChat("center");
         return;
       }
       if (!res.ok) throw new Error(data.error || "chat_failed");
@@ -1769,6 +1782,7 @@ body.high-contrast .resource-form input{
     });
   });
   applyDisplayOptions(loadDisplayOptions());
+  randomizeQuestionPlaceholder();
   markExternalLinks();
   updateGate();
   scheduleTurnstile();
