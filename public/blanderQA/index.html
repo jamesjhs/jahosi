@@ -696,17 +696,6 @@ body.high-contrast .export-btn:hover{background:transparent;color:#003078}
   justify-content:flex-end;
   gap:.75rem;
 }
-.disclaimer-ack{
-  display:flex;
-  align-items:center;
-  gap:.45rem;
-  color:var(--muted);
-  font-size:.94rem;
-}
-.disclaimer-ack input{
-  width:auto;
-  accent-color:var(--brand);
-}
 .export-btn{
   background:transparent;
   color:#9eeaff;
@@ -885,7 +874,6 @@ body.high-contrast .resource-form input{
     flex-direction:column;
     align-items:stretch;
   }
-  .disclaimer-ack{align-self:flex-start}
   .export-btn{align-self:flex-end}
 }
 @media(max-width:360px){
@@ -978,10 +966,6 @@ body.high-contrast .resource-form input{
         <div class="input-row">
           <div class="chat-actions">
             <div class="ask-row">
-              <label class="disclaimer-ack" for="disclaimer-ack">
-                <input id="disclaimer-ack" type="checkbox" required>
-                <span>I have read the <a href="#disclaimer-title">disclaimer</a></span>
-              </label>
               <button id="chat-send" type="submit">Ask</button>
             </div>
             <button id="export-pdf" class="export-btn" type="button">Export PDF</button>
@@ -1596,10 +1580,8 @@ body.high-contrast .resource-form input{
     }, 250);
   }
   async function askQuestion(question){
-    if (!question) return;
-    if (!form.reportValidity()) {
-      const invalid = form.querySelector(":invalid");
-      revealFormProblem("Tick the disclaimer acknowledgement before asking BlanderQA.", invalid || input);
+    if (!question) {
+      revealFormProblem("Enter a question before asking BlanderQA.", input);
       return;
     }
     if (needsGate() && !turnstileToken) {
@@ -1676,13 +1658,6 @@ body.high-contrast .resource-form input{
     event.preventDefault();
     askQuestion(input.value.trim());
   });
-  form.addEventListener("invalid", function(event){
-    if (event.target === input) {
-      revealFormProblem("Enter a question before asking BlanderQA.", input);
-      return;
-    }
-    revealFormProblem("Tick the disclaimer acknowledgement before asking BlanderQA.", event.target);
-  }, true);
   contrastToggle.addEventListener("click", function(){
     updateDisplayOption("highContrast");
   });
