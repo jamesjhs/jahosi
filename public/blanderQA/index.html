@@ -370,7 +370,13 @@ h1{
 .notice h2{font-size:1.02rem;color:#ffe1b3}
 .notice ul{margin:.55rem 0 0;padding-left:1.2rem}
 .notice li{margin:.35rem 0}
-.chat-wrap,.local-tool,.start-tool{
+.chat-wrap{
+  width:100%;
+  max-width:1180px;
+  margin:0 auto 1rem;
+  scroll-margin-top:1rem;
+}
+.local-tool,.start-tool{
   max-width:920px;
   margin:0 auto 1rem;
   scroll-margin-top:1rem;
@@ -545,23 +551,15 @@ h1{
 .panel-pad{padding:1rem}
 .chat-panel{
   display:grid;
-  grid-template-rows:auto minmax(360px,56vh) auto;
+  grid-template-rows:minmax(0,1fr) auto auto;
+  min-height:calc(100vh - 7rem);
+  min-height:calc(100dvh - 7rem);
   overflow:hidden;
   border-color:rgba(53,214,255,.24);
 }
 .chat-panel.is-active{
   border-color:var(--cyan);
   box-shadow:0 0 0 3px rgba(53,214,255,.16), var(--shadow), var(--glow);
-}
-.chat-head{
-  padding:1rem;
-  border-bottom:1px solid var(--line);
-  background:linear-gradient(90deg, rgba(53,214,255,.16), rgba(255,138,28,.10));
-}
-.chat-head h2{
-  margin:0;
-  color:#fff;
-  font-size:1.25rem;
 }
 .thread{
   overflow:auto;
@@ -864,7 +862,6 @@ body.high-contrast .resource-form input{
 }
 @media(max-width:900px){
   .hero-visual{min-height:190px}
-  .chat-panel{grid-template-rows:auto minmax(320px,52vh) auto}
 }
 @media(max-width:620px){
   body{font-size:15.5px}
@@ -888,14 +885,16 @@ body.high-contrast .resource-form input{
   .notice,
   .panel-pad,
   .collapsible-tool-body,
-  .chat-head,
   .chat-form{padding:.75rem}
   .collapsible-tool summary{padding:.85rem .75rem}
   .action-grid,.question-grid,.glossary-grid,.question-pack-grid{
     grid-template-columns:minmax(0,1fr);
     gap:.6rem;
   }
-  .chat-panel{grid-template-rows:auto minmax(300px,54vh) auto}
+  .chat-panel{
+    min-height:calc(100vh - 4.5rem);
+    min-height:calc(100dvh - 4.5rem);
+  }
   .thread{padding:.65rem;gap:.65rem}
   .message{max-width:92%;padding:.7rem .75rem}
   .message.bot{max-width:96%}
@@ -934,6 +933,35 @@ body.high-contrast .resource-form input{
     </div>
   </div>
 </header>
+
+<main class="wrap">
+  <div class="chat-wrap">
+    <section id="ask" class="panel chat-panel" aria-label="BlanderQA chat">
+      <div id="chat-thread" class="thread" aria-live="polite" aria-label="Q&A conversation">
+        <div class="message bot"><strong>BlanderQA</strong>What would you like to learn today?</div>
+      </div>
+      <div id="chat-gate" class="chat-gate" hidden>
+        <div class="gate-copy">Complete the Turnstile check to start chatting.</div>
+        <div id="chat-turnstile" class="chat-turnstile"></div>
+        <p id="chat-gate-note" class="gate-note">Your chat session stays temporary and in-memory only.</p>
+      </div>
+      <form id="chat-form" class="chat-form">
+        <label for="chat-input">Your question</label>
+        <textarea id="chat-input" maxlength="1000" autocomplete="off" placeholder="For example: Should I use modifiers or Geometry Nodes for this Blender 4.0 modeling task?"></textarea>
+        <div class="input-row">
+          <div class="chat-actions">
+            <div class="ask-row">
+              <button id="chat-send" type="submit">Ask</button>
+            </div>
+            <button id="export-pdf" class="export-btn" type="button">Export PDF</button>
+            <p id="form-note" class="form-note" hidden></p>
+          </div>
+        </div>
+      </form>
+    </section>
+  </div>
+  <button id="back-to-chat" class="back-to-chat" type="button" hidden>Back to chat</button>
+
 
 
   <details id="start-tool" class="panel start-tool collapsible-tool">
@@ -975,35 +1003,6 @@ body.high-contrast .resource-form input{
     </div>
   </details>
 
-  <div class="chat-wrap">
-    <section id="ask" class="panel chat-panel" aria-labelledby="qa-title">
-      <div class="chat-head">
-        <h2 id="qa-title">BlanderQA Bot</h2>
-      </div>
-      <div id="chat-thread" class="thread" aria-live="polite" aria-label="Q&A conversation">
-        <div class="message bot"><strong>BlanderQA</strong>What would you like to learn today?</div>
-      </div>
-      <div id="chat-gate" class="chat-gate" hidden>
-        <div class="gate-copy">Complete the Turnstile check to start chatting.</div>
-        <div id="chat-turnstile" class="chat-turnstile"></div>
-        <p id="chat-gate-note" class="gate-note">Your chat session stays temporary and in-memory only.</p>
-      </div>
-      <form id="chat-form" class="chat-form">
-        <label for="chat-input">Your question</label>
-        <textarea id="chat-input" maxlength="1000" autocomplete="off" placeholder="For example: Should I use modifiers or Geometry Nodes for this Blender 4.0 modeling task?"></textarea>
-        <div class="input-row">
-          <div class="chat-actions">
-            <div class="ask-row">
-              <button id="chat-send" type="submit">Ask</button>
-            </div>
-            <button id="export-pdf" class="export-btn" type="button">Export PDF</button>
-            <p id="form-note" class="form-note" hidden></p>
-          </div>
-        </div>
-      </form>
-    </section>
-  </div>
-  <button id="back-to-chat" class="back-to-chat" type="button" hidden>Back to chat</button>
 
   <details class="panel local-tool collapsible-tool">
     <summary>Find Blender resources by topic</summary>
@@ -1132,19 +1131,6 @@ body.high-contrast .resource-form input{
         </div>
       </details>
     </div>
-  </section>
-
-  <section class="notice" aria-labelledby="disclaimer-title">
-    <h2 id="disclaimer-title">Disclaimer</h2>
-    <p>BlanderQA is an experimental AI-assisted Blender help page. AI responses can be incomplete, outdated, misread the manual or overstate a workflow. Do not rely on an answer as the only basis for a production decision.</p>
-    <ul>
-      <li>Always open the cited Blender 4.0 manual pages or release notes and check the original wording.</li>
-      <li>Different Blender tasks can legitimately have more than one correct workflow.</li>
-      <li>Version-specific advice is intentionally limited to Blender 4.0.</li>
-      <li>Use the official manual first for exact names, menus and shortcut details.</li>
-      <li>Jahosi.co.uk cannot accept responsibility for production issues or losses arising from AI answers without independent checking.</li>
-      <li>Do not enter personal or confidential studio data into the chat.</li>
-    </ul>
   </section>
 
 
@@ -1608,7 +1594,7 @@ body.high-contrast .resource-form input{
     if (thinkingMessage && thinkingMessage.parentNode) thinkingMessage.remove();
   }
   function needsGate(){
-    return TURNSTILE_ENABLED && !getSessionToken();
+    return TURNSTILE_ENABLED && !getSessionToken() && !turnstileToken;
   }
   function updateGate(){
     if (!gate) return;
@@ -1629,15 +1615,17 @@ body.high-contrast .resource-form input{
       sitekey: TURNSTILE_SITE_KEY,
       callback: function(token){
         turnstileToken = token || "";
-        setGateMessage("Verification complete. You can chat in this browser session.");
+        updateGate();
       },
       "expired-callback": function(){
         turnstileToken = "";
         setGateMessage("Verification expired. Please complete it again.");
+        updateGate();
       },
       "error-callback": function(code){
         turnstileToken = "";
         setGateMessage("Verification could not load (code " + String(code || "unknown") + ").");
+        updateGate();
       }
     });
   }
