@@ -402,6 +402,174 @@ const SOCIAL_QA_CHAT_GUIDELINES = [
   "Validated sources:\n" + SOCIAL_QA_SOURCE_TEXT,
 ].join("\n");
 
+const BLANDER_QA_SOURCES = [
+  {
+    title: "Blender 4.0 Reference Manual",
+    organisation: "docs.blender.org",
+    url: "https://docs.blender.org/manual/en/4.0/",
+    scope: "Official Blender 4.0 manual home page and topic map.",
+  },
+  {
+    title: "About Blender",
+    organisation: "Blender Manual",
+    url: "https://docs.blender.org/manual/en/4.0/getting_started/about/index.html",
+    scope: "What Blender is, what it is good at, and the basics of the 4.0 release framing.",
+  },
+  {
+    title: "Help System",
+    organisation: "Blender Manual",
+    url: "https://docs.blender.org/manual/en/4.0/getting_started/help.html",
+    scope: "How to get help from inside Blender and the manual.",
+  },
+  {
+    title: "User Interface",
+    organisation: "Blender Manual",
+    url: "https://docs.blender.org/manual/en/4.0/interface/index.html",
+    scope: "Windows, areas, tools, shortcuts and the overall interface.",
+  },
+  {
+    title: "Editors",
+    organisation: "Blender Manual",
+    url: "https://docs.blender.org/manual/en/4.0/editors/index.html",
+    scope: "Overview of Blender editors such as the 3D Viewport, Shader Editor, Graph Editor and Sequencer.",
+  },
+  {
+    title: "Scenes & Objects",
+    organisation: "Blender Manual",
+    url: "https://docs.blender.org/manual/en/4.0/scene_layout/index.html",
+    scope: "Scenes, objects, collections and view layers.",
+  },
+  {
+    title: "Modeling",
+    organisation: "Blender Manual",
+    url: "https://docs.blender.org/manual/en/4.0/modeling/index.html",
+    scope: "Meshes, curves, metaballs, text, modeling tools and modifiers.",
+  },
+  {
+    title: "Transform and snapping",
+    organisation: "Blender Manual",
+    url: "https://docs.blender.org/manual/en/4.0/modeling/transform/modal_map.html",
+    scope: "Transform tools, modal controls and snap-base workflows.",
+  },
+  {
+    title: "Snapping",
+    organisation: "Blender Manual",
+    url: "https://docs.blender.org/manual/en/4.0/editors/3dview/controls/snapping.html",
+    scope: "Vertex, edge, face, midpoint, perpendicular and rotation snapping controls.",
+  },
+  {
+    title: "Geometry Nodes",
+    organisation: "Blender Manual",
+    url: "https://docs.blender.org/manual/en/4.0/modeling/geometry_nodes/index.html",
+    scope: "Procedural and non-destructive workflows that can replace or augment manual modeling.",
+  },
+  {
+    title: "Sculpting & Painting",
+    organisation: "Blender Manual",
+    url: "https://docs.blender.org/manual/en/4.0/sculpt_paint/index.html",
+    scope: "Sculpting, texture painting and vertex painting workflows.",
+  },
+  {
+    title: "Animation & Rigging",
+    organisation: "Blender Manual",
+    url: "https://docs.blender.org/manual/en/4.0/animation/index.html",
+    scope: "Keyframes, drivers, constraints, armatures and shape keys.",
+  },
+  {
+    title: "Principled BSDF",
+    organisation: "Blender Manual",
+    url: "https://docs.blender.org/manual/en/4.0/render/shader_nodes/shader/principled.html",
+    scope: "The main shader node for physically based materials in Blender 4.0.",
+  },
+  {
+    title: "Rendering",
+    organisation: "Blender Manual",
+    url: "https://docs.blender.org/manual/en/4.0/render/index.html",
+    scope: "EEVEE, Cycles, Freestyle and rendering workflows.",
+  },
+  {
+    title: "Compositing",
+    organisation: "Blender Manual",
+    url: "https://docs.blender.org/manual/en/4.0/compositing/index.html",
+    scope: "Post-processing with compositor nodes.",
+  },
+  {
+    title: "Assets, Files & Data System",
+    organisation: "Blender Manual",
+    url: "https://docs.blender.org/manual/en/4.0/files/index.html",
+    scope: "Blend-file structure, datablocks and asset management.",
+  },
+  {
+    title: "Add-ons",
+    organisation: "Blender Manual",
+    url: "https://docs.blender.org/manual/en/4.0/addons/index.html",
+    scope: "Extending Blender with add-ons.",
+  },
+  {
+    title: "Advanced",
+    organisation: "Blender Manual",
+    url: "https://docs.blender.org/manual/en/4.0/advanced/index.html",
+    scope: "Python scripting, custom tools and command-line arguments.",
+  },
+  {
+    title: "Troubleshooting",
+    organisation: "Blender Manual",
+    url: "https://docs.blender.org/manual/en/4.0/troubleshooting/index.html",
+    scope: "Startup issues, graphics problems, crashes, Python errors and recovery.",
+  },
+  {
+    title: "Blender 4.0 release page",
+    organisation: "Blender.org",
+    url: "https://www.blender.org/download/releases/4-0/",
+    scope: "Official release overview for Blender 4.0 changes, workflows and major features.",
+  },
+  {
+    title: "Blender Support / FAQ",
+    organisation: "Blender.org",
+    url: "https://www.blender.org/support/faq/",
+    scope: "Official support landing page and common help routes.",
+  },
+  {
+    title: "Blender Python API 4.0",
+    organisation: "Blender API",
+    url: "https://docs.blender.org/api/4.0/",
+    scope: "Official API reference for scripting and add-on development.",
+  },
+];
+
+const BLANDER_QA_SOURCE_TEXT = BLANDER_QA_SOURCES.map(
+  (source, index) =>
+    `${index + 1}. ${source.title} - ${source.organisation}. URL: ${source.url}. Scope: ${source.scope}`
+).join("\n");
+
+const BLANDER_QA_SOURCE_NOTES = [
+  "Blender 4.0 manual: a task may have more than one valid workflow. Compare the options briefly instead of forcing one path.",
+  "Modeling: many problems can be solved with manual mesh editing, modifiers, Geometry Nodes or sculpting. Mention the trade-off, especially destructiveness versus flexibility.",
+  "Rendering: EEVEE is often used for fast look development while Cycles is often used for final physically based rendering. Have you considered doing it a different way, such as iterating in EEVEE and finishing in Cycles?",
+  "Rigging and animation: keyframes, constraints, drivers, shape keys and the Pose Library can each solve a different part of a motion problem. Explain when one is simpler than another.",
+  "Troubleshooting: official guidance points first to startup files, add-ons, GPU or driver issues, crashes, Python errors and recovery. Move through those possibilities in a calm, practical order.",
+  "The 4.0 release page and manual are the only sources for version-specific claims in this assistant.",
+].join("\n");
+
+const BLANDER_QA_CHAT_GUIDELINES = [
+  "You are BlanderQA, a plain-English Q&A assistant for Blender 4.0.",
+  "Source rule: use ONLY the validated official Blender sources listed below. Do not use forums, social posts, YouTube commentary, unofficial tutorials, community wikis, blog posts, or memory of uncited facts.",
+  "Every user query is headed by this requirement: answer only from official Blender 4.0 reference manual pages, official Blender release material, or official Blender API / support pages.",
+  "Every answer must include a 'References' section naming the source titles and URLs used.",
+  "Use plain text only. Do not use Markdown heading markers such as ###, bold markers such as **, or decorative ASCII formatting.",
+  "If the listed sources do not support the exact answer requested, do not stop at a blunt refusal. Say: 'I cannot answer your exact question because that would go beyond the validated official Blender 4.0 sources.' Then add: 'However, based on the themes of your question, I can explain these general points from the official sources.' Break the safe answer into themes and signpost where to go next.",
+  "Do not invent menu labels, shortcuts, version changes, settings names, node sockets, tool names, or URLs.",
+  "Use plain English, short paragraphs and practical next steps. Explain that this is guidance, not a substitute for the manual when the user needs exact button names or a precise workflow.",
+  "When the user asks how to achieve something in Blender, look for multiple valid routes and compare them briefly. If a different workflow may be better, say: 'Have you considered doing it a different way, such as ...?'",
+  "When a question could be solved by more than one workflow, compare manual modeling, modifiers, Geometry Nodes, sculpting, rigging controls, compositor fixes or render-engine choices where the official sources support them.",
+  "If the user appears to ask for a workflow that is version-sensitive, explicitly keep the answer to Blender 4.0 and note that later releases may differ.",
+  "For shading and rendering, keep the answer within the official manual and release page. Do not recommend third-party shader packs, assets or unofficial presets.",
+  "For troubleshooting, prefer official startup, GPU, crash and recovery guidance first. If there are multiple likely causes, lay them out as a short diagnostic sequence.",
+  "For add-ons and Python, stay within official add-on and API documentation and avoid guessing about unsupported scripts or extensions.",
+  "Source-backed notes you may use for general explanations:\n" + BLANDER_QA_SOURCE_NOTES,
+  "Validated sources:\n" + BLANDER_QA_SOURCE_TEXT,
+].join("\n");
+
 app.use(express.urlencoded({ extended: false }));
 initAnalytics({ dbPath: ANALYTICS_DB_PATH });
 app.use(
@@ -802,6 +970,229 @@ app.get("/socialQA/policy.html", (req, res) => {
 
 app.use("/socialQA", express.static(path.join(__dirname, "public", "socialQA"), { index: false, setHeaders: setPublicFileHeaders }));
 
+app.get(/^\/blanderQA$/, (req, res) => {
+  res.redirect("/blanderQA/");
+});
+
+app.get("/blanderQA/", (req, res) => {
+  setNoCacheHeaders(res);
+  res.send(renderBlanderQaIndexHtml());
+});
+
+app.get("/blanderQA/index.html", (req, res) => {
+  setNoCacheHeaders(res);
+  res.send(renderBlanderQaIndexHtml());
+});
+
+app.get("/blanderQA/policy.html", (req, res) => {
+  setNoCacheHeaders(res);
+  res.send(renderBlanderQaPolicyHtml());
+});
+
+app.use("/blanderQA", express.static(path.join(__dirname, "public", "blanderQA"), { index: false, setHeaders: setPublicFileHeaders }));
+
+app.get("/blanderQA/resource-info", (req, res) => {
+  const topic = String(req.query.topic || "").trim().toLowerCase();
+  const matchedTopic = [
+    {
+      match: /model|mesh|modifier|geometry|topolog|uv|transform|snap|snapp|hard[- ]surface|retopo/i,
+      payload: {
+        title: "Modeling and layout",
+        summary: "Good for mesh editing, modifiers, Geometry Nodes, transforms and snapping.",
+        links: [
+          { label: "Modeling", href: "https://docs.blender.org/manual/en/4.0/modeling/index.html" },
+          { label: "Transform and snapping", href: "https://docs.blender.org/manual/en/4.0/modeling/transform/modal_map.html" },
+          { label: "Snapping", href: "https://docs.blender.org/manual/en/4.0/editors/3dview/controls/snapping.html" },
+          { label: "Geometry Nodes", href: "https://docs.blender.org/manual/en/4.0/modeling/geometry_nodes/index.html" },
+        ],
+        followUps: [
+          "Have you considered doing it a different way, such as using a modifier stack instead of editing the mesh destructively?",
+          "If the shape is more procedural, Geometry Nodes may be the cleaner path than manual modeling.",
+        ],
+      },
+    },
+    {
+      match: /shade|material|shader|render|lighting|light|eevee|cycles|principled|color|lookdev/i,
+      payload: {
+        title: "Shading and rendering",
+        summary: "Good for materials, lighting, render-engine choice and look development.",
+        links: [
+          { label: "Rendering", href: "https://docs.blender.org/manual/en/4.0/render/index.html" },
+          { label: "Principled BSDF", href: "https://docs.blender.org/manual/en/4.0/render/shader_nodes/shader/principled.html" },
+          { label: "Blender 4.0 release page", href: "https://www.blender.org/download/releases/4-0/" },
+        ],
+        followUps: [
+          "Have you considered doing it a different way, such as iterating in EEVEE first and finalising in Cycles?",
+          "If the material feels close but not right, try comparing the Principled BSDF inputs before reaching for an add-on or external preset.",
+        ],
+      },
+    },
+    {
+      match: /animat|rig|armatur|bone|pose|driver|constraint|keyframe|motion|shape key/i,
+      payload: {
+        title: "Animation and rigging",
+        summary: "Good for keyframes, constraints, armatures, bone collections and shape keys.",
+        links: [
+          { label: "Animation & Rigging", href: "https://docs.blender.org/manual/en/4.0/animation/index.html" },
+          { label: "Bone Collections", href: "https://docs.blender.org/manual/en/4.0/animation/armatures/bones/bone_collections.html" },
+          { label: "Graph Editor", href: "https://docs.blender.org/manual/en/4.0/editors/graph_editor/index.html" },
+        ],
+        followUps: [
+          "Have you considered doing it a different way, such as using constraints before adding a lot of keyframes?",
+          "For animation cleanup, the Graph Editor can be the simpler route before resorting to more complex driver logic.",
+        ],
+      },
+    },
+    {
+      match: /crash|error|gpu|driver|startup|recover|missing|broken|slow|lag|compat/i,
+      payload: {
+        title: "Troubleshooting",
+        summary: "Good for startup issues, GPU problems, crashes, Python errors and recovering files.",
+        links: [
+          { label: "Troubleshooting", href: "https://docs.blender.org/manual/en/4.0/troubleshooting/index.html" },
+          { label: "Startup", href: "https://docs.blender.org/manual/en/4.0/troubleshooting/startup.html" },
+          { label: "Graphics Hardware", href: "https://docs.blender.org/manual/en/4.0/troubleshooting/gpu/index.html" },
+          { label: "Crashes", href: "https://docs.blender.org/manual/en/4.0/troubleshooting/crash.html" },
+          { label: "Recovering Data", href: "https://docs.blender.org/manual/en/4.0/troubleshooting/recover.html" },
+        ],
+        followUps: [
+          "Have you considered doing it a different way, such as testing the issue in factory settings or with add-ons disabled first?",
+          "If the problem is graphical, the official troubleshooting flow usually starts with GPU and driver checks before deeper debugging.",
+        ],
+      },
+    },
+    {
+      match: /add-?on|script|python|api|extension|automation/i,
+      payload: {
+        title: "Add-ons and Python",
+        summary: "Good for extending Blender with add-ons or scripting against the API.",
+        links: [
+          { label: "Add-ons", href: "https://docs.blender.org/manual/en/4.0/addons/index.html" },
+          { label: "Advanced", href: "https://docs.blender.org/manual/en/4.0/advanced/index.html" },
+          { label: "Blender Python API 4.0", href: "https://docs.blender.org/api/4.0/" },
+        ],
+        followUps: [
+          "Have you considered doing it a different way, such as an add-on before a custom script?",
+          "If the task is repetitive but simple, a built-in add-on may be the quickest path.",
+        ],
+      },
+    },
+  ].find((entry) => entry.match.test(topic));
+
+  const payload = matchedTopic
+    ? matchedTopic.payload
+    : {
+        title: "Blender 4.0 official resources",
+        summary: "Start with the manual home page, then branch into the section that matches the task.",
+        links: [
+          { label: "Blender 4.0 Reference Manual", href: "https://docs.blender.org/manual/en/4.0/" },
+          { label: "User Interface", href: "https://docs.blender.org/manual/en/4.0/interface/index.html" },
+          { label: "Modeling", href: "https://docs.blender.org/manual/en/4.0/modeling/index.html" },
+          { label: "Rendering", href: "https://docs.blender.org/manual/en/4.0/render/index.html" },
+          { label: "Troubleshooting", href: "https://docs.blender.org/manual/en/4.0/troubleshooting/index.html" },
+        ],
+        followUps: [
+          "If you are not sure where to start, ask by workflow: modeling, shading, animation or troubleshooting.",
+          "Have you considered doing it a different way, such as using modifiers or Geometry Nodes instead of editing everything by hand?",
+        ],
+      };
+
+  res.json({
+    ...payload,
+    localLinks: payload.links,
+  });
+});
+
+app.post("/blanderQA/chat", splashChatRateLimit, express.json({ limit: "50kb" }), async (req, res) => {
+  if (!SPLASH_OPENAI_API_KEY) {
+    return res.status(404).json({ error: "disabled" });
+  }
+
+  const body = req.body && typeof req.body === "object" ? req.body : {};
+  const message = typeof body.message === "string" ? body.message.trim() : "";
+  const history = Array.isArray(body.history) ? body.history : [];
+  const resourceContext = sanitizeSocialQaLocalContext(body.localContext);
+  const chatSessionToken = typeof body.chatSessionToken === "string" ? body.chatSessionToken.trim() : "";
+  const turnstileToken = typeof body.turnstileToken === "string" ? body.turnstileToken.trim() : "";
+  const remoteip = req.ip || req.socket.remoteAddress || undefined;
+
+  if (!message || message.length > 2000) {
+    return res.status(400).json({ error: "invalid_message" });
+  }
+
+  let resolvedChatSessionToken = chatSessionToken;
+  if (isTurnstileEnabled()) {
+    if (!validateChemChatSession(resolvedChatSessionToken)) {
+      if (!turnstileToken) {
+        return res.status(403).json({ error: "turnstile_required" });
+      }
+      const turnstileOk = await verifyTurnstileToken(turnstileToken, remoteip);
+      if (!turnstileOk) {
+        return res.status(403).json({ error: "turnstile_failed" });
+      }
+      resolvedChatSessionToken = mintChemChatSession();
+    }
+  }
+
+  const safeHistory = history
+    .slice(-8)
+    .filter((item) => item && typeof item === "object")
+    .map((item) => {
+      const role = item.role === "assistant" ? "assistant" : "user";
+      const content = String(item.content || "").slice(0, 2500);
+      return { role, content };
+    })
+    .filter((item) => item.content.trim());
+
+  const payloadMessages = [
+    { role: "system", content: BLANDER_QA_CHAT_GUIDELINES },
+    ...(resourceContext
+      ? [
+          {
+            role: "system",
+            content:
+              "User-selected official Blender context. Use this only as an official-resource reminder, not to invent unsupported claims.\n" +
+              resourceContext,
+          },
+        ]
+      : []),
+    ...safeHistory,
+    {
+      role: "user",
+      content:
+        "Requirement: answer only from the official Blender 4.0 manual, official Blender release material, official Blender API docs, or official Blender support pages. Include references with URLs. User question: " +
+        message,
+    },
+  ];
+
+  try {
+    const llmRes = await fetch(`${SPLASH_OPENAI_BASE_URL}/chat/completions`, {
+      method: "POST",
+      headers: chatCompletionHeaders(),
+      body: JSON.stringify({
+        model: "gpt-4o-mini",
+        temperature: 0.1,
+        messages: payloadMessages,
+      }),
+    });
+
+    if (!llmRes.ok) {
+      return res.status(502).json({ error: "upstream_failed" });
+    }
+
+    const data = await llmRes.json();
+    const reply = data?.choices?.[0]?.message?.content;
+    if (typeof reply !== "string" || !reply.trim()) {
+      return res.status(502).json({ error: "upstream_empty" });
+    }
+    const response = { reply: expandBlanderQaRefusal(reply, message) };
+    if (resolvedChatSessionToken) response.chatSessionToken = resolvedChatSessionToken;
+    return res.json(response);
+  } catch (error) {
+    return res.status(502).json({ error: "upstream_error" });
+  }
+});
+
 app.get("/socialQA/local-info", async (req, res) => {
   const postcode = String(req.query.postcode || "").trim().toUpperCase();
   const compactPostcode = postcode.replace(/\s+/g, "");
@@ -1013,6 +1404,15 @@ function renderSocialQaPolicyHtml() {
   return SOCIAL_QA_POLICY_HTML_TEMPLATE.replaceAll("__CONTACT_PAGE_PATH__", CONTACT_PAGE_PATH);
 }
 
+const BLANDER_QA_INDEX_HTML_TEMPLATE = fs.readFileSync(path.join(__dirname, "public", "blanderQA", "index.html"), "utf8");
+function renderBlanderQaIndexHtml() {
+  return BLANDER_QA_INDEX_HTML_TEMPLATE.replace('"__TURNSTILE_SITE_KEY__"', JSON.stringify(TURNSTILE_SITE_KEY));
+}
+const BLANDER_QA_POLICY_HTML_TEMPLATE = fs.readFileSync(path.join(__dirname, "public", "blanderQA", "policy.html"), "utf8");
+function renderBlanderQaPolicyHtml() {
+  return BLANDER_QA_POLICY_HTML_TEMPLATE.replaceAll("__CONTACT_PAGE_PATH__", CONTACT_PAGE_PATH);
+}
+
 function normalizeSocialQaReply(reply) {
   return String(reply || "")
     .replace(/^\s{0,3}#{1,6}\s+/gm, "")
@@ -1062,6 +1462,43 @@ function expandSocialQaBluntRefusal(reply, message) {
     "FCA Firm Checker - Financial Conduct Authority: https://www.fca.org.uk/consumers/fca-firm-checker",
     "About the Society of Later Life Advisers - SOLLA: https://societyoflaterlifeadvisers.co.uk/about",
   ].join("\n");
+}
+
+function normalizeBlanderQaReply(reply) {
+  return String(reply || "")
+    .replace(/^\s{0,3}#{1,6}\s+/gm, "")
+    .replace(/\*\*/g, "")
+    .trim();
+}
+
+function expandBlanderQaRefusal(reply, message) {
+  const normalized = normalizeBlanderQaReply(reply);
+  if (!/(I cannot answer that from the validated sources on this page|I cannot answer your exact question because)/i.test(normalized)) return normalized;
+  const messageText = String(message || "").toLowerCase();
+  const hints = [];
+  if (/(crash|error|gpu|driver|startup|recover|slow|lag|compat)/i.test(messageText)) {
+    hints.push("Start with the Troubleshooting section, then check the startup, GPU, crash and recovery pages.");
+  }
+  if (/(model|mesh|modifier|geometry|topolog|uv|transform|snap)/i.test(messageText)) {
+    hints.push("For modeling questions, compare manual edit-mode work, modifiers, snapping and Geometry Nodes before choosing one path.");
+  }
+  if (/(shade|material|render|light|eevee|cycles|principled)/i.test(messageText)) {
+    hints.push("For shading and rendering questions, compare EEVEE, Cycles and the Principled BSDF manual pages.");
+  }
+  if (/(animat|rig|bone|pose|driver|constraint|keyframe|shape key)/i.test(messageText)) {
+    hints.push("For animation questions, compare keyframes, constraints, drivers, armatures and shape keys.");
+  }
+  if (/(add-?on|script|python|api|extension)/i.test(messageText)) {
+    hints.push("For add-ons or scripting, stay within the official add-ons and Python API docs.");
+  }
+  const general = [
+    "However, based on the themes of your question, I can explain these general points from the official Blender 4.0 sources.",
+    hints.length ? "What I can explain generally:\n- " + hints.join("\n- ") : "What I can explain generally:\n- Use the manual section that matches the workflow and compare alternate approaches before committing to one path.",
+    "References:\n- Blender 4.0 Reference Manual: https://docs.blender.org/manual/en/4.0/\n- Blender 4.0 release page: https://www.blender.org/download/releases/4-0/",
+  ]
+    .filter(Boolean)
+    .join("\n\n");
+  return `${normalized}\n\n${general}`;
 }
 
 function renderContactPage({ status, error, debug }) {

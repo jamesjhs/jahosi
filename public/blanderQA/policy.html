@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#7c3aed">
+<meta name="robots" content="index,follow,max-snippet:-1">
+<link rel="canonical" href="https://jahosi.co.uk/blanderQA/policy.html">
+<meta name="description" content="BlanderQA policy, use policy and disclaimer for the Blender 4.0 tutorial Q&A page.">
+<title>BlanderQA policy, use policy and disclaimer</title>
+<style>
+:root{
+  --bg:#f8f7ff;
+  --panel:#ffffff;
+  --ink:#1b1630;
+  --muted:#5f5a76;
+  --line:#ddd7f0;
+  --brand:#7c3aed;
+  --brand-dark:#5b21b6;
+  --brand-pale:#efe7ff;
+  --warn:#a16207;
+  --warn-bg:#fffbeb;
+  --error:#9f1239;
+  --shadow:0 2px 10px rgba(124,58,237,.10);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0;
+  font-family:Arial, Helvetica, sans-serif;
+  font-size:16px;
+  line-height:1.6;
+  color:var(--ink);
+  background:var(--bg);
+}
+a{color:var(--brand-dark);font-weight:700}
+a:focus{outline:3px solid #f59e0b;outline-offset:3px}
+header{
+  background:#241338;
+  color:#fff;
+  border-bottom:5px solid var(--brand);
+}
+.header-inner,.wrap,footer{
+  max-width:980px;
+  margin:0 auto;
+  padding:1.25rem 1rem;
+}
+.back-link{color:#f0e8ff;text-decoration:none}
+h1{
+  margin:.7rem 0 .35rem;
+  font-size:clamp(2rem,5vw,3rem);
+  line-height:1.08;
+}
+.lede{
+  max-width:760px;
+  margin:0;
+  color:#f0e8ff;
+}
+.panel{
+  margin:1rem 0;
+  padding:1rem;
+  background:var(--panel);
+  border:1px solid var(--line);
+  border-radius:8px;
+  box-shadow:var(--shadow);
+}
+.notice{
+  border-left:6px solid var(--warn);
+  background:var(--warn-bg);
+}
+.danger{
+  border-left:6px solid var(--error);
+  background:#fff1f5;
+}
+h2{margin:0 0 .6rem;font-size:1.25rem}
+h3{margin:1rem 0 .35rem;font-size:1.05rem}
+p{margin:.5rem 0}
+ul{margin:.5rem 0;padding-left:1.2rem}
+li{margin:.35rem 0}
+.meta{
+  color:var(--muted);
+  font-size:.94rem;
+}
+.toc{
+  display:grid;
+  gap:.35rem;
+  padding-left:1rem;
+}
+.source-list{
+  list-style:none;
+  padding:0;
+}
+.source-list li{
+  border-top:1px solid var(--line);
+  padding:.65rem 0 0;
+}
+.source-list li:first-child{border-top:0;padding-top:0}
+footer{
+  color:var(--muted);
+  font-size:.92rem;
+}
+@media(max-width:620px){
+  body{font-size:15.5px}
+  .header-inner,.wrap,footer{padding:1rem .75rem}
+  .panel{padding:.85rem}
+}
+</style>
+</head>
+<body>
+<header>
+  <div class="header-inner">
+    <a class="back-link" href="/blanderQA/">Back to BlanderQA</a>
+    <h1>BlanderQA policy, use policy and disclaimer</h1>
+    <p class="lede">How BlanderQA works, what it can and cannot do, how information is handled, and what users should check before relying on any answer.</p>
+  </div>
+</header>
+
+<main class="wrap">
+  <section class="panel notice" aria-labelledby="status-title">
+    <h2 id="status-title">Status of this policy</h2>
+    <p><strong>Version:</strong> 1.0.0. <strong>Published:</strong> 24 June 2026. <strong>Last updated:</strong> 24 June 2026. <strong>Sources reviewed:</strong> 24 June 2026.</p>
+    <p>This policy is written for BlanderQA at <a href="/blanderQA/">https://jahosi.co.uk/blanderQA/</a>. It will be updated over time as Blender 4.x, the source list, and the hosting or AI setup change.</p>
+    <p>This page is not legal advice. It is a practical public statement of how the BlanderQA page is intended to work and the limits users should understand before using it.</p>
+  </section>
+
+  <nav class="panel" aria-label="Policy sections">
+    <h2>Contents</h2>
+    <div class="toc">
+      <a href="#plain-summary">Plain-English summary</a>
+      <a href="#scope">What BlanderQA is</a>
+      <a href="#use-policy">Use policy and disclaimer</a>
+      <a href="#privacy">Privacy policy</a>
+      <a href="#sources">Sources and freshness</a>
+      <a href="#risk-review">Workflow and safety review</a>
+      <a href="#reference-material">Reference material used for this policy</a>
+    </div>
+  </nav>
+
+  <section id="plain-summary" class="panel danger">
+    <h2>Plain-English summary</h2>
+    <ul>
+      <li>BlanderQA is an experimental AI-assisted information page for Blender 4.0. It is not a substitute for the Blender manual or professional training.</li>
+      <li>Use it as a guide to compare workflows, find official resources and ask better questions.</li>
+      <li>Do not treat any answer as the only valid workflow. For many Blender tasks, several approaches can work.</li>
+      <li>Always check the official Blender 4.0 Reference Manual, release notes, API docs or Blender Foundation pages before relying on an answer.</li>
+      <li>Do not enter sensitive personal, financial or account details into the chat.</li>
+      <li>BlanderQA is instructed to stay within the official Blender 4.0 source list and to refuse unsupported speculation, unofficial shortcuts and version-mismatched advice.</li>
+    </ul>
+  </section>
+
+  <section id="scope" class="panel">
+    <h2>What BlanderQA is</h2>
+    <p>BlanderQA is a plain-English Q&A page for Blender 4.0 users. It is designed to help enthusiasts and artists understand common topics such as modeling, modifiers, shading, animation, rigging, rendering, compositing, geometry nodes, the interface and Python basics.</p>
+
+    <h3>Design philosophy</h3>
+    <p>The page is intentionally restrained. BlanderQA is built around source discipline, plain-language explanation and practical signposting. It should help users understand what to try next and how different workflows compare, not force a single way of doing things.</p>
+
+    <h3>Functional overview</h3>
+    <ul>
+      <li>The chat sends the user's question and recent temporary browser-session chat history to the BlanderQA server.</li>
+      <li>The server passes the question to a configured AI service with instructions to use only the validated Blender 4.0 source list.</li>
+      <li>The page includes starter prompts, common questions, topic lookup by Blender area, display controls and browser-side PDF export.</li>
+      <li>Starter prompts and common questions move focus back to the chat panel, show status text, and reveal the generated answer where it appears.</li>
+      <li>The topic lookup sends a Blender subject to the BlanderQA server, which returns official manuals, release notes and other Blender Foundation resources.</li>
+      <li>After a successful topic lookup, limited official resource context may be sent with later chat questions so answers can point to the relevant Blender docs.</li>
+      <li>Cloudflare Turnstile may be used to reduce automated abuse before chat is enabled.</li>
+    </ul>
+  </section>
+
+  <section id="use-policy" class="panel">
+    <h2>Use policy and disclaimer</h2>
+
+    <h3>Use BlanderQA of your own accord</h3>
+    <p>By using BlanderQA, you choose to ask questions of your own accord. You remain responsible for deciding whether to act, what to check, and whether to cross-check the answer against the Blender manual or other official Blender sources. The page cannot know your project goals, scene setup, add-ons, render engine, hardware, version, or artistic intent.</p>
+
+    <h3>Not a substitute for the manual</h3>
+    <p>BlanderQA does not replace the Blender 4.0 Reference Manual, official release notes, API documentation or Blender Foundation announcements. It is a helper for explanation and navigation. If an answer conflicts with the official docs, the official docs win.</p>
+    <p>The chatbot instructions explicitly require it to prefer official Blender 4.0 resources, to identify version-specific behavior, and to note when more than one workflow may be valid. It should explain trade-offs rather than pretending there is only one correct method.</p>
+
+    <h3>Workflow comparison</h3>
+    <p>Many Blender tasks can be done several ways. BlanderQA should explain alternatives where appropriate, for example non-destructive modifiers versus direct mesh edits, nodes versus traditional settings, or baking versus live shading. If a user asks for a method, the bot may say something like, “have you considered doing it a different way, such as ...?” when that is genuinely helpful.</p>
+
+    <h3>Limitation of advice</h3>
+    <p>Do not rely on BlanderQA alone for production-critical decisions. A short answer can miss context such as object scale, topology, render engine, color management, animation intent or add-on behavior. Check the manual and test in your own file before committing to a workflow.</p>
+
+    <h3>Safety and support</h3>
+    <p>BlanderQA is not an emergency service and is not intended for crisis situations. If you encounter account, licensing or payment issues in Blender services, use official Blender Foundation support channels. If a question is about third-party assets, add-ons or services, verify the relevant vendor's own documentation and terms.</p>
+  </section>
+
+  <section id="privacy" class="panel">
+    <h2>Privacy policy</h2>
+
+    <h3>Data controller and contact</h3>
+    <p>The data controller for BlanderQA is <strong>James Rowson</strong>. For privacy questions, correction requests or communication preferences, use the <a href="__CONTACT_PAGE_PATH__">Jahosi contact page</a>.</p>
+
+    <h3>Data you should not provide</h3>
+    <p>Do not enter passwords, API keys, account details, personal documents, payment details, client files, private project links or any other sensitive information into the chat.</p>
+    <p>BlanderQA warns users not to enter sensitive information. It is not technically possible to stop every user from doing so, especially if they type sensitive information into free text. If the AI detects or appears to detect sensitive information, it is instructed to warn the user, avoid repeating the details, and provide only general guidance or ask the user to rephrase without sensitive information.</p>
+
+    <h3>Information processed when using the page</h3>
+    <ul>
+      <li><strong>Chat question:</strong> the text you submit is sent to the BlanderQA server and then to the configured AI service so an answer can be generated.</li>
+      <li><strong>Recent chat history:</strong> recent messages are held in your browser session storage and sent with later questions to preserve short-term context.</li>
+      <li><strong>Topic lookup context:</strong> after a successful topic lookup, the page may send returned official Blender resource links with later chat questions so the bot can give more targeted signposting.</li>
+      <li><strong>Session token:</strong> a temporary browser-session token may be stored in session storage after Turnstile verification.</li>
+      <li><strong>Display settings:</strong> high-contrast and large-font preferences may be stored in browser local storage.</li>
+      <li><strong>PDF export:</strong> exports are generated in your browser from the conversation visible in that browser session.</li>
+      <li><strong>Security and service data:</strong> standard web request metadata such as IP address, time, URL, user agent and error information may be processed by the server, hosting provider, rate limiter or security tools.</li>
+      <li><strong>Turnstile:</strong> if enabled, Cloudflare Turnstile may process browser, device and interaction signals to check for abuse.</li>
+      <li><strong>Third-party scripts:</strong> the page loads Cloudflare Turnstile and jsDelivr-hosted PDF export code. Those third-party services may receive ordinary browser request metadata such as IP address, user agent, requested URL and timing information.</li>
+    </ul>
+
+    <h3>Purpose of processing</h3>
+    <p>Information is processed to provide the Q&A function, preserve temporary context in the user's browser session, generate topic signposting, reduce abuse, troubleshoot the service and improve safe operation. BlanderQA is not designed to build profiles, target advertising or sell user data.</p>
+
+    <h3>Storage and retention</h3>
+    <p>BlanderQA does not maintain a user account or permanent chat database for this page. The AI has no persistent memory of user inputs beyond the temporary session context needed to answer within the current browser session. Chat history is stored in browser session storage on the user's device for the current browser session. Display preferences are stored in local storage until cleared by the user. Server-side processing is request-based, although hosting, security, rate-limiting or upstream service logs may retain technical metadata according to their own operational settings.</p>
+
+    <h3>Sharing with service providers</h3>
+    <p>To operate the page, information may be processed by the hosting environment, the configured AI service, Blender Foundation reference pages used as official signposts, Cloudflare Turnstile if enabled, jsDelivr for the PDF export library, and the user's browser. External reference links open third-party sites; those sites have their own privacy policies and are not controlled by Jahosi.</p>
+
+    <h3>User controls</h3>
+    <ul>
+      <li>Do not submit sensitive information.</li>
+      <li>Close the browser tab or clear browser session storage to remove local chat history for the current session.</li>
+      <li>Clear local storage to remove display preferences.</li>
+      <li>Use the browser's download/delete controls for any PDF export you create.</li>
+      <li>Use the <a href="__CONTACT_PAGE_PATH__">Jahosi contact page</a> for privacy questions, correction requests or communication preferences.</li>
+    </ul>
+
+    <p class="meta">This policy is guided by UK data protection transparency principles, including the ICO's guidance that people should be informed about collection and use of personal data, purposes, retention and sharing.</p>
+  </section>
+
+  <section id="sources" class="panel">
+    <h2>Sources and freshness</h2>
+    <p>BlanderQA is constrained to a curated source list of official Blender Foundation and Blender Project sources, including the Blender 4.0 Reference Manual, release notes, API docs and official support pages. The source list was last reviewed on <strong>24 June 2026</strong>. Sources can change without notice. BlanderQA will be updated over time as able, but users must check the original source and test the workflow in their own file before acting.</p>
+    <p>Where BlanderQA cannot answer from the validated source list, it should say so and signpost the relevant official Blender source instead of inventing an answer.</p>
+  </section>
+
+  <section id="risk-review" class="panel notice">
+    <h2>Workflow and safety review</h2>
+
+    <h3>User perspective</h3>
+    <ul>
+      <li>The main risk is over-reliance: users may treat a clear AI answer as the only correct workflow.</li>
+      <li>The page now requires a disclaimer acknowledgement before asking the bot a question.</li>
+      <li>Starter and common-question buttons route users to the chat panel and reveal the answer area, reducing the risk that a generated answer appears away from the current viewport.</li>
+      <li>The page provides a return-to-chat control after a conversation has started and the user scrolls away from the chat area.</li>
+      <li>The page repeatedly tells users not to enter sensitive personal or account information. The bot also has instructions to warn users if sensitive information appears in a prompt, but it is not possible to guarantee prevention because users control what they type.</li>
+      <li>The AI has no persistent memory of inputs beyond temporary session context, but submitted text is still processed to generate answers and may be visible in technical or upstream processing flows.</li>
+      <li>The tool should remain careful, plain and source-linked, especially for version-specific behavior, nodes, modifiers, rendering and scripting questions.</li>
+    </ul>
+
+    <h3>QA inspector perspective</h3>
+    <ul>
+      <li>The server-side prompt constrains answers to a validated Blender 4.0 source list and requires references.</li>
+      <li>The server-side prompt explicitly requires refusals and warnings when the answer would depend on an unsupported version, an unofficial source, or speculation about how Blender works.</li>
+      <li>The source list includes official manuals, release notes, API documentation and Blender Foundation pages.</li>
+      <li>The topic lookup is a narrow signposting function, not a knowledge base or community forum replacement.</li>
+      <li>Local context passed to chat is limited to official Blender resource data returned by the lookup, and must not be used to infer unsupported features, hidden behavior or add-on quality.</li>
+      <li>PDF export is user-initiated and browser-side, but users should avoid exporting sensitive content.</li>
+    </ul>
+
+    <h3>Current compliance assessment</h3>
+    <p><strong>Source discipline:</strong> BlanderQA should stay within official Blender resources and should not present unofficial tutorials, forum guesses or outdated version behavior as authoritative.</p>
+    <p><strong>Workflow guidance:</strong> The page should explain that multiple valid workflows may exist and should distinguish between preferences, trade-offs and hard constraints from the manual.</p>
+    <p><strong>Privacy and data protection:</strong> The key risk is users entering sensitive personal or account data despite warnings. The current design mitigates this through warnings, browser-session storage, no account system, no permanent chat database for BlanderQA, and this privacy notice. A fuller legal review should confirm processor/controller roles for the AI provider, hosting provider and Turnstile if the project moves beyond prototype or experimental use.</p>
+  </section>
+
+  <section id="reference-material" class="panel">
+    <h2>Reference material used for this policy</h2>
+    <ul class="source-list">
+      <li><a href="https://ico.org.uk/for-organisations/uk-gdpr-guidance-and-resources/individual-rights/the-right-to-be-informed/" target="_blank" rel="noopener noreferrer">The right to be informed</a> - Information Commissioner's Office. Transparency guidance for privacy information.</li>
+      <li><a href="https://ico.org.uk/for-organisations/uk-gdpr-guidance-and-resources/artificial-intelligence/" target="_blank" rel="noopener noreferrer">Artificial intelligence and data protection</a> - Information Commissioner's Office. Guidance on applying data-protection principles to AI.</li>
+      <li><a href="https://www.gov.uk/data-protection" target="_blank" rel="noopener noreferrer">The UK's data protection legislation</a> - GOV.UK. Overview of UK GDPR and Data Protection Act 2018.</li>
+      <li><a href="https://www.legislation.gov.uk/ukpga/2018/12/contents" target="_blank" rel="noopener noreferrer">Data Protection Act 2018</a> - legislation.gov.uk. Primary legislation.</li>
+      <li><a href="https://www.blender.org/about/" target="_blank" rel="noopener noreferrer">About Blender</a> - Blender Foundation. Official project overview.</li>
+      <li><a href="https://docs.blender.org/manual/en/4.0/" target="_blank" rel="noopener noreferrer">Blender 4.0 Reference Manual</a> - Blender Foundation. Official manual.
+      </li>
+      <li><a href="https://www.blender.org/download/releases/4-0/" target="_blank" rel="noopener noreferrer">Blender 4.0 release notes</a> - Blender Foundation. Official release information.</li>
+      <li><a href="https://docs.blender.org/api/4.0/" target="_blank" rel="noopener noreferrer">Blender 4.0 Python API</a> - Blender Foundation. Official API documentation.</li>
+      <li><a href="https://www.blender.org/support/faq/" target="_blank" rel="noopener noreferrer">Blender support FAQ</a> - Blender Foundation. Official support guidance.</li>
+      <li><a href="https://www.blender.org/download/" target="_blank" rel="noopener noreferrer">Download Blender</a> - Blender Foundation. Official download page.</li>
+    </ul>
+  </section>
+</main>
+
+<footer>
+  version 1.0.0 | Last updated: 24 June 2026 | &copy; 2026 <a href="/">www.jahosi.co.uk</a>
+</footer>
+</body>
+</html>
