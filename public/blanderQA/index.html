@@ -202,12 +202,12 @@ header::after{
   margin:0 auto;
   padding:2rem 1rem 1.6rem;
   position:relative;
-  display:grid;
-  grid-template-columns:minmax(0,1.25fr) minmax(260px,.75fr);
-  gap:1.25rem;
-  align-items:center;
+  min-height:7.25rem;
 }
-.header-copy{min-width:0}
+.header-copy{
+  min-width:0;
+  padding-right:8rem;
+}
 .kicker{
   margin:0 0 .55rem;
   color:#9eeaff;
@@ -334,12 +334,13 @@ h1{
 }
 .header-tools{
   position:absolute;
-  top:.9rem;
+  top:2rem;
   right:1rem;
   display:flex;
-  flex-wrap:wrap;
-  justify-content:flex-end;
-  gap:.5rem;
+  flex-direction:column;
+  align-items:flex-end;
+  justify-content:flex-start;
+  gap:.22rem;
 }
 .wrap{
   max-width:1180px;
@@ -665,18 +666,26 @@ button:hover{
 }
 button:disabled{opacity:.65;cursor:wait;transform:none}
 .toggle-btn{
-  background:rgba(255,255,255,.08);
-  color:#f8fbff;
-  border:1px solid rgba(255,255,255,.18);
+  background:transparent;
+  color:#9eeaff;
+  border:0;
+  border-radius:0;
   box-shadow:none;
-  padding:.45rem .65rem;
+  padding:.05rem 0;
+  text-decoration:underline;
+  text-decoration-thickness:1px;
+  text-underline-offset:4px;
+  text-align:right;
+  font-size:.92rem;
+  font-weight:700;
 }
 .toggle-btn:hover,
 .toggle-btn[aria-pressed="true"]{
-  background:rgba(53,214,255,.16);
   color:#fff;
-  border-color:rgba(53,214,255,.4);
+  background:transparent;
+  border:0;
   box-shadow:none;
+  text-decoration-thickness:2px;
 }
 body.high-contrast button{
   border:2px solid #000;
@@ -686,13 +695,13 @@ body.high-contrast button{
 }
 body.high-contrast button:hover{background:#003078;color:#fff}
 body.high-contrast .toggle-btn{
-  background:#fff;
-  color:#000;
-  border:2px solid #000;
+  background:transparent;
+  color:#003078;
+  border:0;
 }
 body.high-contrast .toggle-btn:hover,
 body.high-contrast .toggle-btn[aria-pressed="true"]{
-  background:#ffdd00;
+  background:transparent;
   color:#000;
 }
 body.high-contrast .export-btn{
@@ -854,7 +863,6 @@ body.high-contrast .resource-form input{
 }
 @media(max-width:900px){
   .header-inner{
-    grid-template-columns:1fr;
     padding-top:3.5rem;
   }
   .hero-visual{min-height:190px}
@@ -863,11 +871,14 @@ body.high-contrast .resource-form input{
 @media(max-width:620px){
   body{font-size:15.5px}
   body.large-font{font-size:18px}
-  .header-inner{padding:3.35rem .75rem .85rem}
+  .header-inner{
+    min-height:6.6rem;
+    padding:4.05rem .75rem .85rem;
+  }
   .header-tools{
-    top:.65rem;
+    top:.72rem;
     right:.75rem;
-    gap:.4rem;
+    gap:.1rem;
     font-size:.88rem;
   }
   h1{font-size:2rem}
@@ -918,7 +929,6 @@ body.high-contrast .resource-form input{
 <header>
   <div class="header-inner">
     <div class="header-copy">
-      <p class="kicker">Blender 4.0 assistant from official sources</p>
       <h1>BlanderQA <span class="byline">by Jahosi</span></h1>
     </div>
 
