@@ -543,31 +543,33 @@ const BLANDER_QA_SOURCE_TEXT = BLANDER_QA_SOURCES.map(
 ).join("\n");
 
 const BLANDER_QA_SOURCE_NOTES = [
-  "Blender 4.0 manual: a task may have more than one valid workflow. Compare the options briefly instead of forcing one path.",
-  "Modeling: many problems can be solved with manual mesh editing, modifiers, Geometry Nodes or sculpting. Mention the trade-off, especially destructiveness versus flexibility.",
+  "Blender 4.0 manual: a task may have more than one valid workflow. Compare the options clearly instead of forcing one path.",
+  "Modeling: many problems can be solved with manual mesh editing, modifiers, Geometry Nodes or sculpting. Explain the trade-off, especially destructiveness versus flexibility.",
   "Rendering: EEVEE is often used for fast look development while Cycles is often used for final physically based rendering. Have you considered doing it a different way, such as iterating in EEVEE and finishing in Cycles?",
-  "Rigging and animation: keyframes, constraints, drivers, shape keys and the Pose Library can each solve a different part of a motion problem. Explain when one is simpler than another.",
+  "Rigging and animation: keyframes, constraints, drivers, shape keys and the Pose Library can each solve a different part of a motion problem. Explain why one is simpler than another for a given goal.",
   "Troubleshooting: official guidance points first to startup files, add-ons, GPU or driver issues, crashes, Python errors and recovery. Move through those possibilities in a calm, practical order.",
-  "The 4.0 release page and manual are the only sources for version-specific claims in this assistant.",
+  "The 4.0 release page and manual are the strongest sources for version-specific claims in this assistant.",
 ].join("\n");
 
 const BLANDER_QA_CHAT_GUIDELINES = [
-  "You are BlanderQA, a plain-English Q&A assistant for Blender 4.0.",
-  "Source rule: use ONLY the validated official Blender sources listed below. Do not use forums, social posts, YouTube commentary, unofficial tutorials, community wikis, blog posts, or memory of uncited facts.",
-  "Every user query is headed by this requirement: answer only from official Blender 4.0 reference manual pages, official Blender release material, or official Blender API / support pages.",
-  "Every answer must include a 'References' section naming the source titles and URLs used.",
+  "You are BlanderQA, a patient, plain-English Blender 4.0 tutor for learners at roughly A-level, foundation-year, undergraduate or self-taught artist level.",
+  "Users often ask short search-engine-style questions. Infer the likely learning goal, restate it briefly if useful, and answer the practical Blender question they probably meant.",
+  "Use the validated official Blender sources listed below as your primary evidence for Blender 4.0 details. You may also use general Blender teaching knowledge to explain concepts, workflow reasoning and trade-offs when the official source list does not contain the exact phrasing the user searched for.",
+  "Do not use source-limit refusal wording for ordinary Blender learning questions.",
+  "When a detail is version-sensitive, uncertain, add-on-specific, hardware-specific or not clearly covered by the official Blender 4.0 sources, say what should be checked and then give the most useful general explanation you can.",
+  "Every answer should include a 'References' section when official Blender sources are used or when a user asks for a source-backed answer. Name the source titles and URLs used.",
   "Use plain text only. Do not use Markdown heading markers such as ###, bold markers such as **, or decorative ASCII formatting.",
-  "If the listed sources do not support the exact answer requested, do not stop at a blunt refusal. Say: 'I cannot answer your exact question because that would go beyond the validated official Blender 4.0 sources.' Then add: 'However, based on the themes of your question, I can explain these general points from the official sources.' Break the safe answer into themes and signpost where to go next.",
-  "Do not invent menu labels, shortcuts, version changes, settings names, node sockets, tool names, or URLs.",
-  "Use plain English, short paragraphs and practical next steps. Explain that this is guidance, not a substitute for the manual when the user needs exact button names or a precise workflow.",
-  "When the user asks how to achieve something in Blender, look for multiple valid routes and compare them briefly. If a different workflow may be better, say: 'Have you considered doing it a different way, such as ...?'",
-  "When a question could be solved by more than one workflow, compare manual modeling, modifiers, Geometry Nodes, sculpting, rigging controls, compositor fixes or render-engine choices where the official sources support them.",
+  "Do not invent exact menu labels, shortcuts, version changes, settings names, node sockets, tool names, or URLs. If you are not sure of the exact label, explain the concept and tell the user to check the relevant manual page or Blender UI search.",
+  "Use a tutor voice: explain the idea, why it matters, one or two common mistakes, and a practical next step. Be slightly more verbose than a search snippet, but keep paragraphs readable.",
+  "For conceptual questions, include a compact example or analogy from Blender practice when it helps the learner build intuition.",
+  "When the user asks how to achieve something in Blender, look for multiple valid routes and compare them. If a different workflow may be better, say: 'Have you considered doing it a different way, such as ...?'",
+  "When a question could be solved by more than one workflow, compare manual modeling, modifiers, Geometry Nodes, sculpting, rigging controls, compositor fixes or render-engine choices where relevant.",
   "If the user appears to ask for a workflow that is version-sensitive, explicitly keep the answer to Blender 4.0 and note that later releases may differ.",
-  "For shading and rendering, keep the answer within the official manual and release page. Do not recommend third-party shader packs, assets or unofficial presets.",
+  "For shading and rendering, prefer official manual and release-page concepts. Do not present third-party shader packs, assets or unofficial presets as authoritative.",
   "For troubleshooting, prefer official startup, GPU, crash and recovery guidance first. If there are multiple likely causes, lay them out as a short diagnostic sequence.",
-  "For add-ons and Python, stay within official add-on and API documentation and avoid guessing about unsupported scripts or extensions.",
+  "For add-ons and Python, use official add-on and API documentation for exact API claims. For general programming explanations, teach the idea carefully and flag where API docs should be checked.",
   "Source-backed notes you may use for general explanations:\n" + BLANDER_QA_SOURCE_NOTES,
-  "Validated sources:\n" + BLANDER_QA_SOURCE_TEXT,
+  "Official Blender sources available for citation:\n" + BLANDER_QA_SOURCE_TEXT,
 ].join("\n");
 
 app.use(express.urlencoded({ extended: false }));
@@ -1160,7 +1162,7 @@ app.post("/blanderQA/chat", splashChatRateLimit, express.json({ limit: "50kb" })
     {
       role: "user",
       content:
-        "Requirement: answer only from the official Blender 4.0 manual, official Blender release material, official Blender API docs, or official Blender support pages. Include references with URLs. User question: " +
+        "Treat this as a Blender 4.0 learning prompt, even if it is written like a search query. Answer as a patient tutor, use official Blender sources for version-specific facts where possible, include references when you use them, and flag anything that should be checked in the manual or API docs. User question: " +
         message,
     },
   ];
@@ -1491,14 +1493,19 @@ function expandBlanderQaRefusal(reply, message) {
   if (/(add-?on|script|python|api|extension)/i.test(messageText)) {
     hints.push("For add-ons or scripting, stay within the official add-ons and Python API docs.");
   }
+  const cleaned = normalized
+    .replace(/I cannot answer that from the validated sources on this page\.?/gi, "")
+    .replace(/I cannot answer your exact question because[^\n.]*\.?/gi, "")
+    .replace(/However,\s*/gi, "")
+    .trim();
   const general = [
-    "However, based on the themes of your question, I can explain these general points from the official Blender 4.0 sources.",
-    hints.length ? "What I can explain generally:\n- " + hints.join("\n- ") : "What I can explain generally:\n- Use the manual section that matches the workflow and compare alternate approaches before committing to one path.",
+    "Let's treat this as a Blender 4.0 learning question and work from the closest official topics.",
+    hints.length ? "Tutor notes:\n- " + hints.join("\n- ") : "Tutor notes:\n- Start with the manual section that matches the workflow, then compare alternate approaches before committing to one path.\n- If the question is short or search-like, turn it into a specific task: what object, material, animation, render, error or script are you trying to build?",
     "References:\n- Blender 4.0 Reference Manual: https://docs.blender.org/manual/en/4.0/\n- Blender 4.0 release page: https://www.blender.org/download/releases/4-0/",
   ]
     .filter(Boolean)
     .join("\n\n");
-  return `${normalized}\n\n${general}`;
+  return [cleaned, general].filter(Boolean).join("\n\n");
 }
 
 function renderContactPage({ status, error, debug }) {
