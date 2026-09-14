@@ -620,7 +620,7 @@ h1{
 .chat-form label{font-weight:800}
 .input-row{
   display:grid;
-  grid-template-columns:minmax(0,1fr) auto;
+  grid-template-columns:minmax(0,1fr) max-content;
   gap:.75rem;
   align-items:stretch;
 }
@@ -919,7 +919,7 @@ body.high-contrast .resource-form input{
   .message.bot{max-width:96%}
   .resource-form{grid-template-columns:1fr}
   .input-row{
-    grid-template-columns:minmax(0,1fr) auto;
+    grid-template-columns:minmax(0,1fr) max-content;
     gap:.55rem;
   }
   button{width:100%}
