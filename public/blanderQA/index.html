@@ -457,6 +457,23 @@ h1{
   padding-left:1.35rem;
 }
 .question-pack-body li{margin:.35rem 0}
+.pack-question-btn{
+  width:100%;
+  border:1px solid transparent;
+  background:transparent;
+  color:#edf6ff;
+  box-shadow:none;
+  padding:.45rem .55rem;
+  text-align:left;
+  font-weight:650;
+}
+.pack-question-btn:hover{
+  transform:none;
+  background:rgba(53,214,255,.10);
+  border-color:rgba(53,214,255,.32);
+  color:#fff;
+  box-shadow:none;
+}
 .question-card{
   color:#edf6ff;
   background:rgba(255,255,255,.055);
@@ -809,6 +826,17 @@ body.high-contrast .message.user{
   color:#000;
   border:2px solid #000;
 }
+body.high-contrast .pack-question-btn{
+  background:#fff;
+  color:#000;
+  border:2px solid transparent;
+  box-shadow:none;
+}
+body.high-contrast .pack-question-btn:hover{
+  background:#ffdd00;
+  color:#000;
+  border-color:#000;
+}
 body.high-contrast textarea,
 body.high-contrast .resource-form input{
   background:#fff;
@@ -950,10 +978,9 @@ body.high-contrast .resource-form input{
   <div class="chat-wrap">
     <section id="ask" class="panel chat-panel" aria-labelledby="qa-title">
       <div class="chat-head">
-        <h2 id="qa-title">Ask the BlanderQA bot a question</h2>
+        <h2 id="qa-title">BlanderQA Bot</h2>
       </div>
       <div id="chat-thread" class="thread" aria-live="polite" aria-label="Q&A conversation">
-        <div class="message bot"><strong>BlanderQA</strong>Ask about Blender 4.0 workflows, not personal data. If there are several valid ways to solve a problem, I should compare them and flag trade-offs. I can point you to official manual pages, release notes and API docs, then suggest a different route if that may be cleaner.</div>
       </div>
       <div id="chat-gate" class="chat-gate" hidden>
         <div class="gate-copy">Complete the Turnstile check to start chatting.</div>
@@ -1012,48 +1039,94 @@ body.high-contrast .resource-form input{
   </details>
 
   <section class="panel panel-pad guided-section" aria-labelledby="packs-title">
-    <h2 id="packs-title">Question packs</h2>
-    <p class="source-scope">Expand a card to see useful Blender questions. The point is to compare workflows, not just to get a single answer.</p>
+    <h2 id="packs-title">Workflow question packs</h2>
+    <p class="source-scope">Expand a pack and choose a question. Each one sends BlanderQA a little context about the workflow area, so the answer can behave more like a tutor than a search result.</p>
     <div class="question-pack-grid">
       <details class="question-pack">
-        <summary>Modeling workflow questions</summary>
+        <summary>Interface, scene setup and working faster</summary>
         <div class="question-pack-body">
-          <p>Useful when deciding whether to edit meshes directly, use modifiers, or move into Geometry Nodes.</p>
+          <p>Useful when Blender feels busy, unfamiliar or hard to navigate while you are trying to keep momentum.</p>
           <ol>
-            <li>Should this object be modeled directly or built from a modifier stack?</li>
-            <li>Would Geometry Nodes make the workflow easier to revise later?</li>
-            <li>What parts of the shape are better done destructively and which are better kept procedural?</li>
-            <li>Is snapping or a transform pivot giving a cleaner result than changing the mesh itself?</li>
-            <li>What should I check if the topology is getting in the way of the shape?</li>
-            <li>What is the simplest official workflow for this result in Blender 4.0?</li>
+            <li><button class="pack-question-btn" type="button" data-question="In the Interface, scene setup and working faster question pack: What is the best official Blender 4.0 route for getting oriented in the interface as a learner, and which areas should I understand first?">Get oriented in the interface</button></li>
+            <li><button class="pack-question-btn" type="button" data-question="In the Interface, scene setup and working faster question pack: How should I use Blender 4.0's search, menus and editors when I cannot remember where a tool is?">Find tools without memorising menus</button></li>
+            <li><button class="pack-question-btn" type="button" data-question="In the Interface, scene setup and working faster question pack: How do transforms, pivots, snapping and orientation settings affect everyday Blender 4.0 work?">Understand transforms, pivots and snapping</button></li>
+            <li><button class="pack-question-btn" type="button" data-question="In the Interface, scene setup and working faster question pack: What should I check before I start building a Blender scene so scale, units, camera and lighting do not cause problems later?">Set up a scene before building</button></li>
+            <li><button class="pack-question-btn" type="button" data-question="In the Interface, scene setup and working faster question pack: How should I think about Blender 4.0 editors, workspaces and panels as parts of one workflow rather than separate screens?">Use editors and workspaces together</button></li>
+            <li><button class="pack-question-btn" type="button" data-question="In the Interface, scene setup and working faster question pack: What is a sensible beginner-to-intermediate checklist before I assume Blender is behaving incorrectly?">Check before blaming Blender</button></li>
+            <li><button class="pack-question-btn" type="button" data-question="In the Interface, scene setup and working faster question pack: How do I organise objects, collections and names in Blender 4.0 so a project remains understandable later?">Keep the scene organised</button></li>
+            <li><button class="pack-question-btn" type="button" data-question="In the Interface, scene setup and working faster question pack: What common workflow habits make Blender 4.0 feel faster for a learner without relying on unofficial shortcuts?">Build faster workflow habits</button></li>
           </ol>
         </div>
       </details>
       <details class="question-pack">
-        <summary>Shading and rendering questions</summary>
+        <summary>Modeling, modifiers and Geometry Nodes</summary>
         <div class="question-pack-body">
-          <p>Useful when comparing Principled BSDF, EEVEE, Cycles and compositing.</p>
+          <p>Useful when choosing between direct mesh work, non-destructive modifiers, sculpting and procedural node workflows.</p>
           <ol>
-            <li>Is this a look-dev problem or a final-render problem?</li>
-            <li>Should I use EEVEE to iterate quickly and Cycles to finish?</li>
-            <li>What does the Blender 4.0 Principled BSDF add or change?</li>
-            <li>Should color management or lighting be adjusted first?</li>
-            <li>Could the compositor solve this faster than reworking the material?</li>
-            <li>Is a different workflow better than trying to perfect the shader immediately?</li>
+            <li><button class="pack-question-btn" type="button" data-question="In the Modeling, modifiers and Geometry Nodes question pack: Should this object be modeled directly or built from a modifier stack in Blender 4.0? Compare the trade-offs like a tutor.">Direct modeling or modifier stack?</button></li>
+            <li><button class="pack-question-btn" type="button" data-question="In the Modeling, modifiers and Geometry Nodes question pack: When would Geometry Nodes make a Blender 4.0 modeling workflow easier to revise later?">When Geometry Nodes helps</button></li>
+            <li><button class="pack-question-btn" type="button" data-question="In the Modeling, modifiers and Geometry Nodes question pack: What parts of a shape are usually better kept procedural, and what parts are reasonable to edit destructively?">Procedural or destructive edits?</button></li>
+            <li><button class="pack-question-btn" type="button" data-question="In the Modeling, modifiers and Geometry Nodes question pack: How do I decide whether snapping, transform settings or pivot changes solve my modeling problem better than editing the mesh?">Use transforms before mesh edits</button></li>
+            <li><button class="pack-question-btn" type="button" data-question="In the Modeling, modifiers and Geometry Nodes question pack: What should I check if topology is getting in the way of a shape in Blender 4.0?">Topology getting in the way</button></li>
+            <li><button class="pack-question-btn" type="button" data-question="In the Modeling, modifiers and Geometry Nodes question pack: How should a learner think about curves, meshes and text objects when choosing the simplest Blender 4.0 workflow?">Curves, meshes or text objects?</button></li>
+            <li><button class="pack-question-btn" type="button" data-question="In the Modeling, modifiers and Geometry Nodes question pack: When is sculpting a better starting point than mesh editing or Geometry Nodes in Blender 4.0?">When sculpting is the right start</button></li>
+            <li><button class="pack-question-btn" type="button" data-question="In the Modeling, modifiers and Geometry Nodes question pack: What is a sensible Blender 4.0 workflow for blocking out, refining and keeping a model editable?">Block out, refine, keep editable</button></li>
+            <li><button class="pack-question-btn" type="button" data-question="In the Modeling, modifiers and Geometry Nodes question pack: What common beginner mistakes make a Blender 4.0 model hard to shade, rig or render later?">Avoid downstream modeling mistakes</button></li>
+            <li><button class="pack-question-btn" type="button" data-question="In the Modeling, modifiers and Geometry Nodes question pack: What is the simplest official workflow for choosing a modeling method in Blender 4.0 when I only know the result I want?">Choose a modeling method</button></li>
           </ol>
         </div>
       </details>
       <details class="question-pack">
-        <summary>Animation and troubleshooting questions</summary>
+        <summary>Materials, lighting, rendering and compositing</summary>
         <div class="question-pack-body">
-          <p>Useful when choosing between keyframes, constraints, drivers, shape keys and recovery steps.</p>
+          <p>Useful when the image does not look right and you need to separate material, light, render-engine and post-processing problems.</p>
           <ol>
-            <li>Should the motion be built from keyframes or constrained controls?</li>
-            <li>Would a driver or a shape key be simpler here?</li>
-            <li>What is the official troubleshooting order for startup, GPU and crash problems?</li>
-            <li>Should I disable add-ons before chasing a deeper bug?</li>
-            <li>Is this a file problem, an add-on problem or a graphics problem?</li>
-            <li>What should I recover first if Blender closed unexpectedly?</li>
+            <li><button class="pack-question-btn" type="button" data-question="In the Materials, lighting, rendering and compositing question pack: Is my Blender 4.0 problem more likely a material problem, a lighting problem, a render setting problem or a color management problem?">Material, light or render setting?</button></li>
+            <li><button class="pack-question-btn" type="button" data-question="In the Materials, lighting, rendering and compositing question pack: When should I use EEVEE to iterate and Cycles to finish in Blender 4.0?">EEVEE for iteration, Cycles for finish</button></li>
+            <li><button class="pack-question-btn" type="button" data-question="In the Materials, lighting, rendering and compositing question pack: What changed in the Blender 4.0 Principled BSDF, and how should a learner think about it?">Principled BSDF as a learner</button></li>
+            <li><button class="pack-question-btn" type="button" data-question="In the Materials, lighting, rendering and compositing question pack: Should I fix my scene by changing the shader, the lights, the camera, color management or the compositor?">Choose the right place to fix the image</button></li>
+            <li><button class="pack-question-btn" type="button" data-question="In the Materials, lighting, rendering and compositing question pack: How should I build a material in Blender 4.0 without overcomplicating the node setup too early?">Build materials without overcomplicating</button></li>
+            <li><button class="pack-question-btn" type="button" data-question="In the Materials, lighting, rendering and compositing question pack: What does the compositor do in Blender 4.0, and when is it better than changing the material itself?">Use the compositor at the right time</button></li>
+            <li><button class="pack-question-btn" type="button" data-question="In the Materials, lighting, rendering and compositing question pack: How should I troubleshoot noise, slow renders or unexpected appearance in a Blender 4.0 render?">Troubleshoot render quality and speed</button></li>
+            <li><button class="pack-question-btn" type="button" data-question="In the Materials, lighting, rendering and compositing question pack: How do I move from viewport look development to a final render workflow in Blender 4.0?">Move from viewport to final render</button></li>
+            <li><button class="pack-question-btn" type="button" data-question="In the Materials, lighting, rendering and compositing question pack: What common shading mistakes should a Blender 4.0 learner check before adding more nodes?">Common shading mistakes</button></li>
+            <li><button class="pack-question-btn" type="button" data-question="In the Materials, lighting, rendering and compositing question pack: Have you considered doing this a different way, such as fixing lighting or compositing before rebuilding the shader?">Consider a different image workflow</button></li>
+          </ol>
+        </div>
+      </details>
+      <details class="question-pack">
+        <summary>Animation, rigging and motion design</summary>
+        <div class="question-pack-body">
+          <p>Useful when deciding whether motion should come from keyframes, constraints, drivers, shape keys or rig controls.</p>
+          <ol>
+            <li><button class="pack-question-btn" type="button" data-question="In the Animation, rigging and motion design question pack: Should the motion be built from keyframes, constraints, drivers or shape keys in Blender 4.0? Compare them as a tutor.">Keyframes, constraints, drivers or shape keys?</button></li>
+            <li><button class="pack-question-btn" type="button" data-question="In the Animation, rigging and motion design question pack: When is a simple keyframed animation better than building a complex rig in Blender 4.0?">When simple keyframes are enough</button></li>
+            <li><button class="pack-question-btn" type="button" data-question="In the Animation, rigging and motion design question pack: How do constraints help control motion, and when do they become too much for a Blender 4.0 learner?">Use constraints without overbuilding</button></li>
+            <li><button class="pack-question-btn" type="button" data-question="In the Animation, rigging and motion design question pack: What are drivers useful for in Blender 4.0, and what should I understand before using them?">Understand drivers before using them</button></li>
+            <li><button class="pack-question-btn" type="button" data-question="In the Animation, rigging and motion design question pack: When are shape keys a better solution than bones or modifiers in Blender 4.0?">When shape keys fit best</button></li>
+            <li><button class="pack-question-btn" type="button" data-question="In the Animation, rigging and motion design question pack: How should I use the Graph Editor to diagnose timing, easing and unwanted motion in Blender 4.0?">Read motion in the Graph Editor</button></li>
+            <li><button class="pack-question-btn" type="button" data-question="In the Animation, rigging and motion design question pack: How do armatures and bone collections fit into a tidy Blender 4.0 rigging workflow?">Keep rigs understandable</button></li>
+            <li><button class="pack-question-btn" type="button" data-question="In the Animation, rigging and motion design question pack: What should I check when an animated object moves unexpectedly in Blender 4.0?">Diagnose unexpected movement</button></li>
+            <li><button class="pack-question-btn" type="button" data-question="In the Animation, rigging and motion design question pack: How can I plan animation controls before adding lots of keyframes, constraints or drivers?">Plan controls before animating</button></li>
+            <li><button class="pack-question-btn" type="button" data-question="In the Animation, rigging and motion design question pack: Have you considered doing this a different way, such as using a constraint or shape key instead of manually keyframing every change?">Consider a cleaner motion workflow</button></li>
+          </ol>
+        </div>
+      </details>
+      <details class="question-pack">
+        <summary>Troubleshooting, files, assets and Python</summary>
+        <div class="question-pack-body">
+          <p>Useful when something breaks, a file becomes messy, or a workflow may need add-ons, scripting or the Python API.</p>
+          <ol>
+            <li><button class="pack-question-btn" type="button" data-question="In the Troubleshooting, files, assets and Python question pack: What is the official Blender 4.0 troubleshooting order for startup, GPU, crash and recovery problems?">Official troubleshooting order</button></li>
+            <li><button class="pack-question-btn" type="button" data-question="In the Troubleshooting, files, assets and Python question pack: Should I disable add-ons, reset startup settings or check graphics drivers first when Blender 4.0 acts strangely?">Add-ons, startup or graphics?</button></li>
+            <li><button class="pack-question-btn" type="button" data-question="In the Troubleshooting, files, assets and Python question pack: How do I tell whether a Blender 4.0 problem is caused by the file, the interface state, an add-on, Python or hardware?">Find the likely source of a problem</button></li>
+            <li><button class="pack-question-btn" type="button" data-question="In the Troubleshooting, files, assets and Python question pack: What should I recover first if Blender 4.0 closes unexpectedly, and how should I protect the file before experimenting?">Recover and protect a project file</button></li>
+            <li><button class="pack-question-btn" type="button" data-question="In the Troubleshooting, files, assets and Python question pack: How do Blender 4.0 blend files, data-blocks and assets relate to keeping a project tidy?">Understand files, data-blocks and assets</button></li>
+            <li><button class="pack-question-btn" type="button" data-question="In the Troubleshooting, files, assets and Python question pack: When should I use an add-on, a small script or the Blender Python API for a repetitive task?">Add-on, script or API?</button></li>
+            <li><button class="pack-question-btn" type="button" data-question="In the Troubleshooting, files, assets and Python question pack: What should a learner know before running Python code or installing add-ons in Blender 4.0?">Use Python and add-ons carefully</button></li>
+            <li><button class="pack-question-btn" type="button" data-question="In the Troubleshooting, files, assets and Python question pack: How can I use official Blender 4.0 documentation to debug an error message without relying only on forum answers?">Debug using official docs</button></li>
+            <li><button class="pack-question-btn" type="button" data-question="In the Troubleshooting, files, assets and Python question pack: What common file organisation mistakes cause Blender projects to become hard to reuse or share?">Avoid messy project files</button></li>
+            <li><button class="pack-question-btn" type="button" data-question="In the Troubleshooting, files, assets and Python question pack: Have you considered doing this a different way, such as using an existing add-on or manual workflow before writing custom Python?">Consider a non-code route first</button></li>
           </ol>
         </div>
       </details>
