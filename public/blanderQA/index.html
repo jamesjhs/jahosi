@@ -104,6 +104,7 @@
   --focus:#35d6ff;
   --shadow:0 22px 70px rgba(0,0,0,.38);
   --glow:0 0 32px rgba(53,214,255,.20);
+  --header-offset:5.25rem;
 }
 body.high-contrast{
   color-scheme:light;
@@ -130,7 +131,10 @@ body.high-contrast{
   --glow:none;
 }
 *{box-sizing:border-box}
-html{scroll-behavior:smooth}
+html{
+  scroll-behavior:smooth;
+  scroll-padding-top:var(--header-offset);
+}
 body{
   margin:0;
   min-height:100vh;
@@ -169,7 +173,7 @@ a:focus,button:focus,input:focus,textarea:focus,summary:focus{
   position:absolute;
   left:.75rem;
   top:.75rem;
-  z-index:20;
+  z-index:40;
   transform:translateY(-160%);
   background:#fff;
   color:#000;
@@ -180,7 +184,9 @@ a:focus,button:focus,input:focus,textarea:focus,summary:focus{
 .skip-link:focus{transform:translateY(0)}
 header{
   color:#fff;
-  position:relative;
+  position:sticky;
+  top:0;
+  z-index:30;
   overflow:hidden;
   border-bottom:1px solid var(--line);
   background:
@@ -374,13 +380,13 @@ h1{
   width:100%;
   max-width:1180px;
   margin:0 auto 1rem;
-  scroll-margin-top:1rem;
+  scroll-margin-top:var(--header-offset);
 }
 .collapsible-tool{
   width:100%;
   max-width:980px;
   margin:0 auto 1rem;
-  scroll-margin-top:1rem;
+  scroll-margin-top:var(--header-offset);
 }
 .collapsible-tool{
   padding:0;
@@ -888,6 +894,7 @@ body.high-contrast .resource-form input{
 @media(max-width:620px){
   body{font-size:15.5px}
   body.large-font{font-size:18px}
+  :root{--header-offset:4.5rem}
   .header-inner{padding:.7rem .75rem}
   .header-tools{
     right:.75rem;
@@ -1814,7 +1821,7 @@ body.high-contrast .resource-form input{
       resetTurnstile();
       setFormNote("");
       clearElement(thread);
-      appendMessage("assistant", "What would you like to learn today?");
+      appendMessage("assistant", "Hi! What would you like to learn today?");
       setChatInputBlank();
       randomizeStarterQuestion();
       updateGate();
