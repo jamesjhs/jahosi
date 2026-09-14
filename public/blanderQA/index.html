@@ -636,6 +636,9 @@ textarea{
   font:inherit;
   box-shadow:inset 0 1px 0 rgba(255,255,255,.04);
 }
+textarea.has-starter-example{
+  color:var(--muted);
+}
 textarea:focus,.resource-form input:focus{
   border-color:var(--cyan);
   box-shadow:0 0 0 4px rgba(53,214,255,.12);
@@ -698,12 +701,12 @@ body.high-contrast .toggle-btn[aria-pressed="true"]{
   background:transparent;
   color:#000;
 }
-body.high-contrast .export-btn{
+body.high-contrast .text-action-btn{
   background:transparent;
   color:#003078;
   border:0;
 }
-body.high-contrast .export-btn:hover{background:transparent;color:#003078}
+body.high-contrast .text-action-btn:hover{background:transparent;color:#003078}
 .chat-actions{
   display:flex;
   flex-direction:column;
@@ -716,7 +719,14 @@ body.high-contrast .export-btn:hover{background:transparent;color:#003078}
   justify-content:flex-end;
   gap:.75rem;
 }
-.export-btn{
+.secondary-actions{
+  display:flex;
+  flex-wrap:wrap;
+  align-items:center;
+  justify-content:flex-end;
+  gap:.75rem;
+}
+.text-action-btn{
   background:transparent;
   color:#9eeaff;
   border:0;
@@ -727,7 +737,7 @@ body.high-contrast .export-btn:hover{background:transparent;color:#003078}
   font-size:.94rem;
   box-shadow:none;
 }
-.export-btn:hover{
+.text-action-btn:hover{
   background:transparent;
   color:#fff;
   box-shadow:none;
@@ -910,13 +920,13 @@ body.high-contrast .resource-form input{
     right:.75rem;
     bottom:calc(.75rem + env(safe-area-inset-bottom));
   }
-  .toggle-btn,.export-btn{width:auto}
+  .toggle-btn,.text-action-btn{width:auto}
   .chat-actions{align-items:stretch}
   .ask-row{
     flex-direction:column;
     align-items:stretch;
   }
-  .export-btn{align-self:flex-end}
+  .secondary-actions{align-self:flex-end}
 }
 @media(max-width:360px){
   .header-tools{
@@ -950,8 +960,7 @@ body.high-contrast .resource-form input{
         <div class="message bot"><strong>BlanderQA</strong>What would you like to learn today?</div>
       </div>
       <form id="chat-form" class="chat-form">
-        <label for="chat-input">Your question</label>
-        <textarea id="chat-input" maxlength="1000" autocomplete="off" placeholder="Ask a Blender 4.0 workflow question..."></textarea>
+        <textarea id="chat-input" maxlength="1000" autocomplete="off" aria-label="Your question" placeholder=""></textarea>
         <div class="input-row">
           <div class="chat-actions">
             <div class="ask-row">
@@ -960,7 +969,10 @@ body.high-contrast .resource-form input{
               </div>
               <button id="chat-send" type="submit">Ask</button>
             </div>
-            <button id="export-pdf" class="export-btn" type="button">Export PDF</button>
+            <div class="secondary-actions">
+              <button id="clear-chat" class="text-action-btn" type="button">Clear the chat</button>
+              <button id="export-pdf" class="text-action-btn" type="button">Export PDF</button>
+            </div>
             <p id="form-note" class="form-note" hidden></p>
           </div>
         </div>
@@ -1206,6 +1218,7 @@ body.high-contrast .resource-form input{
   const form = document.getElementById("chat-form");
   const input = document.getElementById("chat-input");
   const send = document.getElementById("chat-send");
+  const clearChat = document.getElementById("clear-chat");
   const exportPdf = document.getElementById("export-pdf");
   const chatPanel = document.getElementById("ask");
   const formNote = document.getElementById("form-note");
@@ -1243,7 +1256,27 @@ body.high-contrast .resource-form input{
       link.rel = "noopener noreferrer";
     });
   }
-  function randomizeQuestionPlaceholder(){
+  function clearStarterExample(){
+    if (!input || !input.classList.contains("has-starter-example")) return;
+    input.value = "";
+    input.placeholder = "";
+    input.classList.remove("has-starter-example");
+    delete input.dataset.suggestedQuestion;
+  }
+  function setChatInputBlank(){
+    if (!input) return;
+    input.value = "";
+    input.placeholder = "";
+    input.classList.remove("has-starter-example");
+    delete input.dataset.suggestedQuestion;
+  }
+  function getQuestionForSubmit(){
+    if (input && input.classList.contains("has-starter-example") && input.dataset.suggestedQuestion) {
+      return input.dataset.suggestedQuestion.trim();
+    }
+    return input ? input.value.trim() : "";
+  }
+  function randomizeStarterQuestion(){
     if (!input || input.value.trim() || history.length) return;
     const questions = Array.from(document.querySelectorAll(".pack-question-btn[data-question]"))
       .map(function(button){return button.getAttribute("data-question") || "";})
@@ -1253,7 +1286,10 @@ body.high-contrast .resource-form input{
       .filter(Boolean);
     if (!questions.length) return;
     const selected = questions[Math.floor(Math.random() * questions.length)];
-    input.placeholder = "For example: " + selected;
+    input.value = "Type your question, e.g.: " + selected;
+    input.placeholder = "";
+    input.dataset.suggestedQuestion = selected;
+    input.classList.add("has-starter-example");
   }
 
   function getSessionToken(){
@@ -1273,6 +1309,9 @@ body.high-contrast .resource-form input{
   }
   function storeHistory(){
     try{sessionStorage.setItem(CHAT_HISTORY_STORAGE_KEY, JSON.stringify(history.slice(-8)));}catch{}
+  }
+  function clearStoredHistory(){
+    try{sessionStorage.removeItem(CHAT_HISTORY_STORAGE_KEY);}catch{}
   }
   function setFormNote(message){
     if (!formNote) return;
@@ -1368,6 +1407,7 @@ body.high-contrast .resource-form input{
   function setBusy(isBusy){
     send.disabled = isBusy;
     input.disabled = isBusy;
+    if (clearChat) clearChat.disabled = isBusy;
     send.textContent = isBusy ? "Checking sources..." : "Ask";
   }
   function setResourceBusy(isBusy){
@@ -1672,7 +1712,7 @@ body.high-contrast .resource-form input{
     appendMessage("user", question);
     history.push({role:"user", content:question});
     storeHistory();
-    input.value = "";
+    setChatInputBlank();
     setBusy(true);
     const thinkingMessage = appendMessage("assistant", "Thinking...");
     thinkingMessage.classList.add("thinking");
@@ -1731,7 +1771,7 @@ body.high-contrast .resource-form input{
 
   form.addEventListener("submit", function(event){
     event.preventDefault();
-    askQuestion(input.value.trim());
+    askQuestion(getQuestionForSubmit());
   });
   contrastToggle.addEventListener("click", function(){
     updateDisplayOption("highContrast");
@@ -1743,6 +1783,28 @@ body.high-contrast .resource-form input{
     event.preventDefault();
     lookupLocalSources(resourceInput.value.trim());
   });
+  input.addEventListener("focus", clearStarterExample);
+  input.addEventListener("input", function(){
+    if (input.classList.contains("has-starter-example")) clearStarterExample();
+  });
+  if (clearChat) {
+    clearChat.addEventListener("click", function(){
+      const confirmed = window.confirm("Clear this chat and start fresh?");
+      if (!confirmed) return;
+      history = [];
+      localChatContext = null;
+      clearStoredHistory();
+      clearSessionToken();
+      resetTurnstile();
+      setFormNote("");
+      clearElement(thread);
+      appendMessage("assistant", "What would you like to learn today?");
+      setChatInputBlank();
+      randomizeStarterQuestion();
+      updateGate();
+      revealChat("start");
+    });
+  }
   exportPdf.addEventListener("click", exportChatPdf);
   if (backToChat) {
     backToChat.addEventListener("click", function(){
@@ -1766,6 +1828,7 @@ body.high-contrast .resource-form input{
   });
   document.querySelectorAll("[data-question]").forEach(function(button){
     button.addEventListener("click", function(){
+      setChatInputBlank();
       input.value = button.getAttribute("data-question") || "";
       revealChat("start");
       input.focus({preventScroll:true});
@@ -1774,6 +1837,7 @@ body.high-contrast .resource-form input{
   });
   document.querySelectorAll("[data-prompt]").forEach(function(button){
     button.addEventListener("click", function(){
+      setChatInputBlank();
       input.value = button.getAttribute("data-prompt") || "";
       if (startTool) startTool.open = false;
       revealChat("start");
@@ -1782,7 +1846,7 @@ body.high-contrast .resource-form input{
     });
   });
   applyDisplayOptions(loadDisplayOptions());
-  randomizeQuestionPlaceholder();
+  randomizeStarterQuestion();
   markExternalLinks();
   updateGate();
   scheduleTurnstile();
