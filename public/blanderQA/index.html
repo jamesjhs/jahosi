@@ -619,10 +619,10 @@ h1{
 }
 .chat-form label{font-weight:800}
 .input-row{
-  display:flex;
-  justify-content:flex-end;
+  display:grid;
+  grid-template-columns:minmax(0,1fr) auto;
   gap:.75rem;
-  align-items:end;
+  align-items:stretch;
 }
 textarea{
   width:100%;
@@ -711,13 +711,18 @@ body.high-contrast .text-action-btn:hover{background:transparent;color:#003078}
   display:flex;
   flex-direction:column;
   align-items:flex-end;
+  justify-content:flex-end;
   gap:.5rem;
+  min-width:7rem;
 }
 .ask-row{
   display:flex;
   align-items:center;
   justify-content:flex-end;
   gap:.75rem;
+}
+.ask-row #chat-send{
+  min-width:6.5rem;
 }
 .secondary-actions{
   display:flex;
@@ -913,7 +918,10 @@ body.high-contrast .resource-form input{
   .message{max-width:92%;padding:.7rem .75rem}
   .message.bot{max-width:96%}
   .resource-form{grid-template-columns:1fr}
-  .input-row{display:block}
+  .input-row{
+    grid-template-columns:minmax(0,1fr) auto;
+    gap:.55rem;
+  }
   button{width:100%}
   .back-to-chat{
     width:auto;
@@ -921,11 +929,15 @@ body.high-contrast .resource-form input{
     bottom:calc(.75rem + env(safe-area-inset-bottom));
   }
   .toggle-btn,.text-action-btn{width:auto}
-  .chat-actions{align-items:stretch}
-  .ask-row{
-    flex-direction:column;
-    align-items:stretch;
+  .chat-actions{
+    align-items:flex-end;
+    min-width:5.75rem;
   }
+  .ask-row{
+    flex-direction:row;
+    align-items:center;
+  }
+  .ask-row #chat-send{width:auto;min-width:5.75rem}
   .secondary-actions{align-self:flex-end}
 }
 @media(max-width:360px){
@@ -960,21 +972,21 @@ body.high-contrast .resource-form input{
         <div class="message bot"><strong>BlanderQA</strong>What would you like to learn today?</div>
       </div>
       <form id="chat-form" class="chat-form">
-        <textarea id="chat-input" maxlength="1000" autocomplete="off" aria-label="Your question" placeholder=""></textarea>
         <div class="input-row">
-          <div class="chat-actions">
-            <div class="ask-row">
-              <div id="chat-gate" class="chat-gate" hidden>
-                <div id="chat-turnstile" class="chat-turnstile"></div>
-              </div>
-              <button id="chat-send" type="submit">Ask</button>
+          <textarea id="chat-input" maxlength="1000" autocomplete="off" aria-label="Your question" placeholder=""></textarea>
+          <div class="ask-row">
+            <div id="chat-gate" class="chat-gate" hidden>
+              <div id="chat-turnstile" class="chat-turnstile"></div>
             </div>
+            <button id="chat-send" type="submit">Ask</button>
+          </div>
+        </div>
+        <div class="chat-actions">
             <div class="secondary-actions">
               <button id="clear-chat" class="text-action-btn" type="button">Clear the chat</button>
               <button id="export-pdf" class="text-action-btn" type="button">Export PDF</button>
             </div>
             <p id="form-note" class="form-note" hidden></p>
-          </div>
         </div>
       </form>
     </section>
@@ -1671,6 +1683,7 @@ body.high-contrast .resource-form input{
     if (!window.turnstile || typeof window.turnstile.render !== "function") return;
     turnstileWidgetId = window.turnstile.render(container, {
       sitekey: TURNSTILE_SITE_KEY,
+      size: window.matchMedia("(max-width: 620px)").matches ? "compact" : "normal",
       callback: function(token){
         turnstileToken = token || "";
         updateGate();
