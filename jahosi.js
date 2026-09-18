@@ -107,6 +107,8 @@ const SITEMAP_PATHS = [
   "/splash/appendices.htm",
   "/socialQA/",
   "/socialQA/policy.html",
+  "/teachMe/",
+  "/teachMe/policy.html",
 ];
 
 const MAX_REQUESTS_PER_WINDOW = 5;
@@ -572,6 +574,90 @@ const BLANDER_QA_CHAT_GUIDELINES = [
   "Official Blender sources available for citation:\n" + BLANDER_QA_SOURCE_TEXT,
 ].join("\n");
 
+const TEACH_ME_SOURCES = [
+  {
+    title: "National curriculum in England: primary curriculum",
+    organisation: "Department for Education / GOV.UK",
+    url: "https://www.gov.uk/government/publications/national-curriculum-in-england-primary-curriculum",
+    scope: "Statutory primary national curriculum programmes of study and attainment targets for maintained schools in England.",
+  },
+  {
+    title: "Development Matters",
+    organisation: "Department for Education / GOV.UK",
+    url: "https://www.gov.uk/government/publications/development-matters--2",
+    scope: "Non-statutory curriculum guidance for the early years foundation stage.",
+  },
+  {
+    title: "The reading framework",
+    organisation: "Department for Education / GOV.UK",
+    url: "https://www.gov.uk/government/publications/the-reading-framework-teaching-the-foundations-of-literacy",
+    scope: "Teaching the foundations of literacy, including reading, phonics and early language.",
+  },
+  {
+    title: "Statutory framework for the early years foundation stage",
+    organisation: "Department for Education / GOV.UK",
+    url: "https://www.gov.uk/government/publications/early-years-foundation-stage-framework--2",
+    scope: "Statutory standards for learning, development and care in early years settings.",
+  },
+  {
+    title: "Teaching mathematics in primary schools",
+    organisation: "Department for Education and NCETM / GOV.UK",
+    url: "https://www.gov.uk/government/publications/teaching-mathematics-in-primary-schools",
+    scope: "DfE and NCETM guidance for teaching mathematics in key stages 1 and 2.",
+  },
+  {
+    title: "Working with Parents to Support Children's Learning",
+    organisation: "Education Endowment Foundation",
+    url: "https://educationendowmentfoundation.org.uk/education-evidence/guidance-reports/supporting-parents",
+    scope: "Evidence-informed guidance for supporting parents and home learning.",
+  },
+  {
+    title: "Information for parents: 2024 national curriculum tests at the end of key stage 2",
+    organisation: "Standards and Testing Agency / GOV.UK",
+    url: "https://www.gov.uk/government/publications/key-stage-2-tests-information-for-parents",
+    scope: "Parent information about end of key stage 2 national curriculum tests.",
+  },
+  {
+    title: "Information for parents: Reception baseline assessment",
+    organisation: "Standards and Testing Agency / GOV.UK",
+    url: "https://www.gov.uk/government/publications/reception-baseline-assessment-information-for-parents",
+    scope: "Parent information about the Reception baseline assessment.",
+  },
+  {
+    title: "Multiplication tables check: Information for parents",
+    organisation: "Standards and Testing Agency / GOV.UK",
+    url: "https://www.gov.uk/government/publications/multiplication-tables-check-information-for-parents",
+    scope: "Parent information about the year 4 multiplication tables check.",
+  },
+];
+
+const TEACH_ME_SOURCE_TEXT = TEACH_ME_SOURCES.map(
+  (source, index) =>
+    `${index + 1}. ${source.title} - ${source.organisation}. URL: ${source.url}. Scope: ${source.scope}`
+).join("\n");
+
+const TEACH_ME_STAGE_NOTES = [
+  "Reception is early years foundation stage. Use Development Matters, the EYFS statutory framework, the reading framework and Reception baseline assessment parent information.",
+  "Years 1 and 2 are key stage 1. Use the primary national curriculum, the reading framework, primary mathematics guidance and parent-support evidence.",
+  "Years 3 to 6 are key stage 2. Use the primary national curriculum, primary mathematics guidance, the reading framework where literacy foundations matter, and the relevant STA parent information for year 4 multiplication tables and year 6 tests.",
+  "Secondary years are outside the primary resources listed here. If asked about year 7 or above, explain that this page's source list only supports early years and primary curriculum signposting.",
+].join("\n");
+
+const TEACH_ME_CHAT_GUIDELINES = [
+  "You are TeachMe, a calm, practical plain-English guide for parents navigating the English early years and primary National Curriculum.",
+  "Use only the official and evidence-informed resources listed below. Do not signpost to websites, videos, apps, worksheets, publishers, tutors, forums, charities or resources outside this source list.",
+  "If the parent asks for an external resource that is not in the source list, say you cannot signpost to it from this page and point to the closest listed resource instead.",
+  "Always adapt the answer to the supplied school year and key stage. If the year is missing or conflicts with the question, ask for the year or give a cautious stage-based answer.",
+  "Do not invent exact statutory wording, assessment arrangements, dates, scaled scores, test thresholds or policy changes. Tell parents to check the original GOV.UK or EEF page for the current wording.",
+  "Use the subject headings derived from the listed curriculum resources: Early years foundations, Reading and phonics, English, Mathematics, Science, Computing, History, Geography, Art and design, Design and technology, Music, Physical education, Languages, Assessment checkpoints, and Supporting learning at home.",
+  "For each answer, explain what the child is likely building towards, what a parent can do at home without turning it into school-at-home, and what to ask the school if the parent needs precision.",
+  "Keep advice parent-safe: no diagnosis, safeguarding decisions, special educational needs determinations, or legal advice. Encourage discussion with the child's school or qualified professionals for individual concerns.",
+  "Use plain text only. Do not use Markdown heading markers such as ###, bold markers such as **, or decorative ASCII formatting.",
+  "Include a References section with titles and URLs from the allowed source list whenever you answer a curriculum or assessment question.",
+  "Stage notes:\n" + TEACH_ME_STAGE_NOTES,
+  "Allowed resources:\n" + TEACH_ME_SOURCE_TEXT,
+].join("\n");
+
 app.use(express.urlencoded({ extended: false }));
 initAnalytics({ dbPath: ANALYTICS_DB_PATH });
 app.use(
@@ -992,6 +1078,227 @@ app.get("/blanderQA/policy.html", (req, res) => {
 });
 
 app.use("/blanderQA", express.static(path.join(__dirname, "public", "blanderQA"), { index: false, setHeaders: setPublicFileHeaders }));
+
+app.get(/^\/teachMe$/, (req, res) => {
+  res.redirect("/teachMe/");
+});
+
+app.get("/teachMe/", (req, res) => {
+  setNoCacheHeaders(res);
+  res.send(renderTeachMeIndexHtml());
+});
+
+app.get("/teachMe/index.html", (req, res) => {
+  setNoCacheHeaders(res);
+  res.send(renderTeachMeIndexHtml());
+});
+
+app.get("/teachMe/policy.html", (req, res) => {
+  setNoCacheHeaders(res);
+  res.send(renderTeachMePolicyHtml());
+});
+
+app.use("/teachMe", express.static(path.join(__dirname, "public", "teachMe"), { index: false, setHeaders: setPublicFileHeaders }));
+
+app.get("/teachMe/resource-info", (req, res) => {
+  const topic = String(req.query.topic || "").trim().toLowerCase();
+  const matchedTopic = [
+    {
+      match: /early|eyfs|reception|baseline|development|foundation/i,
+      payload: {
+        title: "Early years foundations",
+        summary: "Start here for Reception, early language, early maths, development and the Reception baseline assessment.",
+        links: [
+          TEACH_ME_SOURCES[1],
+          TEACH_ME_SOURCES[3],
+          TEACH_ME_SOURCES[7],
+          TEACH_ME_SOURCES[2],
+        ],
+        followUps: [
+          "Ask: What should I do at home for Reception without turning play into formal lessons?",
+          "Ask: How does Reception prepare a child for key stage 1?",
+        ],
+      },
+    },
+    {
+      match: /read|phon|literacy|english|writing|spell|vocab|grammar/i,
+      payload: {
+        title: "Reading, phonics and English",
+        summary: "Use these for reading foundations, phonics, English curriculum expectations and parent support.",
+        links: [TEACH_ME_SOURCES[2], TEACH_ME_SOURCES[0], TEACH_ME_SOURCES[5]],
+        followUps: [
+          "Ask: What does reading support look like in this school year?",
+          "Ask: How can I help with writing without correcting every sentence?",
+        ],
+      },
+    },
+    {
+      match: /math|number|times|multiplication|table|fraction|measure|geometry/i,
+      payload: {
+        title: "Mathematics",
+        summary: "Use these for primary maths progression, home support and year 4 multiplication tables check signposting.",
+        links: [TEACH_ME_SOURCES[4], TEACH_ME_SOURCES[0], TEACH_ME_SOURCES[8], TEACH_ME_SOURCES[5]],
+        followUps: [
+          "Ask: What number facts matter most for this year?",
+          "Ask: How should I support times tables in year 4?",
+        ],
+      },
+    },
+    {
+      match: /science|comput|history|geography|art|design|technology|music|pe|physical|language/i,
+      payload: {
+        title: "Foundation and wider curriculum subjects",
+        summary: "Use the primary curriculum resource for science, computing, history, geography, art and design, design and technology, music, PE and languages.",
+        links: [TEACH_ME_SOURCES[0], TEACH_ME_SOURCES[5]],
+        followUps: [
+          "Ask: What is the broad aim of this subject in my child's year?",
+          "Ask: What can I notice or talk about at home to support this subject?",
+        ],
+      },
+    },
+    {
+      match: /test|assessment|sat|sats|check|baseline|year 4|year 6|ks2|key stage 2/i,
+      payload: {
+        title: "Assessment checkpoints",
+        summary: "Use these for Reception baseline, year 4 multiplication tables check and end of key stage 2 tests.",
+        links: [TEACH_ME_SOURCES[7], TEACH_ME_SOURCES[8], TEACH_ME_SOURCES[6], TEACH_ME_SOURCES[0]],
+        followUps: [
+          "Ask: What should I know about this assessment as a parent?",
+          "Ask: How can I support preparation calmly?",
+        ],
+      },
+    },
+  ].find((entry) => entry.match.test(topic));
+
+  const payload = matchedTopic
+    ? matchedTopic.payload
+    : {
+        title: "Official curriculum resources",
+        summary: "Start with the primary curriculum, then branch to early years, reading, maths, assessment or parent-support guidance.",
+        links: TEACH_ME_SOURCES,
+        followUps: [
+          "Ask by school year, for example: What should a Year 3 parent understand about maths?",
+          "Ask by subject, for example: How does geography change across key stage 2?",
+        ],
+      };
+
+  res.json({
+    title: payload.title,
+    summary: payload.summary,
+    localLinks: payload.links.map((source) => ({
+      label: source.title,
+      href: source.url,
+      note: source.organisation,
+    })),
+    authorities: payload.links.map((source) => ({
+      name: source.title,
+      tier: source.organisation,
+      homepage_url: source.url,
+    })),
+    followUps: payload.followUps,
+  });
+});
+
+app.post("/teachMe/chat", splashChatRateLimit, express.json({ limit: "50kb" }), async (req, res) => {
+  if (!SPLASH_OPENAI_API_KEY) {
+    return res.status(404).json({ error: "disabled" });
+  }
+
+  const body = req.body && typeof req.body === "object" ? req.body : {};
+  const message = typeof body.message === "string" ? body.message.trim() : "";
+  const history = Array.isArray(body.history) ? body.history : [];
+  const resourceContext = sanitizeSocialQaLocalContext(body.localContext);
+  const schoolYearContext = sanitizeTeachMeYearContext(body.schoolYearContext);
+  const chatSessionToken = typeof body.chatSessionToken === "string" ? body.chatSessionToken.trim() : "";
+  const turnstileToken = typeof body.turnstileToken === "string" ? body.turnstileToken.trim() : "";
+  const remoteip = req.ip || req.socket.remoteAddress || undefined;
+
+  if (!message || message.length > 2000) {
+    return res.status(400).json({ error: "invalid_message" });
+  }
+
+  let resolvedChatSessionToken = chatSessionToken;
+  if (isTurnstileEnabled()) {
+    if (!validateChemChatSession(resolvedChatSessionToken)) {
+      if (!turnstileToken) {
+        return res.status(403).json({ error: "turnstile_required" });
+      }
+      const turnstileOk = await verifyTurnstileToken(turnstileToken, remoteip);
+      if (!turnstileOk) {
+        return res.status(403).json({ error: "turnstile_failed" });
+      }
+      resolvedChatSessionToken = mintChemChatSession();
+    }
+  }
+
+  const safeHistory = history
+    .slice(-8)
+    .filter((item) => item && typeof item === "object")
+    .map((item) => {
+      const role = item.role === "assistant" ? "assistant" : "user";
+      const content = String(item.content || "").slice(0, 2500);
+      return { role, content };
+    })
+    .filter((item) => item.content.trim());
+
+  const payloadMessages = [
+    { role: "system", content: TEACH_ME_CHAT_GUIDELINES },
+    ...(schoolYearContext
+      ? [
+          {
+            role: "system",
+            content:
+              "Selected school-year context. Adapt all explanations to this stage unless the user's question explicitly changes it.\n" +
+              schoolYearContext,
+          },
+        ]
+      : []),
+    ...(resourceContext
+      ? [
+          {
+            role: "system",
+            content:
+              "User-selected resource context from the allowed source list. Use it only as source signposting, not as permission to cite anything outside the list.\n" +
+              resourceContext,
+          },
+        ]
+      : []),
+    ...safeHistory,
+    {
+      role: "user",
+      content:
+        "Treat this as a UK parent curriculum-support question. Answer from the allowed resource list only, adapt to the selected school year/key stage, include practical home support, and include references from the allowed list. User question: " +
+        message,
+    },
+  ];
+
+  try {
+    const llmRes = await fetch(`${SPLASH_OPENAI_BASE_URL}/chat/completions`, {
+      method: "POST",
+      headers: chatCompletionHeaders(),
+      body: JSON.stringify({
+        model: "gpt-4o-mini",
+        temperature: 0.1,
+        messages: payloadMessages,
+      }),
+    });
+
+    if (!llmRes.ok) {
+      return res.status(502).json({ error: "upstream_failed" });
+    }
+
+    const data = await llmRes.json();
+    const reply = data?.choices?.[0]?.message?.content;
+    if (typeof reply !== "string" || !reply.trim()) {
+      return res.status(502).json({ error: "upstream_empty" });
+    }
+    const response = { reply: normalizeTeachMeReply(reply) };
+    if (resolvedChatSessionToken) response.chatSessionToken = resolvedChatSessionToken;
+    return res.json(response);
+  } catch {
+    return res.status(502).json({ error: "upstream_error" });
+  }
+});
 
 app.get("/blanderQA/resource-info", (req, res) => {
   const topic = String(req.query.topic || "").trim().toLowerCase();
@@ -1415,11 +1722,42 @@ function renderBlanderQaPolicyHtml() {
   return BLANDER_QA_POLICY_HTML_TEMPLATE.replaceAll("__CONTACT_PAGE_PATH__", CONTACT_PAGE_PATH);
 }
 
+const TEACH_ME_INDEX_HTML_TEMPLATE = fs.readFileSync(path.join(__dirname, "public", "teachMe", "index.html"), "utf8");
+function renderTeachMeIndexHtml() {
+  return TEACH_ME_INDEX_HTML_TEMPLATE.replace('"__TURNSTILE_SITE_KEY__"', JSON.stringify(TURNSTILE_SITE_KEY));
+}
+const TEACH_ME_POLICY_HTML_TEMPLATE = fs.readFileSync(path.join(__dirname, "public", "teachMe", "policy.html"), "utf8");
+function renderTeachMePolicyHtml() {
+  return TEACH_ME_POLICY_HTML_TEMPLATE.replaceAll("__CONTACT_PAGE_PATH__", CONTACT_PAGE_PATH);
+}
+
 function normalizeSocialQaReply(reply) {
   return String(reply || "")
     .replace(/^\s{0,3}#{1,6}\s+/gm, "")
     .replace(/\*\*/g, "")
     .trim();
+}
+
+function normalizeTeachMeReply(reply) {
+  return String(reply || "")
+    .replace(/^\s{0,3}#{1,6}\s+/gm, "")
+    .replace(/\*\*/g, "")
+    .trim();
+}
+
+function sanitizeTeachMeYearContext(value) {
+  const raw = value && typeof value === "object" ? value : {};
+  const year = String(raw.year || "").slice(0, 40);
+  const keyStage = String(raw.keyStage || "").slice(0, 40);
+  const age = String(raw.age || "").slice(0, 40);
+  const focus = String(raw.focus || "").slice(0, 180);
+  const lines = [
+    year && `- School year: ${year}`,
+    keyStage && `- Key stage: ${keyStage}`,
+    age && `- Typical age: ${age}`,
+    focus && `- Stage focus: ${focus}`,
+  ].filter(Boolean);
+  return lines.length ? lines.join("\n") : "";
 }
 
 function hasAssetCareFeeTheme(message) {
