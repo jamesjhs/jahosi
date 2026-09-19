@@ -1,19 +1,49 @@
-# Official curriculum resources
+# Official Blender resources
 
-Department for Education (DfE) (2013) National curriculum in England: primary curriculum. London: Department for Education. Available at: https://www.gov.uk/government/publications/national-curriculum-in-england-primary-curriculum (Accessed: 18 September 2026).
+Source list reviewed for BlanderQA: 20 September 2026.
 
-Department for Education (DfE) (2021) Development Matters: Non-statutory curriculum guidance for the early years foundation stage. London: Department for Education. Available at: https://www.gov.uk/government/publications/development-matters--2 (Accessed: 18 September 2026).
+BlanderQA should answer Blender workflow questions from official Blender 4.0 sources only. If a question needs third-party add-on behaviour, unofficial tutorials, marketplace assets, hardware-vendor support, or a newer Blender version, BlanderQA should say that the answer is outside the validated source list and signpost the relevant official or vendor documentation.
 
-Department for Education (DfE) (2023) The reading framework: Teaching the foundations of literacy. London: Department for Education. Available at: https://www.gov.uk/government/publications/the-reading-framework-teaching-the-foundations-of-literacy (Accessed: 18 September 2026).
+Blender Foundation (2023) Blender 4.0 Reference Manual. Available at: https://docs.blender.org/manual/en/4.0/ (Accessed: 20 September 2026).
 
-Department for Education (DfE) (2024) Statutory framework for the early years foundation stage: For group and school-based providers. London: Department for Education. Available at: https://www.gov.uk/government/publications/early-years-foundation-stage-framework--2 (Accessed: 18 September 2026).
+Blender Foundation (2023) About Blender. Blender 4.0 Reference Manual. Available at: https://docs.blender.org/manual/en/4.0/getting_started/about/index.html (Accessed: 20 September 2026).
 
-Department for Education and National Centre for Excellence in the Teaching of Mathematics (NCETM) (2020) Teaching mathematics in primary schools: guidance for key stages 1 and 2. London: Department for Education. Available at: https://www.gov.uk/government/publications/teaching-mathematics-in-primary-schools (Accessed: 18 September 2026).
+Blender Foundation (2023) Help System. Blender 4.0 Reference Manual. Available at: https://docs.blender.org/manual/en/4.0/getting_started/help.html (Accessed: 20 September 2026).
 
-Education Endowment Foundation (EEF) (2019) Working with Parents to Support Children’s Learning: Guidance Report. London: Education Endowment Foundation. Available at: https://educationendowmentfoundation.org.uk/education-evidence/guidance-reports/supporting-parents (Accessed: 18 September 2026).
+Blender Foundation (2023) User Interface. Blender 4.0 Reference Manual. Available at: https://docs.blender.org/manual/en/4.0/interface/index.html (Accessed: 20 September 2026).
 
-Standards and Testing Agency (STA) (2024) Information for parents: 2024 national curriculum tests at the end of key stage 2. London: Standards and Testing Agency. Available at: https://www.gov.uk/government/publications/key-stage-2-tests-information-for-parents (Accessed: 18 September 2026).
+Blender Foundation (2023) Editors. Blender 4.0 Reference Manual. Available at: https://docs.blender.org/manual/en/4.0/editors/index.html (Accessed: 20 September 2026).
 
-Standards and Testing Agency (STA) (2024) Information for parents: Reception baseline assessment. London: Standards and Testing Agency. Available at: https://www.gov.uk/government/publications/reception-baseline-assessment-information-for-parents (Accessed: 18 September 2026).
+Blender Foundation (2023) Scenes and Objects. Blender 4.0 Reference Manual. Available at: https://docs.blender.org/manual/en/4.0/scene_layout/index.html (Accessed: 20 September 2026).
 
-Standards and Testing Agency (STA) (2024) Multiplication tables check: Information for parents. London: Standards and Testing Agency. Available at: https://www.gov.uk/government/publications/multiplication-tables-check-information-for-parents (Accessed: 18 September 2026).
+Blender Foundation (2023) Modeling. Blender 4.0 Reference Manual. Available at: https://docs.blender.org/manual/en/4.0/modeling/index.html (Accessed: 20 September 2026).
+
+Blender Foundation (2023) Transform and snapping. Blender 4.0 Reference Manual. Available at: https://docs.blender.org/manual/en/4.0/modeling/transform/modal_map.html (Accessed: 20 September 2026).
+
+Blender Foundation (2023) Snapping. Blender 4.0 Reference Manual. Available at: https://docs.blender.org/manual/en/4.0/editors/3dview/controls/snapping.html (Accessed: 20 September 2026).
+
+Blender Foundation (2023) Geometry Nodes. Blender 4.0 Reference Manual. Available at: https://docs.blender.org/manual/en/4.0/modeling/geometry_nodes/index.html (Accessed: 20 September 2026).
+
+Blender Foundation (2023) Sculpting and Painting. Blender 4.0 Reference Manual. Available at: https://docs.blender.org/manual/en/4.0/sculpt_paint/index.html (Accessed: 20 September 2026).
+
+Blender Foundation (2023) Animation and Rigging. Blender 4.0 Reference Manual. Available at: https://docs.blender.org/manual/en/4.0/animation/index.html (Accessed: 20 September 2026).
+
+Blender Foundation (2023) Principled BSDF. Blender 4.0 Reference Manual. Available at: https://docs.blender.org/manual/en/4.0/render/shader_nodes/shader/principled.html (Accessed: 20 September 2026).
+
+Blender Foundation (2023) Rendering. Blender 4.0 Reference Manual. Available at: https://docs.blender.org/manual/en/4.0/render/index.html (Accessed: 20 September 2026).
+
+Blender Foundation (2023) Compositing. Blender 4.0 Reference Manual. Available at: https://docs.blender.org/manual/en/4.0/compositing/index.html (Accessed: 20 September 2026).
+
+Blender Foundation (2023) Assets, Files and Data System. Blender 4.0 Reference Manual. Available at: https://docs.blender.org/manual/en/4.0/files/index.html (Accessed: 20 September 2026).
+
+Blender Foundation (2023) Add-ons. Blender 4.0 Reference Manual. Available at: https://docs.blender.org/manual/en/4.0/addons/index.html (Accessed: 20 September 2026).
+
+Blender Foundation (2023) Advanced. Blender 4.0 Reference Manual. Available at: https://docs.blender.org/manual/en/4.0/advanced/index.html (Accessed: 20 September 2026).
+
+Blender Foundation (2023) Troubleshooting. Blender 4.0 Reference Manual. Available at: https://docs.blender.org/manual/en/4.0/troubleshooting/index.html (Accessed: 20 September 2026).
+
+Blender Foundation (2023) Blender 4.0 release page. Available at: https://www.blender.org/download/releases/4-0/ (Accessed: 20 September 2026).
+
+Blender Foundation (2026) Blender support and FAQ. Available at: https://www.blender.org/support/faq/ (Accessed: 20 September 2026).
+
+Blender Foundation (2023) Blender Python API 4.0. Available at: https://docs.blender.org/api/4.0/ (Accessed: 20 September 2026).
