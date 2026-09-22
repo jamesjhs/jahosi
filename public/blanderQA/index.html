@@ -77,7 +77,7 @@
   },
   "isAccessibleForFree": true,
   "inLanguage": "en-GB",
-  "dateModified": "2026-09-14"
+  "dateModified": "2026-09-22"
 }
 </script>
 <style>
@@ -808,6 +808,66 @@ body.high-contrast .text-action-btn:hover{background:transparent;color:#003078}
   color:var(--muted);
   font-size:.92rem;
 }
+.shortcut-note{
+  margin:.35rem 0 .9rem;
+  color:var(--muted);
+  font-size:.94rem;
+}
+.shortcut-grid{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:.85rem;
+}
+.shortcut-card{
+  border:1px solid var(--line);
+  border-radius:8px;
+  padding:.85rem;
+  background:rgba(255,255,255,.045);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.06);
+}
+.shortcut-card h3{
+  margin:0 0 .55rem;
+  color:#fff;
+  font-size:1rem;
+}
+.shortcut-card dl{
+  display:grid;
+  grid-template-columns:minmax(0,1fr);
+  gap:.1rem;
+  margin:0;
+}
+.shortcut-card dt,.shortcut-card dd{margin:0}
+.shortcut-card dt{margin-top:.45rem}
+.shortcut-card dt:first-child{margin-top:0}
+.shortcut-card dd{
+  color:var(--muted);
+  padding-bottom:.35rem;
+  border-bottom:1px solid rgba(255,255,255,.08);
+}
+.shortcut-card dd:last-child{
+  padding-bottom:0;
+  border-bottom:0;
+}
+kbd{
+  display:inline-block;
+  border:1px solid var(--line-strong);
+  border-bottom-color:rgba(255,255,255,.38);
+  border-radius:5px;
+  padding:.05rem .32rem;
+  color:#fff;
+  background:rgba(3,7,18,.74);
+  font:700 .86em ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
+  white-space:nowrap;
+}
+.cross-check-list{
+  margin:.9rem 0 0;
+  padding-left:1.2rem;
+  color:var(--muted);
+}
+.cross-check-list li{margin:.35rem 0}
+@media(max-width:760px){
+  .shortcut-grid{grid-template-columns:minmax(0,1fr)}
+}
 .guided-section{margin-top:0}
 .references{margin-top:1rem}
 .references .source-list{
@@ -1079,6 +1139,108 @@ body.high-contrast .resource-form input{
     </div>
   </details>
 
+  <details class="panel local-tool collapsible-tool">
+    <summary>Keyboard shortcuts for Blender functions</summary>
+    <div class="collapsible-tool-body">
+      <p class="shortcut-note">Checked against official Blender 4.0 manual pages for Common Shortcuts, Default Keymap, Industry Compatible Keymap and Preferences &gt; Keymap. These are common default-keymap shortcuts, not a complete or custom-keymap export.</p>
+      <div class="shortcut-grid" aria-label="Blender 4.0 shortcut groups">
+        <article class="shortcut-card">
+          <h3>Global controls</h3>
+          <dl>
+            <dt><kbd>Ctrl</kbd>-<kbd>O</kbd></dt><dd>Open file</dd>
+            <dt><kbd>Ctrl</kbd>-<kbd>S</kbd></dt><dd>Save file</dd>
+            <dt><kbd>Ctrl</kbd>-<kbd>N</kbd></dt><dd>New file</dd>
+            <dt><kbd>Ctrl</kbd>-<kbd>Z</kbd></dt><dd>Undo</dd>
+            <dt><kbd>Shift</kbd>-<kbd>Ctrl</kbd>-<kbd>Z</kbd></dt><dd>Redo</dd>
+            <dt><kbd>F1</kbd></dt><dd>Context-sensitive help</dd>
+            <dt><kbd>F2</kbd></dt><dd>Rename active item</dd>
+            <dt><kbd>F3</kbd></dt><dd>Menu Search</dd>
+            <dt><kbd>F4</kbd></dt><dd>File context menu</dd>
+            <dt><kbd>F9</kbd></dt><dd>Adjust last operation</dd>
+            <dt><kbd>F11</kbd></dt><dd>Show render window</dd>
+            <dt><kbd>F12</kbd></dt><dd>Render current frame</dd>
+            <dt><kbd>Q</kbd></dt><dd>Quick access favorites</dd>
+            <dt><kbd>Ctrl</kbd>-<kbd>Spacebar</kbd></dt><dd>Toggle Maximize Area</dd>
+            <dt><kbd>Ctrl</kbd>-<kbd>PageUp</kbd> / <kbd>Ctrl</kbd>-<kbd>PageDown</kbd></dt><dd>Next or previous workspace</dd>
+          </dl>
+        </article>
+        <article class="shortcut-card">
+          <h3>Common editing and UI</h3>
+          <dl>
+            <dt><kbd>X</kbd></dt><dd>Delete selected item with confirmation</dd>
+            <dt><kbd>Delete</kbd></dt><dd>Delete selected item without confirmation</dd>
+            <dt><kbd>A</kbd></dt><dd>Select all in shared editors</dd>
+            <dt><kbd>Alt</kbd>-<kbd>A</kbd></dt><dd>Select none</dd>
+            <dt><kbd>Ctrl</kbd>-<kbd>I</kbd></dt><dd>Invert selection</dd>
+            <dt><kbd>H</kbd></dt><dd>Hide selection</dd>
+            <dt><kbd>Alt</kbd>-<kbd>H</kbd></dt><dd>Reveal hidden items</dd>
+            <dt><kbd>T</kbd></dt><dd>Toggle Toolbar</dd>
+            <dt><kbd>N</kbd></dt><dd>Toggle Sidebar</dd>
+            <dt><kbd>Esc</kbd> / <kbd>RMB</kbd></dt><dd>Cancel</dd>
+            <dt><kbd>Return</kbd> / <kbd>LMB</kbd></dt><dd>Confirm</dd>
+          </dl>
+        </article>
+        <article class="shortcut-card">
+          <h3>3D Viewport</h3>
+          <dl>
+            <dt><kbd>Tab</kbd></dt><dd>Toggle Edit Mode</dd>
+            <dt><kbd>Ctrl</kbd>-<kbd>Tab</kbd></dt><dd>Pose Mode for armatures, or mode-switching pie menu for other objects</dd>
+            <dt><kbd>1</kbd> / <kbd>2</kbd> / <kbd>3</kbd></dt><dd>Edit Mode vertex, edge or face selection</dd>
+            <dt><kbd>Shift</kbd> with <kbd>1</kbd>-<kbd>3</kbd></dt><dd>Toggle selection modes without disabling the others</dd>
+            <dt><kbd>AccentGrave</kbd></dt><dd>3D Viewport navigation pie menu</dd>
+            <dt><kbd>Ctrl</kbd>-<kbd>AccentGrave</kbd></dt><dd>Toggle gizmos</dd>
+            <dt><kbd>Shift</kbd>-<kbd>AccentGrave</kbd></dt><dd>Start Walk/Fly Navigation</dd>
+          </dl>
+        </article>
+        <article class="shortcut-card">
+          <h3>Precise editing habits</h3>
+          <dl>
+            <dt><kbd>Ctrl</kbd> while dragging</dt><dd>Snap to discrete steps</dd>
+            <dt><kbd>Shift</kbd> while dragging</dt><dd>Precision control over the value</dd>
+            <dt><kbd>Shift</kbd>-<kbd>Ctrl</kbd> while dragging</dt><dd>Precise snap with high precision</dd>
+            <dt><kbd>I</kbd> while hovering a property</dt><dd>Insert a keyframe</dd>
+            <dt><kbd>Alt</kbd>-<kbd>I</kbd> while hovering</dt><dd>Clear the keyframe</dd>
+            <dt><kbd>Ctrl</kbd>-<kbd>C</kbd> over a value</dt><dd>Copy a single value</dd>
+            <dt><kbd>Ctrl</kbd>-<kbd>V</kbd> over a value</dt><dd>Paste a single value</dd>
+            <dt><kbd>Alt</kbd> while editing values</dt><dd>Apply the change to selected items where supported</dd>
+          </dl>
+        </article>
+        <article class="shortcut-card">
+          <h3>Spacebar and preferences</h3>
+          <dl>
+            <dt><kbd>Spacebar</kbd></dt><dd>User configurable in the default keymap</dd>
+            <dt>Play</dt><dd>Spacebar toggles Timeline playback</dd>
+            <dt>Tools</dt><dd>Spacebar opens tool switching, with <kbd>Shift</kbd>-<kbd>Spacebar</kbd> for play</dd>
+            <dt>Search</dt><dd>Spacebar opens action search, with <kbd>Shift</kbd>-<kbd>Spacebar</kbd> for play</dd>
+            <dt><kbd>Cmd</kbd> on macOS</dt><dd>Can replace <kbd>Ctrl</kbd> except where the operating system conflicts</dd>
+            <dt><kbd>Cmd</kbd>-<kbd>Comma</kbd></dt><dd>Preferences on macOS</dd>
+          </dl>
+        </article>
+        <article class="shortcut-card">
+          <h3>Industry Compatible differences</h3>
+          <dl>
+            <dt><kbd>Tab</kbd></dt><dd>Menu Search</dd>
+            <dt><kbd>Shift</kbd>-<kbd>Tab</kbd></dt><dd>Quick access favorites</dd>
+            <dt><kbd>Ctrl</kbd>-<kbd>Return</kbd></dt><dd>Render</dd>
+            <dt><kbd>Alt</kbd>-<kbd>LMB</kbd></dt><dd>Orbit View</dd>
+            <dt><kbd>Alt</kbd>-<kbd>MMB</kbd></dt><dd>Pan View</dd>
+            <dt><kbd>Alt</kbd>-<kbd>RMB</kbd></dt><dd>Zoom View</dd>
+            <dt><kbd>F</kbd></dt><dd>Frame selected</dd>
+            <dt><kbd>Ctrl</kbd>-<kbd>B</kbd></dt><dd>Bevel in edit-mode tools</dd>
+            <dt><kbd>K</kbd></dt><dd>Knife in edit-mode tools</dd>
+          </dl>
+        </article>
+      </div>
+      <ul class="cross-check-list">
+        <li>Default-keymap entries are cross-checked with the official Blender 4.0 Default Keymap page.</li>
+        <li>Key naming, mouse-button naming, hover shortcuts, dragging modifiers and confirm/cancel behavior are cross-checked with the official Common Shortcuts page.</li>
+        <li>Spacebar customization, search-by-key-binding, restore behavior and custom-keymap risk are cross-checked with the official Preferences &gt; Keymap page.</li>
+        <li>Industry Compatible entries are separated because that preset intentionally differs from Blender's default keymap.</li>
+      </ul>
+      <p class="shortcut-note">For a modified setup, open Edit &gt; Preferences &gt; Keymap, search by key binding, and verify the active keymap item before relying on a shortcut.</p>
+    </div>
+  </details>
+
   <details class="panel guided-section collapsible-tool" open>
     <summary id="packs-title">Workflow question packs</summary>
     <div class="collapsible-tool-body">
@@ -1196,12 +1358,16 @@ body.high-contrast .resource-form input{
   <details class="panel references collapsible-tool">
     <summary id="references-title">References</summary>
     <div class="collapsible-tool-body">
-      <p class="source-scope">These are the validated Blender 4.0 sources used by this page. Open the original source before relying on any answer. Sources last reviewed: 14 September 2026.</p>
+      <p class="source-scope">These are the validated Blender 4.0 sources used by this page. Open the original source before relying on any answer. Sources last reviewed: 22 September 2026.</p>
       <ul class="source-list">
       <li><a href="https://docs.blender.org/manual/en/4.0/" target="_blank" rel="noopener noreferrer">Blender 4.0 Reference Manual</a><span class="source-org">docs.blender.org</span><p class="source-scope">Official Blender 4.0 manual home page and topic map.</p></li>
       <li><a href="https://docs.blender.org/manual/en/4.0/getting_started/about/index.html" target="_blank" rel="noopener noreferrer">About Blender</a><span class="source-org">Blender Manual</span><p class="source-scope">What Blender is, what it is good at and how the 4.0 release frames the software.</p></li>
       <li><a href="https://docs.blender.org/manual/en/4.0/getting_started/help.html" target="_blank" rel="noopener noreferrer">Help System</a><span class="source-org">Blender Manual</span><p class="source-scope">How to get help from inside Blender and the manual itself.</p></li>
       <li><a href="https://docs.blender.org/manual/en/4.0/interface/index.html" target="_blank" rel="noopener noreferrer">User Interface</a><span class="source-org">Blender Manual</span><p class="source-scope">Windows, areas, widgets, tools and shortcuts.</p></li>
+      <li><a href="https://docs.blender.org/manual/en/4.0/interface/keymap/introduction.html" target="_blank" rel="noopener noreferrer">Common Shortcuts</a><span class="source-org">Blender Manual</span><p class="source-scope">Official shortcut conventions, mouse-button names, hovering shortcuts, dragging modifiers, text editing and confirm/cancel behavior.</p></li>
+      <li><a href="https://docs.blender.org/manual/en/4.0/interface/keymap/blender_default.html" target="_blank" rel="noopener noreferrer">Default Keymap</a><span class="source-org">Blender Manual</span><p class="source-scope">Common keys used in Blender's default keymap, including global, editor and 3D Viewport keys.</p></li>
+      <li><a href="https://docs.blender.org/manual/en/4.0/interface/keymap/industry_compatible.html" target="_blank" rel="noopener noreferrer">Industry Compatible Keymap</a><span class="source-org">Blender Manual</span><p class="source-scope">Common keys used when Blender is set to the Industry Compatible keymap preset.</p></li>
+      <li><a href="https://docs.blender.org/manual/en/4.0/editors/preferences/keymap.html" target="_blank" rel="noopener noreferrer">Preferences: Keymap</a><span class="source-org">Blender Manual</span><p class="source-scope">How Blender exposes keymap presets, key binding search, individual keymap items, restoring defaults and custom-keymap limitations.</p></li>
       <li><a href="https://docs.blender.org/manual/en/4.0/editors/index.html" target="_blank" rel="noopener noreferrer">Editors</a><span class="source-org">Blender Manual</span><p class="source-scope">Overview of the 3D Viewport, Shader Editor, Graph Editor, Sequencer and other editors.</p></li>
       <li><a href="https://docs.blender.org/manual/en/4.0/modeling/index.html" target="_blank" rel="noopener noreferrer">Modeling</a><span class="source-org">Blender Manual</span><p class="source-scope">Meshes, curves, text, tools and modifiers.</p></li>
       <li><a href="https://docs.blender.org/manual/en/4.0/modeling/transform/modal_map.html" target="_blank" rel="noopener noreferrer">Transform and snapping</a><span class="source-org">Blender Manual</span><p class="source-scope">Transform controls, modal operations and snap-base workflows.</p></li>
@@ -1225,7 +1391,7 @@ body.high-contrast .resource-form input{
 
 <footer>
   <a href="/blanderQA/policy.html">Privacy, use policy and disclaimer</a><br>
-  version 0.3.0 | Last updated: 24 June 2026 | &copy; 2026 <a href="/">www.jahosi.co.uk</a>
+  version 0.3.1 | Last updated: 22 September 2026 | &copy; 2026 <a href="/">www.jahosi.co.uk</a>
 </footer>
 
 <script>

@@ -430,6 +430,30 @@ const BLANDER_QA_SOURCES = [
     scope: "Windows, areas, tools, shortcuts and the overall interface.",
   },
   {
+    title: "Common Shortcuts",
+    organisation: "Blender Manual",
+    url: "https://docs.blender.org/manual/en/4.0/interface/keymap/introduction.html",
+    scope: "Official shortcut conventions, mouse-button names, hovering shortcuts, dragging modifiers, text editing and confirm/cancel behavior.",
+  },
+  {
+    title: "Default Keymap",
+    organisation: "Blender Manual",
+    url: "https://docs.blender.org/manual/en/4.0/interface/keymap/blender_default.html",
+    scope: "Common keys used in Blender's default keymap, including global, editor and 3D Viewport keys.",
+  },
+  {
+    title: "Industry Compatible Keymap",
+    organisation: "Blender Manual",
+    url: "https://docs.blender.org/manual/en/4.0/interface/keymap/industry_compatible.html",
+    scope: "Common keys used when Blender is set to the Industry Compatible keymap preset.",
+  },
+  {
+    title: "Preferences: Keymap",
+    organisation: "Blender Manual",
+    url: "https://docs.blender.org/manual/en/4.0/editors/preferences/keymap.html",
+    scope: "Keymap presets, key binding search, individual keymap items, restoring defaults and custom-keymap limitations.",
+  },
+  {
     title: "Editors",
     organisation: "Blender Manual",
     url: "https://docs.blender.org/manual/en/4.0/editors/index.html",
@@ -550,6 +574,7 @@ const BLANDER_QA_SOURCE_NOTES = [
   "Rendering: EEVEE is often used for fast look development while Cycles is often used for final physically based rendering. Have you considered doing it a different way, such as iterating in EEVEE and finishing in Cycles?",
   "Rigging and animation: keyframes, constraints, drivers, shape keys and the Pose Library can each solve a different part of a motion problem. Explain why one is simpler than another for a given goal.",
   "Troubleshooting: official guidance points first to startup files, add-ons, GPU or driver issues, crashes, Python errors and recovery. Move through those possibilities in a calm, practical order.",
+  "Keyboard shortcuts: exact bindings depend on the active keymap preset and user customizations. Use the official Common Shortcuts, Default Keymap, Industry Compatible Keymap and Preferences: Keymap pages for shortcut claims, and tell users to verify custom setups in Preferences > Keymap.",
   "The 4.0 release page and manual are the strongest sources for version-specific claims in this assistant.",
 ].join("\n");
 
@@ -1369,6 +1394,23 @@ app.get("/blanderQA/resource-info", (req, res) => {
         followUps: [
           "Have you considered doing it a different way, such as testing the issue in factory settings or with add-ons disabled first?",
           "If the problem is graphical, the official troubleshooting flow usually starts with GPU and driver checks before deeper debugging.",
+        ],
+      },
+    },
+    {
+      match: /shortcut|hotkey|keymap|key map|keyboard|binding|spacebar|menu search|quick access|favorite|favourites|favorites|viewport navigation|industry compatible/i,
+      payload: {
+        title: "Keyboard shortcuts and keymaps",
+        summary: "Good for Blender 4.0 shortcut conventions, default keys, Industry Compatible differences and checking customized key bindings.",
+        links: [
+          { label: "Common Shortcuts", href: "https://docs.blender.org/manual/en/4.0/interface/keymap/introduction.html" },
+          { label: "Default Keymap", href: "https://docs.blender.org/manual/en/4.0/interface/keymap/blender_default.html" },
+          { label: "Industry Compatible Keymap", href: "https://docs.blender.org/manual/en/4.0/interface/keymap/industry_compatible.html" },
+          { label: "Preferences: Keymap", href: "https://docs.blender.org/manual/en/4.0/editors/preferences/keymap.html" },
+        ],
+        followUps: [
+          "If a shortcut does not work, check which keymap preset is active and whether the key has been customized.",
+          "Have you considered using Menu Search or Preferences > Keymap search before trying to memorize every shortcut?",
         ],
       },
     },
