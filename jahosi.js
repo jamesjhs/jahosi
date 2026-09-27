@@ -1661,6 +1661,10 @@ function isTurnstileEnabled() {
   return Boolean(TURNSTILE_SITE_KEY && TURNSTILE_SECRET_KEY);
 }
 
+function isContactTurnstileReady() {
+  return isTurnstileEnabled();
+}
+
 function verifyTurnstileToken(token, remoteip) {
   if (!isTurnstileEnabled()) return Promise.resolve(true);
   if (!token) return Promise.resolve(false);
@@ -1908,27 +1912,40 @@ function renderContactPage({ status, error, debug }) {
   const captchaUi = isTurnstileEnabled()
     ? '<div id="contact-turnstile" class="mt-2 min-h-[65px]"></div><p id="contact-turnstile-note" class="mt-2 text-sm text-slate-600">Complete verification to send your message.</p>'
     : '<p class="mt-2 text-sm text-rose-700">Contact form anti-spam is not configured. Please refresh the page and try again.</p>';
+  const submitButtonAttrs = isTurnstileEnabled()
+    ? 'id="contact-submit" class="rounded-lg bg-sky-600 px-4 py-2 text-sm font-semibold text-white hover:bg-sky-700 disabled:cursor-not-allowed disabled:bg-slate-400" type="submit" disabled'
+    : 'class="rounded-lg bg-slate-400 px-4 py-2 text-sm font-semibold text-white" type="submit" disabled';
   const turnstileInitScript = isTurnstileEnabled()
     ? `<script>
   (function () {
     const siteKey = ${JSON.stringify(TURNSTILE_SITE_KEY)};
+    const submitButton = document.getElementById("contact-submit");
     let renderAttempts = 0;
     const maxRenderAttempts = 40;
     const renderRetryDelayMs = 250;
+    const setCanSubmit = (canSubmit) => {
+      if (!submitButton) return;
+      submitButton.disabled = !canSubmit;
+      submitButton.setAttribute("aria-disabled", canSubmit ? "false" : "true");
+    };
     const renderTurnstile = () => {
       const container = document.getElementById("contact-turnstile");
       const note = document.getElementById("contact-turnstile-note");
       if (!container || container.dataset.rendered === "1") return;
       if (!window.turnstile || typeof window.turnstile.render !== "function") return;
+      setCanSubmit(false);
       window.turnstile.render(container, {
         sitekey: siteKey,
         callback() {
           if (note) note.textContent = "Verification complete.";
+          setCanSubmit(true);
         },
         "expired-callback"() {
           if (note) note.textContent = "Verification expired. Please complete it again.";
+          setCanSubmit(false);
         },
         "error-callback"(code) {
+          setCanSubmit(false);
           if (!note) return;
           note.textContent =
             "Verification could not load (code " +
@@ -1998,7 +2015,7 @@ function renderContactPage({ status, error, debug }) {
         </label>
         ${captchaUi}
         <div class="flex items-center gap-3">
-          <button class="rounded-lg bg-sky-600 px-4 py-2 text-sm font-semibold text-white hover:bg-sky-700" type="submit">Send</button>
+          <button ${submitButtonAttrs}>Send</button>
           <a class="rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-semibold text-slate-700 hover:border-slate-400 hover:text-slate-900" href="/">Back</a>
         </div>
       </form>
@@ -2054,6 +2071,10 @@ app.post("/api/contact/submit", contactSubmitRateLimit, async (req, res) => {
   }
 
   const turnstileToken = String(req.body["cf-turnstile-response"] || "").trim();
+  if (!isContactTurnstileReady()) {
+    console.error("Contact form blocked: Turnstile is not configured.");
+    return redirectWithError("blocked");
+  }
   const turnstileOk = await verifyTurnstileToken(turnstileToken, ip);
   if (!turnstileOk) {
     return redirectWithError("blocked");
