@@ -1,6 +1,6 @@
 # Official Blender resources
 
-Source list reviewed for BlanderQA: 20 September 2026.
+Source list reviewed for BlanderQA: 5 October 2026.
 
 BlanderQA should answer Blender workflow questions from official Blender 4.0 sources only. If a question needs third-party add-on behaviour, unofficial tutorials, marketplace assets, hardware-vendor support, or a newer Blender version, BlanderQA should say that the answer is outside the validated source list and signpost the relevant official or vendor documentation.
 
@@ -11,6 +11,14 @@ Blender Foundation (2023) About Blender. Blender 4.0 Reference Manual. Available
 Blender Foundation (2023) Help System. Blender 4.0 Reference Manual. Available at: https://docs.blender.org/manual/en/4.0/getting_started/help.html (Accessed: 20 September 2026).
 
 Blender Foundation (2023) User Interface. Blender 4.0 Reference Manual. Available at: https://docs.blender.org/manual/en/4.0/interface/index.html (Accessed: 20 September 2026).
+
+Blender Foundation (2023) Common Shortcuts. Blender 4.0 Reference Manual. Available at: https://docs.blender.org/manual/en/4.0/interface/keymap/introduction.html (Accessed: 5 October 2026).
+
+Blender Foundation (2023) Default Keymap. Blender 4.0 Reference Manual. Available at: https://docs.blender.org/manual/en/4.0/interface/keymap/blender_default.html (Accessed: 5 October 2026).
+
+Blender Foundation (2023) Industry Compatible Keymap. Blender 4.0 Reference Manual. Available at: https://docs.blender.org/manual/en/4.0/interface/keymap/industry_compatible.html (Accessed: 5 October 2026).
+
+Blender Foundation (2023) Preferences: Keymap. Blender 4.0 Reference Manual. Available at: https://docs.blender.org/manual/en/4.0/editors/preferences/keymap.html (Accessed: 5 October 2026).
 
 Blender Foundation (2023) Editors. Blender 4.0 Reference Manual. Available at: https://docs.blender.org/manual/en/4.0/editors/index.html (Accessed: 20 September 2026).
 

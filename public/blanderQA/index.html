@@ -1142,7 +1142,7 @@ body.high-contrast .resource-form input{
   <details class="panel local-tool collapsible-tool">
     <summary>Keyboard shortcuts for Blender functions</summary>
     <div class="collapsible-tool-body">
-      <p class="shortcut-note">Checked against official Blender 4.0 manual pages for Common Shortcuts, Default Keymap, Industry Compatible Keymap and Preferences &gt; Keymap. These are common default-keymap shortcuts, not a complete or custom-keymap export.</p>
+      <p class="shortcut-note">Checked against official Blender 4.0 manual pages for Common Shortcuts, Default Keymap, Industry Compatible Keymap and Preferences &gt; Keymap, then expanded from the local Blender shortcut brief. Treat this as a practical default-keymap quick reference, not a complete or custom-keymap export.</p>
       <div class="shortcut-grid" aria-label="Blender 4.0 shortcut groups">
         <article class="shortcut-card">
           <h3>Global controls</h3>
@@ -1160,7 +1160,11 @@ body.high-contrast .resource-form input{
             <dt><kbd>F11</kbd></dt><dd>Show render window</dd>
             <dt><kbd>F12</kbd></dt><dd>Render current frame</dd>
             <dt><kbd>Q</kbd></dt><dd>Quick access favorites</dd>
+            <dt><kbd>Shift</kbd>-<kbd>A</kbd></dt><dd>Add object or node in supported editors</dd>
+            <dt><kbd>Shift</kbd>-<kbd>D</kbd></dt><dd>Duplicate selected item</dd>
+            <dt><kbd>Alt</kbd>-<kbd>D</kbd></dt><dd>Duplicate linked</dd>
             <dt><kbd>Ctrl</kbd>-<kbd>Spacebar</kbd></dt><dd>Toggle Maximize Area</dd>
+            <dt><kbd>Ctrl</kbd>-<kbd>Alt</kbd>-<kbd>Spacebar</kbd></dt><dd>Fullscreen the current area</dd>
             <dt><kbd>Ctrl</kbd>-<kbd>PageUp</kbd> / <kbd>Ctrl</kbd>-<kbd>PageDown</kbd></dt><dd>Next or previous workspace</dd>
           </dl>
         </article>
@@ -1174,8 +1178,11 @@ body.high-contrast .resource-form input{
             <dt><kbd>Ctrl</kbd>-<kbd>I</kbd></dt><dd>Invert selection</dd>
             <dt><kbd>H</kbd></dt><dd>Hide selection</dd>
             <dt><kbd>Alt</kbd>-<kbd>H</kbd></dt><dd>Reveal hidden items</dd>
+            <dt><kbd>Shift</kbd>-<kbd>H</kbd></dt><dd>Hide all except the selection</dd>
             <dt><kbd>T</kbd></dt><dd>Toggle Toolbar</dd>
             <dt><kbd>N</kbd></dt><dd>Toggle Sidebar</dd>
+            <dt><kbd>B</kbd></dt><dd>Box select</dd>
+            <dt><kbd>C</kbd></dt><dd>Circle select</dd>
             <dt><kbd>Esc</kbd> / <kbd>RMB</kbd></dt><dd>Cancel</dd>
             <dt><kbd>Return</kbd> / <kbd>LMB</kbd></dt><dd>Confirm</dd>
           </dl>
@@ -1188,12 +1195,140 @@ body.high-contrast .resource-form input{
             <dt><kbd>1</kbd> / <kbd>2</kbd> / <kbd>3</kbd></dt><dd>Edit Mode vertex, edge or face selection</dd>
             <dt><kbd>Shift</kbd> with <kbd>1</kbd>-<kbd>3</kbd></dt><dd>Toggle selection modes without disabling the others</dd>
             <dt><kbd>AccentGrave</kbd></dt><dd>3D Viewport navigation pie menu</dd>
+            <dt><kbd>MMB</kbd></dt><dd>Orbit the view</dd>
+            <dt><kbd>Shift</kbd>-<kbd>MMB</kbd></dt><dd>Pan the view</dd>
+            <dt><kbd>Wheel</kbd> / <kbd>Ctrl</kbd>-<kbd>MMB</kbd></dt><dd>Zoom in or out</dd>
+            <dt><kbd>Numpad 1</kbd> / <kbd>3</kbd> / <kbd>7</kbd></dt><dd>Front, side and top views</dd>
+            <dt><kbd>Numpad 0</kbd></dt><dd>Camera view</dd>
+            <dt><kbd>Numpad .</kbd></dt><dd>Focus selected item</dd>
+            <dt><kbd>Home</kbd></dt><dd>Zoom out to show all objects</dd>
+            <dt><kbd>Shift</kbd>-<kbd>B</kbd></dt><dd>Zoom to a drawn region</dd>
+            <dt><kbd>Z</kbd></dt><dd>Shading pie menu</dd>
+            <dt><kbd>Alt</kbd>-<kbd>Z</kbd></dt><dd>Toggle X-Ray</dd>
             <dt><kbd>Ctrl</kbd>-<kbd>AccentGrave</kbd></dt><dd>Toggle gizmos</dd>
             <dt><kbd>Shift</kbd>-<kbd>AccentGrave</kbd></dt><dd>Start Walk/Fly Navigation</dd>
           </dl>
         </article>
         <article class="shortcut-card">
-          <h3>Precise editing habits</h3>
+          <h3>Object mode and transforms</h3>
+          <dl>
+            <dt><kbd>G</kbd></dt><dd>Move or grab</dd>
+            <dt><kbd>R</kbd></dt><dd>Rotate</dd>
+            <dt><kbd>S</kbd></dt><dd>Scale</dd>
+            <dt><kbd>X</kbd> / <kbd>Y</kbd> / <kbd>Z</kbd> after transform</dt><dd>Constrain to an axis</dd>
+            <dt><kbd>Ctrl</kbd>-<kbd>P</kbd></dt><dd>Set parent</dd>
+            <dt><kbd>Alt</kbd>-<kbd>P</kbd></dt><dd>Clear parent</dd>
+            <dt><kbd>Alt</kbd>-<kbd>G</kbd></dt><dd>Clear location</dd>
+            <dt><kbd>Alt</kbd>-<kbd>R</kbd></dt><dd>Clear rotation</dd>
+            <dt><kbd>Alt</kbd>-<kbd>S</kbd></dt><dd>Clear scale</dd>
+            <dt><kbd>Ctrl</kbd>-<kbd>A</kbd></dt><dd>Apply location, rotation or scale</dd>
+            <dt><kbd>Ctrl</kbd>-<kbd>J</kbd></dt><dd>Join selected objects</dd>
+            <dt><kbd>M</kbd></dt><dd>Move active object to a collection</dd>
+          </dl>
+        </article>
+        <article class="shortcut-card">
+          <h3>Edit mode modeling</h3>
+          <dl>
+            <dt><kbd>E</kbd></dt><dd>Extrude</dd>
+            <dt><kbd>I</kbd></dt><dd>Inset</dd>
+            <dt><kbd>Ctrl</kbd>-<kbd>B</kbd></dt><dd>Bevel edges</dd>
+            <dt><kbd>Ctrl</kbd>-<kbd>Shift</kbd>-<kbd>B</kbd></dt><dd>Bevel vertices</dd>
+            <dt><kbd>Ctrl</kbd>-<kbd>R</kbd></dt><dd>Loop cut</dd>
+            <dt><kbd>G</kbd>, <kbd>G</kbd></dt><dd>Vertex or edge slide</dd>
+            <dt><kbd>K</kbd></dt><dd>Knife</dd>
+            <dt><kbd>F</kbd></dt><dd>Fill face</dd>
+            <dt><kbd>M</kbd></dt><dd>Merge</dd>
+            <dt><kbd>P</kbd></dt><dd>Separate selection to a new object</dd>
+            <dt><kbd>Shift</kbd>-<kbd>N</kbd></dt><dd>Recalculate normals</dd>
+            <dt><kbd>O</kbd></dt><dd>Toggle proportional editing</dd>
+          </dl>
+        </article>
+        <article class="shortcut-card">
+          <h3>Edit mode selection</h3>
+          <dl>
+            <dt><kbd>Ctrl</kbd>-<kbd>L</kbd></dt><dd>Select linked mesh</dd>
+            <dt><kbd>L</kbd></dt><dd>Select linked mesh under the cursor</dd>
+            <dt><kbd>Alt</kbd>-<kbd>LMB</kbd></dt><dd>Select edge or face loop</dd>
+            <dt><kbd>Ctrl</kbd>-<kbd>Alt</kbd>-<kbd>RMB</kbd></dt><dd>Select edge ring</dd>
+            <dt><kbd>Ctrl</kbd>-<kbd>Plus</kbd> / <kbd>Ctrl</kbd>-<kbd>Minus</kbd></dt><dd>Select more or less</dd>
+            <dt><kbd>Ctrl</kbd>-<kbd>Shift</kbd>-<kbd>M</kbd></dt><dd>Mirror current selection</dd>
+            <dt><kbd>Shift</kbd>-<kbd>E</kbd></dt><dd>Edge crease</dd>
+          </dl>
+        </article>
+        <article class="shortcut-card">
+          <h3>UV, image and painting</h3>
+          <dl>
+            <dt><kbd>U</kbd></dt><dd>Unwrap in mesh edit workflows</dd>
+            <dt><kbd>Ctrl</kbd>-<kbd>E</kbd></dt><dd>Mark seam from the edge menu</dd>
+            <dt><kbd>L</kbd> / <kbd>Ctrl</kbd>-<kbd>L</kbd></dt><dd>Select UV island</dd>
+            <dt><kbd>P</kbd> / <kbd>Alt</kbd>-<kbd>P</kbd></dt><dd>Pin or unpin UVs</dd>
+            <dt><kbd>Shift</kbd>-<kbd>P</kbd></dt><dd>Select pinned UVs</dd>
+            <dt><kbd>F</kbd></dt><dd>Brush size in paint workflows</dd>
+            <dt><kbd>Shift</kbd>-<kbd>F</kbd></dt><dd>Brush strength</dd>
+            <dt><kbd>S</kbd></dt><dd>Sample color</dd>
+            <dt><kbd>X</kbd></dt><dd>Flip color</dd>
+          </dl>
+        </article>
+        <article class="shortcut-card">
+          <h3>Nodes and compositor</h3>
+          <dl>
+            <dt><kbd>Ctrl</kbd>-<kbd>RMB</kbd> drag</dt><dd>Cut a node connection</dd>
+            <dt><kbd>Shift</kbd>-<kbd>RMB</kbd> drag</dt><dd>Create or reroute a connection</dd>
+            <dt><kbd>F</kbd></dt><dd>Connect selected nodes</dd>
+            <dt><kbd>M</kbd></dt><dd>Mute selected nodes</dd>
+            <dt><kbd>Ctrl</kbd>-<kbd>G</kbd></dt><dd>Group selected nodes</dd>
+            <dt><kbd>Ctrl</kbd>-<kbd>Alt</kbd>-<kbd>G</kbd></dt><dd>Ungroup selected nodes</dd>
+            <dt><kbd>Tab</kbd></dt><dd>Toggle editing a node group</dd>
+            <dt><kbd>Ctrl</kbd>-<kbd>J</kbd></dt><dd>Frame selected nodes</dd>
+            <dt><kbd>Alt</kbd>-<kbd>MMB</kbd></dt><dd>Move compositor backdrop</dd>
+            <dt><kbd>V</kbd> / <kbd>Alt</kbd>-<kbd>V</kbd></dt><dd>Zoom compositor backdrop</dd>
+          </dl>
+        </article>
+        <article class="shortcut-card">
+          <h3>Sculpting and masks</h3>
+          <dl>
+            <dt><kbd>Ctrl</kbd> while sculpting</dt><dd>Invert the active brush effect</dd>
+            <dt><kbd>F</kbd></dt><dd>Brush size</dd>
+            <dt><kbd>Shift</kbd>-<kbd>F</kbd></dt><dd>Brush strength</dd>
+            <dt><kbd>Shift</kbd>-<kbd>Spacebar</kbd></dt><dd>Brush selection</dd>
+            <dt><kbd>M</kbd></dt><dd>Mask brush</dd>
+            <dt><kbd>Ctrl</kbd>-<kbd>I</kbd></dt><dd>Invert mask</dd>
+            <dt><kbd>Alt</kbd>-<kbd>M</kbd></dt><dd>Clear mask</dd>
+            <dt><kbd>A</kbd></dt><dd>Mask pie menu</dd>
+            <dt><kbd>Alt</kbd>-<kbd>W</kbd></dt><dd>Face Set pie menu</dd>
+          </dl>
+        </article>
+        <article class="shortcut-card">
+          <h3>Animation and playback</h3>
+          <dl>
+            <dt><kbd>Spacebar</kbd></dt><dd>Play or pause when Spacebar is set to Play</dd>
+            <dt><kbd>Ctrl</kbd>-<kbd>Shift</kbd>-<kbd>Spacebar</kbd></dt><dd>Reverse playback</dd>
+            <dt><kbd>Left</kbd> / <kbd>Right</kbd></dt><dd>Previous or next frame</dd>
+            <dt><kbd>Shift</kbd>-<kbd>Left</kbd> / <kbd>Shift</kbd>-<kbd>Right</kbd></dt><dd>First or last frame</dd>
+            <dt><kbd>Up</kbd> / <kbd>Down</kbd></dt><dd>Jump to keyframe</dd>
+            <dt><kbd>I</kbd></dt><dd>Add keyframe on the current frame</dd>
+            <dt><kbd>Alt</kbd>-<kbd>I</kbd></dt><dd>Delete keyframe on the current frame</dd>
+            <dt><kbd>T</kbd></dt><dd>Set keyframe interpolation</dd>
+            <dt><kbd>V</kbd></dt><dd>Set keyframe handle type</dd>
+            <dt><kbd>Shift</kbd>-<kbd>E</kbd></dt><dd>Set keyframe extrapolation</dd>
+          </dl>
+        </article>
+        <article class="shortcut-card">
+          <h3>Graph, rigging and pose</h3>
+          <dl>
+            <dt><kbd>Ctrl</kbd>-<kbd>RMB</kbd></dt><dd>Add a keyframe at the cursor in the Graph Editor</dd>
+            <dt><kbd>Tab</kbd></dt><dd>Lock selected channel in graph-style animation editors</dd>
+            <dt><kbd>E</kbd></dt><dd>Add a new bone in armature edit workflows</dd>
+            <dt><kbd>Shift</kbd>-<kbd>D</kbd></dt><dd>Duplicate bone</dd>
+            <dt><kbd>Ctrl</kbd>-<kbd>R</kbd></dt><dd>Roll bone</dd>
+            <dt><kbd>Alt</kbd>-<kbd>R</kbd></dt><dd>Clear bone roll or pose rotation depending on mode</dd>
+            <dt><kbd>Ctrl</kbd>-<kbd>C</kbd> / <kbd>Ctrl</kbd>-<kbd>V</kbd></dt><dd>Copy and paste pose</dd>
+            <dt><kbd>Ctrl</kbd>-<kbd>Shift</kbd>-<kbd>V</kbd></dt><dd>Paste pose flipped</dd>
+            <dt><kbd>Shift</kbd>-<kbd>I</kbd></dt><dd>Add IK</dd>
+          </dl>
+        </article>
+        <article class="shortcut-card">
+          <h3>Property hover and precision</h3>
           <dl>
             <dt><kbd>Ctrl</kbd> while dragging</dt><dd>Snap to discrete steps</dd>
             <dt><kbd>Shift</kbd> while dragging</dt><dd>Precision control over the value</dd>
@@ -1203,6 +1338,20 @@ body.high-contrast .resource-form input{
             <dt><kbd>Ctrl</kbd>-<kbd>C</kbd> over a value</dt><dd>Copy a single value</dd>
             <dt><kbd>Ctrl</kbd>-<kbd>V</kbd> over a value</dt><dd>Paste a single value</dd>
             <dt><kbd>Alt</kbd> while editing values</dt><dd>Apply the change to selected items where supported</dd>
+          </dl>
+        </article>
+        <article class="shortcut-card">
+          <h3>Window and editor switching</h3>
+          <dl>
+            <dt><kbd>Shift</kbd>-<kbd>F3</kbd></dt><dd>Node editor</dd>
+            <dt><kbd>Shift</kbd>-<kbd>F4</kbd></dt><dd>Python Console</dd>
+            <dt><kbd>Shift</kbd>-<kbd>F5</kbd></dt><dd>3D Viewport</dd>
+            <dt><kbd>Shift</kbd>-<kbd>F6</kbd></dt><dd>Graph Editor</dd>
+            <dt><kbd>Shift</kbd>-<kbd>F7</kbd></dt><dd>Properties</dd>
+            <dt><kbd>Shift</kbd>-<kbd>F8</kbd></dt><dd>Video Sequencer</dd>
+            <dt><kbd>Shift</kbd>-<kbd>F9</kbd></dt><dd>Outliner</dd>
+            <dt><kbd>Shift</kbd>-<kbd>F12</kbd></dt><dd>Dope Sheet</dd>
+            <dt><kbd>Ctrl</kbd>-<kbd>Alt</kbd>-<kbd>Q</kbd></dt><dd>Quad View</dd>
           </dl>
         </article>
         <article class="shortcut-card">
@@ -1236,6 +1385,7 @@ body.high-contrast .resource-form input{
         <li>Key naming, mouse-button naming, hover shortcuts, dragging modifiers and confirm/cancel behavior are cross-checked with the official Common Shortcuts page.</li>
         <li>Spacebar customization, search-by-key-binding, restore behavior and custom-keymap risk are cross-checked with the official Preferences &gt; Keymap page.</li>
         <li>Industry Compatible entries are separated because that preset intentionally differs from Blender's default keymap.</li>
+        <li>Workflow-specific groups are incorporated from the local shortcut brief and should be verified in Blender if a shortcut is critical to your project or teaching material.</li>
       </ul>
       <p class="shortcut-note">For a modified setup, open Edit &gt; Preferences &gt; Keymap, search by key binding, and verify the active keymap item before relying on a shortcut.</p>
     </div>
@@ -1358,14 +1508,14 @@ body.high-contrast .resource-form input{
   <details class="panel references collapsible-tool">
     <summary id="references-title">References</summary>
     <div class="collapsible-tool-body">
-      <p class="source-scope">These are the validated Blender 4.0 sources used by this page. Open the original source before relying on any answer. Sources last reviewed: 22 September 2026.</p>
+      <p class="source-scope">These are the validated Blender 4.0 sources used by this page. Open the original source before relying on any answer. Sources last reviewed: 5 October 2026.</p>
       <ul class="source-list">
       <li><a href="https://docs.blender.org/manual/en/4.0/" target="_blank" rel="noopener noreferrer">Blender 4.0 Reference Manual</a><span class="source-org">docs.blender.org</span><p class="source-scope">Official Blender 4.0 manual home page and topic map.</p></li>
       <li><a href="https://docs.blender.org/manual/en/4.0/getting_started/about/index.html" target="_blank" rel="noopener noreferrer">About Blender</a><span class="source-org">Blender Manual</span><p class="source-scope">What Blender is, what it is good at and how the 4.0 release frames the software.</p></li>
       <li><a href="https://docs.blender.org/manual/en/4.0/getting_started/help.html" target="_blank" rel="noopener noreferrer">Help System</a><span class="source-org">Blender Manual</span><p class="source-scope">How to get help from inside Blender and the manual itself.</p></li>
       <li><a href="https://docs.blender.org/manual/en/4.0/interface/index.html" target="_blank" rel="noopener noreferrer">User Interface</a><span class="source-org">Blender Manual</span><p class="source-scope">Windows, areas, widgets, tools and shortcuts.</p></li>
-      <li><a href="https://docs.blender.org/manual/en/4.0/interface/keymap/introduction.html" target="_blank" rel="noopener noreferrer">Common Shortcuts</a><span class="source-org">Blender Manual</span><p class="source-scope">Official shortcut conventions, mouse-button names, hovering shortcuts, dragging modifiers, text editing and confirm/cancel behavior.</p></li>
-      <li><a href="https://docs.blender.org/manual/en/4.0/interface/keymap/blender_default.html" target="_blank" rel="noopener noreferrer">Default Keymap</a><span class="source-org">Blender Manual</span><p class="source-scope">Common keys used in Blender's default keymap, including global, editor and 3D Viewport keys.</p></li>
+      <li><a href="https://docs.blender.org/manual/en/4.0/interface/keymap/introduction.html" target="_blank" rel="noopener noreferrer">Common Shortcuts</a><span class="source-org">Blender Manual</span><p class="source-scope">Official shortcut conventions, mouse-button names, hovering shortcuts, dragging modifiers, text editing, confirm/cancel behavior and property/keyframe hover actions.</p></li>
+      <li><a href="https://docs.blender.org/manual/en/4.0/interface/keymap/blender_default.html" target="_blank" rel="noopener noreferrer">Default Keymap</a><span class="source-org">Blender Manual</span><p class="source-scope">Common keys used in Blender's default keymap, including global, common editor, 3D Viewport, navigation, mode switching and keymap preference behavior.</p></li>
       <li><a href="https://docs.blender.org/manual/en/4.0/interface/keymap/industry_compatible.html" target="_blank" rel="noopener noreferrer">Industry Compatible Keymap</a><span class="source-org">Blender Manual</span><p class="source-scope">Common keys used when Blender is set to the Industry Compatible keymap preset.</p></li>
       <li><a href="https://docs.blender.org/manual/en/4.0/editors/preferences/keymap.html" target="_blank" rel="noopener noreferrer">Preferences: Keymap</a><span class="source-org">Blender Manual</span><p class="source-scope">How Blender exposes keymap presets, key binding search, individual keymap items, restoring defaults and custom-keymap limitations.</p></li>
       <li><a href="https://docs.blender.org/manual/en/4.0/editors/index.html" target="_blank" rel="noopener noreferrer">Editors</a><span class="source-org">Blender Manual</span><p class="source-scope">Overview of the 3D Viewport, Shader Editor, Graph Editor, Sequencer and other editors.</p></li>
@@ -1391,7 +1541,7 @@ body.high-contrast .resource-form input{
 
 <footer>
   <a href="/blanderQA/policy.html">Privacy, use policy and disclaimer</a><br>
-  version 0.3.1 | Last updated: 22 September 2026 | &copy; 2026 <a href="/">www.jahosi.co.uk</a>
+  version 0.3.2 | Last updated: 5 October 2026 | &copy; 2026 <a href="/">www.jahosi.co.uk</a>
 </footer>
 
 <script>

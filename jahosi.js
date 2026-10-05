@@ -433,13 +433,13 @@ const BLANDER_QA_SOURCES = [
     title: "Common Shortcuts",
     organisation: "Blender Manual",
     url: "https://docs.blender.org/manual/en/4.0/interface/keymap/introduction.html",
-    scope: "Official shortcut conventions, mouse-button names, hovering shortcuts, dragging modifiers, text editing and confirm/cancel behavior.",
+    scope: "Official shortcut conventions, mouse-button names, hovering shortcuts, dragging modifiers, text editing, confirm/cancel behavior and property/keyframe hover actions.",
   },
   {
     title: "Default Keymap",
     organisation: "Blender Manual",
     url: "https://docs.blender.org/manual/en/4.0/interface/keymap/blender_default.html",
-    scope: "Common keys used in Blender's default keymap, including global, editor and 3D Viewport keys.",
+    scope: "Common keys used in Blender's default keymap, including global, common editor, 3D Viewport, navigation, mode switching and keymap preference behavior.",
   },
   {
     title: "Industry Compatible Keymap",
@@ -574,7 +574,7 @@ const BLANDER_QA_SOURCE_NOTES = [
   "Rendering: EEVEE is often used for fast look development while Cycles is often used for final physically based rendering. Have you considered doing it a different way, such as iterating in EEVEE and finishing in Cycles?",
   "Rigging and animation: keyframes, constraints, drivers, shape keys and the Pose Library can each solve a different part of a motion problem. Explain why one is simpler than another for a given goal.",
   "Troubleshooting: official guidance points first to startup files, add-ons, GPU or driver issues, crashes, Python errors and recovery. Move through those possibilities in a calm, practical order.",
-  "Keyboard shortcuts: exact bindings depend on the active keymap preset and user customizations. Use the official Common Shortcuts, Default Keymap, Industry Compatible Keymap and Preferences: Keymap pages for shortcut claims, and tell users to verify custom setups in Preferences > Keymap.",
+  "Keyboard shortcuts: exact bindings depend on the active keymap preset and user customizations. Use the official Common Shortcuts, Default Keymap, Industry Compatible Keymap and Preferences: Keymap pages for authoritative shortcut claims. The page also contains a local expanded shortcut brief for practical grouping across viewport, object/edit mode, UV/image, nodes, compositor, sculpt, animation, graph, rigging, pose and window-switching workflows; tell users to verify custom setups in Preferences > Keymap.",
   "The 4.0 release page and manual are the strongest sources for version-specific claims in this assistant.",
 ].join("\n");
 
@@ -1401,7 +1401,7 @@ app.get("/blanderQA/resource-info", (req, res) => {
       match: /shortcut|hotkey|keymap|key map|keyboard|binding|spacebar|menu search|quick access|favorite|favourites|favorites|viewport navigation|industry compatible/i,
       payload: {
         title: "Keyboard shortcuts and keymaps",
-        summary: "Good for Blender 4.0 shortcut conventions, default keys, Industry Compatible differences and checking customized key bindings.",
+        summary: "Good for Blender 4.0 shortcut conventions, default-keymap basics, viewport navigation, object/edit-mode workflows, node and animation shortcuts, Industry Compatible differences and checking customized key bindings.",
         links: [
           { label: "Common Shortcuts", href: "https://docs.blender.org/manual/en/4.0/interface/keymap/introduction.html" },
           { label: "Default Keymap", href: "https://docs.blender.org/manual/en/4.0/interface/keymap/blender_default.html" },
@@ -1410,7 +1410,8 @@ app.get("/blanderQA/resource-info", (req, res) => {
         ],
         followUps: [
           "If a shortcut does not work, check which keymap preset is active and whether the key has been customized.",
-          "Have you considered using Menu Search or Preferences > Keymap search before trying to memorize every shortcut?",
+          "Have you considered using Menu Search, Quick Favorites, or Preferences > Keymap search before trying to memorize every shortcut?",
+          "For practical work, group shortcuts by workflow: navigation, transforms, modeling, UVs, nodes, sculpting, animation, rigging and window switching.",
         ],
       },
     },
