@@ -1,0 +1,2200 @@
+
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#0b0f18">
+<meta name="application-name" content="Blender5QA">
+<meta name="description" content="Blender5QA helps Blender 5.0 users ask plain-English questions, compare modeling, Geometry Nodes, shading, animation, rendering and troubleshooting workflows, and check official Blender sources.">
+<meta name="keywords" content="Blender5QA, Blender 5.0 help, Blender Q&A, Blender tutorial assistant, Blender modeling help, Geometry Nodes help, Blender shading, Blender animation, Blender rendering, Blender troubleshooting, Blender Python API">
+<meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1">
+<link rel="canonical" href="https://jahosi.co.uk/blender5QA/">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Blender5QA | Blender 5.0 Workflow Q&A">
+<meta property="og:description" content="Ask Blender 5.0 questions in plain English, compare official workflows, find manual pages, and troubleshoot modeling, Geometry Nodes, shading, animation, rendering and Python tasks.">
+<meta property="og:url" content="https://jahosi.co.uk/blender5QA/">
+<meta property="og:site_name" content="Blender5QA">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Blender5QA | Blender 5.0 Workflow Q&A">
+<meta name="twitter:description" content="Plain-English Blender 5.0 help for comparing workflows, finding official sources, and troubleshooting creative projects.">
+<title>Blender5QA | Blender 5.0 Workflow Q&A</title>
+<script src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit" async defer></script>
+<script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js" defer></script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "Blender5QA",
+  "alternateName": "Blender5QA by Jahosi",
+  "url": "https://jahosi.co.uk/blender5QA/",
+  "applicationCategory": "EducationalApplication",
+  "operatingSystem": "Any",
+  "browserRequirements": "Requires a modern web browser with JavaScript enabled.",
+  "description": "Plain-English Blender 5.0 Q&A tool for comparing modeling, modifiers, Geometry Nodes, shading, animation, rendering, troubleshooting and Python workflows using official Blender sources.",
+  "audience": {
+    "@type": "Audience",
+    "audienceType": "Blender learners, hobbyist 3D artists, digital artists, animators and technical artists"
+  },
+  "about": [
+    {"@type": "Thing", "name": "Blender 5.0"},
+    {"@type": "Thing", "name": "3D modeling"},
+    {"@type": "Thing", "name": "Geometry Nodes"},
+    {"@type": "Thing", "name": "Shading and materials"},
+    {"@type": "Thing", "name": "Animation and rigging"},
+    {"@type": "Thing", "name": "Rendering and compositing"},
+    {"@type": "Thing", "name": "Blender troubleshooting"},
+    {"@type": "Thing", "name": "Blender Python API"}
+  ],
+  "mainEntity": {
+    "@type": "FAQPage",
+    "name": "Blender5QA common Blender 5.0 questions",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "Should I use direct modeling, modifiers or Geometry Nodes in Blender 5.0?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Blender5QA helps users compare official Blender 5.0 modeling routes so they can choose between direct mesh editing, modifier stacks and Geometry Nodes based on the task."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "How can I troubleshoot Blender 5.0 startup, GPU or crash problems?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Blender5QA points users toward official Blender troubleshooting sources for startup state, add-ons, graphics hardware, crashes and file recovery."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Can Blender5QA replace the Blender manual?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "No. Blender5QA is an AI-assisted explanation and navigation layer. Users should check the cited official Blender 5.0 manual, release notes or API documentation before relying on an answer."
+        }
+      }
+    ]
+  },
+  "isAccessibleForFree": true,
+  "inLanguage": "en-GB",
+  "dateModified": "2026-10-11"
+}
+</script>
+<style>
+:root{
+  color-scheme:dark;
+  --bg:#090b10;
+  --bg-deep:#050609;
+  --panel:rgba(17,23,35,.78);
+  --panel-strong:rgba(22,30,45,.94);
+  --panel-soft:rgba(255,255,255,.045);
+  --ink:#f6f8fb;
+  --muted:#aeb8c7;
+  --line:rgba(255,255,255,.14);
+  --line-strong:rgba(255,255,255,.24);
+  --brand:#ff8a1c;
+  --brand-dark:#ff6a00;
+  --brand-pale:rgba(255,138,28,.14);
+  --cyan:#35d6ff;
+  --violet:#8b5cf6;
+  --green:#56f0a7;
+  --warn:#ffbf69;
+  --warn-bg:rgba(255,191,105,.12);
+  --error:#ff6b8a;
+  --focus:#35d6ff;
+  --shadow:0 22px 70px rgba(0,0,0,.38);
+  --glow:0 0 32px rgba(53,214,255,.20);
+  --header-offset:5.25rem;
+}
+body.high-contrast{
+  color-scheme:light;
+  --bg:#000;
+  --bg-deep:#000;
+  --panel:#fff;
+  --panel-strong:#fff;
+  --panel-soft:#fff;
+  --ink:#000;
+  --muted:#111;
+  --line:#000;
+  --line-strong:#000;
+  --brand:#005ea5;
+  --brand-dark:#003078;
+  --brand-pale:#ffdd00;
+  --cyan:#005ea5;
+  --violet:#000;
+  --green:#00703c;
+  --warn:#000;
+  --warn-bg:#ffdd00;
+  --error:#d4351c;
+  --focus:#ffdd00;
+  --shadow:none;
+  --glow:none;
+}
+*{box-sizing:border-box}
+html{
+  scroll-behavior:smooth;
+  scroll-padding-top:var(--header-offset);
+}
+body{
+  margin:0;
+  min-height:100vh;
+  font-family:Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, Helvetica, sans-serif;
+  font-size:16px;
+  line-height:1.55;
+  color:var(--ink);
+  background:
+    linear-gradient(115deg, rgba(255,106,0,.13), transparent 32%),
+    linear-gradient(245deg, rgba(53,214,255,.12), transparent 36%),
+    linear-gradient(180deg, var(--bg), var(--bg-deep));
+  overflow-x:hidden;
+  -webkit-text-size-adjust:100%;
+  text-size-adjust:100%;
+}
+body::before{
+  content:"";
+  position:fixed;
+  inset:0;
+  pointer-events:none;
+  z-index:-1;
+  background:
+    linear-gradient(rgba(255,255,255,.045) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,.035) 1px, transparent 1px);
+  background-size:48px 48px;
+  mask-image:linear-gradient(to bottom, rgba(0,0,0,.72), transparent 78%);
+}
+body.large-font{font-size:19px}
+a{color:#7de3ff;font-weight:700;text-decoration-color:rgba(125,227,255,.42)}
+a:hover{text-decoration-thickness:2px}
+a:focus,button:focus,input:focus,textarea:focus,summary:focus{
+  outline:3px solid var(--focus);
+  outline-offset:3px;
+}
+.skip-link{
+  position:absolute;
+  left:.75rem;
+  top:.75rem;
+  z-index:40;
+  transform:translateY(-160%);
+  background:#fff;
+  color:#000;
+  border:2px solid var(--focus);
+  border-radius:8px;
+  padding:.55rem .75rem;
+}
+.skip-link:focus{transform:translateY(0)}
+header{
+  color:#fff;
+  position:sticky;
+  top:0;
+  z-index:30;
+  overflow:hidden;
+  border-bottom:1px solid var(--line);
+  background:
+    linear-gradient(135deg, rgba(255,138,28,.22), transparent 34%),
+    linear-gradient(225deg, rgba(53,214,255,.20), transparent 38%),
+    #0b0f18;
+}
+header::after{
+  content:"";
+  position:absolute;
+  left:0;
+  right:0;
+  bottom:0;
+  height:1px;
+  background:linear-gradient(90deg, transparent, var(--brand), var(--cyan), transparent);
+}
+.header-inner{
+  max-width:1180px;
+  margin:0 auto;
+  padding:.85rem 1rem;
+  position:relative;
+}
+.header-copy{
+  min-width:0;
+  padding-right:8rem;
+}
+.kicker{
+  margin:0 0 .55rem;
+  color:#9eeaff;
+  font-size:.78rem;
+  font-weight:800;
+  letter-spacing:0;
+  text-transform:uppercase;
+}
+h1{
+  margin:0;
+  font-size:3rem;
+  line-height:1.03;
+  letter-spacing:0;
+}
+.byline{
+  color:#cbd5e1;
+  font-size:.34em;
+  font-style:normal;
+  font-weight:500;
+  white-space:nowrap;
+}
+.lede{
+  max-width:760px;
+  margin:0;
+  color:#d8e4f2;
+  font-size:1.08rem;
+}
+.signal-row{
+  display:flex;
+  flex-wrap:wrap;
+  gap:.55rem;
+  margin-top:1rem;
+}
+.signal-chip{
+  border:1px solid rgba(255,255,255,.18);
+  border-radius:999px;
+  background:rgba(255,255,255,.08);
+  color:#edf6ff;
+  padding:.42rem .7rem;
+  font-size:.9rem;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.08);
+}
+.hero-visual{
+  position:relative;
+  min-height:220px;
+  border:1px solid var(--line);
+  border-radius:8px;
+  overflow:hidden;
+  background:
+    linear-gradient(160deg, rgba(255,255,255,.10), rgba(255,255,255,.03)),
+    radial-gradient(circle at 70% 30%, rgba(53,214,255,.20), transparent 42%),
+    #111827;
+  box-shadow:var(--shadow), var(--glow);
+}
+.hero-visual::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  background:
+    linear-gradient(rgba(255,255,255,.055) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,.055) 1px, transparent 1px);
+  background-size:28px 28px;
+  transform:perspective(420px) rotateX(58deg) translateY(22px) scale(1.22);
+  transform-origin:50% 90%;
+}
+.viewport-toolbar{
+  position:absolute;
+  top:.75rem;
+  left:.75rem;
+  right:.75rem;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:.75rem;
+  color:#c8d5e4;
+  font-size:.78rem;
+}
+.toolbar-lights{
+  display:flex;
+  gap:.35rem;
+}
+.toolbar-lights span{
+  width:.55rem;
+  height:.55rem;
+  border-radius:50%;
+  background:var(--brand);
+  box-shadow:0 0 14px rgba(255,138,28,.7);
+}
+.toolbar-lights span:nth-child(2){background:var(--cyan);box-shadow:0 0 14px rgba(53,214,255,.65)}
+.toolbar-lights span:nth-child(3){background:var(--green);box-shadow:0 0 14px rgba(86,240,167,.55)}
+.mesh-object{
+  position:absolute;
+  left:50%;
+  top:55%;
+  width:116px;
+  height:116px;
+  border:1px solid rgba(53,214,255,.65);
+  border-radius:8px;
+  transform:translate(-50%,-50%) rotate(45deg) skew(-10deg,-10deg);
+  background:linear-gradient(135deg, rgba(53,214,255,.12), rgba(255,138,28,.12));
+  box-shadow:0 0 34px rgba(53,214,255,.25), inset 0 0 34px rgba(255,138,28,.10);
+}
+.mesh-object::before,
+.mesh-object::after{
+  content:"";
+  position:absolute;
+  inset:18%;
+  border:1px solid rgba(255,255,255,.34);
+}
+.mesh-object::after{
+  inset:34%;
+  border-color:rgba(255,138,28,.55);
+}
+.viewport-caption{
+  position:absolute;
+  left:.85rem;
+  bottom:.75rem;
+  right:.85rem;
+  display:flex;
+  justify-content:space-between;
+  gap:.6rem;
+  color:#dbeafe;
+  font-size:.82rem;
+}
+.header-tools{
+  position:absolute;
+  top:50%;
+  right:1rem;
+  transform:translateY(-50%);
+  display:flex;
+  flex-direction:column;
+  align-items:flex-end;
+  justify-content:flex-start;
+  gap:.1rem;
+}
+.wrap{
+  max-width:1180px;
+  margin:0 auto;
+  padding:1rem;
+  overflow-wrap:anywhere;
+  display:flex;
+  flex-direction:column;
+}
+.chat-wrap{order:1}
+.notice{order:2}
+.start-tool{order:3}
+.local-tool{order:4}
+.guided-section{order:5}
+.references{order:6}
+.notice{
+  border:1px solid rgba(255,191,105,.26);
+  border-left:3px solid var(--warn);
+  background:var(--warn-bg);
+  padding:1rem;
+  margin:1rem auto;
+  max-width:920px;
+  border-radius:8px;
+  box-shadow:0 14px 38px rgba(0,0,0,.18);
+}
+.notice h2,.notice p{margin:.2rem 0}
+.notice h2{font-size:1.02rem;color:#ffe1b3}
+.notice ul{margin:.55rem 0 0;padding-left:1.2rem}
+.notice li{margin:.35rem 0}
+.chat-wrap{
+  width:100%;
+  max-width:1180px;
+  margin:0 auto 1rem;
+  scroll-margin-top:var(--header-offset);
+}
+.collapsible-tool{
+  width:100%;
+  max-width:980px;
+  margin:0 auto 1rem;
+  scroll-margin-top:var(--header-offset);
+}
+.collapsible-tool{
+  padding:0;
+  overflow:hidden;
+}
+.collapsible-tool summary{
+  position:relative;
+  padding:1rem 1.1rem;
+  color:#f7fbff;
+  font-weight:800;
+  font-size:1.08rem;
+  cursor:pointer;
+  background:linear-gradient(90deg, rgba(255,138,28,.12), transparent);
+  border-radius:8px;
+}
+.collapsible-tool summary::marker{color:var(--brand)}
+.collapsible-tool summary:hover{
+  color:#fff;
+  background:linear-gradient(90deg, rgba(255,138,28,.22), rgba(53,214,255,.10));
+}
+.collapsible-tool[open] summary{
+  border-bottom:1px solid var(--line);
+  border-bottom-left-radius:0;
+  border-bottom-right-radius:0;
+}
+.collapsible-tool-body{padding:1rem}
+.collapsible-tool-body > :first-child{margin-top:0}
+.collapsible-tool-body > :last-child{margin-bottom:0}
+.action-grid,.question-grid,.glossary-grid,.question-pack-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+  gap:.75rem;
+}
+.question-pack-grid{
+  grid-template-columns:minmax(0,1fr);
+}
+.action-card,.question-card,.question-pack,.term-card{
+  border:1px solid var(--line);
+  border-radius:8px;
+  background:linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.035));
+  padding:.9rem;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.08);
+}
+.action-card,.term-card,.question-pack{transition:transform .18s ease, border-color .18s ease, background .18s ease}
+.action-card:hover,.term-card:hover,.question-pack:hover{
+  transform:translateY(-2px);
+  border-color:rgba(53,214,255,.42);
+  background:linear-gradient(180deg, rgba(53,214,255,.09), rgba(255,255,255,.04));
+}
+.action-card h3,.term-card h3{
+  margin:0 0 .35rem;
+  color:#fff;
+  font-size:1rem;
+}
+.action-card p,.term-card p{
+  margin:.35rem 0 .65rem;
+  color:var(--muted);
+  font-size:.94rem;
+}
+.action-card button,.question-card{width:100%}
+.question-pack{
+  padding:0;
+  overflow:hidden;
+}
+.question-pack summary{
+  padding:.9rem;
+  color:#fff;
+  font-weight:800;
+  cursor:pointer;
+}
+.question-pack summary::marker{color:var(--cyan)}
+.question-pack summary:hover{
+  color:#fff;
+  background:rgba(53,214,255,.12);
+}
+.question-pack[open] summary{border-bottom:1px solid var(--line)}
+.question-pack-body{padding:.9rem}
+.question-pack-body p{
+  margin:.35rem 0 .65rem;
+  color:var(--muted);
+  font-size:.94rem;
+}
+.question-pack-body ol{
+  margin:.65rem 0 0;
+  padding-left:1.35rem;
+}
+.question-pack-body li{margin:.35rem 0}
+.pack-question-btn{
+  width:100%;
+  border:1px solid transparent;
+  background:transparent;
+  color:#edf6ff;
+  box-shadow:none;
+  padding:.45rem .55rem;
+  text-align:left;
+  font-weight:650;
+}
+.pack-question-btn:hover{
+  transform:none;
+  background:rgba(53,214,255,.10);
+  border-color:rgba(53,214,255,.32);
+  color:#fff;
+  box-shadow:none;
+}
+.question-card{
+  color:#edf6ff;
+  background:rgba(255,255,255,.055);
+  border:1px solid var(--line);
+  text-align:left;
+  min-height:3.2rem;
+  transition:transform .18s ease, border-color .18s ease, background .18s ease;
+}
+.question-card:hover{
+  transform:translateY(-2px);
+  color:#fff;
+  background:linear-gradient(135deg, rgba(255,138,28,.20), rgba(53,214,255,.12));
+  border-color:rgba(255,138,28,.5);
+}
+.question-card:active{transform:translateY(0)}
+.subtle-note{
+  margin:.75rem 0 0;
+  color:var(--muted);
+  font-size:.92rem;
+}
+.resource-form{
+  display:grid;
+  grid-template-columns:minmax(0,1fr) auto;
+  gap:.75rem;
+  align-items:end;
+}
+.resource-form label{
+  display:grid;
+  gap:.35rem;
+  font-weight:800;
+}
+.resource-form input{
+  width:100%;
+  border:1px solid var(--line-strong);
+  border-radius:8px;
+  padding:.82rem .9rem;
+  color:var(--ink);
+  background:rgba(3,7,18,.56);
+  font:inherit;
+}
+.resource-form input::placeholder,textarea::placeholder{color:#7c8797}
+.local-results{
+  margin-top:1rem;
+  border-top:1px solid var(--line);
+  padding-top:1rem;
+}
+.local-results[hidden]{display:none}
+.local-results h3{
+  margin:0 0 .5rem;
+  color:#fff;
+  font-size:1.05rem;
+}
+.local-results ul{margin:.5rem 0 0;padding-left:1.2rem}
+.local-results li{margin:.35rem 0}
+.result-note{
+  color:var(--muted);
+  margin:.35rem 0;
+}
+.panel{
+  background:var(--panel);
+  border:1px solid var(--line);
+  border-radius:8px;
+  box-shadow:var(--shadow);
+}
+@supports(backdrop-filter:blur(18px)){
+  .panel,.notice{backdrop-filter:blur(18px)}
+}
+.panel-pad{padding:1rem}
+.chat-panel{
+  display:grid;
+  grid-template-rows:minmax(0,1fr) auto auto;
+  min-height:calc(100vh - 7rem);
+  min-height:calc(100dvh - 7rem);
+  overflow:hidden;
+  border-color:rgba(53,214,255,.24);
+}
+.chat-panel.is-active{
+  border-color:var(--cyan);
+  box-shadow:0 0 0 3px rgba(53,214,255,.16), var(--shadow), var(--glow);
+}
+.thread{
+  overflow:auto;
+  padding:1rem;
+  display:grid;
+  gap:.85rem;
+  align-content:start;
+  background:
+    linear-gradient(rgba(255,255,255,.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,.026) 1px, transparent 1px),
+    rgba(5,8,14,.78);
+  background-size:32px 32px;
+}
+.message{
+  max-width:min(72ch, calc(100% - 1rem));
+  border-radius:8px;
+  padding:.85rem 1rem;
+  white-space:pre-wrap;
+  overflow-wrap:anywhere;
+}
+.message.bot{
+  background:rgba(17,24,39,.92);
+  border:1px solid rgba(53,214,255,.24);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.08);
+}
+.message.user{
+  margin-left:auto;
+  color:#10141c;
+  background:linear-gradient(135deg, #ffb45f, #ff8a1c);
+  border:1px solid rgba(255,255,255,.24);
+}
+.message strong{display:block;margin-bottom:.25rem}
+.message.thinking{
+  color:var(--muted);
+  font-style:italic;
+}
+.message.is-new{
+  outline:3px solid rgba(53,214,255,.22);
+  outline-offset:2px;
+}
+.chat-gate{
+  display:flex;
+  justify-content:flex-end;
+  min-height:65px;
+  max-width:100%;
+  overflow:hidden;
+}
+.chat-gate[hidden]{display:none}
+.chat-turnstile{max-width:100%;overflow:hidden}
+.chat-form{
+  border-top:1px solid var(--line);
+  padding:1rem;
+  display:grid;
+  gap:.75rem;
+  background:rgba(10,14,22,.95);
+}
+.chat-form label{font-weight:800}
+.input-row{
+  display:grid;
+  grid-template-columns:minmax(0,1fr) max-content;
+  gap:.75rem;
+  align-items:stretch;
+}
+textarea{
+  width:100%;
+  min-height:5.5rem;
+  resize:vertical;
+  border:1px solid var(--line-strong);
+  border-radius:8px;
+  padding:.85rem .9rem;
+  color:var(--ink);
+  background:#080c14;
+  font:inherit;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.04);
+}
+textarea.has-starter-example{
+  color:var(--muted);
+}
+textarea:focus,.resource-form input:focus{
+  border-color:var(--cyan);
+  box-shadow:0 0 0 4px rgba(53,214,255,.12);
+}
+button{
+  border:1px solid rgba(255,255,255,.14);
+  border-radius:8px;
+  background:linear-gradient(135deg, var(--brand), #ffb45f);
+  color:#111827;
+  padding:.8rem 1rem;
+  font:inherit;
+  font-weight:900;
+  cursor:pointer;
+  box-shadow:0 10px 26px rgba(255,106,0,.20);
+  transition:transform .18s ease, box-shadow .18s ease, border-color .18s ease, filter .18s ease;
+}
+button:hover{
+  transform:translateY(-1px);
+  filter:saturate(1.12);
+  box-shadow:0 14px 34px rgba(255,106,0,.28);
+}
+button:disabled{opacity:.65;cursor:wait;transform:none}
+.toggle-btn{
+  background:transparent;
+  color:#9eeaff;
+  border:0;
+  border-radius:0;
+  box-shadow:none;
+  padding:.05rem 0;
+  text-decoration:underline;
+  text-decoration-thickness:1px;
+  text-underline-offset:4px;
+  text-align:right;
+  font-size:.92rem;
+  font-weight:700;
+  line-height:1.15;
+}
+.toggle-btn:hover,
+.toggle-btn[aria-pressed="true"]{
+  color:#fff;
+  background:transparent;
+  border:0;
+  box-shadow:none;
+  text-decoration-thickness:2px;
+}
+body.high-contrast button{
+  border:2px solid #000;
+  background:#005ea5;
+  color:#fff;
+  box-shadow:none;
+}
+body.high-contrast button:hover{background:#003078;color:#fff}
+body.high-contrast .toggle-btn{
+  background:transparent;
+  color:#003078;
+  border:0;
+}
+body.high-contrast .toggle-btn:hover,
+body.high-contrast .toggle-btn[aria-pressed="true"]{
+  background:transparent;
+  color:#000;
+}
+body.high-contrast .text-action-btn{
+  background:transparent;
+  color:#003078;
+  border:0;
+}
+body.high-contrast .text-action-btn:hover{background:transparent;color:#003078}
+.chat-actions{
+  display:flex;
+  flex-direction:column;
+  align-items:flex-end;
+  justify-content:flex-end;
+  gap:.5rem;
+  min-width:7rem;
+}
+.ask-row{
+  display:flex;
+  align-items:center;
+  justify-content:flex-end;
+  gap:.75rem;
+}
+.ask-row #chat-send{
+  min-width:6.5rem;
+}
+.secondary-actions{
+  display:flex;
+  flex-wrap:wrap;
+  align-items:center;
+  justify-content:flex-end;
+  gap:.75rem;
+}
+.text-action-btn{
+  background:transparent;
+  color:#9eeaff;
+  border:0;
+  border-radius:0;
+  padding:.1rem 0;
+  text-decoration:underline;
+  text-underline-offset:3px;
+  font-size:.94rem;
+  box-shadow:none;
+}
+.text-action-btn:hover{
+  background:transparent;
+  color:#fff;
+  box-shadow:none;
+  text-decoration-thickness:2px;
+}
+.form-note{
+  margin:0;
+  color:var(--error);
+  font-weight:800;
+}
+.form-note[hidden]{display:none}
+.back-to-chat{
+  position:fixed;
+  right:1rem;
+  bottom:calc(1rem + env(safe-area-inset-bottom));
+  z-index:15;
+  width:auto;
+  min-width:0;
+  max-width:11rem;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  border-radius:999px;
+  padding:.68rem .95rem;
+  white-space:nowrap;
+  box-shadow:0 16px 40px rgba(0,0,0,.36), 0 0 0 1px rgba(255,255,255,.10);
+}
+.back-to-chat[hidden]{display:none}
+.references h2{
+  margin:0 0 .65rem;
+  color:#fff;
+  font-size:1.15rem;
+}
+.source-list{
+  display:grid;
+  gap:.75rem;
+  margin:0;
+  padding:0;
+  list-style:none;
+}
+.source-list li{
+  border-top:1px solid var(--line);
+  padding-top:.75rem;
+}
+.source-list li:first-child{border-top:0;padding-top:0}
+.source-org{
+  display:block;
+  color:var(--muted);
+  font-size:.9rem;
+  font-weight:400;
+}
+.source-scope{
+  margin:.2rem 0 0;
+  color:var(--muted);
+  font-size:.92rem;
+}
+.shortcut-note{
+  margin:.35rem 0 .9rem;
+  color:var(--muted);
+  font-size:.94rem;
+}
+.shortcut-grid{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:.85rem;
+}
+.shortcut-card{
+  border:1px solid var(--line);
+  border-radius:8px;
+  padding:.85rem;
+  background:rgba(255,255,255,.045);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.06);
+}
+.shortcut-card h3{
+  margin:0 0 .55rem;
+  color:#fff;
+  font-size:1rem;
+}
+.shortcut-card dl{
+  display:grid;
+  grid-template-columns:minmax(0,1fr);
+  gap:.1rem;
+  margin:0;
+}
+.shortcut-card dt,.shortcut-card dd{margin:0}
+.shortcut-card dt{margin-top:.45rem}
+.shortcut-card dt:first-child{margin-top:0}
+.shortcut-card dd{
+  color:var(--muted);
+  padding-bottom:.35rem;
+  border-bottom:1px solid rgba(255,255,255,.08);
+}
+.shortcut-card dd:last-child{
+  padding-bottom:0;
+  border-bottom:0;
+}
+kbd{
+  display:inline-block;
+  border:1px solid var(--line-strong);
+  border-bottom-color:rgba(255,255,255,.38);
+  border-radius:5px;
+  padding:.05rem .32rem;
+  color:#fff;
+  background:rgba(3,7,18,.74);
+  font:700 .86em ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
+  white-space:nowrap;
+}
+.cross-check-list{
+  margin:.9rem 0 0;
+  padding-left:1.2rem;
+  color:var(--muted);
+}
+.cross-check-list li{margin:.35rem 0}
+@media(max-width:760px){
+  .shortcut-grid{grid-template-columns:minmax(0,1fr)}
+}
+.guided-section{margin-top:0}
+.references{margin-top:1rem}
+.references .source-list{
+  grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
+  gap:1rem;
+}
+.references .source-list li{
+  border:1px solid var(--line);
+  border-radius:8px;
+  padding:.85rem;
+  background:rgba(255,255,255,.045);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.06);
+}
+.references .source-list li:first-child{
+  border-top:1px solid var(--line);
+  padding-top:.85rem;
+}
+footer{
+  max-width:1180px;
+  margin:0 auto;
+  padding:1.5rem 1rem 2rem;
+  color:var(--muted);
+  font-size:.92rem;
+}
+body.high-contrast footer{color:#fff}
+body.high-contrast header,
+body.high-contrast .thread,
+body.high-contrast .chat-form,
+body.high-contrast .chat-gate,
+body.high-contrast .hero-visual{
+  background:#fff;
+  color:#000;
+}
+body.high-contrast .lede,
+body.high-contrast .kicker,
+body.high-contrast .signal-chip,
+body.high-contrast .notice h2{
+  color:#000;
+}
+body.high-contrast .message.bot,
+body.high-contrast .action-card,
+body.high-contrast .question-card,
+body.high-contrast .question-pack,
+body.high-contrast .term-card,
+body.high-contrast .references .source-list li{
+  background:#fff;
+  color:#000;
+  border:2px solid #000;
+}
+body.high-contrast .message.user{
+  background:#ffdd00;
+  color:#000;
+  border:2px solid #000;
+}
+body.high-contrast .pack-question-btn{
+  background:#fff;
+  color:#000;
+  border:2px solid transparent;
+  box-shadow:none;
+}
+body.high-contrast .pack-question-btn:hover{
+  background:#ffdd00;
+  color:#000;
+  border-color:#000;
+}
+body.high-contrast textarea,
+body.high-contrast .resource-form input{
+  background:#fff;
+  color:#000;
+  border:2px solid #000;
+}
+@media(prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  *,*::before,*::after{
+    animation-duration:.01ms!important;
+    animation-iteration-count:1!important;
+    scroll-behavior:auto!important;
+    transition:none!important;
+  }
+}
+@media(max-width:900px){
+  .hero-visual{min-height:190px}
+}
+@media(max-width:620px){
+  body{font-size:15.5px}
+  body.large-font{font-size:18px}
+  :root{--header-offset:4.5rem}
+  .header-inner{padding:.7rem .75rem}
+  .header-tools{
+    right:.75rem;
+    gap:0;
+    font-size:.74rem;
+    line-height:1.05;
+  }
+  h1{font-size:2rem}
+  .lede{font-size:.98rem;line-height:1.45}
+  .signal-row{gap:.4rem}
+  .signal-chip{font-size:.84rem;padding:.34rem .55rem}
+  .hero-visual{min-height:132px}
+  .mesh-object{width:74px;height:74px}
+  .viewport-caption{font-size:.75rem}
+  .viewport-toolbar{font-size:.72rem}
+  .wrap{padding:.75rem .5rem}
+  .notice,
+  .panel-pad,
+  .collapsible-tool-body,
+  .chat-form{padding:.75rem}
+  .collapsible-tool summary{padding:.85rem .75rem}
+  .action-grid,.question-grid,.glossary-grid,.question-pack-grid{
+    grid-template-columns:minmax(0,1fr);
+    gap:.6rem;
+  }
+  .chat-panel{
+    min-height:calc(100vh - 4.5rem);
+    min-height:calc(100dvh - 4.5rem);
+  }
+  .thread{padding:.65rem;gap:.65rem}
+  .message{max-width:92%;padding:.7rem .75rem}
+  .message.bot{max-width:96%}
+  .resource-form{grid-template-columns:1fr}
+  .input-row{
+    grid-template-columns:minmax(0,1fr) max-content;
+    gap:.55rem;
+  }
+  button{width:100%}
+  .back-to-chat{
+    width:auto;
+    right:.75rem;
+    bottom:calc(.75rem + env(safe-area-inset-bottom));
+  }
+  .toggle-btn,.text-action-btn{width:auto}
+  .chat-actions{
+    align-items:flex-end;
+    min-width:5.75rem;
+  }
+  .ask-row{
+    flex-direction:row;
+    align-items:center;
+  }
+  .ask-row #chat-send{width:auto;min-width:5.75rem}
+  .secondary-actions{align-self:flex-end}
+}
+@media(max-width:360px){
+  .header-tools{
+    flex-direction:column;
+    align-items:flex-end;
+    gap:.15rem;
+  }
+}
+</style>
+</head>
+<body>
+<a class="skip-link" href="#ask">Skip to Q&A</a>
+<header>
+  <div class="header-inner">
+    <div class="header-copy">
+      <h1>Blender5QA <span class="byline">by Jahosi</span></h1>
+    </div>
+
+    
+    <div class="header-tools" aria-label="Display options">
+      <button id="contrast-toggle" class="toggle-btn" type="button" aria-pressed="false">High contrast</button>
+      <button id="font-toggle" class="toggle-btn" type="button" aria-pressed="false">Large font</button>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+  <div class="chat-wrap">
+    <section id="ask" class="panel chat-panel" aria-label="Blender5QA chat">
+      <div id="chat-thread" class="thread" aria-live="polite" aria-label="Q&A conversation">
+        <div class="message bot"><strong>Blender5QA</strong>What would you like to learn today?</div>
+      </div>
+      <form id="chat-form" class="chat-form">
+        <div class="input-row">
+          <textarea id="chat-input" maxlength="1000" autocomplete="off" aria-label="Your question" placeholder=""></textarea>
+          <div class="ask-row">
+            <div id="chat-gate" class="chat-gate" hidden>
+              <div id="chat-turnstile" class="chat-turnstile"></div>
+            </div>
+            <button id="chat-send" type="submit">Ask</button>
+          </div>
+        </div>
+        <div class="chat-actions">
+            <div class="secondary-actions">
+              <button id="clear-chat" class="text-action-btn" type="button">Clear the chat</button>
+              <button id="export-pdf" class="text-action-btn" type="button">Export PDF</button>
+            </div>
+            <p id="form-note" class="form-note" hidden></p>
+        </div>
+      </form>
+    </section>
+  </div>
+  <button id="back-to-chat" class="back-to-chat" type="button" hidden>Back to chat</button>
+
+
+
+  <details id="start-tool" class="panel start-tool collapsible-tool">
+    <summary>Start here</summary>
+    <div class="collapsible-tool-body">
+      <p class="source-scope">Choose the workflow that is closest to your task. Each starter question points at an official Blender 5.0 route and nudges you toward alternate methods where that makes sense.</p>
+      <div class="action-grid">
+        <article class="action-card">
+          <h3>Model it a different way</h3>
+          <p>Compare manual mesh editing, modifiers and Geometry Nodes before locking into one approach.</p>
+          <button type="button" data-prompt="I want to build a Blender 5.0 object, but I am not sure whether to model it directly, use modifiers, or use Geometry Nodes. Compare the official workflows and explain when it makes sense to choose one over another. Have you considered doing it a different way?">Ask this question</button>
+        </article>
+        <article class="action-card">
+          <h3>Shade it two ways</h3>
+          <p>Compare quick look development in EEVEE with final shading in Cycles.</p>
+          <button type="button" data-prompt="For Blender 5.0, how should I compare EEVEE, Cycles and the Principled BSDF when building a material? Explain more than one valid workflow and include a 'have you considered doing it a different way' style suggestion where appropriate.">Ask this question</button>
+        </article>
+        <article class="action-card">
+          <h3>Animate without overbuilding</h3>
+          <p>Compare keyframes, constraints, drivers and shape keys for the problem you have.</p>
+          <button type="button" data-prompt="In Blender 5.0, when should I use keyframes, constraints, drivers or shape keys for an animation problem? Explain the trade-offs and mention if a different workflow might be simpler.">Ask this question</button>
+        </article>
+        <article class="action-card">
+          <h3>Render with intent</h3>
+          <p>Ask when to use the viewport, render settings, compositor and the Principled BSDF.</p>
+          <button type="button" data-prompt="For Blender 5.0 rendering, what are the official ways to approach a scene using EEVEE, Cycles and the compositor? Explain the differences and suggest alternate ways to work if a scene is only partly finished.">Ask this question</button>
+        </article>
+        <article class="action-card">
+          <h3>Troubleshoot first</h3>
+          <p>Work through startup, GPU, crash and recovery checks in an official order.</p>
+          <button type="button" data-prompt="Blender 5.0 is crashing or acting strangely. What official troubleshooting route should I check first, and what different causes should I rule out before blaming the scene file?">Ask this question</button>
+        </article>
+        <article class="action-card">
+          <h3>Extend Blender safely</h3>
+          <p>Understand when an add-on is enough and when Python or the API is the better fit.</p>
+          <button type="button" data-prompt="In Blender 5.0, when should I use an add-on, a script or the Python API for a workflow problem? Compare the official routes and mention when a different solution may be easier.">Ask this question</button>
+        </article>
+      </div>
+    </div>
+  </details>
+
+
+  <details class="panel local-tool collapsible-tool">
+    <summary>Find Blender resources by topic</summary>
+    <div class="collapsible-tool-body">
+      <p class="source-scope">Enter a topic such as modeling, shading, animation, troubleshooting or Python to pull together the most relevant official Blender 5.0 resources.</p>
+      <p class="source-scope">This is intentionally version-specific. If you want later-release details, say so explicitly and check the relevant Blender 5.x manual page too.</p>
+      <form id="resource-form" class="resource-form">
+        <label for="resource-input">
+          Topic
+          <input id="resource-input" name="topic" type="text" autocomplete="off" maxlength="40" placeholder="e.g., shading or Geometry Nodes">
+        </label>
+        <button id="resource-submit" type="submit">Find resources</button>
+      </form>
+      <div id="local-results" class="local-results" hidden aria-live="polite"></div>
+    </div>
+  </details>
+
+  <details class="panel local-tool collapsible-tool">
+    <summary>Common questions</summary>
+    <div class="collapsible-tool-body">
+      <div class="question-grid">
+        <button class="question-card" type="button" data-question="What is the Blender 5.0 manual's official way to get started, and which sections matter most for an artist coming from an illustration or 2D background?">Getting started</button>
+        <button class="question-card" type="button" data-question="How do I decide between manual mesh editing, modifiers and Geometry Nodes in Blender 5.0?">Modeling methods</button>
+        <button class="question-card" type="button" data-question="What changed in the Blender 5.0 Principled BSDF and how should I think about coat, sheen and color management?">Principled BSDF</button>
+        <button class="question-card" type="button" data-question="When should I use EEVEE, Cycles or the compositor while developing a look in Blender 5.0?">Render workflow</button>
+        <button class="question-card" type="button" data-question="When is it better to use constraints, drivers, keyframes or shape keys in Blender 5.0?">Animation choices</button>
+        <button class="question-card" type="button" data-question="What is the official Blender 5.0 troubleshooting path for startup, GPU, crash and recovery problems?">Troubleshooting path</button>
+        <button class="question-card" type="button" data-question="How do I search menus, use snapping and work faster in Blender 5.0 without memorising everything?">Menu search and snapping</button>
+        <button class="question-card" type="button" data-question="What can add-ons, Python and the Blender API do in Blender 5.0, and what should stay in the manual first?">Add-ons and Python</button>
+        <button class="question-card" type="button" data-question="How does Blender 5.0 handle assets, blend files and data-blocks, and why does that matter for a tidy project?">Files and assets</button>
+        <button class="question-card" type="button" data-question="How do I compare a direct workflow against a more procedural one when building something in Blender 5.0?">Compare workflows</button>
+      </div>
+    </div>
+  </details>
+
+  <details class="panel local-tool collapsible-tool">
+    <summary>Keyboard shortcuts for Blender functions</summary>
+    <div class="collapsible-tool-body">
+      <p class="shortcut-note">Checked against official Blender 5.0 manual pages for Common Shortcuts, Default Keymap, Industry Compatible Keymap and Preferences &gt; Keymap, then expanded from the local Blender shortcut brief. Treat this as a practical default-keymap quick reference, not a complete or custom-keymap export.</p>
+      <div class="shortcut-grid" aria-label="Blender 5.0 shortcut groups">
+        <article class="shortcut-card">
+          <h3>Global controls</h3>
+          <dl>
+            <dt><kbd>Ctrl</kbd>-<kbd>O</kbd></dt><dd>Open file</dd>
+            <dt><kbd>Ctrl</kbd>-<kbd>S</kbd></dt><dd>Save file</dd>
+            <dt><kbd>Ctrl</kbd>-<kbd>N</kbd></dt><dd>New file</dd>
+            <dt><kbd>Ctrl</kbd>-<kbd>Z</kbd></dt><dd>Undo</dd>
+            <dt><kbd>Shift</kbd>-<kbd>Ctrl</kbd>-<kbd>Z</kbd></dt><dd>Redo</dd>
+            <dt><kbd>F1</kbd></dt><dd>Context-sensitive help</dd>
+            <dt><kbd>F2</kbd></dt><dd>Rename active item</dd>
+            <dt><kbd>F3</kbd></dt><dd>Menu Search</dd>
+            <dt><kbd>F4</kbd></dt><dd>File context menu</dd>
+            <dt><kbd>F9</kbd></dt><dd>Adjust last operation</dd>
+            <dt><kbd>F11</kbd></dt><dd>Show render window</dd>
+            <dt><kbd>F12</kbd></dt><dd>Render current frame</dd>
+            <dt><kbd>Q</kbd></dt><dd>Quick access favorites</dd>
+            <dt><kbd>Shift</kbd>-<kbd>A</kbd></dt><dd>Add object or node in supported editors</dd>
+            <dt><kbd>Shift</kbd>-<kbd>D</kbd></dt><dd>Duplicate selected item</dd>
+            <dt><kbd>Alt</kbd>-<kbd>D</kbd></dt><dd>Duplicate linked</dd>
+            <dt><kbd>Ctrl</kbd>-<kbd>Spacebar</kbd></dt><dd>Toggle Maximize Area</dd>
+            <dt><kbd>Ctrl</kbd>-<kbd>Alt</kbd>-<kbd>Spacebar</kbd></dt><dd>Fullscreen the current area</dd>
+            <dt><kbd>Ctrl</kbd>-<kbd>PageUp</kbd> / <kbd>Ctrl</kbd>-<kbd>PageDown</kbd></dt><dd>Next or previous workspace</dd>
+          </dl>
+        </article>
+        <article class="shortcut-card">
+          <h3>Common editing and UI</h3>
+          <dl>
+            <dt><kbd>X</kbd></dt><dd>Delete selected item with confirmation</dd>
+            <dt><kbd>Delete</kbd></dt><dd>Delete selected item without confirmation</dd>
+            <dt><kbd>A</kbd></dt><dd>Select all in shared editors</dd>
+            <dt><kbd>Alt</kbd>-<kbd>A</kbd></dt><dd>Select none</dd>
+            <dt><kbd>Ctrl</kbd>-<kbd>I</kbd></dt><dd>Invert selection</dd>
+            <dt><kbd>H</kbd></dt><dd>Hide selection</dd>
+            <dt><kbd>Alt</kbd>-<kbd>H</kbd></dt><dd>Reveal hidden items</dd>
+            <dt><kbd>Shift</kbd>-<kbd>H</kbd></dt><dd>Hide all except the selection</dd>
+            <dt><kbd>T</kbd></dt><dd>Toggle Toolbar</dd>
+            <dt><kbd>N</kbd></dt><dd>Toggle Sidebar</dd>
+            <dt><kbd>B</kbd></dt><dd>Box select</dd>
+            <dt><kbd>C</kbd></dt><dd>Circle select</dd>
+            <dt><kbd>Esc</kbd> / <kbd>RMB</kbd></dt><dd>Cancel</dd>
+            <dt><kbd>Return</kbd> / <kbd>LMB</kbd></dt><dd>Confirm</dd>
+          </dl>
+        </article>
+        <article class="shortcut-card">
+          <h3>3D Viewport</h3>
+          <dl>
+            <dt><kbd>Tab</kbd></dt><dd>Toggle Edit Mode</dd>
+            <dt><kbd>Ctrl</kbd>-<kbd>Tab</kbd></dt><dd>Pose Mode for armatures, or mode-switching pie menu for other objects</dd>
+            <dt><kbd>1</kbd> / <kbd>2</kbd> / <kbd>3</kbd></dt><dd>Edit Mode vertex, edge or face selection</dd>
+            <dt><kbd>Shift</kbd> with <kbd>1</kbd>-<kbd>3</kbd></dt><dd>Toggle selection modes without disabling the others</dd>
+            <dt><kbd>AccentGrave</kbd></dt><dd>3D Viewport navigation pie menu</dd>
+            <dt><kbd>MMB</kbd></dt><dd>Orbit the view</dd>
+            <dt><kbd>Shift</kbd>-<kbd>MMB</kbd></dt><dd>Pan the view</dd>
+            <dt><kbd>Wheel</kbd> / <kbd>Ctrl</kbd>-<kbd>MMB</kbd></dt><dd>Zoom in or out</dd>
+            <dt><kbd>Numpad 1</kbd> / <kbd>3</kbd> / <kbd>7</kbd></dt><dd>Front, side and top views</dd>
+            <dt><kbd>Numpad 0</kbd></dt><dd>Camera view</dd>
+            <dt><kbd>Numpad .</kbd></dt><dd>Focus selected item</dd>
+            <dt><kbd>Home</kbd></dt><dd>Zoom out to show all objects</dd>
+            <dt><kbd>Shift</kbd>-<kbd>B</kbd></dt><dd>Zoom to a drawn region</dd>
+            <dt><kbd>Z</kbd></dt><dd>Shading pie menu</dd>
+            <dt><kbd>Alt</kbd>-<kbd>Z</kbd></dt><dd>Toggle X-Ray</dd>
+            <dt><kbd>Ctrl</kbd>-<kbd>AccentGrave</kbd></dt><dd>Toggle gizmos</dd>
+            <dt><kbd>Shift</kbd>-<kbd>AccentGrave</kbd></dt><dd>Start Walk/Fly Navigation</dd>
+          </dl>
+        </article>
+        <article class="shortcut-card">
+          <h3>Object mode and transforms</h3>
+          <dl>
+            <dt><kbd>G</kbd></dt><dd>Move or grab</dd>
+            <dt><kbd>R</kbd></dt><dd>Rotate</dd>
+            <dt><kbd>S</kbd></dt><dd>Scale</dd>
+            <dt><kbd>X</kbd> / <kbd>Y</kbd> / <kbd>Z</kbd> after transform</dt><dd>Constrain to an axis</dd>
+            <dt><kbd>Ctrl</kbd>-<kbd>P</kbd></dt><dd>Set parent</dd>
+            <dt><kbd>Alt</kbd>-<kbd>P</kbd></dt><dd>Clear parent</dd>
+            <dt><kbd>Alt</kbd>-<kbd>G</kbd></dt><dd>Clear location</dd>
+            <dt><kbd>Alt</kbd>-<kbd>R</kbd></dt><dd>Clear rotation</dd>
+            <dt><kbd>Alt</kbd>-<kbd>S</kbd></dt><dd>Clear scale</dd>
+            <dt><kbd>Ctrl</kbd>-<kbd>A</kbd></dt><dd>Apply location, rotation or scale</dd>
+            <dt><kbd>Ctrl</kbd>-<kbd>J</kbd></dt><dd>Join selected objects</dd>
+            <dt><kbd>M</kbd></dt><dd>Move active object to a collection</dd>
+          </dl>
+        </article>
+        <article class="shortcut-card">
+          <h3>Edit mode modeling</h3>
+          <dl>
+            <dt><kbd>E</kbd></dt><dd>Extrude</dd>
+            <dt><kbd>I</kbd></dt><dd>Inset</dd>
+            <dt><kbd>Ctrl</kbd>-<kbd>B</kbd></dt><dd>Bevel edges</dd>
+            <dt><kbd>Ctrl</kbd>-<kbd>Shift</kbd>-<kbd>B</kbd></dt><dd>Bevel vertices</dd>
+            <dt><kbd>Ctrl</kbd>-<kbd>R</kbd></dt><dd>Loop cut</dd>
+            <dt><kbd>G</kbd>, <kbd>G</kbd></dt><dd>Vertex or edge slide</dd>
+            <dt><kbd>K</kbd></dt><dd>Knife</dd>
+            <dt><kbd>F</kbd></dt><dd>Fill face</dd>
+            <dt><kbd>M</kbd></dt><dd>Merge</dd>
+            <dt><kbd>P</kbd></dt><dd>Separate selection to a new object</dd>
+            <dt><kbd>Shift</kbd>-<kbd>N</kbd></dt><dd>Recalculate normals</dd>
+            <dt><kbd>O</kbd></dt><dd>Toggle proportional editing</dd>
+          </dl>
+        </article>
+        <article class="shortcut-card">
+          <h3>Edit mode selection</h3>
+          <dl>
+            <dt><kbd>Ctrl</kbd>-<kbd>L</kbd></dt><dd>Select linked mesh</dd>
+            <dt><kbd>L</kbd></dt><dd>Select linked mesh under the cursor</dd>
+            <dt><kbd>Alt</kbd>-<kbd>LMB</kbd></dt><dd>Select edge or face loop</dd>
+            <dt><kbd>Ctrl</kbd>-<kbd>Alt</kbd>-<kbd>RMB</kbd></dt><dd>Select edge ring</dd>
+            <dt><kbd>Ctrl</kbd>-<kbd>Plus</kbd> / <kbd>Ctrl</kbd>-<kbd>Minus</kbd></dt><dd>Select more or less</dd>
+            <dt><kbd>Ctrl</kbd>-<kbd>Shift</kbd>-<kbd>M</kbd></dt><dd>Mirror current selection</dd>
+            <dt><kbd>Shift</kbd>-<kbd>E</kbd></dt><dd>Edge crease</dd>
+          </dl>
+        </article>
+        <article class="shortcut-card">
+          <h3>UV, image and painting</h3>
+          <dl>
+            <dt><kbd>U</kbd></dt><dd>Unwrap in mesh edit workflows</dd>
+            <dt><kbd>Ctrl</kbd>-<kbd>E</kbd></dt><dd>Mark seam from the edge menu</dd>
+            <dt><kbd>L</kbd></dt><dd>Select UV island</dd>
+            <dt><kbd>P</kbd> / <kbd>Alt</kbd>-<kbd>P</kbd></dt><dd>Pin or unpin UVs</dd>
+            <dt><kbd>Shift</kbd>-<kbd>P</kbd></dt><dd>Select pinned UVs</dd>
+            <dt><kbd>F</kbd></dt><dd>Brush size in paint workflows</dd>
+            <dt><kbd>Shift</kbd>-<kbd>F</kbd></dt><dd>Brush strength</dd>
+            <dt><kbd>S</kbd></dt><dd>Sample color</dd>
+            <dt><kbd>X</kbd></dt><dd>Flip color</dd>
+          </dl>
+        </article>
+        <article class="shortcut-card">
+          <h3>Nodes and compositor</h3>
+          <dl>
+            <dt><kbd>Ctrl</kbd>-<kbd>RMB</kbd> drag</dt><dd>Cut a node connection</dd>
+            <dt><kbd>Shift</kbd>-<kbd>RMB</kbd> drag</dt><dd>Create or reroute a connection</dd>
+            <dt><kbd>F</kbd></dt><dd>Connect selected nodes</dd>
+            <dt><kbd>M</kbd></dt><dd>Mute selected nodes</dd>
+            <dt><kbd>Ctrl</kbd>-<kbd>G</kbd></dt><dd>Group selected nodes</dd>
+            <dt><kbd>Ctrl</kbd>-<kbd>Alt</kbd>-<kbd>G</kbd></dt><dd>Ungroup selected nodes</dd>
+            <dt><kbd>Tab</kbd></dt><dd>Toggle editing a node group</dd>
+            <dt><kbd>Ctrl</kbd>-<kbd>J</kbd></dt><dd>Frame selected nodes</dd>
+            <dt><kbd>Alt</kbd>-<kbd>MMB</kbd></dt><dd>Move compositor backdrop</dd>
+            <dt><kbd>V</kbd> / <kbd>Alt</kbd>-<kbd>V</kbd></dt><dd>Zoom compositor backdrop</dd>
+          </dl>
+        </article>
+        <article class="shortcut-card">
+          <h3>Sculpting and masks</h3>
+          <dl>
+            <dt><kbd>Ctrl</kbd> while sculpting</dt><dd>Invert the active brush effect</dd>
+            <dt><kbd>F</kbd></dt><dd>Brush size</dd>
+            <dt><kbd>Shift</kbd>-<kbd>F</kbd></dt><dd>Brush strength</dd>
+            <dt><kbd>Shift</kbd>-<kbd>Spacebar</kbd></dt><dd>Brush selection</dd>
+            <dt><kbd>M</kbd></dt><dd>Mask brush</dd>
+            <dt><kbd>Ctrl</kbd>-<kbd>I</kbd></dt><dd>Invert mask</dd>
+            <dt><kbd>Alt</kbd>-<kbd>M</kbd></dt><dd>Clear mask</dd>
+            <dt><kbd>A</kbd></dt><dd>Mask pie menu</dd>
+            <dt><kbd>Alt</kbd>-<kbd>W</kbd></dt><dd>Face Set pie menu</dd>
+          </dl>
+        </article>
+        <article class="shortcut-card">
+          <h3>Animation and playback</h3>
+          <dl>
+            <dt><kbd>Spacebar</kbd></dt><dd>Play or pause when Spacebar is set to Play</dd>
+            <dt><kbd>Ctrl</kbd>-<kbd>Shift</kbd>-<kbd>Spacebar</kbd></dt><dd>Reverse playback</dd>
+            <dt><kbd>Left</kbd> / <kbd>Right</kbd></dt><dd>Previous or next frame</dd>
+            <dt><kbd>Shift</kbd>-<kbd>Left</kbd> / <kbd>Shift</kbd>-<kbd>Right</kbd></dt><dd>First or last frame</dd>
+            <dt><kbd>Up</kbd> / <kbd>Down</kbd></dt><dd>Jump to keyframe</dd>
+            <dt><kbd>I</kbd></dt><dd>Add keyframe on the current frame</dd>
+            <dt><kbd>Alt</kbd>-<kbd>I</kbd></dt><dd>Delete keyframe on the current frame</dd>
+            <dt><kbd>T</kbd></dt><dd>Set keyframe interpolation</dd>
+            <dt><kbd>V</kbd></dt><dd>Set keyframe handle type</dd>
+            <dt><kbd>Shift</kbd>-<kbd>E</kbd></dt><dd>Set keyframe extrapolation</dd>
+          </dl>
+        </article>
+        <article class="shortcut-card">
+          <h3>Graph, rigging and pose</h3>
+          <dl>
+            <dt><kbd>Ctrl</kbd>-<kbd>RMB</kbd></dt><dd>Add a keyframe at the cursor in the Graph Editor</dd>
+            <dt><kbd>Tab</kbd></dt><dd>Lock selected channel in graph-style animation editors</dd>
+            <dt><kbd>E</kbd></dt><dd>Add a new bone in armature edit workflows</dd>
+            <dt><kbd>Shift</kbd>-<kbd>D</kbd></dt><dd>Duplicate bone</dd>
+            <dt><kbd>Ctrl</kbd>-<kbd>R</kbd></dt><dd>Roll bone</dd>
+            <dt><kbd>Alt</kbd>-<kbd>R</kbd></dt><dd>Clear bone roll or pose rotation depending on mode</dd>
+            <dt><kbd>Ctrl</kbd>-<kbd>C</kbd> / <kbd>Ctrl</kbd>-<kbd>V</kbd></dt><dd>Copy and paste pose</dd>
+            <dt><kbd>Ctrl</kbd>-<kbd>Shift</kbd>-<kbd>V</kbd></dt><dd>Paste pose flipped</dd>
+            <dt><kbd>Shift</kbd>-<kbd>I</kbd></dt><dd>Add IK</dd>
+          </dl>
+        </article>
+        <article class="shortcut-card">
+          <h3>Property hover and precision</h3>
+          <dl>
+            <dt><kbd>Ctrl</kbd> while dragging</dt><dd>Snap to discrete steps</dd>
+            <dt><kbd>Shift</kbd> while dragging</dt><dd>Precision control over the value</dd>
+            <dt><kbd>Shift</kbd>-<kbd>Ctrl</kbd> while dragging</dt><dd>Precise snap with high precision</dd>
+            <dt><kbd>I</kbd> while hovering a property</dt><dd>Insert a keyframe</dd>
+            <dt><kbd>Alt</kbd>-<kbd>I</kbd> while hovering</dt><dd>Clear the keyframe</dd>
+            <dt><kbd>Ctrl</kbd>-<kbd>C</kbd> over a value</dt><dd>Copy a single value</dd>
+            <dt><kbd>Ctrl</kbd>-<kbd>V</kbd> over a value</dt><dd>Paste a single value</dd>
+            <dt><kbd>Alt</kbd> while editing values</dt><dd>Apply the change to selected items where supported</dd>
+          </dl>
+        </article>
+        <article class="shortcut-card">
+          <h3>Window and editor switching</h3>
+          <dl>
+            <dt><kbd>Shift</kbd>-<kbd>F3</kbd></dt><dd>Node editor</dd>
+            <dt><kbd>Shift</kbd>-<kbd>F4</kbd></dt><dd>Python Console</dd>
+            <dt><kbd>Shift</kbd>-<kbd>F5</kbd></dt><dd>3D Viewport</dd>
+            <dt><kbd>Shift</kbd>-<kbd>F6</kbd></dt><dd>Graph Editor</dd>
+            <dt><kbd>Shift</kbd>-<kbd>F7</kbd></dt><dd>Properties</dd>
+            <dt><kbd>Shift</kbd>-<kbd>F8</kbd></dt><dd>Video Sequencer</dd>
+            <dt><kbd>Shift</kbd>-<kbd>F9</kbd></dt><dd>Outliner</dd>
+            <dt><kbd>Shift</kbd>-<kbd>F12</kbd></dt><dd>Dope Sheet</dd>
+            <dt><kbd>Ctrl</kbd>-<kbd>Alt</kbd>-<kbd>Q</kbd></dt><dd>Quad View</dd>
+          </dl>
+        </article>
+        <article class="shortcut-card">
+          <h3>Spacebar and preferences</h3>
+          <dl>
+            <dt><kbd>Spacebar</kbd></dt><dd>User configurable in the default keymap</dd>
+            <dt>Play</dt><dd>Spacebar toggles Timeline playback</dd>
+            <dt>Tools</dt><dd>Spacebar opens tool switching, with <kbd>Shift</kbd>-<kbd>Spacebar</kbd> for play</dd>
+            <dt>Search</dt><dd>Spacebar opens action search, with <kbd>Shift</kbd>-<kbd>Spacebar</kbd> for play</dd>
+            <dt><kbd>Cmd</kbd> on macOS</dt><dd>Can replace <kbd>Ctrl</kbd> except where the operating system conflicts</dd>
+            <dt><kbd>Cmd</kbd>-<kbd>Comma</kbd></dt><dd>Preferences on macOS</dd>
+          </dl>
+        </article>
+        <article class="shortcut-card">
+          <h3>Industry Compatible differences</h3>
+          <dl>
+            <dt><kbd>Tab</kbd></dt><dd>Menu Search</dd>
+            <dt><kbd>Shift</kbd>-<kbd>Tab</kbd></dt><dd>Quick access favorites</dd>
+            <dt><kbd>Ctrl</kbd>-<kbd>Return</kbd></dt><dd>Render</dd>
+            <dt><kbd>Alt</kbd>-<kbd>LMB</kbd></dt><dd>Orbit View</dd>
+            <dt><kbd>Alt</kbd>-<kbd>MMB</kbd></dt><dd>Pan View</dd>
+            <dt><kbd>Alt</kbd>-<kbd>RMB</kbd></dt><dd>Zoom View</dd>
+            <dt><kbd>F</kbd></dt><dd>Frame selected</dd>
+            <dt><kbd>Ctrl</kbd>-<kbd>B</kbd></dt><dd>Bevel in edit-mode tools</dd>
+            <dt><kbd>K</kbd></dt><dd>Knife in edit-mode tools</dd>
+          </dl>
+        </article>
+      </div>
+      <ul class="cross-check-list">
+        <li>Default-keymap entries are cross-checked with the official Blender 5.0 Default Keymap page.</li>
+        <li>Key naming, mouse-button naming, hover shortcuts, dragging modifiers and confirm/cancel behavior are cross-checked with the official Common Shortcuts page.</li>
+        <li>Spacebar customization, search-by-key-binding, restore behavior and custom-keymap risk are cross-checked with the official Preferences &gt; Keymap page.</li>
+        <li>Industry Compatible entries are separated because that preset intentionally differs from Blender's default keymap.</li>
+        <li>Workflow-specific groups are incorporated from the local shortcut brief and should be verified in Blender if a shortcut is critical to your project or teaching material.</li>
+      </ul>
+      <p class="shortcut-note">For a modified setup, open Edit &gt; Preferences &gt; Keymap, search by key binding, and verify the active keymap item before relying on a shortcut.</p>
+    </div>
+  </details>
+
+  <details class="panel guided-section collapsible-tool" open>
+    <summary id="packs-title">Workflow question packs</summary>
+    <div class="collapsible-tool-body">
+      <p class="source-scope">Expand a pack and choose a question. Each one sends Blender5QA a little context about the workflow area, so the answer can behave more like a tutor than a search result.</p>
+      <div class="question-pack-grid">
+      <details class="question-pack">
+        <summary>Interface, scene setup and working faster</summary>
+        <div class="question-pack-body">
+          <p>Useful when Blender feels busy, unfamiliar or hard to navigate while you are trying to keep momentum.</p>
+          <ol>
+            <li><button class="pack-question-btn" type="button" data-question="In the Interface, scene setup and working faster question pack: What is the best official Blender 5.0 route for getting oriented in the interface as a learner, and which areas should I understand first?">Get oriented in the interface</button></li>
+            <li><button class="pack-question-btn" type="button" data-question="In the Interface, scene setup and working faster question pack: How should I use Blender 5.0's search, menus and editors when I cannot remember where a tool is?">Find tools without memorising menus</button></li>
+            <li><button class="pack-question-btn" type="button" data-question="In the Interface, scene setup and working faster question pack: How do transforms, pivots, snapping and orientation settings affect everyday Blender 5.0 work?">Understand transforms, pivots and snapping</button></li>
+            <li><button class="pack-question-btn" type="button" data-question="In the Interface, scene setup and working faster question pack: What should I check before I start building a Blender scene so scale, units, camera and lighting do not cause problems later?">Set up a scene before building</button></li>
+            <li><button class="pack-question-btn" type="button" data-question="In the Interface, scene setup and working faster question pack: How should I think about Blender 5.0 editors, workspaces and panels as parts of one workflow rather than separate screens?">Use editors and workspaces together</button></li>
+            <li><button class="pack-question-btn" type="button" data-question="In the Interface, scene setup and working faster question pack: What is a sensible beginner-to-intermediate checklist before I assume Blender is behaving incorrectly?">Check before blaming Blender</button></li>
+            <li><button class="pack-question-btn" type="button" data-question="In the Interface, scene setup and working faster question pack: How do I organise objects, collections and names in Blender 5.0 so a project remains understandable later?">Keep the scene organised</button></li>
+            <li><button class="pack-question-btn" type="button" data-question="In the Interface, scene setup and working faster question pack: What common workflow habits make Blender 5.0 feel faster for a learner without relying on unofficial shortcuts?">Build faster workflow habits</button></li>
+          </ol>
+        </div>
+      </details>
+      <details class="question-pack">
+        <summary>Modeling, modifiers and Geometry Nodes</summary>
+        <div class="question-pack-body">
+          <p>Useful when choosing between direct mesh work, non-destructive modifiers, sculpting and procedural node workflows.</p>
+          <ol>
+            <li><button class="pack-question-btn" type="button" data-question="In the Modeling, modifiers and Geometry Nodes question pack: Should this object be modeled directly or built from a modifier stack in Blender 5.0? Compare the trade-offs like a tutor.">Direct modeling or modifier stack?</button></li>
+            <li><button class="pack-question-btn" type="button" data-question="In the Modeling, modifiers and Geometry Nodes question pack: When would Geometry Nodes make a Blender 5.0 modeling workflow easier to revise later?">When Geometry Nodes helps</button></li>
+            <li><button class="pack-question-btn" type="button" data-question="In the Modeling, modifiers and Geometry Nodes question pack: What parts of a shape are usually better kept procedural, and what parts are reasonable to edit destructively?">Procedural or destructive edits?</button></li>
+            <li><button class="pack-question-btn" type="button" data-question="In the Modeling, modifiers and Geometry Nodes question pack: How do I decide whether snapping, transform settings or pivot changes solve my modeling problem better than editing the mesh?">Use transforms before mesh edits</button></li>
+            <li><button class="pack-question-btn" type="button" data-question="In the Modeling, modifiers and Geometry Nodes question pack: What should I check if topology is getting in the way of a shape in Blender 5.0?">Topology getting in the way</button></li>
+            <li><button class="pack-question-btn" type="button" data-question="In the Modeling, modifiers and Geometry Nodes question pack: How should a learner think about curves, meshes and text objects when choosing the simplest Blender 5.0 workflow?">Curves, meshes or text objects?</button></li>
+            <li><button class="pack-question-btn" type="button" data-question="In the Modeling, modifiers and Geometry Nodes question pack: When is sculpting a better starting point than mesh editing or Geometry Nodes in Blender 5.0?">When sculpting is the right start</button></li>
+            <li><button class="pack-question-btn" type="button" data-question="In the Modeling, modifiers and Geometry Nodes question pack: What is a sensible Blender 5.0 workflow for blocking out, refining and keeping a model editable?">Block out, refine, keep editable</button></li>
+            <li><button class="pack-question-btn" type="button" data-question="In the Modeling, modifiers and Geometry Nodes question pack: What common beginner mistakes make a Blender 5.0 model hard to shade, rig or render later?">Avoid downstream modeling mistakes</button></li>
+            <li><button class="pack-question-btn" type="button" data-question="In the Modeling, modifiers and Geometry Nodes question pack: What is the simplest official workflow for choosing a modeling method in Blender 5.0 when I only know the result I want?">Choose a modeling method</button></li>
+          </ol>
+        </div>
+      </details>
+      <details class="question-pack">
+        <summary>Materials, lighting, rendering and compositing</summary>
+        <div class="question-pack-body">
+          <p>Useful when the image does not look right and you need to separate material, light, render-engine and post-processing problems.</p>
+          <ol>
+            <li><button class="pack-question-btn" type="button" data-question="In the Materials, lighting, rendering and compositing question pack: Is my Blender 5.0 problem more likely a material problem, a lighting problem, a render setting problem or a color management problem?">Material, light or render setting?</button></li>
+            <li><button class="pack-question-btn" type="button" data-question="In the Materials, lighting, rendering and compositing question pack: When should I use EEVEE to iterate and Cycles to finish in Blender 5.0?">EEVEE for iteration, Cycles for finish</button></li>
+            <li><button class="pack-question-btn" type="button" data-question="In the Materials, lighting, rendering and compositing question pack: What changed in the Blender 5.0 Principled BSDF, and how should a learner think about it?">Principled BSDF as a learner</button></li>
+            <li><button class="pack-question-btn" type="button" data-question="In the Materials, lighting, rendering and compositing question pack: Should I fix my scene by changing the shader, the lights, the camera, color management or the compositor?">Choose the right place to fix the image</button></li>
+            <li><button class="pack-question-btn" type="button" data-question="In the Materials, lighting, rendering and compositing question pack: How should I build a material in Blender 5.0 without overcomplicating the node setup too early?">Build materials without overcomplicating</button></li>
+            <li><button class="pack-question-btn" type="button" data-question="In the Materials, lighting, rendering and compositing question pack: What does the compositor do in Blender 5.0, and when is it better than changing the material itself?">Use the compositor at the right time</button></li>
+            <li><button class="pack-question-btn" type="button" data-question="In the Materials, lighting, rendering and compositing question pack: How should I troubleshoot noise, slow renders or unexpected appearance in a Blender 5.0 render?">Troubleshoot render quality and speed</button></li>
+            <li><button class="pack-question-btn" type="button" data-question="In the Materials, lighting, rendering and compositing question pack: How do I move from viewport look development to a final render workflow in Blender 5.0?">Move from viewport to final render</button></li>
+            <li><button class="pack-question-btn" type="button" data-question="In the Materials, lighting, rendering and compositing question pack: What common shading mistakes should a Blender 5.0 learner check before adding more nodes?">Common shading mistakes</button></li>
+            <li><button class="pack-question-btn" type="button" data-question="In the Materials, lighting, rendering and compositing question pack: Have you considered doing this a different way, such as fixing lighting or compositing before rebuilding the shader?">Consider a different image workflow</button></li>
+          </ol>
+        </div>
+      </details>
+      <details class="question-pack">
+        <summary>Animation, rigging and motion design</summary>
+        <div class="question-pack-body">
+          <p>Useful when deciding whether motion should come from keyframes, constraints, drivers, shape keys or rig controls.</p>
+          <ol>
+            <li><button class="pack-question-btn" type="button" data-question="In the Animation, rigging and motion design question pack: Should the motion be built from keyframes, constraints, drivers or shape keys in Blender 5.0? Compare them as a tutor.">Keyframes, constraints, drivers or shape keys?</button></li>
+            <li><button class="pack-question-btn" type="button" data-question="In the Animation, rigging and motion design question pack: When is a simple keyframed animation better than building a complex rig in Blender 5.0?">When simple keyframes are enough</button></li>
+            <li><button class="pack-question-btn" type="button" data-question="In the Animation, rigging and motion design question pack: How do constraints help control motion, and when do they become too much for a Blender 5.0 learner?">Use constraints without overbuilding</button></li>
+            <li><button class="pack-question-btn" type="button" data-question="In the Animation, rigging and motion design question pack: What are drivers useful for in Blender 5.0, and what should I understand before using them?">Understand drivers before using them</button></li>
+            <li><button class="pack-question-btn" type="button" data-question="In the Animation, rigging and motion design question pack: When are shape keys a better solution than bones or modifiers in Blender 5.0?">When shape keys fit best</button></li>
+            <li><button class="pack-question-btn" type="button" data-question="In the Animation, rigging and motion design question pack: How should I use the Graph Editor to diagnose timing, easing and unwanted motion in Blender 5.0?">Read motion in the Graph Editor</button></li>
+            <li><button class="pack-question-btn" type="button" data-question="In the Animation, rigging and motion design question pack: How do armatures and bone collections fit into a tidy Blender 5.0 rigging workflow?">Keep rigs understandable</button></li>
+            <li><button class="pack-question-btn" type="button" data-question="In the Animation, rigging and motion design question pack: What should I check when an animated object moves unexpectedly in Blender 5.0?">Diagnose unexpected movement</button></li>
+            <li><button class="pack-question-btn" type="button" data-question="In the Animation, rigging and motion design question pack: How can I plan animation controls before adding lots of keyframes, constraints or drivers?">Plan controls before animating</button></li>
+            <li><button class="pack-question-btn" type="button" data-question="In the Animation, rigging and motion design question pack: Have you considered doing this a different way, such as using a constraint or shape key instead of manually keyframing every change?">Consider a cleaner motion workflow</button></li>
+          </ol>
+        </div>
+      </details>
+      <details class="question-pack">
+        <summary>Troubleshooting, files, assets and Python</summary>
+        <div class="question-pack-body">
+          <p>Useful when something breaks, a file becomes messy, or a workflow may need add-ons, scripting or the Python API.</p>
+          <ol>
+            <li><button class="pack-question-btn" type="button" data-question="In the Troubleshooting, files, assets and Python question pack: What is the official Blender 5.0 troubleshooting order for startup, GPU, crash and recovery problems?">Official troubleshooting order</button></li>
+            <li><button class="pack-question-btn" type="button" data-question="In the Troubleshooting, files, assets and Python question pack: Should I disable add-ons, reset startup settings or check graphics drivers first when Blender 5.0 acts strangely?">Add-ons, startup or graphics?</button></li>
+            <li><button class="pack-question-btn" type="button" data-question="In the Troubleshooting, files, assets and Python question pack: How do I tell whether a Blender 5.0 problem is caused by the file, the interface state, an add-on, Python or hardware?">Find the likely source of a problem</button></li>
+            <li><button class="pack-question-btn" type="button" data-question="In the Troubleshooting, files, assets and Python question pack: What should I recover first if Blender 5.0 closes unexpectedly, and how should I protect the file before experimenting?">Recover and protect a project file</button></li>
+            <li><button class="pack-question-btn" type="button" data-question="In the Troubleshooting, files, assets and Python question pack: How do Blender 5.0 blend files, data-blocks and assets relate to keeping a project tidy?">Understand files, data-blocks and assets</button></li>
+            <li><button class="pack-question-btn" type="button" data-question="In the Troubleshooting, files, assets and Python question pack: When should I use an add-on, a small script or the Blender Python API for a repetitive task?">Add-on, script or API?</button></li>
+            <li><button class="pack-question-btn" type="button" data-question="In the Troubleshooting, files, assets and Python question pack: What should a learner know before running Python code or installing add-ons in Blender 5.0?">Use Python and add-ons carefully</button></li>
+            <li><button class="pack-question-btn" type="button" data-question="In the Troubleshooting, files, assets and Python question pack: How can I use official Blender 5.0 documentation to debug an error message without relying only on forum answers?">Debug using official docs</button></li>
+            <li><button class="pack-question-btn" type="button" data-question="In the Troubleshooting, files, assets and Python question pack: What common file organisation mistakes cause Blender projects to become hard to reuse or share?">Avoid messy project files</button></li>
+            <li><button class="pack-question-btn" type="button" data-question="In the Troubleshooting, files, assets and Python question pack: Have you considered doing this a different way, such as using an existing add-on or manual workflow before writing custom Python?">Consider a non-code route first</button></li>
+          </ol>
+        </div>
+      </details>
+      </div>
+    </div>
+  </details>
+
+
+  <details class="panel guided-section collapsible-tool">
+    <summary id="glossary-title">Plain-English glossary</summary>
+    <div class="collapsible-tool-body">
+      <div class="glossary-grid">
+      <article class="term-card"><h3>EEVEE</h3><p>Blender's real-time renderer. Useful for quick look development and previewing a scene while you work.</p></article>
+      <article class="term-card"><h3>Cycles</h3><p>Blender's path-tracing renderer. Useful when you want physically based lighting and final output.</p></article>
+      <article class="term-card"><h3>Principled BSDF</h3><p>The main Blender 5.0 shader node for building materials with a broadly standard workflow.</p></article>
+      <article class="term-card"><h3>Geometry Nodes</h3><p>A procedural system for building and modifying geometry with node networks instead of only direct mesh edits.</p></article>
+      <article class="term-card"><h3>Modifiers</h3><p>Non-destructive object or mesh operations that let you keep options open until you apply them.</p></article>
+      <article class="term-card"><h3>Constraints</h3><p>Rules that control movement, rotation or relationships between objects or bones.</p></article>
+      <article class="term-card"><h3>Drivers</h3><p>Links that make one property respond to another property or control input.</p></article>
+      <article class="term-card"><h3>Compositor</h3><p>Blender's node-based post-processing space for combining, correcting or enhancing rendered images.</p></article>
+      </div>
+    </div>
+  </details>
+
+  <details class="panel references collapsible-tool">
+    <summary id="references-title">References</summary>
+    <div class="collapsible-tool-body">
+      <p class="source-scope">These are the validated Blender 5.0 sources used by this page. Open the original source before relying on any answer. Sources last reviewed: 11 October 2026.</p>
+      <ul class="source-list">
+      <li><a href="https://docs.blender.org/manual/en/5.0/" target="_blank" rel="noopener noreferrer">Blender 5.0 Reference Manual</a><span class="source-org">docs.blender.org</span><p class="source-scope">Official Blender 5.0 manual home page and topic map.</p></li>
+      <li><a href="https://docs.blender.org/manual/en/5.0/getting_started/about/index.html" target="_blank" rel="noopener noreferrer">About Blender</a><span class="source-org">Blender Manual</span><p class="source-scope">What Blender is, what it is good at and how the 5.0 release frames the software.</p></li>
+      <li><a href="https://docs.blender.org/manual/en/5.0/getting_started/help.html" target="_blank" rel="noopener noreferrer">Help System</a><span class="source-org">Blender Manual</span><p class="source-scope">How to get help from inside Blender and the manual itself.</p></li>
+      <li><a href="https://docs.blender.org/manual/en/5.0/interface/index.html" target="_blank" rel="noopener noreferrer">User Interface</a><span class="source-org">Blender Manual</span><p class="source-scope">Windows, areas, widgets, tools and shortcuts.</p></li>
+      <li><a href="https://docs.blender.org/manual/en/5.0/interface/keymap/introduction.html" target="_blank" rel="noopener noreferrer">Common Shortcuts</a><span class="source-org">Blender Manual</span><p class="source-scope">Official shortcut conventions, mouse-button names, hovering shortcuts, dragging modifiers, text editing, confirm/cancel behavior and property/keyframe hover actions.</p></li>
+      <li><a href="https://docs.blender.org/manual/en/5.0/interface/keymap/blender_default.html" target="_blank" rel="noopener noreferrer">Default Keymap</a><span class="source-org">Blender Manual</span><p class="source-scope">Common keys used in Blender's default keymap, including global, common editor, 3D Viewport, navigation, mode switching and keymap preference behavior.</p></li>
+      <li><a href="https://docs.blender.org/manual/en/5.0/interface/keymap/industry_compatible.html" target="_blank" rel="noopener noreferrer">Industry Compatible Keymap</a><span class="source-org">Blender Manual</span><p class="source-scope">Common keys used when Blender is set to the Industry Compatible keymap preset.</p></li>
+      <li><a href="https://docs.blender.org/manual/en/5.0/editors/preferences/keymap.html" target="_blank" rel="noopener noreferrer">Preferences: Keymap</a><span class="source-org">Blender Manual</span><p class="source-scope">How Blender exposes keymap presets, key binding search, individual keymap items, restoring defaults and custom-keymap limitations.</p></li>
+      <li><a href="https://docs.blender.org/manual/en/5.0/editors/index.html" target="_blank" rel="noopener noreferrer">Editors</a><span class="source-org">Blender Manual</span><p class="source-scope">Overview of the 3D Viewport, Shader Editor, Graph Editor, Sequencer and other editors.</p></li>
+      <li><a href="https://docs.blender.org/manual/en/5.0/modeling/index.html" target="_blank" rel="noopener noreferrer">Modeling</a><span class="source-org">Blender Manual</span><p class="source-scope">Meshes, curves, text, tools and modifiers.</p></li>
+      <li><a href="https://docs.blender.org/manual/en/5.0/modeling/transform/modal_map.html" target="_blank" rel="noopener noreferrer">Transform and snapping</a><span class="source-org">Blender Manual</span><p class="source-scope">Transform controls, modal operations and snap-base workflows.</p></li>
+      <li><a href="https://docs.blender.org/manual/en/5.0/modeling/geometry_nodes/index.html" target="_blank" rel="noopener noreferrer">Geometry Nodes</a><span class="source-org">Blender Manual</span><p class="source-scope">Procedural and non-destructive workflows for geometry.</p></li>
+      <li><a href="https://docs.blender.org/manual/en/5.0/sculpt_paint/index.html" target="_blank" rel="noopener noreferrer">Sculpting & Painting</a><span class="source-org">Blender Manual</span><p class="source-scope">Sculpting, texture painting and vertex painting workflows.</p></li>
+      <li><a href="https://docs.blender.org/manual/en/5.0/animation/index.html" target="_blank" rel="noopener noreferrer">Animation & Rigging</a><span class="source-org">Blender Manual</span><p class="source-scope">Keyframes, drivers, constraints, armatures and shape keys.</p></li>
+      <li><a href="https://docs.blender.org/manual/en/5.0/render/shader_nodes/shader/principled.html" target="_blank" rel="noopener noreferrer">Principled BSDF</a><span class="source-org">Blender Manual</span><p class="source-scope">The main Blender 5.0 shader node for physically based materials.</p></li>
+      <li><a href="https://docs.blender.org/manual/en/5.0/render/index.html" target="_blank" rel="noopener noreferrer">Rendering</a><span class="source-org">Blender Manual</span><p class="source-scope">Rendering and shading with EEVEE, Cycles and Freestyle.</p></li>
+      <li><a href="https://docs.blender.org/manual/en/5.0/compositing/index.html" target="_blank" rel="noopener noreferrer">Compositing</a><span class="source-org">Blender Manual</span><p class="source-scope">Post-processing with the compositor nodes.</p></li>
+      <li><a href="https://docs.blender.org/manual/en/5.0/files/index.html" target="_blank" rel="noopener noreferrer">Assets, Files & Data System</a><span class="source-org">Blender Manual</span><p class="source-scope">Blend-file structure, datablocks and asset management.</p></li>
+      <li><a href="https://docs.blender.org/manual/en/5.0/addons/index.html" target="_blank" rel="noopener noreferrer">Add-ons</a><span class="source-org">Blender Manual</span><p class="source-scope">Additional functionality available as add-ons.</p></li>
+      <li><a href="https://docs.blender.org/manual/en/5.0/advanced/index.html" target="_blank" rel="noopener noreferrer">Advanced</a><span class="source-org">Blender Manual</span><p class="source-scope">Python scripting, add-on writing and command-line options.</p></li>
+      <li><a href="https://docs.blender.org/manual/en/5.0/troubleshooting/index.html" target="_blank" rel="noopener noreferrer">Troubleshooting</a><span class="source-org">Blender Manual</span><p class="source-scope">Solving crashes, graphics issues, Python errors and recovering data.</p></li>
+      <li><a href="https://www.blender.org/download/releases/5-0/" target="_blank" rel="noopener noreferrer">Blender 5.0 release page</a><span class="source-org">Blender.org</span><p class="source-scope">Official release overview and highlights for Blender 5.0.</p></li>
+      <li><a href="https://www.blender.org/support/faq/" target="_blank" rel="noopener noreferrer">Blender support FAQ</a><span class="source-org">Blender.org</span><p class="source-scope">Official support landing page and common help routes.</p></li>
+      <li><a href="https://docs.blender.org/api/5.0/" target="_blank" rel="noopener noreferrer">Blender Python API 5.0</a><span class="source-org">Blender API</span><p class="source-scope">Official API reference for scripting and add-on development.</p></li>
+      </ul>
+    </div>
+  </details>
+</main>
+
+<footer>
+  <a href="/blender5QA/policy.html">Privacy, use policy and disclaimer</a><br>
+  version 0.4.0 | Last updated: 11 October 2026 | &copy; 2026 <a href="/">www.jahosi.co.uk</a>
+</footer>
+
+<script>
+(function(){
+  const TURNSTILE_SITE_KEY = "__TURNSTILE_SITE_KEY__";
+  const CHAT_SESSION_STORAGE_KEY = "blender5qa_chat_session_1";
+  const CHAT_HISTORY_STORAGE_KEY = "blender5qa_chat_history_1";
+  const DISPLAY_STORAGE_KEY = "blender5qa_display_options_1";
+  const TURNSTILE_ENABLED = Boolean(TURNSTILE_SITE_KEY);
+  let turnstileToken = "";
+  let turnstileWidgetId = null;
+  let history = loadHistory();
+  let localChatContext = null;
+
+  const thread = document.getElementById("chat-thread");
+  const form = document.getElementById("chat-form");
+  const input = document.getElementById("chat-input");
+  const send = document.getElementById("chat-send");
+  const clearChat = document.getElementById("clear-chat");
+  const exportPdf = document.getElementById("export-pdf");
+  const chatPanel = document.getElementById("ask");
+  const formNote = document.getElementById("form-note");
+  const backToChat = document.getElementById("back-to-chat");
+  const resourceForm = document.getElementById("resource-form");
+  const resourceInput = document.getElementById("resource-input");
+  const resourceSubmit = document.getElementById("resource-submit");
+  const localResults = document.getElementById("local-results");
+  const startTool = document.getElementById("start-tool");
+  const gate = document.getElementById("chat-gate");
+  const contrastToggle = document.getElementById("contrast-toggle");
+  const fontToggle = document.getElementById("font-toggle");
+
+  function loadDisplayOptions(){
+    try{return JSON.parse(localStorage.getItem(DISPLAY_STORAGE_KEY) || "{}");}catch{return {};}
+  }
+  function storeDisplayOptions(options){
+    try{localStorage.setItem(DISPLAY_STORAGE_KEY, JSON.stringify(options));}catch{}
+  }
+  function applyDisplayOptions(options){
+    document.body.classList.toggle("high-contrast", Boolean(options.highContrast));
+    document.body.classList.toggle("large-font", Boolean(options.largeFont));
+    contrastToggle.setAttribute("aria-pressed", options.highContrast ? "true" : "false");
+    fontToggle.setAttribute("aria-pressed", options.largeFont ? "true" : "false");
+  }
+  function updateDisplayOption(key){
+    const options = loadDisplayOptions();
+    options[key] = !options[key];
+    storeDisplayOptions(options);
+    applyDisplayOptions(options);
+  }
+  function markExternalLinks(){
+    document.querySelectorAll('a[href^="http://"],a[href^="https://"]').forEach(function(link){
+      link.target = "_blank";
+      link.rel = "noopener noreferrer";
+    });
+  }
+  function clearStarterExample(){
+    if (!input || !input.classList.contains("has-starter-example")) return;
+    input.value = "";
+    input.placeholder = "";
+    input.classList.remove("has-starter-example");
+    delete input.dataset.suggestedQuestion;
+  }
+  function setChatInputBlank(){
+    if (!input) return;
+    input.value = "";
+    input.placeholder = "";
+    input.classList.remove("has-starter-example");
+    delete input.dataset.suggestedQuestion;
+  }
+  function getQuestionForSubmit(){
+    if (input && input.classList.contains("has-starter-example") && input.dataset.suggestedQuestion) {
+      return input.dataset.suggestedQuestion.trim();
+    }
+    return input ? input.value.trim() : "";
+  }
+  function randomizeStarterQuestion(){
+    if (!input || input.value.trim() || history.length) return;
+    const questions = Array.from(document.querySelectorAll(".pack-question-btn[data-question]"))
+      .map(function(button){return button.getAttribute("data-question") || "";})
+      .map(function(question){
+        return question.replace(/^In the [^:]+ question pack:\s*/i, "").trim();
+      })
+      .filter(Boolean);
+    if (!questions.length) return;
+    const selected = questions[Math.floor(Math.random() * questions.length)];
+    input.value = "Type your question, e.g.: " + selected;
+    input.placeholder = "";
+    input.dataset.suggestedQuestion = selected;
+    input.classList.add("has-starter-example");
+  }
+
+  function getSessionToken(){
+    try{return sessionStorage.getItem(CHAT_SESSION_STORAGE_KEY) || "";}catch{return "";}
+  }
+  function storeSessionToken(token){
+    try{sessionStorage.setItem(CHAT_SESSION_STORAGE_KEY, token);}catch{}
+  }
+  function clearSessionToken(){
+    try{sessionStorage.removeItem(CHAT_SESSION_STORAGE_KEY);}catch{}
+  }
+  function loadHistory(){
+    try{
+      const parsed = JSON.parse(sessionStorage.getItem(CHAT_HISTORY_STORAGE_KEY) || "[]");
+      return Array.isArray(parsed) ? parsed.slice(-8) : [];
+    }catch{return [];}
+  }
+  function storeHistory(){
+    try{sessionStorage.setItem(CHAT_HISTORY_STORAGE_KEY, JSON.stringify(history.slice(-8)));}catch{}
+  }
+  function clearStoredHistory(){
+    try{sessionStorage.removeItem(CHAT_HISTORY_STORAGE_KEY);}catch{}
+  }
+  function setFormNote(message){
+    if (!formNote) return;
+    formNote.textContent = message || "";
+    formNote.hidden = !message;
+  }
+  function highlightChat(){
+    if (!chatPanel) return;
+    chatPanel.classList.add("is-active");
+    window.clearTimeout(highlightChat.timer);
+    highlightChat.timer = window.setTimeout(function(){
+      chatPanel.classList.remove("is-active");
+    }, 2400);
+  }
+  function revealElement(element, block){
+    if (!element || typeof element.scrollIntoView !== "function") return;
+    window.requestAnimationFrame(function(){
+      element.scrollIntoView({behavior:"smooth", block:block || "nearest"});
+    });
+  }
+  function revealChat(block){
+    highlightChat();
+    revealElement(chatPanel, block || "start");
+  }
+  function revealFormProblem(message, element){
+    setFormNote(message);
+    revealChat("center");
+    window.setTimeout(function(){
+      if (element && typeof element.focus === "function") element.focus({preventScroll:true});
+    }, 250);
+  }
+  function clearNewMessageMarkers(){
+    thread.querySelectorAll(".message.is-new").forEach(function(item){
+      item.classList.remove("is-new");
+    });
+  }
+  function revealNewMessage(messageElement){
+    clearNewMessageMarkers();
+    if (messageElement) messageElement.classList.add("is-new");
+    revealElement(messageElement || chatPanel, "start");
+    highlightChat();
+  }
+  function appendReplyContent(element, content){
+    const urlPattern = /\bhttps?:\/\/[^\s<>"']+/gi;
+    let lastIndex = 0;
+    let match;
+    while ((match = urlPattern.exec(content)) !== null) {
+      const rawUrl = match[0];
+      const trimmedUrl = rawUrl.replace(/[),.;:!?]+$/g, "");
+      const trailingText = rawUrl.slice(trimmedUrl.length);
+      if (match.index > lastIndex) {
+        element.appendChild(document.createTextNode(content.slice(lastIndex, match.index)));
+      }
+      try{
+        const parsed = new URL(trimmedUrl);
+        if (parsed.protocol === "http:" || parsed.protocol === "https:") {
+          const link = document.createElement("a");
+          link.href = parsed.href;
+          link.textContent = "[source]";
+          link.target = "_blank";
+          link.rel = "noopener noreferrer";
+          element.appendChild(link);
+        } else {
+          element.appendChild(document.createTextNode(trimmedUrl));
+        }
+      }catch{
+        element.appendChild(document.createTextNode(trimmedUrl));
+      }
+      if (trailingText) {
+        element.appendChild(document.createTextNode(trailingText));
+      }
+      lastIndex = match.index + rawUrl.length;
+    }
+    if (lastIndex < content.length) {
+      element.appendChild(document.createTextNode(content.slice(lastIndex)));
+    }
+  }
+  function appendMessage(role, content){
+    const item = document.createElement("div");
+    item.className = "message " + (role === "user" ? "user" : "bot");
+    const label = document.createElement("strong");
+    label.textContent = role === "user" ? "You" : "Blender5QA";
+    item.appendChild(label);
+    if (role === "user") {
+      item.appendChild(document.createTextNode(content));
+    } else {
+      appendReplyContent(item, content);
+    }
+    thread.appendChild(item);
+    thread.scrollTop = thread.scrollHeight;
+    return item;
+  }
+  function setBusy(isBusy){
+    send.disabled = isBusy;
+    input.disabled = isBusy;
+    if (clearChat) clearChat.disabled = isBusy;
+    send.textContent = isBusy ? "Checking sources..." : "Ask";
+  }
+  function setResourceBusy(isBusy){
+    resourceSubmit.disabled = isBusy;
+    resourceInput.disabled = isBusy;
+    resourceSubmit.textContent = isBusy ? "Looking..." : "Find resources";
+  }
+  function clearElement(element){
+    while (element.firstChild) element.removeChild(element.firstChild);
+  }
+  function appendLocalLink(list, label, href, note){
+    const item = document.createElement("li");
+    const link = document.createElement("a");
+    link.href = href;
+    link.textContent = label;
+    link.target = "_blank";
+    link.rel = "noopener noreferrer";
+    item.appendChild(link);
+    if (note) {
+      item.appendChild(document.createTextNode(" - " + note));
+    }
+    list.appendChild(item);
+  }
+  function buildLocalChatContext(data){
+    const authorities = Array.isArray(data.authorities) ? data.authorities.map(function(authority){
+      return {
+        name: authority && authority.name ? String(authority.name).slice(0, 120) : "",
+        tier: authority && authority.tier ? String(authority.tier).slice(0, 80) : "",
+        homepage_url: authority && authority.homepage_url ? String(authority.homepage_url).slice(0, 300) : ""
+      };
+    }).filter(function(authority){return authority.name;}) : [];
+    const links = Array.isArray(data.localLinks) ? data.localLinks.map(function(link){
+      return {
+        label: link && link.label ? String(link.label).slice(0, 120) : "",
+        href: link && link.href ? String(link.href).slice(0, 300) : ""
+      };
+    }).filter(function(link){return link.label && link.href;}) : [];
+    return authorities.length || links.length ? {authorities: authorities, links: links} : null;
+  }
+  function showLocalMessage(title, message, links){
+    localChatContext = null;
+    clearElement(localResults);
+    const heading = document.createElement("h3");
+    heading.textContent = title;
+    localResults.appendChild(heading);
+    const copy = document.createElement("p");
+    copy.className = "result-note";
+    copy.textContent = message;
+    localResults.appendChild(copy);
+    if (Array.isArray(links) && links.length) {
+      const list = document.createElement("ul");
+      links.forEach(function(link){
+        appendLocalLink(list, link.label, link.href, link.note);
+      });
+      localResults.appendChild(list);
+    }
+    localResults.hidden = false;
+  }
+  function renderLocalResults(data){
+    clearElement(localResults);
+    const heading = document.createElement("h3");
+    heading.textContent = data.title || "Blender 5.0 official resources";
+    localResults.appendChild(heading);
+
+    const intro = document.createElement("p");
+    intro.className = "result-note";
+    intro.textContent = data.summary || "Use these official Blender links to check the source material before relying on an AI answer.";
+    localResults.appendChild(intro);
+
+    const list = document.createElement("ul");
+    if (Array.isArray(data.localLinks) && data.localLinks.length) {
+      data.localLinks.forEach(function(link){
+        if (!link || !link.label || !link.href) return;
+        appendLocalLink(list, link.label, link.href, link.note || "");
+      });
+    }
+    localResults.appendChild(list);
+
+    if (Array.isArray(data.followUps) && data.followUps.length) {
+      const followUpHeading = document.createElement("p");
+      followUpHeading.className = "result-note";
+      followUpHeading.textContent = "Useful follow-up prompts:";
+      localResults.appendChild(followUpHeading);
+      const followUpList = document.createElement("ul");
+      data.followUps.forEach(function(prompt){
+        const item = document.createElement("li");
+        item.textContent = prompt;
+        followUpList.appendChild(item);
+      });
+      localResults.appendChild(followUpList);
+    }
+    localChatContext = buildLocalChatContext(data);
+    localResults.hidden = false;
+  }
+  async function lookupLocalSources(topic){
+    if (!topic) {
+      showLocalMessage("Enter a topic", "Enter a Blender topic such as modeling, shading, animation, troubleshooting or Python.", []);
+      return;
+    }
+    setResourceBusy(true);
+    try{
+      const res = await fetch("/blender5QA/resource-info?topic=" + encodeURIComponent(topic), {
+        headers: {"Accept":"application/json"}
+      });
+      const data = await res.json().catch(function(){return {};});
+      if (!res.ok) {
+        showLocalMessage("Resource lookup problem", data.message || "The resource lookup could not be completed.", [
+          {label:"Blender 5.0 Reference Manual", href:"https://docs.blender.org/manual/en/5.0/", note:"Start with the official manual."},
+          {label:"Blender 5.0 release page", href:"https://www.blender.org/download/releases/5-0/", note:"Check official version-specific release notes."},
+          {label:"Blender Python API 5.0", href:"https://docs.blender.org/api/5.0/", note:"Use for scripting and add-on questions."}
+        ]);
+        return;
+      }
+      renderLocalResults(data);
+    }catch{
+      showLocalMessage("Lookup unavailable", "The Blender resource lookup is temporarily unavailable. Use these official links directly.", [
+        {label:"Blender 5.0 Reference Manual", href:"https://docs.blender.org/manual/en/5.0/", note:"Start with the official manual."},
+        {label:"Blender 5.0 release page", href:"https://www.blender.org/download/releases/5-0/", note:"Check official version-specific release notes."},
+        {label:"Blender Python API 5.0", href:"https://docs.blender.org/api/5.0/", note:"Use for scripting and add-on questions."}
+      ]);
+    }finally{
+      setResourceBusy(false);
+    }
+  }
+  function getConversationLines(){
+    return Array.from(thread.querySelectorAll(".message")).map(function(item){
+      const speaker = item.querySelector("strong");
+      const label = speaker ? speaker.textContent.trim() : "Message";
+      const bodyParts = [];
+      Array.from(item.childNodes).forEach(function(node){
+        if (node === speaker) return;
+        if (node.nodeType === Node.TEXT_NODE) {
+          bodyParts.push(node.textContent);
+        } else if (node.nodeType === Node.ELEMENT_NODE && node.tagName === "A") {
+          bodyParts.push(node.href || node.textContent);
+        } else if (node.textContent) {
+          bodyParts.push(node.textContent);
+        }
+      });
+      const body = bodyParts.join("").trim();
+      return {label: label, body: body};
+    }).filter(function(item){
+      return item.body && item.body !== "Thinking...";
+    });
+  }
+  function addWrappedText(doc, text, x, y, options){
+    const pageHeight = doc.internal.pageSize.getHeight();
+    const maxWidth = options.maxWidth;
+    const lineHeight = options.lineHeight || 6;
+    const lines = doc.splitTextToSize(text, maxWidth);
+    lines.forEach(function(line){
+      if (y > pageHeight - 18) {
+        doc.addPage();
+        y = 18;
+      }
+      doc.text(line, x, y);
+      y += lineHeight;
+    });
+    return y;
+  }
+  function exportChatPdf(){
+    const jspdf = window.jspdf && window.jspdf.jsPDF;
+    if (!jspdf) {
+      window.print();
+      return;
+    }
+    const doc = new jspdf({unit:"mm", format:"a4"});
+    const generatedAt = new Date().toLocaleString("en-GB", {dateStyle:"medium", timeStyle:"short"});
+    const siteUrl = "https://jahosi.co.uk/blender5QA/";
+    const disclaimer = [
+      "Blender5QA is an experimental AI-assisted Blender 5.0 information page. AI responses can be incomplete, outdated, misread a source, or phrase something too strongly. Do not rely on an answer as the sole basis for a production workflow or project decision.",
+      "Always open the cited references and check the original official wording yourself.",
+      "Blender workflows can vary by scene setup, render engine, add-ons, operating system, hardware, project scale and exact Blender version.",
+      "For production-critical work, test the workflow in a copy of your own file and check the relevant Blender manual, release notes or API documentation before acting.",
+      "Blender5QA must not invent shortcuts, settings, version changes, node sockets, tool names or unsupported third-party recommendations.",
+      "Confirm important technical decisions with official Blender documentation, project tests, studio review or a qualified Blender trainer where appropriate.",
+      "Jahosi.co.uk cannot accept responsibility for project issues, losses, delays or other consequences arising from AI answers or from use of this page without independent fact checking.",
+      "Do not enter personal, confidential studio, client, account or unreleased project details into the chat."
+    ];
+    const references = Array.from(document.querySelectorAll(".references .source-list li")).map(function(item){
+      const link = item.querySelector("a");
+      const org = item.querySelector(".source-org");
+      return [
+        link ? link.textContent.trim() : "",
+        org ? org.textContent.trim() : "",
+        link ? link.href : ""
+      ].filter(Boolean).join(" - ");
+    });
+    let y = 18;
+    doc.setProperties({title:"Blender5QA chat export", subject:"Blender 5.0 workflow Q&A"});
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(18);
+    doc.text("Blender5QA chat export", 14, y);
+    y += 8;
+    doc.setFont("helvetica", "normal");
+    doc.setFontSize(10);
+    y = addWrappedText(doc, "Generated: " + generatedAt, 14, y, {maxWidth:180, lineHeight:5});
+    y = addWrappedText(doc, "Website: " + siteUrl, 14, y, {maxWidth:180, lineHeight:5});
+    y += 4;
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(13);
+    doc.text("Important disclaimer", 14, y);
+    y += 7;
+    doc.setFont("helvetica", "normal");
+    doc.setFontSize(10);
+    disclaimer.forEach(function(line){
+      y = addWrappedText(doc, line, 14, y, {maxWidth:180, lineHeight:5});
+      y += 2;
+    });
+    y += 3;
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(13);
+    doc.text("Chat", 14, y);
+    y += 7;
+    doc.setFontSize(10);
+    getConversationLines().forEach(function(item){
+      doc.setFont("helvetica", "bold");
+      y = addWrappedText(doc, item.label + ":", 14, y, {maxWidth:180, lineHeight:5});
+      doc.setFont("helvetica", "normal");
+      y = addWrappedText(doc, item.body, 14, y, {maxWidth:180, lineHeight:5});
+      y += 3;
+    });
+    y += 3;
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(13);
+    if (y > 270) {
+      doc.addPage();
+      y = 18;
+    }
+    doc.text("References", 14, y);
+    y += 7;
+    doc.setFont("helvetica", "normal");
+    doc.setFontSize(9);
+    references.forEach(function(line){
+      y = addWrappedText(doc, line, 14, y, {maxWidth:180, lineHeight:4.5});
+      y += 1.5;
+    });
+    doc.save("blender5qa-chat-export.pdf");
+  }
+  function removeThinkingMessage(thinkingMessage){
+    if (thinkingMessage && thinkingMessage.parentNode) thinkingMessage.remove();
+  }
+  function needsGate(){
+    return TURNSTILE_ENABLED && !getSessionToken() && !turnstileToken;
+  }
+  function updateGate(){
+    const shouldShowGate = needsGate();
+    if (gate) gate.hidden = !shouldShowGate;
+    if (send) send.hidden = shouldShowGate;
+    if (shouldShowGate) ensureTurnstileWidget();
+  }
+  function resetTurnstile(){
+    turnstileToken = "";
+    if (window.turnstile && typeof window.turnstile.reset === "function" && turnstileWidgetId !== null) {
+      try{window.turnstile.reset(turnstileWidgetId);}catch{}
+    }
+  }
+  function ensureTurnstileWidget(){
+    const container = document.getElementById("chat-turnstile");
+    if (!TURNSTILE_ENABLED || !container || turnstileWidgetId !== null) return;
+    if (!window.turnstile || typeof window.turnstile.render !== "function") return;
+    turnstileWidgetId = window.turnstile.render(container, {
+      sitekey: TURNSTILE_SITE_KEY,
+      size: window.matchMedia("(max-width: 620px)").matches ? "compact" : "normal",
+      callback: function(token){
+        turnstileToken = token || "";
+        updateGate();
+      },
+      "expired-callback": function(){
+        turnstileToken = "";
+        updateGate();
+      },
+      "error-callback": function(code){
+        turnstileToken = "";
+        updateGate();
+      }
+    });
+  }
+  function scheduleTurnstile(){
+    if (!TURNSTILE_ENABLED) return;
+    if (window.turnstile && typeof window.turnstile.ready === "function") {
+      window.turnstile.ready(function(){ensureTurnstileWidget();});
+    }
+    let attempts = 0;
+    const timer = window.setInterval(function(){
+      ensureTurnstileWidget();
+      attempts += 1;
+      if (turnstileWidgetId !== null || attempts >= 40) window.clearInterval(timer);
+    }, 250);
+  }
+  async function askQuestion(question){
+    if (!question) {
+      revealFormProblem("Enter a question before asking Blender5QA.", input);
+      return;
+    }
+    if (needsGate() && !turnstileToken) {
+      updateGate();
+      revealChat("center");
+      return;
+    }
+    setFormNote("");
+    revealChat("start");
+    appendMessage("user", question);
+    history.push({role:"user", content:question});
+    storeHistory();
+    setChatInputBlank();
+    setBusy(true);
+    const thinkingMessage = appendMessage("assistant", "Thinking...");
+    thinkingMessage.classList.add("thinking");
+    revealNewMessage(thinkingMessage);
+    try{
+      const payload = {
+        message: question,
+        history: history.slice(-8),
+        chatSessionToken: getSessionToken()
+      };
+      if (localChatContext) payload.localContext = localChatContext;
+      if (turnstileToken) payload.turnstileToken = turnstileToken;
+      const res = await fetch("/blender5QA/chat", {
+        method: "POST",
+        headers: {"Content-Type":"application/json"},
+        body: JSON.stringify(payload)
+      });
+      const data = await res.json().catch(function(){return {};});
+      if (res.status === 403 && data && data.error === "turnstile_required") {
+        removeThinkingMessage(thinkingMessage);
+        clearSessionToken();
+        updateGate();
+        revealChat("center");
+        return;
+      }
+      if (res.status === 403 && data && data.error === "turnstile_failed") {
+        removeThinkingMessage(thinkingMessage);
+        clearSessionToken();
+        resetTurnstile();
+        updateGate();
+        revealChat("center");
+        return;
+      }
+      if (!res.ok) throw new Error(data.error || "chat_failed");
+      if (typeof data.chatSessionToken === "string" && data.chatSessionToken) {
+        storeSessionToken(data.chatSessionToken);
+        turnstileToken = "";
+      }
+      const reply = typeof data.reply === "string" ? data.reply : "";
+      if (!reply.trim()) throw new Error("empty_reply");
+      removeThinkingMessage(thinkingMessage);
+      const replyMessage = appendMessage("assistant", reply.trim());
+      revealNewMessage(replyMessage);
+      history.push({role:"assistant", content:reply.trim()});
+      history = history.slice(-8);
+      storeHistory();
+      updateGate();
+    }catch{
+      removeThinkingMessage(thinkingMessage);
+      const errorMessage = appendMessage("assistant", "I could not complete that request. Please try again, and use the References links directly if the question is urgent.");
+      revealNewMessage(errorMessage);
+    }finally{
+      setBusy(false);
+    }
+  }
+
+  form.addEventListener("submit", function(event){
+    event.preventDefault();
+    askQuestion(getQuestionForSubmit());
+  });
+  contrastToggle.addEventListener("click", function(){
+    updateDisplayOption("highContrast");
+  });
+  fontToggle.addEventListener("click", function(){
+    updateDisplayOption("largeFont");
+  });
+  resourceForm.addEventListener("submit", function(event){
+    event.preventDefault();
+    lookupLocalSources(resourceInput.value.trim());
+  });
+  input.addEventListener("focus", clearStarterExample);
+  input.addEventListener("input", function(){
+    if (input.classList.contains("has-starter-example")) clearStarterExample();
+  });
+  if (clearChat) {
+    clearChat.addEventListener("click", function(){
+      const confirmed = window.confirm("Clear this chat and start fresh?");
+      if (!confirmed) return;
+      history = [];
+      localChatContext = null;
+      clearStoredHistory();
+      clearSessionToken();
+      resetTurnstile();
+      setFormNote("");
+      clearElement(thread);
+      appendMessage("assistant", "Hi! What would you like to learn today?");
+      setChatInputBlank();
+      randomizeStarterQuestion();
+      updateGate();
+      revealChat("start");
+    });
+  }
+  exportPdf.addEventListener("click", exportChatPdf);
+  if (backToChat) {
+    backToChat.addEventListener("click", function(){
+      revealChat("start");
+      input.focus({preventScroll:true});
+      backToChat.hidden = true;
+    });
+  }
+  window.addEventListener("scroll", function(){
+    if (!backToChat || !chatPanel) return;
+    const rect = chatPanel.getBoundingClientRect();
+    const isChatVisible = rect.top < window.innerHeight * .65 && rect.bottom > window.innerHeight * .25;
+    const hasConversation = thread.querySelectorAll(".message").length > 1;
+    backToChat.hidden = isChatVisible || !hasConversation;
+  }, {passive:true});
+  input.addEventListener("keydown", function(event){
+    if (event.key === "Enter" && !event.shiftKey) {
+      event.preventDefault();
+      form.requestSubmit();
+    }
+  });
+  document.querySelectorAll("[data-question]").forEach(function(button){
+    button.addEventListener("click", function(){
+      setChatInputBlank();
+      input.value = button.getAttribute("data-question") || "";
+      revealChat("start");
+      input.focus({preventScroll:true});
+      askQuestion(input.value.trim());
+    });
+  });
+  document.querySelectorAll("[data-prompt]").forEach(function(button){
+    button.addEventListener("click", function(){
+      setChatInputBlank();
+      input.value = button.getAttribute("data-prompt") || "";
+      if (startTool) startTool.open = false;
+      revealChat("start");
+      input.focus({preventScroll:true});
+      askQuestion(input.value.trim());
+    });
+  });
+  applyDisplayOptions(loadDisplayOptions());
+  randomizeStarterQuestion();
+  markExternalLinks();
+  updateGate();
+  scheduleTurnstile();
+})();
+</script>
+</body>
+</html>

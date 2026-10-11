@@ -109,6 +109,8 @@ const SITEMAP_PATHS = [
   "/socialQA/policy.html",
   "/teachMe/",
   "/teachMe/policy.html",
+  "/blender5QA/",
+  "/blender5QA/policy.html",
 ];
 
 const MAX_REQUESTS_PER_WINDOW = 5;
@@ -597,6 +599,49 @@ const BLANDER_QA_CHAT_GUIDELINES = [
   "For add-ons and Python, use official add-on and API documentation for exact API claims. For general programming explanations, teach the idea carefully and flag where API docs should be checked.",
   "Source-backed notes you may use for general explanations:\n" + BLANDER_QA_SOURCE_NOTES,
   "Official Blender sources available for citation:\n" + BLANDER_QA_SOURCE_TEXT,
+].join("\n");
+
+function toBlender5QaText(value) {
+  return String(value || "")
+    .replace(/BlanderQA/g, "Blender5QA")
+    .replace(/Blender 4\.0/g, "Blender 5.0")
+    .replace(/4\.0/g, "5.0")
+    .replace(/4-0/g, "5-0");
+}
+
+const BLENDER5_QA_SOURCES = BLANDER_QA_SOURCES.map((source) => ({
+  title: toBlender5QaText(source.title),
+  organisation: source.organisation,
+  url: toBlender5QaText(source.url),
+  scope: toBlender5QaText(source.scope),
+}));
+
+const BLENDER5_QA_SOURCE_TEXT = BLENDER5_QA_SOURCES.map(
+  (source, index) =>
+    `${index + 1}. ${source.title} - ${source.organisation}. URL: ${source.url}. Scope: ${source.scope}`
+).join("\n");
+
+const BLENDER5_QA_SOURCE_NOTES = toBlender5QaText(BLANDER_QA_SOURCE_NOTES);
+
+const BLENDER5_QA_CHAT_GUIDELINES = [
+  "You are Blender5QA, a patient, plain-English Blender 5.0 tutor for learners at roughly A-level, foundation-year, undergraduate or self-taught artist level.",
+  "Users often ask short search-engine-style questions. Infer the likely learning goal, restate it briefly if useful, and answer the practical Blender question they probably meant.",
+  "Use the validated official Blender sources listed below as your primary evidence for Blender 5.0 details. You may also use general Blender teaching knowledge to explain concepts, workflow reasoning and trade-offs when the official source list does not contain the exact phrasing the user searched for.",
+  "Do not use source-limit refusal wording for ordinary Blender learning questions.",
+  "When a detail is version-sensitive, uncertain, add-on-specific, hardware-specific or not clearly covered by the official Blender 5.0 sources, say what should be checked and then give the most useful general explanation you can.",
+  "Every answer should include a 'References' section when official Blender sources are used or when a user asks for a source-backed answer. Name the source titles and URLs used.",
+  "Use plain text only. Do not use Markdown heading markers such as ###, bold markers such as **, or decorative ASCII formatting.",
+  "Do not invent exact menu labels, shortcuts, version changes, settings names, node sockets, tool names, or URLs. If you are not sure of the exact label, explain the concept and tell the user to check the relevant manual page or Blender UI search.",
+  "Use a tutor voice: explain the idea, why it matters, one or two common mistakes, and a practical next step. Be slightly more verbose than a search snippet, but keep paragraphs readable.",
+  "For conceptual questions, include a compact example or analogy from Blender practice when it helps the learner build intuition.",
+  "When the user asks how to achieve something in Blender, look for multiple valid routes and compare them. If a different workflow may be better, say: 'Have you considered doing it a different way, such as ...?'",
+  "When a question could be solved by more than one workflow, compare manual modeling, modifiers, Geometry Nodes, sculpting, rigging controls, compositor fixes or render-engine choices where relevant.",
+  "If the user appears to ask for a workflow that is version-sensitive, explicitly keep the answer to Blender 5.0 and note that other releases may differ.",
+  "For shading and rendering, prefer official manual and release-page concepts. Do not present third-party shader packs, assets or unofficial presets as authoritative.",
+  "For troubleshooting, prefer official startup, GPU, crash and recovery guidance first. If there are multiple likely causes, lay them out as a short diagnostic sequence.",
+  "For add-ons and Python, use official add-on and API documentation for exact API claims. For general programming explanations, teach the idea carefully and flag where API docs should be checked.",
+  "Source-backed notes you may use for general explanations:\n" + BLENDER5_QA_SOURCE_NOTES,
+  "Official Blender sources available for citation:\n" + BLENDER5_QA_SOURCE_TEXT,
 ].join("\n");
 
 const TEACH_ME_SOURCES = [
@@ -1106,6 +1151,27 @@ app.get("/blanderQA/policy.html", (req, res) => {
 
 app.use("/blanderQA", express.static(path.join(__dirname, "public", "blanderQA"), { index: false, setHeaders: setPublicFileHeaders }));
 
+app.get(/^\/blender5QA$/, (req, res) => {
+  res.redirect("/blender5QA/");
+});
+
+app.get("/blender5QA/", (req, res) => {
+  setNoCacheHeaders(res);
+  res.send(renderBlender5QaIndexHtml());
+});
+
+app.get("/blender5QA/index.html", (req, res) => {
+  setNoCacheHeaders(res);
+  res.send(renderBlender5QaIndexHtml());
+});
+
+app.get("/blender5QA/policy.html", (req, res) => {
+  setNoCacheHeaders(res);
+  res.send(renderBlender5QaPolicyHtml());
+});
+
+app.use("/blender5QA", express.static(path.join(__dirname, "public", "blender5QA"), { index: false, setHeaders: setPublicFileHeaders }));
+
 app.get(/^\/teachMe$/, (req, res) => {
   res.redirect("/teachMe/");
 });
@@ -1348,7 +1414,7 @@ app.get("/blanderQA/resource-info", (req, res) => {
       },
     },
     {
-      match: /shade|material|shader|render|lighting|light|eevee|cycles|principled|color|lookdev/i,
+      match: /shad|material|shader|render|lighting|light|eevee|cycles|principled|color|lookdev/i,
       payload: {
         title: "Shading and rendering",
         summary: "Good for materials, lighting, render-engine choice and look development.",
@@ -1457,6 +1523,135 @@ app.get("/blanderQA/resource-info", (req, res) => {
   });
 });
 
+app.get("/blender5QA/resource-info", (req, res) => {
+  const topic = String(req.query.topic || "").trim().toLowerCase();
+  const matchedTopic = [
+    {
+      match: /model|mesh|modifier|geometry|topolog|uv|transform|snap|snapp|hard[- ]surface|retopo/i,
+      payload: {
+        title: "Modeling and layout",
+        summary: "Good for mesh editing, modifiers, Geometry Nodes, transforms and snapping.",
+        links: [
+          { label: "Modeling", href: "https://docs.blender.org/manual/en/5.0/modeling/index.html" },
+          { label: "Transform and snapping", href: "https://docs.blender.org/manual/en/5.0/modeling/transform/modal_map.html" },
+          { label: "Snapping", href: "https://docs.blender.org/manual/en/5.0/editors/3dview/controls/snapping.html" },
+          { label: "Geometry Nodes", href: "https://docs.blender.org/manual/en/5.0/modeling/geometry_nodes/index.html" },
+        ],
+        followUps: [
+          "Have you considered doing it a different way, such as using a modifier stack instead of editing the mesh destructively?",
+          "If the shape is more procedural, Geometry Nodes may be the cleaner path than manual modeling.",
+        ],
+      },
+    },
+    {
+      match: /shad|material|shader|render|lighting|light|eevee|cycles|principled|color|lookdev/i,
+      payload: {
+        title: "Shading and rendering",
+        summary: "Good for materials, lighting, render-engine choice and look development.",
+        links: [
+          { label: "Rendering", href: "https://docs.blender.org/manual/en/5.0/render/index.html" },
+          { label: "Principled BSDF", href: "https://docs.blender.org/manual/en/5.0/render/shader_nodes/shader/principled.html" },
+          { label: "Blender 5.0 release page", href: "https://www.blender.org/download/releases/5-0/" },
+        ],
+        followUps: [
+          "Have you considered doing it a different way, such as iterating in EEVEE first and finalising in Cycles?",
+          "If the material feels close but not right, try comparing the Principled BSDF inputs before reaching for an add-on or external preset.",
+        ],
+      },
+    },
+    {
+      match: /animat|rig|armatur|bone|pose|driver|constraint|keyframe|motion|shape key/i,
+      payload: {
+        title: "Animation and rigging",
+        summary: "Good for keyframes, constraints, armatures, bone collections and shape keys.",
+        links: [
+          { label: "Animation & Rigging", href: "https://docs.blender.org/manual/en/5.0/animation/index.html" },
+          { label: "Graph Editor", href: "https://docs.blender.org/manual/en/5.0/editors/graph_editor/index.html" },
+        ],
+        followUps: [
+          "Have you considered doing it a different way, such as using constraints before adding a lot of keyframes?",
+          "For animation cleanup, the Graph Editor can be the simpler route before resorting to more complex driver logic.",
+        ],
+      },
+    },
+    {
+      match: /crash|error|gpu|driver|startup|recover|missing|broken|slow|lag|compat/i,
+      payload: {
+        title: "Troubleshooting",
+        summary: "Good for startup issues, GPU problems, crashes, Python errors and recovering files.",
+        links: [
+          { label: "Troubleshooting", href: "https://docs.blender.org/manual/en/5.0/troubleshooting/index.html" },
+          { label: "Startup", href: "https://docs.blender.org/manual/en/5.0/troubleshooting/startup.html" },
+          { label: "Graphics Hardware", href: "https://docs.blender.org/manual/en/5.0/troubleshooting/gpu/index.html" },
+          { label: "Crashes", href: "https://docs.blender.org/manual/en/5.0/troubleshooting/crash.html" },
+          { label: "Recovering Data", href: "https://docs.blender.org/manual/en/5.0/troubleshooting/recover.html" },
+        ],
+        followUps: [
+          "Have you considered doing it a different way, such as testing the issue in factory settings or with add-ons disabled first?",
+          "If the problem is graphical, the official troubleshooting flow usually starts with GPU and driver checks before deeper debugging.",
+        ],
+      },
+    },
+    {
+      match: /shortcut|hotkey|keymap|key map|keyboard|binding|spacebar|menu search|quick access|favorite|favourites|favorites|viewport navigation|industry compatible/i,
+      payload: {
+        title: "Keyboard shortcuts and keymaps",
+        summary: "Good for Blender 5.0 shortcut conventions, default-keymap basics, viewport navigation, object/edit-mode workflows, node and animation shortcuts, Industry Compatible differences and checking customized key bindings.",
+        links: [
+          { label: "Common Shortcuts", href: "https://docs.blender.org/manual/en/5.0/interface/keymap/introduction.html" },
+          { label: "Default Keymap", href: "https://docs.blender.org/manual/en/5.0/interface/keymap/blender_default.html" },
+          { label: "Industry Compatible Keymap", href: "https://docs.blender.org/manual/en/5.0/interface/keymap/industry_compatible.html" },
+          { label: "Preferences: Keymap", href: "https://docs.blender.org/manual/en/5.0/editors/preferences/keymap.html" },
+        ],
+        followUps: [
+          "If a shortcut does not work, check which keymap preset is active and whether the key has been customized.",
+          "Have you considered using Menu Search, Quick Favorites, or Preferences > Keymap search before trying to memorize every shortcut?",
+          "For practical work, group shortcuts by workflow: navigation, transforms, modeling, UVs, nodes, sculpting, animation, rigging and window-switching workflows.",
+        ],
+      },
+    },
+    {
+      match: /add-?on|script|python|api|extension|automation/i,
+      payload: {
+        title: "Add-ons and Python",
+        summary: "Good for extending Blender with add-ons or scripting against the API.",
+        links: [
+          { label: "Add-ons", href: "https://docs.blender.org/manual/en/5.0/addons/index.html" },
+          { label: "Advanced", href: "https://docs.blender.org/manual/en/5.0/advanced/index.html" },
+          { label: "Blender Python API 5.0", href: "https://docs.blender.org/api/5.0/" },
+        ],
+        followUps: [
+          "Have you considered doing it a different way, such as an add-on before a custom script?",
+          "If the task is repetitive but simple, a built-in add-on may be the quickest path.",
+        ],
+      },
+    },
+  ].find((entry) => entry.match.test(topic));
+
+  const payload = matchedTopic
+    ? matchedTopic.payload
+    : {
+        title: "Blender 5.0 official resources",
+        summary: "Start with the manual home page, then branch into the section that matches the task.",
+        links: [
+          { label: "Blender 5.0 Reference Manual", href: "https://docs.blender.org/manual/en/5.0/" },
+          { label: "User Interface", href: "https://docs.blender.org/manual/en/5.0/interface/index.html" },
+          { label: "Modeling", href: "https://docs.blender.org/manual/en/5.0/modeling/index.html" },
+          { label: "Rendering", href: "https://docs.blender.org/manual/en/5.0/render/index.html" },
+          { label: "Troubleshooting", href: "https://docs.blender.org/manual/en/5.0/troubleshooting/index.html" },
+        ],
+        followUps: [
+          "If you are not sure where to start, ask by workflow: modeling, shading, animation or troubleshooting.",
+          "Have you considered doing it a different way, such as using modifiers or Geometry Nodes instead of editing everything by hand?",
+        ],
+      };
+
+  res.json({
+    ...payload,
+    localLinks: payload.links,
+  });
+});
+
 app.post("/blanderQA/chat", splashChatRateLimit, express.json({ limit: "50kb" }), async (req, res) => {
   if (!SPLASH_OPENAI_API_KEY) {
     return res.status(404).json({ error: "disabled" });
@@ -1540,6 +1735,96 @@ app.post("/blanderQA/chat", splashChatRateLimit, express.json({ limit: "50kb" })
       return res.status(502).json({ error: "upstream_empty" });
     }
     const response = { reply: expandBlanderQaRefusal(reply, message) };
+    if (resolvedChatSessionToken) response.chatSessionToken = resolvedChatSessionToken;
+    return res.json(response);
+  } catch (error) {
+    return res.status(502).json({ error: "upstream_error" });
+  }
+});
+
+app.post("/blender5QA/chat", splashChatRateLimit, express.json({ limit: "50kb" }), async (req, res) => {
+  if (!SPLASH_OPENAI_API_KEY) {
+    return res.status(404).json({ error: "disabled" });
+  }
+
+  const body = req.body && typeof req.body === "object" ? req.body : {};
+  const message = typeof body.message === "string" ? body.message.trim() : "";
+  const history = Array.isArray(body.history) ? body.history : [];
+  const resourceContext = sanitizeSocialQaLocalContext(body.localContext);
+  const chatSessionToken = typeof body.chatSessionToken === "string" ? body.chatSessionToken.trim() : "";
+  const turnstileToken = typeof body.turnstileToken === "string" ? body.turnstileToken.trim() : "";
+  const remoteip = req.ip || req.socket.remoteAddress || undefined;
+
+  if (!message || message.length > 2000) {
+    return res.status(400).json({ error: "invalid_message" });
+  }
+
+  let resolvedChatSessionToken = chatSessionToken;
+  if (isTurnstileEnabled()) {
+    if (!validateChemChatSession(resolvedChatSessionToken)) {
+      if (!turnstileToken) {
+        return res.status(403).json({ error: "turnstile_required" });
+      }
+      const turnstileOk = await verifyTurnstileToken(turnstileToken, remoteip);
+      if (!turnstileOk) {
+        return res.status(403).json({ error: "turnstile_failed" });
+      }
+      resolvedChatSessionToken = mintChemChatSession();
+    }
+  }
+
+  const safeHistory = history
+    .slice(-8)
+    .filter((item) => item && typeof item === "object")
+    .map((item) => {
+      const role = item.role === "assistant" ? "assistant" : "user";
+      const content = String(item.content || "").slice(0, 2500);
+      return { role, content };
+    })
+    .filter((item) => item.content.trim());
+
+  const payloadMessages = [
+    { role: "system", content: BLENDER5_QA_CHAT_GUIDELINES },
+    ...(resourceContext
+      ? [
+          {
+            role: "system",
+            content:
+              "User-selected official Blender context. Use this only as an official-resource reminder, not to invent unsupported claims.\n" +
+              resourceContext,
+          },
+        ]
+      : []),
+    ...safeHistory,
+    {
+      role: "user",
+      content:
+        "Treat this as a Blender 5.0 learning prompt, even if it is written like a search query. Answer as a patient tutor, use official Blender sources for version-specific facts where possible, include references when you use them, and flag anything that should be checked in the manual or API docs. User question: " +
+        message,
+    },
+  ];
+
+  try {
+    const llmRes = await fetch(`${SPLASH_OPENAI_BASE_URL}/chat/completions`, {
+      method: "POST",
+      headers: chatCompletionHeaders(),
+      body: JSON.stringify({
+        model: "gpt-4o-mini",
+        temperature: 0.1,
+        messages: payloadMessages,
+      }),
+    });
+
+    if (!llmRes.ok) {
+      return res.status(502).json({ error: "upstream_failed" });
+    }
+
+    const data = await llmRes.json();
+    const reply = data?.choices?.[0]?.message?.content;
+    if (typeof reply !== "string" || !reply.trim()) {
+      return res.status(502).json({ error: "upstream_empty" });
+    }
+    const response = { reply: toBlender5QaText(expandBlanderQaRefusal(reply, message)) };
     if (resolvedChatSessionToken) response.chatSessionToken = resolvedChatSessionToken;
     return res.json(response);
   } catch (error) {
@@ -1769,6 +2054,15 @@ function renderBlanderQaIndexHtml() {
 const BLANDER_QA_POLICY_HTML_TEMPLATE = fs.readFileSync(path.join(__dirname, "public", "blanderQA", "policy.html"), "utf8");
 function renderBlanderQaPolicyHtml() {
   return BLANDER_QA_POLICY_HTML_TEMPLATE.replaceAll("__CONTACT_PAGE_PATH__", CONTACT_PAGE_PATH);
+}
+
+const BLENDER5_QA_INDEX_HTML_TEMPLATE = fs.readFileSync(path.join(__dirname, "public", "blender5QA", "index.html"), "utf8");
+function renderBlender5QaIndexHtml() {
+  return BLENDER5_QA_INDEX_HTML_TEMPLATE.replace('"__TURNSTILE_SITE_KEY__"', JSON.stringify(TURNSTILE_SITE_KEY));
+}
+const BLENDER5_QA_POLICY_HTML_TEMPLATE = fs.readFileSync(path.join(__dirname, "public", "blender5QA", "policy.html"), "utf8");
+function renderBlender5QaPolicyHtml() {
+  return BLENDER5_QA_POLICY_HTML_TEMPLATE.replaceAll("__CONTACT_PAGE_PATH__", CONTACT_PAGE_PATH);
 }
 
 const TEACH_ME_INDEX_HTML_TEMPLATE = fs.readFileSync(path.join(__dirname, "public", "teachMe", "index.html"), "utf8");
