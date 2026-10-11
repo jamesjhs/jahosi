@@ -514,14 +514,50 @@ body.high-contrast kbd{background:#fff;border:2px solid #000}
     <summary>Plain-English glossary</summary>
     <div class="collapsible-tool-body">
       <div class="glossary-grid">
-        <article class="term-card"><h3>GameObject</h3><p>A core object in a Unity scene. Behaviour and data usually come from Components attached to it.</p></article>
+        <article class="term-card"><h3>Addressables</h3><p>A package and workflow for loading assets by address, often used to manage downloadable content, memory pressure and content updates.</p></article>
+        <article class="term-card"><h3>Animator Controller</h3><p>An asset that defines animation states, transitions and parameters for characters, props or UI animation.</p></article>
+        <article class="term-card"><h3>Asset</h3><p>Any project file Unity can import or use, including models, textures, audio, scripts, materials, scenes and prefabs.</p></article>
+        <article class="term-card"><h3>AssetBundle</h3><p>A packaged group of assets that can be loaded at runtime, commonly used for downloadable or separately delivered content.</p></article>
+        <article class="term-card"><h3>Bake</h3><p>The process of precomputing data, such as lighting or navigation, so the game can reuse it efficiently at runtime.</p></article>
+        <article class="term-card"><h3>Build Profile</h3><p>A saved build configuration for a target platform, including settings that control how Unity produces the final player.</p></article>
+        <article class="term-card"><h3>Canvas</h3><p>The root element for Unity UI layouts. UI elements render inside a Canvas in screen space, world space or camera space.</p></article>
+        <article class="term-card"><h3>Collider</h3><p>A physics shape used for collision detection and triggers. It may be visible only through gizmos, not as rendered geometry.</p></article>
         <article class="term-card"><h3>Component</h3><p>A modular part attached to a GameObject, such as Transform, Renderer, Collider or a custom script.</p></article>
-        <article class="term-card"><h3>Prefab</h3><p>A reusable GameObject asset that lets you create and update repeated object setups consistently.</p></article>
-        <article class="term-card"><h3>Scene</h3><p>A Unity asset that stores part of the project's world, UI, objects or setup.</p></article>
-        <article class="term-card"><h3>URP</h3><p>The Universal Render Pipeline, often used when broad platform reach and scalable rendering matter.</p></article>
+        <article class="term-card"><h3>DOTS</h3><p>Unity's Data-Oriented Technology Stack, designed around highly parallel, cache-friendly code for large or performance-heavy simulations.</p></article>
+        <article class="term-card"><h3>ECS</h3><p>Entity Component System, a data-oriented architecture where entities are identified by data and systems process that data.</p></article>
+        <article class="term-card"><h3>Editor</h3><p>The Unity application used to build scenes, import assets, configure projects, run Play Mode and prepare builds.</p></article>
+        <article class="term-card"><h3>FixedUpdate</h3><p>A scripting event called on the fixed physics timestep, usually the right place for physics-related Rigidbody changes.</p></article>
+        <article class="term-card"><h3>Game View</h3><p>The Editor view that shows what the active camera renders when the project runs.</p></article>
+        <article class="term-card"><h3>GameObject</h3><p>A core object in a Unity scene. Behaviour and data usually come from Components attached to it.</p></article>
+        <article class="term-card"><h3>Gizmos</h3><p>Editor-only visual aids that show invisible data such as colliders, lights, cameras, paths and custom debugging markers.</p></article>
         <article class="term-card"><h3>HDRP</h3><p>The High Definition Render Pipeline, aimed at high-end visuals where platform and hardware budgets fit.</p></article>
-        <article class="term-card"><h3>Profiler</h3><p>Unity tooling for measuring performance so optimisation starts from evidence.</p></article>
-        <article class="term-card"><h3>Unity Hub</h3><p>The application used to manage Unity Editor installations, modules and projects.</p></article>
+        <article class="term-card"><h3>Inspector</h3><p>The Editor panel used to view and edit the selected object's properties, components, assets and import settings.</p></article>
+        <article class="term-card"><h3>Lightmap</h3><p>A texture that stores baked lighting information so static lighting can render faster at runtime.</p></article>
+        <article class="term-card"><h3>Material</h3><p>An asset that defines how a surface is rendered, including shader choice, textures, colours and other surface properties.</p></article>
+        <article class="term-card"><h3>Mesh</h3><p>The vertex, edge and face data that describes a 3D object's shape.</p></article>
+        <article class="term-card"><h3>MonoBehaviour</h3><p>The base class most Unity scripts inherit from when they need common Unity event functions such as Start, Update or OnCollisionEnter.</p></article>
+        <article class="term-card"><h3>NavMesh</h3><p>Navigation data that describes where AI agents can walk, helping characters find paths around a scene.</p></article>
+        <article class="term-card"><h3>Package Manager</h3><p>The Editor window used to add, remove and update Unity packages, samples and dependencies for a project.</p></article>
+        <article class="term-card"><h3>Play Mode</h3><p>The Editor state that runs the project for testing. Changes made in Play Mode usually do not persist after stopping.</p></article>
+        <article class="term-card"><h3>Prefab</h3><p>A reusable GameObject asset that lets you create and update repeated object setups consistently.</p></article>
+        <article class="term-card"><h3>Profiler</h3><p>Unity tooling for measuring CPU, GPU, memory, rendering and other runtime performance so optimisation starts from evidence.</p></article>
+        <article class="term-card"><h3>Project Settings</h3><p>Central settings for input, physics, rendering, quality, player configuration, tags, layers and other project-wide behaviour.</p></article>
+        <article class="term-card"><h3>Rigidbody</h3><p>A physics component that lets an object respond to forces, gravity and collision movement through the physics engine.</p></article>
+        <article class="term-card"><h3>Scene</h3><p>A Unity asset that stores part of the project's world, UI, objects or setup.</p></article>
+        <article class="term-card"><h3>Scene View</h3><p>The Editor view used to inspect, select and arrange objects in the scene independently of the game camera.</p></article>
+        <article class="term-card"><h3>ScriptableObject</h3><p>A serialisable data container often used for shared settings, item definitions, configuration data or editor tooling.</p></article>
+        <article class="term-card"><h3>Shader Graph</h3><p>A node-based tool for creating shaders visually rather than writing shader code by hand.</p></article>
+        <article class="term-card"><h3>Sprite</h3><p>A 2D graphic asset used for characters, tiles, icons, UI and other flat visual elements.</p></article>
+        <article class="term-card"><h3>Tag</h3><p>A label assigned to GameObjects so scripts can identify broad object roles, such as Player or Enemy.</p></article>
+        <article class="term-card"><h3>Terrain</h3><p>Unity's built-in system for sculpting and painting large outdoor landscapes.</p></article>
+        <article class="term-card"><h3>TextMeshPro</h3><p>Unity's advanced text rendering package, commonly used for sharper UI and in-world text.</p></article>
+        <article class="term-card"><h3>Timeline</h3><p>A sequencing tool for arranging animation, audio, camera cuts and scripted events over time.</p></article>
+        <article class="term-card"><h3>Transform</h3><p>The component every GameObject has, storing position, rotation, scale and parent-child hierarchy information.</p></article>
+        <article class="term-card"><h3>Trigger</h3><p>A Collider mode that detects overlaps without physically blocking movement, often used for zones, pickups and interaction volumes.</p></article>
+        <article class="term-card"><h3>UI Toolkit</h3><p>Unity's retained-mode UI system for Editor extensions and runtime interfaces, based on visual elements and style sheets.</p></article>
+        <article class="term-card"><h3>Unity Hub</h3><p>The application used to manage Unity Editor installations, modules, licences and projects.</p></article>
+        <article class="term-card"><h3>URP</h3><p>The Universal Render Pipeline, often used when broad platform reach and scalable rendering matter.</p></article>
+        <article class="term-card"><h3>Visual Scripting</h3><p>Unity's graph-based scripting system for building logic with nodes instead of writing C# directly.</p></article>
       </div>
     </div>
   </details>
