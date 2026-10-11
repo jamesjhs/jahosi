@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#111318">
+<meta name="robots" content="index,follow,max-snippet:-1">
+<link rel="canonical" href="https://jahosi.co.uk/unityQA/policy.html">
+<meta name="description" content="UnityQA policy, use policy and disclaimer for the Unity Engine Q&A page.">
+<title>UnityQA policy, use policy and disclaimer</title>
+<style>
+:root{color-scheme:dark;--bg:#0d0f14;--panel:#171a21;--ink:#f4f7fb;--muted:#aab3c2;--line:#303540;--brand:#2196f3;--brand-dark:#67c8ff;--warn:#f5c542;--warn-bg:#24200f;--error:#ff6b6b}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;font-family:Inter,Arial,Helvetica,sans-serif;font-size:16px;line-height:1.6;color:var(--ink);background:linear-gradient(180deg,#111318,#090a0d)}
+a{color:var(--brand-dark);font-weight:700}
+a:focus{outline:3px solid var(--brand);outline-offset:3px}
+header{background:#151820;color:#fff;border-bottom:1px solid var(--line)}
+.header-inner,.wrap,footer{max-width:980px;margin:0 auto;padding:1.25rem 1rem}
+.back-link{color:#d8ecff;text-decoration:none}
+h1{margin:.7rem 0 .35rem;font-size:clamp(2rem,5vw,3rem);line-height:1.08}
+.lede{max-width:760px;margin:0;color:#dbe5f3}
+.panel{margin:1rem 0;padding:1rem;background:var(--panel);border:1px solid var(--line);border-radius:8px}
+.notice{border-left:6px solid var(--warn);background:var(--warn-bg)}
+.danger{border-left:6px solid var(--error);background:#251316}
+h2{margin:0 0 .6rem;font-size:1.25rem}
+h3{margin:1rem 0 .35rem;font-size:1.05rem}
+p{margin:.5rem 0}
+ul{margin:.5rem 0;padding-left:1.2rem}
+li{margin:.35rem 0}
+.meta,footer{color:var(--muted);font-size:.94rem}
+.toc{display:grid;gap:.35rem;padding-left:1rem}
+.source-list{list-style:none;padding:0}
+.source-list li{border-top:1px solid var(--line);padding:.65rem 0 0}
+.source-list li:first-child{border-top:0;padding-top:0}
+@media(max-width:620px){body{font-size:15.5px}.header-inner,.wrap,footer{padding:1rem .75rem}.panel{padding:.85rem}}
+</style>
+</head>
+<body>
+<header>
+  <div class="header-inner">
+    <a class="back-link" href="/unityQA/">Back to UnityQA</a>
+    <h1>UnityQA policy, use policy and disclaimer</h1>
+    <p class="lede">How UnityQA works, what it can and cannot do, how information is handled, and what users should check before relying on any answer.</p>
+  </div>
+</header>
+
+<main class="wrap">
+  <section class="panel notice" aria-labelledby="status-title">
+    <h2 id="status-title">Status of this policy</h2>
+    <p><strong>Version:</strong> 1.0.0. <strong>Published:</strong> 11 October 2026. <strong>Last updated:</strong> 11 October 2026. <strong>Sources reviewed:</strong> 11 October 2026.</p>
+    <p>This policy is written for UnityQA at <a href="/unityQA/">https://jahosi.co.uk/unityQA/</a>. It will be updated over time as Unity releases, the source list, and the hosting or AI setup change.</p>
+    <p>This page is not legal advice. It is a practical public statement of how the UnityQA page is intended to work and the limits users should understand before using it.</p>
+  </section>
+
+  <nav class="panel" aria-label="Policy sections">
+    <h2>Contents</h2>
+    <div class="toc">
+      <a href="#plain-summary">Plain-English summary</a>
+      <a href="#scope">What UnityQA is</a>
+      <a href="#use-policy">Use policy and disclaimer</a>
+      <a href="#privacy">Privacy policy</a>
+      <a href="#sources">Sources and freshness</a>
+      <a href="#risk-review">Workflow and safety review</a>
+      <a href="#reference-material">Reference material used for this policy</a>
+    </div>
+  </nav>
+
+  <section id="plain-summary" class="panel danger">
+    <h2>Plain-English summary</h2>
+    <ul>
+      <li>UnityQA is an experimental AI-assisted information page for Unity Engine workflows. It is not a substitute for Unity documentation, release notes, professional training or project testing.</li>
+      <li>Use it as a guide to compare workflows, find official resources and ask better questions.</li>
+      <li>Do not treat any answer as the only valid workflow. Many Unity tasks can be solved through more than one route.</li>
+      <li>Always check the official Unity Manual, Scripting API, package documentation, release notes or Unity Support pages before relying on an answer.</li>
+      <li>Do not enter sensitive personal, financial, account, license, client, repository or unreleased project details into the chat.</li>
+      <li>UnityQA is instructed to stay within the validated Unity source list and to refuse unsupported speculation, unofficial package claims and version-mismatched advice.</li>
+    </ul>
+  </section>
+
+  <section id="scope" class="panel">
+    <h2>What UnityQA is</h2>
+    <p>UnityQA is a plain-English Q&A page for Unity Engine users. It is designed to help learners and makers understand common topics such as the Editor, GameObjects, Components, Prefabs, scripting, rendering pipelines, physics, animation, UI, navigation, assets, profiling, multiplayer and troubleshooting.</p>
+    <h3>Design philosophy</h3>
+    <p>UnityQA is built around source discipline, practical explanation and official signposting. It should help users decide what to try next, compare valid Unity workflows and know when to open the original documentation.</p>
+    <h3>Functional overview</h3>
+    <ul>
+      <li>The chat sends the user's question and recent temporary browser-session chat history to the UnityQA server.</li>
+      <li>The server passes the question to a configured AI service with instructions to use only the validated Unity source list.</li>
+      <li>The page includes starter prompts, common questions, topic lookup by Unity area, display controls and browser-side PDF export.</li>
+      <li>The topic lookup sends a Unity subject to the UnityQA server, which returns official Unity documentation, learning, release and support resources.</li>
+      <li>After a successful topic lookup, limited official resource context may be sent with later chat questions so answers can point to the relevant Unity docs.</li>
+      <li>Cloudflare Turnstile may be used to reduce automated abuse before chat is enabled.</li>
+    </ul>
+  </section>
+
+  <section id="use-policy" class="panel">
+    <h2>Use policy and disclaimer</h2>
+    <h3>Use UnityQA of your own accord</h3>
+    <p>By using UnityQA, you choose to ask questions of your own accord. You remain responsible for deciding whether to act, what to check, and whether to cross-check the answer against official Unity sources. The page cannot know your project goals, package versions, platform target, license position, repository state, hardware, build pipeline or production constraints.</p>
+    <h3>Not a substitute for the manual</h3>
+    <p>UnityQA does not replace the Unity Manual, Scripting API, package documentation, release notes, Unity Learn, Unity Support or Unity Hub documentation. If an answer conflicts with official Unity documentation, the official source wins.</p>
+    <h3>Workflow comparison</h3>
+    <p>Many Unity tasks can be done several ways. UnityQA should explain alternatives where appropriate, for example Prefabs versus scene-only objects, MonoBehaviours versus package systems, URP versus HDRP, physics-driven movement versus scripted movement, UI Toolkit versus uGUI, or built-in services versus a custom backend.</p>
+    <h3>Limitation of advice</h3>
+    <p>Do not rely on UnityQA alone for production-critical decisions. A short answer can miss context such as platform requirements, render pipeline, package versions, memory budgets, multiplayer architecture, accessibility requirements or certification rules. Check the documentation and test in a copy of your own project before committing to a workflow.</p>
+    <h3>Safety and support</h3>
+    <p>UnityQA is not an emergency service and is not intended for crisis situations. For account, license, payment or billing issues, use Unity Support. For platform-holder SDKs, third-party assets, hardware or drivers, verify the relevant official vendor documentation.</p>
+  </section>
+
+  <section id="privacy" class="panel">
+    <h2>Privacy policy</h2>
+    <h3>Data controller and contact</h3>
+    <p>The data controller for UnityQA is <strong>James Rowson</strong>. For privacy questions, correction requests or communication preferences, use the <a href="__CONTACT_PAGE_PATH__">Jahosi contact page</a>.</p>
+    <h3>Data you should not provide</h3>
+    <p>Do not enter passwords, API keys, license details, account details, payment details, client files, private repository links, unreleased project data or any other sensitive information into the chat.</p>
+    <h3>Information processed when using the page</h3>
+    <ul>
+      <li><strong>Chat question:</strong> the text you submit is sent to the UnityQA server and then to the configured AI service so an answer can be generated.</li>
+      <li><strong>Recent chat history:</strong> recent messages are held in your browser session storage and sent with later questions to preserve short-term context.</li>
+      <li><strong>Topic lookup context:</strong> after a successful topic lookup, the page may send returned official Unity resource links with later chat questions.</li>
+      <li><strong>Session token:</strong> a temporary browser-session token may be stored in session storage after Turnstile verification.</li>
+      <li><strong>Display settings:</strong> high-contrast and large-font preferences may be stored in browser local storage.</li>
+      <li><strong>PDF export:</strong> exports are generated in your browser from the conversation visible in that browser session.</li>
+      <li><strong>Security and service data:</strong> standard web request metadata may be processed by the server, hosting provider, rate limiter or security tools.</li>
+    </ul>
+    <h3>Purpose of processing</h3>
+    <p>Information is processed to provide the Q&A function, preserve temporary context in the user's browser session, generate topic signposting, reduce abuse, troubleshoot the service and improve safe operation. UnityQA is not designed to build profiles, target advertising or sell user data.</p>
+    <h3>Storage and retention</h3>
+    <p>UnityQA does not maintain a user account or permanent chat database for this page. Chat history is stored in browser session storage on the user's device for the current browser session. Display preferences are stored in local storage until cleared by the user.</p>
+  </section>
+
+  <section id="sources" class="panel">
+    <h2>Sources and freshness</h2>
+    <p>UnityQA is constrained to a curated source list of official Unity sources and officially recognised Unity learning/support routes, including Unity Documentation, the User Manual, Scripting API, Unity Engine product pages, release support, Unity Hub, Unity Learn and Unity Support. The source list was last reviewed on <strong>11 October 2026</strong>. Sources can change without notice.</p>
+    <p>Where UnityQA cannot answer from the validated source list, it should say so and signpost the relevant official Unity or vendor source instead of inventing an answer.</p>
+  </section>
+
+  <section id="risk-review" class="panel notice">
+    <h2>Workflow and safety review</h2>
+    <h3>User perspective</h3>
+    <ul>
+      <li>The main risk is over-reliance: users may treat a clear AI answer as the only correct Unity workflow.</li>
+      <li>The page repeatedly tells users not to enter sensitive personal, account or project information.</li>
+      <li>The tool should remain careful, plain and source-linked, especially for version-specific behaviour, APIs, package documentation, platform support and production decisions.</li>
+    </ul>
+    <h3>QA inspector perspective</h3>
+    <ul>
+      <li>The server-side prompt constrains answers to a validated Unity source list and requires references.</li>
+      <li>The server-side prompt explicitly requires refusals and warnings when the answer would depend on unsupported versions, unofficial sources, third-party packages or vendor-specific behaviour.</li>
+      <li>The topic lookup is a narrow signposting function, not a knowledge base or community forum replacement.</li>
+      <li>PDF export is user-initiated and browser-side, but users should avoid exporting sensitive content.</li>
+    </ul>
+  </section>
+
+  <section id="reference-material" class="panel">
+    <h2>Reference material used for this policy</h2>
+    <ul class="source-list">
+      <li><a href="https://ico.org.uk/for-organisations/uk-gdpr-guidance-and-resources/individual-rights/the-right-to-be-informed/" target="_blank" rel="noopener noreferrer">The right to be informed</a> - Information Commissioner's Office.</li>
+      <li><a href="https://ico.org.uk/for-organisations/uk-gdpr-guidance-and-resources/artificial-intelligence/" target="_blank" rel="noopener noreferrer">Artificial intelligence and data protection</a> - Information Commissioner's Office.</li>
+      <li><a href="https://www.gov.uk/data-protection" target="_blank" rel="noopener noreferrer">The UK's data protection legislation</a> - GOV.UK.</li>
+      <li><a href="https://unity.com/products/unity-engine" target="_blank" rel="noopener noreferrer">Unity Engine</a> - Unity.</li>
+      <li><a href="https://docs.unity.com/" target="_blank" rel="noopener noreferrer">Unity Documentation</a> - Unity.</li>
+      <li><a href="https://docs.unity3d.com/Manual/index.html" target="_blank" rel="noopener noreferrer">Unity User Manual</a> - Unity.</li>
+      <li><a href="https://docs.unity3d.com/ScriptReference/" target="_blank" rel="noopener noreferrer">Unity Scripting API</a> - Unity.</li>
+      <li><a href="https://docs.unity.cn/Manual/UnityHotkeys.html" target="_blank" rel="noopener noreferrer">Unity shortcuts</a> - Unity.</li>
+      <li><a href="https://docs.unity.com/en-us/engine/6000.6/manual/unity-editor/editor-navigating-managing/shortcuts-manager" target="_blank" rel="noopener noreferrer">Keyboard shortcuts</a> - Unity.</li>
+      <li><a href="https://docs.unity.com/en-us/engine/6000.6/manual/unity-editor/editor-navigating-managing/shortcuts-manager/shortcuts-manage" target="_blank" rel="noopener noreferrer">Manage keyboard shortcuts</a> - Unity.</li>
+      <li><a href="https://docs.unity3d.com/Manual/SceneViewNavigation.html" target="_blank" rel="noopener noreferrer">Scene view navigation</a> - Unity.</li>
+      <li><a href="https://learn.unity.com/" target="_blank" rel="noopener noreferrer">Unity Learn</a> - Unity.</li>
+      <li><a href="https://support.unity.com/" target="_blank" rel="noopener noreferrer">Unity Support</a> - Unity.</li>
+    </ul>
+  </section>
+</main>
+
+<footer>
+  version 1.0.0 | Last updated: 11 October 2026 | &copy; 2026 <a href="/">www.jahosi.co.uk</a>
+</footer>
+</body>
+</html>

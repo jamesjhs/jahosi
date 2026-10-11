@@ -644,6 +644,219 @@ const BLENDER5_QA_CHAT_GUIDELINES = [
   "Official Blender sources available for citation:\n" + BLENDER5_QA_SOURCE_TEXT,
 ].join("\n");
 
+const UNITY_QA_SOURCES = [
+  {
+    title: "Unity Engine",
+    organisation: "Unity",
+    url: "https://unity.com/products/unity-engine",
+    scope: "Official Unity Engine product overview, current positioning, feature areas and developer-resource signposts.",
+  },
+  {
+    title: "Unity 6 release support",
+    organisation: "Unity",
+    url: "https://unity.com/releases/unity-6/support",
+    scope: "Unity 6 release model, LTS support, Update releases, patching and support-window guidance.",
+  },
+  {
+    title: "Unity Documentation",
+    organisation: "Unity Docs",
+    url: "https://docs.unity.com/",
+    scope: "Central documentation route for Unity products and services.",
+  },
+  {
+    title: "Unity User Manual",
+    organisation: "Unity Manual",
+    url: "https://docs.unity3d.com/Manual/index.html",
+    scope: "Official manual for Unity Editor features, UI, workflows and project concepts.",
+  },
+  {
+    title: "Unity Scripting API",
+    organisation: "Unity API",
+    url: "https://docs.unity3d.com/ScriptReference/",
+    scope: "Official API reference for scripting against UnityEngine and related namespaces.",
+  },
+  {
+    title: "Working in Unity",
+    organisation: "Unity Manual",
+    url: "https://docs.unity3d.com/Manual/UnityBasics.html",
+    scope: "Core Editor concepts, windows and Unity workflows.",
+  },
+  {
+    title: "Unity shortcuts",
+    organisation: "Unity Manual",
+    url: "https://docs.unity.cn/Manual/UnityHotkeys.html",
+    scope: "Unity shortcut overview that points users to the Shortcuts Manager and Scene view navigation.",
+  },
+  {
+    title: "Keyboard shortcuts",
+    organisation: "Unity Manual",
+    url: "https://docs.unity.com/en-us/engine/6000.6/manual/unity-editor/editor-navigating-managing/shortcuts-manager",
+    scope: "Viewing, assigning, managing and saving Unity Editor keyboard shortcuts.",
+  },
+  {
+    title: "Manage keyboard shortcuts",
+    organisation: "Unity Manual",
+    url: "https://docs.unity.com/en-us/engine/6000.6/manual/unity-editor/editor-navigating-managing/shortcuts-manager/shortcuts-manage",
+    scope: "Assigning, removing, resetting and resolving conflicts in Unity Editor shortcuts.",
+  },
+  {
+    title: "Scene view navigation",
+    organisation: "Unity Manual",
+    url: "https://docs.unity3d.com/Manual/SceneViewNavigation.html",
+    scope: "Scene view movement, orbit, zoom, flythrough, frame selected and navigation shortcuts.",
+  },
+  {
+    title: "GameObjects",
+    organisation: "Unity Manual",
+    url: "https://docs.unity3d.com/Manual/GameObjects.html",
+    scope: "GameObject concepts and scene object composition.",
+  },
+  {
+    title: "Components",
+    organisation: "Unity Manual",
+    url: "https://docs.unity3d.com/Manual/Components.html",
+    scope: "Component-based behaviour and data attached to GameObjects.",
+  },
+  {
+    title: "Prefabs",
+    organisation: "Unity Manual",
+    url: "https://docs.unity3d.com/Manual/Prefabs.html",
+    scope: "Reusable GameObject asset workflows.",
+  },
+  {
+    title: "Graphics",
+    organisation: "Unity Manual",
+    url: "https://docs.unity3d.com/Manual/Graphics.html",
+    scope: "Rendering and graphics features across Unity projects.",
+  },
+  {
+    title: "Universal Render Pipeline",
+    organisation: "Unity Packages",
+    url: "https://docs.unity3d.com/Packages/com.unity.render-pipelines.universal@latest",
+    scope: "URP package documentation and render-pipeline workflow.",
+  },
+  {
+    title: "High Definition Render Pipeline",
+    organisation: "Unity Packages",
+    url: "https://docs.unity3d.com/Packages/com.unity.render-pipelines.high-definition@latest",
+    scope: "HDRP package documentation and high-end rendering workflow.",
+  },
+  {
+    title: "Physics",
+    organisation: "Unity Manual",
+    url: "https://docs.unity3d.com/Manual/PhysicsSection.html",
+    scope: "Unity physics concepts and workflows.",
+  },
+  {
+    title: "Scripting",
+    organisation: "Unity Manual",
+    url: "https://docs.unity3d.com/Manual/ScriptingSection.html",
+    scope: "Unity scripting concepts and workflow guidance.",
+  },
+  {
+    title: "Animation",
+    organisation: "Unity Manual",
+    url: "https://docs.unity3d.com/Manual/AnimationSection.html",
+    scope: "Unity animation system documentation.",
+  },
+  {
+    title: "Audio",
+    organisation: "Unity Manual",
+    url: "https://docs.unity3d.com/Manual/Audio.html",
+    scope: "Audio workflows and audio feature documentation.",
+  },
+  {
+    title: "User Interfaces",
+    organisation: "Unity Manual",
+    url: "https://docs.unity3d.com/Manual/UIToolkits.html",
+    scope: "UI Toolkit and interface documentation routes.",
+  },
+  {
+    title: "Navigation and Pathfinding",
+    organisation: "Unity Manual",
+    url: "https://docs.unity3d.com/Manual/Navigation.html",
+    scope: "Navigation and pathfinding workflows.",
+  },
+  {
+    title: "Asset Workflow",
+    organisation: "Unity Manual",
+    url: "https://docs.unity3d.com/Manual/AssetWorkflow.html",
+    scope: "Importing, managing and using assets in Unity projects.",
+  },
+  {
+    title: "Profiler overview",
+    organisation: "Unity Manual",
+    url: "https://docs.unity3d.com/Manual/Profiler.html",
+    scope: "Unity profiling and performance measurement.",
+  },
+  {
+    title: "Multiplayer and Networking",
+    organisation: "Unity Docs",
+    url: "https://docs.unity.com/multiplayer/",
+    scope: "Unity multiplayer and networking documentation.",
+  },
+  {
+    title: "Troubleshooting",
+    organisation: "Unity Manual",
+    url: "https://docs.unity3d.com/Manual/Troubleshooting.html",
+    scope: "Troubleshooting route for Unity Editor, project, platform and workflow issues.",
+  },
+  {
+    title: "Unity Hub",
+    organisation: "Unity Documentation",
+    url: "https://docs.unity3d.com/hub/manual/index.html",
+    scope: "Unity Hub installation, modules and project management.",
+  },
+  {
+    title: "Unity Learn",
+    organisation: "Unity",
+    url: "https://learn.unity.com/",
+    scope: "Official learning pathways and tutorials.",
+  },
+  {
+    title: "Unity Support and FAQ",
+    organisation: "Unity Support",
+    url: "https://support.unity.com/",
+    scope: "Official support, account, licensing and FAQ routes.",
+  },
+];
+
+const UNITY_QA_SOURCE_TEXT = UNITY_QA_SOURCES.map(
+  (source, index) =>
+    `${index + 1}. ${source.title} - ${source.organisation}. URL: ${source.url}. Scope: ${source.scope}`
+).join("\n");
+
+const UNITY_QA_SOURCE_NOTES = [
+  "Unity Engine is used for 2D and 3D experiences across many platforms. Keep advice tied to the user's target platform, render pipeline and package/version context.",
+  "Unity projects are commonly structured around GameObjects, Components and Prefabs. Compare composition and reuse before recommending a code-heavy or hierarchy-heavy route.",
+  "Scripting claims should be checked against the Unity Manual and Scripting API. Do not invent APIs, event order details, package behaviour or exact menu names.",
+  "Keyboard shortcuts: exact bindings can vary by shortcut profile, active context, packages and custom tools. Use the official Keyboard shortcuts, Manage keyboard shortcuts and Scene view navigation pages for shortcut claims, and tell users to verify active bindings in the Unity Shortcuts window.",
+  "Graphics advice should distinguish general graphics documentation from URP and HDRP package documentation. Ask about target devices and visual goals when needed.",
+  "Performance advice should start from measurement with the Profiler rather than guessing.",
+  "Troubleshooting should separate Unity Editor/project issues from third-party assets, platform-holder SDKs, hardware drivers, account/licensing issues and vendor documentation.",
+  "Unity 6 release support is relevant for current LTS/update-release framing. If the user asks about future Unity versions, avoid unsupported claims and point to official release pages.",
+].join("\n");
+
+const UNITY_QA_CHAT_GUIDELINES = [
+  "You are UnityQA, a patient, plain-English Unity Engine tutor for learners, hobbyists, educators, technical artists and developers.",
+  "Users often ask short search-engine-style questions. Infer the likely Unity learning goal, restate it briefly if useful, and answer the practical question they probably meant.",
+  "Use the validated official Unity sources listed below as your primary evidence for Unity Engine details. You may also use general Unity teaching knowledge to explain concepts, workflow reasoning and trade-offs when the official source list does not contain the exact phrasing the user searched for.",
+  "Do not use source-limit refusal wording for ordinary Unity learning questions.",
+  "When a detail is version-sensitive, package-specific, platform-specific, hardware-specific, vendor-specific or not clearly covered by the official Unity sources, say what should be checked and then give the most useful general explanation you can.",
+  "Every answer should include a 'References' section when official Unity sources are used or when a user asks for a source-backed answer. Name the source titles and URLs used.",
+  "Use plain text only. Do not use Markdown heading markers such as ###, bold markers such as **, or decorative ASCII formatting.",
+  "Do not invent exact menu labels, API signatures, lifecycle details, package behaviour, version changes, settings names, tool names or URLs. If you are not sure of the exact label, explain the concept and tell the user to check the relevant Unity documentation or Editor search.",
+  "Use a tutor voice: explain the idea, why it matters, one or two common mistakes, and a practical next step.",
+  "When the user asks how to achieve something in Unity, look for multiple valid routes and compare them. If a different workflow may be better, say: 'Have you considered doing it a different way, such as ...?'",
+  "When a question could be solved by more than one workflow, compare GameObjects, Components, Prefabs, scripting, physics, animation, render pipelines, UI systems, packages, services or profiling routes where relevant.",
+  "For graphics and rendering, prefer official Unity Manual and package documentation. Do not present third-party shader packs, assets or unofficial presets as authoritative.",
+  "For troubleshooting, prefer official Unity documentation and support routes first. If there are multiple likely causes, lay them out as a short diagnostic sequence.",
+  "For third-party Asset Store packages, platform-holder SDKs, hardware drivers or vendor services, clearly say that UnityQA cannot validate their behaviour from the Unity source list and direct the user to the vendor's official documentation.",
+  "Warn users not to paste confidential project, client, account, license, repository, API key or unreleased build details.",
+  "Source-backed notes you may use for general explanations:\n" + UNITY_QA_SOURCE_NOTES,
+  "Official Unity sources available for citation:\n" + UNITY_QA_SOURCE_TEXT,
+].join("\n");
+
 const TEACH_ME_SOURCES = [
   {
     title: "National curriculum in England: primary curriculum",
@@ -1172,6 +1385,27 @@ app.get("/blender5QA/policy.html", (req, res) => {
 
 app.use("/blender5QA", express.static(path.join(__dirname, "public", "blender5QA"), { index: false, setHeaders: setPublicFileHeaders }));
 
+app.get(/^\/unityQA$/, (req, res) => {
+  res.redirect("/unityQA/");
+});
+
+app.get("/unityQA/", (req, res) => {
+  setNoCacheHeaders(res);
+  res.send(renderUnityQaIndexHtml());
+});
+
+app.get("/unityQA/index.html", (req, res) => {
+  setNoCacheHeaders(res);
+  res.send(renderUnityQaIndexHtml());
+});
+
+app.get("/unityQA/policy.html", (req, res) => {
+  setNoCacheHeaders(res);
+  res.send(renderUnityQaPolicyHtml());
+});
+
+app.use("/unityQA", express.static(path.join(__dirname, "public", "unityQA"), { index: false, setHeaders: setPublicFileHeaders }));
+
 app.get(/^\/teachMe$/, (req, res) => {
   res.redirect("/teachMe/");
 });
@@ -1652,6 +1886,250 @@ app.get("/blender5QA/resource-info", (req, res) => {
   });
 });
 
+app.get("/unityQA/resource-info", (req, res) => {
+  const topic = String(req.query.topic || "").trim().toLowerCase();
+  const matchedTopic = [
+    {
+      match: /start|begin|editor|interface|window|game view|hierarchy|inspector|project|hub|install/i,
+      payload: {
+        title: "Editor, Hub and getting started",
+        summary: "Good for Unity Hub, Editor orientation, project setup and the main windows used while working.",
+        links: [
+          { label: "Unity Engine", href: "https://unity.com/products/unity-engine" },
+          { label: "Working in Unity", href: "https://docs.unity3d.com/Manual/UnityBasics.html" },
+          { label: "Unity User Manual", href: "https://docs.unity3d.com/Manual/index.html" },
+          { label: "Unity Hub", href: "https://docs.unity3d.com/hub/manual/index.html" },
+          { label: "Unity Learn", href: "https://learn.unity.com/" },
+        ],
+        followUps: [
+          "Ask which Editor window or project stage is confusing so the answer can stay concrete.",
+          "If installation or modules are the issue, start with Unity Hub documentation before project-level troubleshooting.",
+        ],
+      },
+    },
+    {
+      match: /shortcut|shortcuts|hotkey|hotkeys|keyboard|keybind|keybinding|binding|bindings|scene view|flythrough|orbit|pan|zoom|frame selected|view tool|move tool|rotate tool|scale tool/i,
+      payload: {
+        title: "Keyboard shortcuts and Scene view navigation",
+        summary: "Good for Unity Editor shortcut profiles, conflict handling, custom shortcuts, Scene view navigation, flythrough movement, framing and transform-tool shortcuts.",
+        links: [
+          { label: "Unity shortcuts", href: "https://docs.unity.cn/Manual/UnityHotkeys.html" },
+          { label: "Keyboard shortcuts", href: "https://docs.unity.com/en-us/engine/6000.6/manual/unity-editor/editor-navigating-managing/shortcuts-manager" },
+          { label: "Manage keyboard shortcuts", href: "https://docs.unity.com/en-us/engine/6000.6/manual/unity-editor/editor-navigating-managing/shortcuts-manager/shortcuts-manage" },
+          { label: "Scene view navigation", href: "https://docs.unity3d.com/Manual/SceneViewNavigation.html" },
+          { label: "Working in Unity", href: "https://docs.unity3d.com/Manual/UnityBasics.html" },
+        ],
+        followUps: [
+          "Check the Shortcuts window because active shortcut profiles, custom tools and packages can change bindings.",
+          "For Scene view movement, separate navigation controls from transform tools and verify whether the view is in 2D or Perspective mode.",
+        ],
+      },
+    },
+    {
+      match: /gameobject|game object|component|prefab|scene object|transform|hierarchy|reuse|instantiate/i,
+      payload: {
+        title: "GameObjects, Components and Prefabs",
+        summary: "Good for structuring scenes, reusable objects and component-based behaviour.",
+        links: [
+          { label: "GameObjects", href: "https://docs.unity3d.com/Manual/GameObjects.html" },
+          { label: "Components", href: "https://docs.unity3d.com/Manual/Components.html" },
+          { label: "Prefabs", href: "https://docs.unity3d.com/Manual/Prefabs.html" },
+          { label: "Asset Workflow", href: "https://docs.unity3d.com/Manual/AssetWorkflow.html" },
+        ],
+        followUps: [
+          "Have you considered doing it a different way, such as moving repeated object setup into a Prefab instead of duplicating scene objects?",
+          "If the behaviour is reusable, compare a custom Component with a Prefab configuration before adding more scene-specific code.",
+        ],
+      },
+    },
+    {
+      match: /script|c#|csharp|api|monobehaviour|mono behaviour|serialize|lifecycle|code|class|namespace/i,
+      payload: {
+        title: "Scripting and API",
+        summary: "Good for Unity C# scripting, API reference checks, lifecycle questions and connecting code to Components.",
+        links: [
+          { label: "Scripting", href: "https://docs.unity3d.com/Manual/ScriptingSection.html" },
+          { label: "Unity Scripting API", href: "https://docs.unity3d.com/ScriptReference/" },
+          { label: "Components", href: "https://docs.unity3d.com/Manual/Components.html" },
+        ],
+        followUps: [
+          "For exact API details, check the Scripting API page before relying on memory.",
+          "Have you considered exposing settings in the Inspector instead of hard-coding values?",
+        ],
+      },
+    },
+    {
+      match: /graphic|render|rendering|urp|hdrp|pipeline|shader|material|lighting|light|post|visual/i,
+      payload: {
+        title: "Graphics, URP and HDRP",
+        summary: "Good for render-pipeline choice, visual quality, materials, lighting and platform fit.",
+        links: [
+          { label: "Graphics", href: "https://docs.unity3d.com/Manual/Graphics.html" },
+          { label: "Universal Render Pipeline", href: "https://docs.unity3d.com/Packages/com.unity.render-pipelines.universal@latest" },
+          { label: "High Definition Render Pipeline", href: "https://docs.unity3d.com/Packages/com.unity.render-pipelines.high-definition@latest" },
+          { label: "Unity 6 release support", href: "https://unity.com/releases/unity-6/support" },
+        ],
+        followUps: [
+          "Ask about target devices and visual goals before choosing a render pipeline.",
+          "Have you considered testing a small scene in the target pipeline before converting a larger project?",
+        ],
+      },
+    },
+    {
+      match: /physics|rigidbody|collider|collision|trigger|character|movement|projectile/i,
+      payload: {
+        title: "Physics and movement",
+        summary: "Good for physics-driven objects, collisions, triggers and movement design.",
+        links: [
+          { label: "Physics", href: "https://docs.unity3d.com/Manual/PhysicsSection.html" },
+          { label: "Scripting", href: "https://docs.unity3d.com/Manual/ScriptingSection.html" },
+          { label: "Unity Scripting API", href: "https://docs.unity3d.com/ScriptReference/" },
+        ],
+        followUps: [
+          "Have you considered doing it a different way, such as scripted movement for deterministic control or physics for collision-driven interaction?",
+          "Check whether the problem is a physics setup issue, a script timing issue or a collision-layer issue.",
+        ],
+      },
+    },
+    {
+      match: /anim|timeline|animator|clip|keyframe|state|motion|audio|sound/i,
+      payload: {
+        title: "Animation and audio",
+        summary: "Good for animation workflows, motion systems, timing and audio feature signposting.",
+        links: [
+          { label: "Animation", href: "https://docs.unity3d.com/Manual/AnimationSection.html" },
+          { label: "Audio", href: "https://docs.unity3d.com/Manual/Audio.html" },
+          { label: "Scripting", href: "https://docs.unity3d.com/Manual/ScriptingSection.html" },
+        ],
+        followUps: [
+          "Compare animation data, scripted movement and physics before choosing the control route.",
+          "For precise behaviour, check the package or API documentation for the exact Unity version.",
+        ],
+      },
+    },
+    {
+      match: /ui|interface|toolkit|uitoolkit|canvas|button|menu|hud|ux/i,
+      payload: {
+        title: "User interfaces",
+        summary: "Good for UI Toolkit and Unity UI documentation routes.",
+        links: [
+          { label: "User Interfaces", href: "https://docs.unity3d.com/Manual/UIToolkits.html" },
+          { label: "Unity User Manual", href: "https://docs.unity3d.com/Manual/index.html" },
+          { label: "Unity Scripting API", href: "https://docs.unity3d.com/ScriptReference/" },
+        ],
+        followUps: [
+          "Ask whether the UI is runtime gameplay UI, Editor tooling or a menu/settings screen.",
+          "Have you considered separating UI layout from gameplay logic before adding more scripts?",
+        ],
+      },
+    },
+    {
+      match: /nav|navigation|path|pathfinding|agent|ai/i,
+      payload: {
+        title: "Navigation and pathfinding",
+        summary: "Good for pathfinding and navigation workflow signposting.",
+        links: [
+          { label: "Navigation and Pathfinding", href: "https://docs.unity3d.com/Manual/Navigation.html" },
+          { label: "Scripting", href: "https://docs.unity3d.com/Manual/ScriptingSection.html" },
+        ],
+        followUps: [
+          "Check the navigation setup before assuming the movement script is wrong.",
+          "Ask whether this is runtime pathfinding, level setup or agent behaviour.",
+        ],
+      },
+    },
+    {
+      match: /asset|import|package|folder|texture|model|audio file|resource|addressable/i,
+      payload: {
+        title: "Assets and packages",
+        summary: "Good for asset import, project organisation and package/vendor boundaries.",
+        links: [
+          { label: "Asset Workflow", href: "https://docs.unity3d.com/Manual/AssetWorkflow.html" },
+          { label: "Unity User Manual", href: "https://docs.unity3d.com/Manual/index.html" },
+          { label: "Unity Support and FAQ", href: "https://support.unity.com/" },
+        ],
+        followUps: [
+          "If the problem depends on a third-party Asset Store package, check the package publisher's official documentation.",
+          "Have you considered testing the asset in a minimal project before changing production settings?",
+        ],
+      },
+    },
+    {
+      match: /profil|performance|slow|fps|memory|cpu|gpu|optim|lag|stutter/i,
+      payload: {
+        title: "Profiler and performance",
+        summary: "Good for starting performance work from measured evidence.",
+        links: [
+          { label: "Profiler overview", href: "https://docs.unity3d.com/Manual/Profiler.html" },
+          { label: "Graphics", href: "https://docs.unity3d.com/Manual/Graphics.html" },
+          { label: "Unity Scripting API", href: "https://docs.unity3d.com/ScriptReference/" },
+        ],
+        followUps: [
+          "Start by measuring CPU, GPU, memory or rendering cost before applying optimisations.",
+          "Ask which platform and render pipeline you are targeting; performance advice changes with both.",
+        ],
+      },
+    },
+    {
+      match: /multiplayer|network|netcode|server|client|relay|lobby|sync/i,
+      payload: {
+        title: "Multiplayer and networking",
+        summary: "Good for official Unity multiplayer documentation and architecture signposting.",
+        links: [
+          { label: "Multiplayer and Networking", href: "https://docs.unity.com/multiplayer/" },
+          { label: "Unity Documentation", href: "https://docs.unity.com/" },
+          { label: "Scripting", href: "https://docs.unity3d.com/Manual/ScriptingSection.html" },
+        ],
+        followUps: [
+          "Ask whether you need local co-op, authoritative server, lobby/matchmaking or basic state sync.",
+          "Have you considered prototyping network assumptions before building a full game loop around them?",
+        ],
+      },
+    },
+    {
+      match: /troubleshoot|crash|error|build|install|license|licence|account|support|fail|broken|platform/i,
+      payload: {
+        title: "Troubleshooting and support",
+        summary: "Good for Unity troubleshooting, support routes and deciding when vendor docs are needed.",
+        links: [
+          { label: "Troubleshooting", href: "https://docs.unity3d.com/Manual/Troubleshooting.html" },
+          { label: "Unity Support and FAQ", href: "https://support.unity.com/" },
+          { label: "Unity Hub", href: "https://docs.unity3d.com/hub/manual/index.html" },
+          { label: "Unity 6 release support", href: "https://unity.com/releases/unity-6/support" },
+        ],
+        followUps: [
+          "Separate Editor/project issues from account, licensing, platform-holder, hardware or third-party package issues.",
+          "If the issue concerns billing, licensing or account access, use Unity Support rather than project workflow advice.",
+        ],
+      },
+    },
+  ].find((entry) => entry.match.test(topic));
+
+  const payload = matchedTopic
+    ? matchedTopic.payload
+    : {
+        title: "Unity Engine official resources",
+        summary: "Start with the Unity Engine page, the User Manual and the Scripting API, then branch into the section that matches the task.",
+        links: [
+          { label: "Unity Engine", href: "https://unity.com/products/unity-engine" },
+          { label: "Unity User Manual", href: "https://docs.unity3d.com/Manual/index.html" },
+          { label: "Unity Scripting API", href: "https://docs.unity3d.com/ScriptReference/" },
+          { label: "Keyboard shortcuts", href: "https://docs.unity.com/en-us/engine/6000.6/manual/unity-editor/editor-navigating-managing/shortcuts-manager" },
+          { label: "Unity Documentation", href: "https://docs.unity.com/" },
+          { label: "Unity Learn", href: "https://learn.unity.com/" },
+        ],
+        followUps: [
+          "If you are not sure where to start, ask by workflow: Editor, shortcuts, Prefabs, scripting, graphics, physics, UI, profiling or troubleshooting.",
+          "Mention your Unity version, render pipeline, target platform and package names when they matter, without sharing confidential project details.",
+        ],
+      };
+
+  res.json({
+    ...payload,
+    localLinks: payload.links,
+  });
+});
+
 app.post("/blanderQA/chat", splashChatRateLimit, express.json({ limit: "50kb" }), async (req, res) => {
   if (!SPLASH_OPENAI_API_KEY) {
     return res.status(404).json({ error: "disabled" });
@@ -1825,6 +2303,96 @@ app.post("/blender5QA/chat", splashChatRateLimit, express.json({ limit: "50kb" }
       return res.status(502).json({ error: "upstream_empty" });
     }
     const response = { reply: toBlender5QaText(expandBlanderQaRefusal(reply, message)) };
+    if (resolvedChatSessionToken) response.chatSessionToken = resolvedChatSessionToken;
+    return res.json(response);
+  } catch (error) {
+    return res.status(502).json({ error: "upstream_error" });
+  }
+});
+
+app.post("/unityQA/chat", splashChatRateLimit, express.json({ limit: "50kb" }), async (req, res) => {
+  if (!SPLASH_OPENAI_API_KEY) {
+    return res.status(404).json({ error: "disabled" });
+  }
+
+  const body = req.body && typeof req.body === "object" ? req.body : {};
+  const message = typeof body.message === "string" ? body.message.trim() : "";
+  const history = Array.isArray(body.history) ? body.history : [];
+  const resourceContext = sanitizeSocialQaLocalContext(body.localContext);
+  const chatSessionToken = typeof body.chatSessionToken === "string" ? body.chatSessionToken.trim() : "";
+  const turnstileToken = typeof body.turnstileToken === "string" ? body.turnstileToken.trim() : "";
+  const remoteip = req.ip || req.socket.remoteAddress || undefined;
+
+  if (!message || message.length > 2000) {
+    return res.status(400).json({ error: "invalid_message" });
+  }
+
+  let resolvedChatSessionToken = chatSessionToken;
+  if (isTurnstileEnabled()) {
+    if (!validateChemChatSession(resolvedChatSessionToken)) {
+      if (!turnstileToken) {
+        return res.status(403).json({ error: "turnstile_required" });
+      }
+      const turnstileOk = await verifyTurnstileToken(turnstileToken, remoteip);
+      if (!turnstileOk) {
+        return res.status(403).json({ error: "turnstile_failed" });
+      }
+      resolvedChatSessionToken = mintChemChatSession();
+    }
+  }
+
+  const safeHistory = history
+    .slice(-8)
+    .filter((item) => item && typeof item === "object")
+    .map((item) => {
+      const role = item.role === "assistant" ? "assistant" : "user";
+      const content = String(item.content || "").slice(0, 2500);
+      return { role, content };
+    })
+    .filter((item) => item.content.trim());
+
+  const payloadMessages = [
+    { role: "system", content: UNITY_QA_CHAT_GUIDELINES },
+    ...(resourceContext
+      ? [
+          {
+            role: "system",
+            content:
+              "User-selected official Unity context. Use this only as an official-resource reminder, not to invent unsupported claims.\n" +
+              resourceContext,
+          },
+        ]
+      : []),
+    ...safeHistory,
+    {
+      role: "user",
+      content:
+        "Treat this as a Unity Engine learning prompt, even if it is written like a search query. Answer as a patient tutor, use official Unity sources for version-specific facts where possible, include references when you use them, and flag anything that should be checked in the Unity documentation, Scripting API, package docs, release notes, Unity Support or vendor documentation. User question: " +
+        message,
+    },
+  ];
+
+  try {
+    const llmRes = await fetch(`${SPLASH_OPENAI_BASE_URL}/chat/completions`, {
+      method: "POST",
+      headers: chatCompletionHeaders(),
+      body: JSON.stringify({
+        model: "gpt-4o-mini",
+        temperature: 0.1,
+        messages: payloadMessages,
+      }),
+    });
+
+    if (!llmRes.ok) {
+      return res.status(502).json({ error: "upstream_failed" });
+    }
+
+    const data = await llmRes.json();
+    const reply = data?.choices?.[0]?.message?.content;
+    if (typeof reply !== "string" || !reply.trim()) {
+      return res.status(502).json({ error: "upstream_empty" });
+    }
+    const response = { reply: reply.trim() };
     if (resolvedChatSessionToken) response.chatSessionToken = resolvedChatSessionToken;
     return res.json(response);
   } catch (error) {
@@ -2063,6 +2631,15 @@ function renderBlender5QaIndexHtml() {
 const BLENDER5_QA_POLICY_HTML_TEMPLATE = fs.readFileSync(path.join(__dirname, "public", "blender5QA", "policy.html"), "utf8");
 function renderBlender5QaPolicyHtml() {
   return BLENDER5_QA_POLICY_HTML_TEMPLATE.replaceAll("__CONTACT_PAGE_PATH__", CONTACT_PAGE_PATH);
+}
+
+const UNITY_QA_INDEX_HTML_TEMPLATE = fs.readFileSync(path.join(__dirname, "public", "unityQA", "index.html"), "utf8");
+function renderUnityQaIndexHtml() {
+  return UNITY_QA_INDEX_HTML_TEMPLATE.replace('"__TURNSTILE_SITE_KEY__"', JSON.stringify(TURNSTILE_SITE_KEY));
+}
+const UNITY_QA_POLICY_HTML_TEMPLATE = fs.readFileSync(path.join(__dirname, "public", "unityQA", "policy.html"), "utf8");
+function renderUnityQaPolicyHtml() {
+  return UNITY_QA_POLICY_HTML_TEMPLATE.replaceAll("__CONTACT_PAGE_PATH__", CONTACT_PAGE_PATH);
 }
 
 const TEACH_ME_INDEX_HTML_TEMPLATE = fs.readFileSync(path.join(__dirname, "public", "teachMe", "index.html"), "utf8");

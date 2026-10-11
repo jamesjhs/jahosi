@@ -1,0 +1,1072 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#111318">
+<meta name="application-name" content="UnityQA">
+<meta name="description" content="UnityQA helps Unity Engine users ask source-constrained questions about Editor workflows, GameObjects, Components, Prefabs, scripting, graphics, animation, physics, UI, profiling, multiplayer and troubleshooting.">
+<meta name="keywords" content="UnityQA, Unity Engine help, Unity Q&A, Unity Editor, GameObjects, Components, Prefabs, Unity scripting, Unity graphics, URP, HDRP, Unity physics, Unity animation, Unity UI Toolkit">
+<meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1">
+<link rel="canonical" href="https://jahosi.co.uk/unityQA/">
+<meta property="og:type" content="website">
+<meta property="og:title" content="UnityQA | Unity Engine Workflow Q&A">
+<meta property="og:description" content="Ask Unity Engine questions in plain English, compare official workflows, find manual pages, and troubleshoot Unity projects.">
+<meta property="og:url" content="https://jahosi.co.uk/unityQA/">
+<meta property="og:site_name" content="UnityQA">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="UnityQA | Unity Engine Workflow Q&A">
+<meta name="twitter:description" content="Plain-English Unity Engine help grounded in official Unity resources.">
+<title>UnityQA | Unity Engine Workflow Q&A</title>
+<script src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit" async defer></script>
+<script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js" defer></script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "UnityQA",
+  "alternateName": "UnityQA by Jahosi",
+  "url": "https://jahosi.co.uk/unityQA/",
+  "applicationCategory": "EducationalApplication",
+  "operatingSystem": "Any",
+  "browserRequirements": "Requires a modern web browser with JavaScript enabled.",
+  "description": "Plain-English Unity Engine Q&A tool for comparing Editor, GameObject, Component, Prefab, scripting, graphics, animation, physics, UI, profiling, multiplayer and troubleshooting workflows using official Unity sources.",
+  "audience": {
+    "@type": "Audience",
+    "audienceType": "Unity learners, game developers, technical artists, educators and interactive experience makers"
+  },
+  "about": [
+    {"@type": "Thing", "name": "Unity Engine"},
+    {"@type": "Thing", "name": "Unity Editor"},
+    {"@type": "Thing", "name": "GameObjects"},
+    {"@type": "Thing", "name": "Components"},
+    {"@type": "Thing", "name": "Prefabs"},
+    {"@type": "Thing", "name": "Unity scripting"},
+    {"@type": "Thing", "name": "Unity graphics"},
+    {"@type": "Thing", "name": "Unity troubleshooting"}
+  ],
+  "mainEntity": {
+    "@type": "FAQPage",
+    "name": "UnityQA common Unity Engine questions",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "How should I decide between GameObjects, Components and Prefabs in Unity?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "UnityQA helps users compare official Unity workflows for structuring scenes, reusable objects and behaviour."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Which Unity graphics route should I use?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "UnityQA signposts the official Unity graphics, URP and HDRP documentation so users can compare render-pipeline choices."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Can UnityQA replace Unity documentation?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "No. UnityQA is an AI-assisted explanation and navigation layer. Users should check official Unity documentation and test workflows in their own project."
+        }
+      }
+    ]
+  },
+  "isAccessibleForFree": true,
+  "inLanguage": "en-GB",
+  "dateModified": "2026-10-11"
+}
+</script>
+<style>
+:root{
+  color-scheme:dark;
+  --bg:#0f1117;
+  --bg-deep:#08090d;
+  --panel:rgba(24,27,35,.86);
+  --panel-strong:rgba(31,35,45,.96);
+  --ink:#f6f8fb;
+  --muted:#aeb8c7;
+  --line:rgba(255,255,255,.14);
+  --line-strong:rgba(255,255,255,.24);
+  --brand:#2196f3;
+  --brand-2:#66e0ff;
+  --brand-3:#a4ff70;
+  --warn:#ffd45d;
+  --warn-bg:rgba(255,212,93,.12);
+  --error:#ff6b7a;
+  --focus:#66e0ff;
+  --shadow:0 22px 70px rgba(0,0,0,.38);
+  --header-offset:5.25rem;
+}
+body.high-contrast{
+  color-scheme:light;
+  --bg:#000;--bg-deep:#000;--panel:#fff;--panel-strong:#fff;--ink:#000;--muted:#111;--line:#000;--line-strong:#000;--brand:#005ea5;--brand-2:#005ea5;--brand-3:#00703c;--warn:#000;--warn-bg:#ffdd00;--error:#d4351c;--focus:#ffdd00;--shadow:none;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:var(--header-offset)}
+body{
+  margin:0;
+  min-height:100vh;
+  font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,Helvetica,sans-serif;
+  font-size:16px;
+  line-height:1.55;
+  color:var(--ink);
+  background:
+    linear-gradient(135deg,rgba(33,150,243,.18),transparent 32%),
+    linear-gradient(240deg,rgba(102,224,255,.14),transparent 36%),
+    linear-gradient(180deg,var(--bg),var(--bg-deep));
+  overflow-x:hidden;
+}
+body::before{
+  content:"";
+  position:fixed;
+  inset:0;
+  z-index:-1;
+  pointer-events:none;
+  background:
+    linear-gradient(rgba(255,255,255,.04) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(255,255,255,.03) 1px,transparent 1px);
+  background-size:48px 48px;
+  mask-image:linear-gradient(to bottom,rgba(0,0,0,.82),transparent 80%);
+}
+body.large-font{font-size:19px}
+a{color:#87d8ff;font-weight:700;text-decoration-color:rgba(135,216,255,.45)}
+a:hover{text-decoration-thickness:2px}
+a:focus,button:focus,input:focus,textarea:focus,summary:focus{outline:3px solid var(--focus);outline-offset:3px}
+.skip-link{position:absolute;left:.75rem;top:.75rem;z-index:40;transform:translateY(-160%);background:#fff;color:#000;border:2px solid var(--focus);border-radius:8px;padding:.55rem .75rem}
+.skip-link:focus{transform:translateY(0)}
+header{position:sticky;top:0;z-index:30;color:#fff;border-bottom:1px solid var(--line);background:rgba(17,19,24,.96);backdrop-filter:blur(18px)}
+.header-inner{max-width:1180px;margin:0 auto;padding:.85rem 1rem;position:relative}
+.header-copy{padding-right:8rem}
+.kicker{margin:0 0 .25rem;color:#8ed7ff;font-size:.78rem;font-weight:800;text-transform:uppercase}
+h1{margin:0;font-size:3rem;line-height:1.03;letter-spacing:0}
+.byline{color:#cbd5e1;font-size:.34em;font-style:normal;font-weight:500;white-space:nowrap}
+.lede{max-width:780px;margin:.35rem 0 0;color:#d8e4f2;font-size:1.04rem}
+.signal-row{display:flex;flex-wrap:wrap;gap:.55rem;margin-top:.75rem}
+.signal-chip{border:1px solid rgba(255,255,255,.18);border-radius:999px;background:rgba(255,255,255,.08);color:#edf6ff;padding:.36rem .65rem;font-size:.88rem}
+.header-tools{position:absolute;top:50%;right:1rem;transform:translateY(-50%);display:flex;flex-direction:column;align-items:flex-end;gap:.1rem}
+.wrap{max-width:1180px;margin:0 auto;padding:1rem;display:flex;flex-direction:column;gap:1rem}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:8px;box-shadow:var(--shadow)}
+.chat-panel{display:grid;grid-template-rows:minmax(0,1fr) auto;min-height:calc(100vh - 7rem);min-height:calc(100dvh - 7rem);overflow:hidden;border-color:rgba(102,224,255,.24)}
+.chat-panel.is-active{border-color:var(--brand-2);box-shadow:0 0 0 3px rgba(102,224,255,.14),var(--shadow)}
+.thread{overflow:auto;padding:1rem;display:grid;gap:.85rem;align-content:start;background:rgba(8,10,14,.78)}
+.message{max-width:min(74ch,calc(100% - 1rem));border-radius:8px;padding:.85rem 1rem;white-space:pre-wrap;overflow-wrap:anywhere}
+.message.bot{background:rgba(24,28,38,.94);border:1px solid rgba(102,224,255,.22)}
+.message.user{margin-left:auto;color:#071016;background:linear-gradient(135deg,#66e0ff,#a4ff70);border:1px solid rgba(255,255,255,.24)}
+.message strong{display:block;margin-bottom:.25rem}
+.message.thinking{color:var(--muted);font-style:italic}
+.message.is-new{outline:3px solid rgba(102,224,255,.24);outline-offset:2px}
+.chat-form{border-top:1px solid var(--line);padding:1rem;display:grid;gap:.75rem;background:rgba(14,17,23,.96)}
+.input-row{display:grid;grid-template-columns:minmax(0,1fr) max-content;gap:.75rem;align-items:stretch}
+textarea{width:100%;min-height:5.5rem;resize:vertical;border:1px solid var(--line-strong);border-radius:8px;padding:.85rem .9rem;color:var(--ink);background:#0b0e14;font:inherit}
+textarea.has-starter-example{color:var(--muted)}
+textarea:focus,.resource-form input:focus{border-color:var(--brand-2);box-shadow:0 0 0 4px rgba(102,224,255,.13)}
+button{border:1px solid rgba(255,255,255,.14);border-radius:8px;background:linear-gradient(135deg,var(--brand),var(--brand-2));color:#06121a;padding:.8rem 1rem;font:inherit;font-weight:900;cursor:pointer;box-shadow:0 10px 26px rgba(33,150,243,.22);transition:transform .18s ease,box-shadow .18s ease,filter .18s ease}
+button:hover{transform:translateY(-1px);filter:saturate(1.08);box-shadow:0 14px 34px rgba(33,150,243,.30)}
+button:disabled{opacity:.65;cursor:wait;transform:none}
+.toggle-btn,.text-action-btn{background:transparent;color:#9bdcff;border:0;border-radius:0;box-shadow:none;padding:.05rem 0;text-decoration:underline;text-underline-offset:4px;text-align:right;font-size:.92rem;font-weight:700}
+.toggle-btn:hover,.toggle-btn[aria-pressed="true"],.text-action-btn:hover{color:#fff;background:transparent;border:0;box-shadow:none;text-decoration-thickness:2px}
+.ask-row{display:flex;align-items:center;justify-content:flex-end;gap:.75rem}
+.ask-row #chat-send{min-width:6.5rem}
+.chat-gate{display:flex;justify-content:flex-end;min-height:65px;max-width:100%;overflow:hidden}
+.chat-gate[hidden]{display:none}
+.chat-actions{display:flex;flex-direction:column;align-items:flex-end;gap:.5rem}
+.secondary-actions{display:flex;flex-wrap:wrap;align-items:center;justify-content:flex-end;gap:.75rem}
+.form-note{margin:0;color:var(--error);font-weight:800}
+.form-note[hidden]{display:none}
+.back-to-chat{position:fixed;right:1rem;bottom:calc(1rem + env(safe-area-inset-bottom));z-index:15;width:auto;max-width:11rem;border-radius:999px;padding:.68rem .95rem;white-space:nowrap}
+.back-to-chat[hidden]{display:none}
+.notice{border:1px solid rgba(255,212,93,.28);border-left:3px solid var(--warn);background:var(--warn-bg);padding:1rem;max-width:940px;margin:0 auto;border-radius:8px}
+.notice h2,.notice p{margin:.2rem 0}
+.notice h2{font-size:1.02rem;color:#ffe7a8}
+.collapsible-tool{padding:0;overflow:hidden;scroll-margin-top:var(--header-offset)}
+.collapsible-tool summary{padding:1rem 1.1rem;color:#f7fbff;font-weight:800;font-size:1.08rem;cursor:pointer;background:linear-gradient(90deg,rgba(33,150,243,.16),transparent);border-radius:8px}
+.collapsible-tool summary::marker{color:var(--brand-2)}
+.collapsible-tool summary:hover{background:linear-gradient(90deg,rgba(33,150,243,.24),rgba(102,224,255,.10))}
+.collapsible-tool[open] summary{border-bottom:1px solid var(--line);border-bottom-left-radius:0;border-bottom-right-radius:0}
+.collapsible-tool-body{padding:1rem}
+.action-grid,.question-grid,.glossary-grid,.question-pack-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:.75rem}
+.question-pack-grid{grid-template-columns:minmax(0,1fr)}
+.action-card,.question-card,.question-pack,.term-card,.source-list li{border:1px solid var(--line);border-radius:8px;background:linear-gradient(180deg,rgba(255,255,255,.075),rgba(255,255,255,.035));padding:.9rem}
+.action-card h3,.term-card h3{margin:0 0 .35rem;color:#fff;font-size:1rem}
+.action-card p,.term-card p,.question-pack-body p,.source-scope{margin:.35rem 0 .65rem;color:var(--muted);font-size:.94rem}
+.action-card button,.question-card{width:100%}
+.question-card{color:#edf6ff;background:rgba(255,255,255,.055);text-align:left;min-height:3.2rem}
+.question-pack{padding:0;overflow:hidden}
+.question-pack summary{padding:.9rem;font-size:1rem;background:transparent}
+.question-pack[open] summary{border-bottom:1px solid var(--line)}
+.question-pack-body{padding:.9rem}
+.question-pack-body ol{margin:.65rem 0 0;padding-left:1.35rem}
+.question-pack-body li{margin:.35rem 0}
+.pack-question-btn{width:100%;border:1px solid transparent;background:transparent;color:#edf6ff;box-shadow:none;padding:.45rem .55rem;text-align:left;font-weight:650}
+.pack-question-btn:hover{transform:none;background:rgba(102,224,255,.10);border-color:rgba(102,224,255,.34);box-shadow:none}
+.resource-form{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:.75rem;align-items:end}
+.resource-form label{display:grid;gap:.35rem;font-weight:800}
+.resource-form input{width:100%;border:1px solid var(--line-strong);border-radius:8px;padding:.82rem .9rem;color:var(--ink);background:#0b0e14;font:inherit}
+.local-results{margin-top:1rem;border-top:1px solid var(--line);padding-top:1rem}
+.local-results[hidden]{display:none}
+.local-results h3{margin:0 0 .5rem;color:#fff;font-size:1.05rem}
+.local-results ul{margin:.5rem 0 0;padding-left:1.2rem}
+.source-list{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:1rem;margin:0;padding:0;list-style:none}
+.source-org{display:block;color:var(--muted);font-size:.9rem;font-weight:400}
+.shortcut-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.85rem}
+.shortcut-card{border:1px solid var(--line);border-radius:8px;padding:.85rem;background:rgba(255,255,255,.045);box-shadow:inset 0 1px 0 rgba(255,255,255,.06)}
+.shortcut-card h3{margin:0 0 .55rem;color:#fff;font-size:1rem}
+.shortcut-card dl{display:grid;grid-template-columns:minmax(8.5rem,auto) minmax(0,1fr);gap:.35rem .75rem;margin:0}
+.shortcut-card dt,.shortcut-card dd{margin:0}
+.shortcut-card dd{color:var(--muted);padding-bottom:.35rem;border-bottom:1px solid rgba(255,255,255,.08)}
+.shortcut-card dt{padding-bottom:.35rem;border-bottom:1px solid rgba(255,255,255,.08)}
+.shortcut-card dt:last-of-type,.shortcut-card dd:last-of-type{border-bottom:0;padding-bottom:0}
+kbd{display:inline-block;border:1px solid var(--line-strong);border-bottom-color:rgba(255,255,255,.38);border-radius:5px;padding:.05rem .32rem;color:#fff;background:rgba(3,7,18,.74);font:700 .86em ui-monospace,SFMono-Regular,Menlo,Consolas,"Liberation Mono",monospace;white-space:nowrap}
+.cross-check-list{margin:.9rem 0 0;padding-left:1.2rem;color:var(--muted)}
+.cross-check-list li{margin:.35rem 0}
+footer{max-width:1180px;margin:0 auto;padding:1.5rem 1rem 2rem;color:var(--muted);font-size:.92rem}
+body.high-contrast header,body.high-contrast .thread,body.high-contrast .chat-form,body.high-contrast .panel,body.high-contrast .message.bot,body.high-contrast .action-card,body.high-contrast .question-card,body.high-contrast .question-pack,body.high-contrast .term-card,body.high-contrast .source-list li,body.high-contrast .shortcut-card{background:#fff;color:#000;border:2px solid #000}
+body.high-contrast .lede,body.high-contrast .kicker,body.high-contrast .signal-chip,body.high-contrast footer,body.high-contrast .source-scope,body.high-contrast .source-org{color:#000}
+body.high-contrast .message.user{background:#ffdd00;color:#000;border:2px solid #000}
+body.high-contrast textarea,body.high-contrast .resource-form input{background:#fff;color:#000;border:2px solid #000}
+body.high-contrast .shortcut-card h3,body.high-contrast .shortcut-card dd,body.high-contrast .cross-check-list,body.high-contrast kbd{color:#000}
+body.high-contrast kbd{background:#fff;border:2px solid #000}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;scroll-behavior:auto!important;transition:none!important}}
+@media(max-width:760px){.shortcut-grid{grid-template-columns:minmax(0,1fr)}.shortcut-card dl{grid-template-columns:minmax(0,1fr)}}
+@media(max-width:620px){
+  body{font-size:15.5px}body.large-font{font-size:18px}:root{--header-offset:4.5rem}.header-inner{padding:.7rem .75rem}.header-tools{right:.75rem;font-size:.74rem;line-height:1.05}h1{font-size:2rem}.lede{font-size:.98rem}.wrap{padding:.75rem .5rem}.notice,.collapsible-tool-body,.chat-form{padding:.75rem}.collapsible-tool summary{padding:.85rem .75rem}.action-grid,.question-grid,.glossary-grid,.question-pack-grid,.source-list{grid-template-columns:minmax(0,1fr)}.chat-panel{min-height:calc(100vh - 4.5rem);min-height:calc(100dvh - 4.5rem)}.thread{padding:.65rem;gap:.65rem}.message{max-width:92%;padding:.7rem .75rem}.message.bot{max-width:96%}.resource-form{grid-template-columns:1fr}.input-row{grid-template-columns:minmax(0,1fr) max-content;gap:.55rem}button{width:100%}.back-to-chat{width:auto;right:.75rem}.toggle-btn,.text-action-btn{width:auto}.ask-row #chat-send{width:auto;min-width:5.75rem}
+}
+</style>
+</head>
+<body>
+<a class="skip-link" href="#ask">Skip to Q&A</a>
+<header>
+  <div class="header-inner">
+    <div class="header-copy">
+      <p class="kicker">Official-source Unity Engine helper</p>
+      <h1>UnityQA <span class="byline">by Jahosi</span></h1>
+      <p class="lede">Ask Unity Engine questions in plain English, compare workflows, and jump to the Unity docs that matter.</p>
+      <div class="signal-row" aria-label="UnityQA focus areas">
+        <span class="signal-chip">Editor</span>
+        <span class="signal-chip">GameObjects</span>
+        <span class="signal-chip">C# scripting</span>
+        <span class="signal-chip">URP / HDRP</span>
+        <span class="signal-chip">Profiling</span>
+      </div>
+    </div>
+    <div class="header-tools" aria-label="Display options">
+      <button id="contrast-toggle" class="toggle-btn" type="button" aria-pressed="false">High contrast</button>
+      <button id="font-toggle" class="toggle-btn" type="button" aria-pressed="false">Large font</button>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+  <section id="ask" class="panel chat-panel" aria-label="UnityQA chat">
+    <div id="chat-thread" class="thread" aria-live="polite" aria-label="Q&A conversation">
+      <div class="message bot"><strong>UnityQA</strong>What would you like to learn about Unity Engine today?</div>
+    </div>
+    <form id="chat-form" class="chat-form">
+      <div class="input-row">
+        <textarea id="chat-input" maxlength="1000" autocomplete="off" aria-label="Your Unity Engine question"></textarea>
+        <div class="ask-row">
+          <div id="chat-gate" class="chat-gate" hidden><div id="chat-turnstile" class="chat-turnstile"></div></div>
+          <button id="chat-send" type="submit">Ask</button>
+        </div>
+      </div>
+      <div class="chat-actions">
+        <div class="secondary-actions">
+          <button id="clear-chat" class="text-action-btn" type="button">Clear the chat</button>
+          <button id="export-pdf" class="text-action-btn" type="button">Export PDF</button>
+        </div>
+        <p id="form-note" class="form-note" hidden></p>
+      </div>
+    </form>
+  </section>
+  <button id="back-to-chat" class="back-to-chat" type="button" hidden>Back to chat</button>
+
+  <section class="notice" aria-labelledby="source-discipline-title">
+    <h2 id="source-discipline-title">Source discipline</h2>
+    <p>UnityQA is constrained to official Unity documentation, Unity product and release pages, Unity Learn, Unity Support and documented Unity workflows. It should say when a question needs third-party package, platform-holder or vendor documentation.</p>
+  </section>
+
+  <details id="start-tool" class="panel collapsible-tool" open>
+    <summary>Start here</summary>
+    <div class="collapsible-tool-body">
+      <p class="source-scope">Choose the workflow closest to your task. Each starter question sends UnityQA a Unity Engine-specific prompt and asks for official-source signposting.</p>
+      <div class="action-grid">
+        <article class="action-card">
+          <h3>Structure a scene</h3>
+          <p>Compare scene objects, Components and Prefabs before the project gets tangled.</p>
+          <button type="button" data-prompt="I am structuring a Unity project. How should I decide between scene-only GameObjects, reusable Prefabs and Components? Compare the official Unity concepts and suggest checks before I commit.">Ask this question</button>
+        </article>
+        <article class="action-card">
+          <h3>Script behaviour</h3>
+          <p>Connect C# scripts to objects without confusing Editor setup and runtime logic.</p>
+          <button type="button" data-prompt="In Unity Engine, how should I think about C# scripts, MonoBehaviour lifecycle methods, Components and serialized fields when building behaviour? Cite official Unity resources.">Ask this question</button>
+        </article>
+        <article class="action-card">
+          <h3>Choose graphics</h3>
+          <p>Compare general graphics docs, URP and HDRP for the target device and style.</p>
+          <button type="button" data-prompt="How should I choose between Unity graphics workflows, URP and HDRP for a project? Explain the trade-offs with official Unity documentation links.">Ask this question</button>
+        </article>
+        <article class="action-card">
+          <h3>Animate interaction</h3>
+          <p>Separate Animator, Timeline, physics and scripted movement decisions.</p>
+          <button type="button" data-prompt="For Unity Engine, when should animation come from the Animation system, physics, Timeline or script-driven movement? Compare the routes and mention what to verify in official docs.">Ask this question</button>
+        </article>
+        <article class="action-card">
+          <h3>Profile early</h3>
+          <p>Use Profiler thinking before guessing why a build feels slow.</p>
+          <button type="button" data-prompt="Unity project performance feels poor. What official profiling route should I use before guessing, and what common project areas should I inspect first?">Ask this question</button>
+        </article>
+        <article class="action-card">
+          <h3>Troubleshoot safely</h3>
+          <p>Handle install, package, Editor, build and platform issues with source checks.</p>
+          <button type="button" data-prompt="Unity is failing to open, build or run correctly. What official troubleshooting path should I follow, and when should I move to Unity Support or vendor documentation?">Ask this question</button>
+        </article>
+      </div>
+    </div>
+  </details>
+
+  <details class="panel collapsible-tool">
+    <summary>Find Unity resources by topic</summary>
+    <div class="collapsible-tool-body">
+      <p class="source-scope">Enter a topic such as Prefabs, scripting, shortcuts, Scene view navigation, URP, physics, UI Toolkit, profiler, multiplayer or troubleshooting to pull together relevant official Unity resources.</p>
+      <form id="resource-form" class="resource-form">
+        <label for="resource-input">Topic
+          <input id="resource-input" name="topic" type="text" autocomplete="off" maxlength="60" placeholder="e.g., shortcuts or URP">
+        </label>
+        <button id="resource-submit" type="submit">Find resources</button>
+      </form>
+      <div id="local-results" class="local-results" hidden aria-live="polite"></div>
+    </div>
+  </details>
+
+  <details class="panel collapsible-tool">
+    <summary>Common questions</summary>
+    <div class="collapsible-tool-body">
+      <div class="question-grid">
+        <button class="question-card" type="button" data-question="What is the official Unity route for getting oriented in the Editor, and which windows should a new user understand first?">Editor orientation</button>
+        <button class="question-card" type="button" data-question="How do GameObjects, Components and Prefabs relate to each other in Unity Engine?">Objects and Prefabs</button>
+        <button class="question-card" type="button" data-question="When should a Unity workflow use scripting, Inspector configuration or Prefabs instead of hard-coding everything?">Script or configure?</button>
+        <button class="question-card" type="button" data-question="How should I choose between URP and HDRP using official Unity guidance?">URP or HDRP</button>
+        <button class="question-card" type="button" data-question="What should I check before using physics for character, object or projectile movement in Unity?">Physics checks</button>
+        <button class="question-card" type="button" data-question="When should I use UI Toolkit, and what should I verify in the Unity UI documentation?">UI Toolkit</button>
+        <button class="question-card" type="button" data-question="How do I use Unity's Profiler documentation to investigate CPU, GPU, memory or rendering problems?">Profiler route</button>
+        <button class="question-card" type="button" data-question="What official Unity resources should I use for multiplayer and networking decisions?">Multiplayer resources</button>
+        <button class="question-card" type="button" data-question="What are the most useful Unity Editor keyboard shortcuts for navigation, transform tools, play mode, windows and GameObject work, and how do I verify them in the Shortcuts window?">Keyboard shortcuts</button>
+        <button class="question-card" type="button" data-question="How should I troubleshoot package, build, platform or Editor issues without relying on forum guesses?">Troubleshooting</button>
+        <button class="question-card" type="button" data-question="What is the safest way to move from a prototype to a production-ready Unity project structure?">Prototype to production</button>
+      </div>
+    </div>
+  </details>
+
+  <details class="panel collapsible-tool" open>
+    <summary>Workflow question packs</summary>
+    <div class="collapsible-tool-body">
+      <div class="question-pack-grid">
+        <details class="question-pack">
+          <summary>Editor, scenes and reusable structure</summary>
+          <div class="question-pack-body">
+            <p>Useful when the hierarchy, assets or Prefabs are becoming hard to reason about.</p>
+            <ol>
+              <li><button class="pack-question-btn" type="button" data-question="In the Editor and scene structure pack: What should I understand about the Unity Editor, Scene view, Game view, Hierarchy, Inspector and Project window before building quickly?">Understand the Editor layout</button></li>
+              <li><button class="pack-question-btn" type="button" data-question="In the Editor and scene structure pack: When should I turn a scene object into a Prefab, and what should remain scene-specific?">Scene object or Prefab?</button></li>
+              <li><button class="pack-question-btn" type="button" data-question="In the Editor and scene structure pack: How do GameObjects and Components support composition in Unity?">GameObject composition</button></li>
+              <li><button class="pack-question-btn" type="button" data-question="In the Editor and scene structure pack: How should I organise assets so the project remains understandable?">Asset workflow</button></li>
+            </ol>
+          </div>
+        </details>
+        <details class="question-pack">
+          <summary>Scripting, runtime behaviour and architecture</summary>
+          <div class="question-pack-body">
+            <p>Useful when behaviour could live in code, Inspector settings, packages or reusable Prefabs.</p>
+            <ol>
+              <li><button class="pack-question-btn" type="button" data-question="In the scripting pack: How should I connect a C# script to a GameObject and expose safe Inspector settings?">Script and Inspector setup</button></li>
+              <li><button class="pack-question-btn" type="button" data-question="In the scripting pack: Which lifecycle methods should I understand before debugging Unity behaviour?">Lifecycle methods</button></li>
+              <li><button class="pack-question-btn" type="button" data-question="In the scripting pack: How do I avoid coupling every object to every other object too early?">Reduce coupling</button></li>
+              <li><button class="pack-question-btn" type="button" data-question="In the scripting pack: When should I check the Scripting API instead of relying on memory?">Use the Scripting API</button></li>
+            </ol>
+          </div>
+        </details>
+        <details class="question-pack">
+          <summary>Graphics, animation, physics and UI</summary>
+          <div class="question-pack-body">
+            <p>Useful when the problem could be visual, motion-related, simulated or interface-related.</p>
+            <ol>
+              <li><button class="pack-question-btn" type="button" data-question="In the graphics and motion pack: Should this project use general graphics features, URP or HDRP?">Choose a render pipeline</button></li>
+              <li><button class="pack-question-btn" type="button" data-question="In the graphics and motion pack: Is my problem more likely animation, physics, script timing or input?">Animation, physics or script?</button></li>
+              <li><button class="pack-question-btn" type="button" data-question="In the graphics and motion pack: When should I build UI with UI Toolkit, and what should I check in official docs?">Choose UI route</button></li>
+              <li><button class="pack-question-btn" type="button" data-question="In the graphics and motion pack: How do audio, animation and interaction fit into a playable Unity experience?">Interaction polish</button></li>
+            </ol>
+          </div>
+        </details>
+        <details class="question-pack">
+          <summary>Performance, multiplayer and troubleshooting</summary>
+          <div class="question-pack-body">
+            <p>Useful when a project is slow, brittle, networked or behaving differently across platforms.</p>
+            <ol>
+              <li><button class="pack-question-btn" type="button" data-question="In the performance and troubleshooting pack: What should I profile before trying random optimisations?">Profile before optimising</button></li>
+              <li><button class="pack-question-btn" type="button" data-question="In the performance and troubleshooting pack: Which official Unity multiplayer docs should I start with?">Multiplayer starting point</button></li>
+              <li><button class="pack-question-btn" type="button" data-question="In the performance and troubleshooting pack: How should I approach Editor, package, build and platform failures?">Troubleshooting order</button></li>
+              <li><button class="pack-question-btn" type="button" data-question="In the performance and troubleshooting pack: When is a problem outside UnityQA scope and better handled by Unity Support or a vendor?">Know when to escalate</button></li>
+            </ol>
+          </div>
+        </details>
+      </div>
+    </div>
+  </details>
+
+  <details class="panel collapsible-tool">
+    <summary>Keyboard shortcuts for Unity Editor</summary>
+    <div class="collapsible-tool-body">
+      <p class="source-scope">This guide is drawn from Unity's Unity shortcuts, Keyboard shortcuts, Manage keyboard shortcuts, and Scene view navigation documentation. Shortcut profiles, packages, custom tools and active Editor context can change bindings, so verify critical keys in the Unity Shortcuts window.</p>
+      <div class="shortcut-grid" aria-label="Unity Editor shortcut groups">
+        <article class="shortcut-card">
+          <h3>Transform tools</h3>
+          <dl>
+            <dt><kbd>Q</kbd></dt><dd>View tool, used for panning and Scene view navigation.</dd>
+            <dt><kbd>W</kbd></dt><dd>Move tool in normal editing; forward movement in Flythrough mode.</dd>
+            <dt><kbd>E</kbd></dt><dd>Rotate tool in normal editing; move up in Flythrough mode.</dd>
+            <dt><kbd>R</kbd></dt><dd>Scale tool in the common default tool layout.</dd>
+            <dt><kbd>T</kbd></dt><dd>Rect tool in the common default tool layout.</dd>
+            <dt><kbd>V</kbd></dt><dd>Vertex snapping in the common default shortcut set.</dd>
+          </dl>
+        </article>
+        <article class="shortcut-card">
+          <h3>Scene view navigation</h3>
+          <dl>
+            <dt><kbd>Arrow keys</kbd></dt><dd>Move the Scene Camera like walking through the Scene.</dd>
+            <dt><kbd>Shift</kbd> + <kbd>Arrow</kbd></dt><dd>Move the Scene Camera faster.</dd>
+            <dt><kbd>Alt</kbd> + <kbd>LMB</kbd></dt><dd>Orbit around the current pivot in Perspective mode.</dd>
+            <dt><kbd>Alt</kbd> + <kbd>RMB</kbd></dt><dd>Zoom the Scene view on mouse setups that support it.</dd>
+            <dt><kbd>MMB</kbd> drag</dt><dd>Pan with a three-button mouse.</dd>
+            <dt><kbd>`</kbd></dt><dd>Open the Overlays menu; use it to find View Options such as Scene Camera speed.</dd>
+          </dl>
+        </article>
+        <article class="shortcut-card">
+          <h3>Flythrough and framing</h3>
+          <dl>
+            <dt><kbd>RMB</kbd> hold</dt><dd>Enter Flythrough-style navigation in Perspective mode.</dd>
+            <dt><kbd>W</kbd> / <kbd>S</kbd></dt><dd>Move forward or backward in Flythrough mode.</dd>
+            <dt><kbd>A</kbd> / <kbd>D</kbd></dt><dd>Move left or right in Flythrough mode.</dd>
+            <dt><kbd>Q</kbd> / <kbd>E</kbd></dt><dd>Move down or up in Flythrough mode.</dd>
+            <dt><kbd>Shift</kbd></dt><dd>Move faster while navigating.</dd>
+            <dt><kbd>F</kbd></dt><dd>Frame the selected GameObject in the Scene view.</dd>
+            <dt><kbd>Shift</kbd> + <kbd>F</kbd></dt><dd>Lock the view to the selected GameObject.</dd>
+          </dl>
+        </article>
+        <article class="shortcut-card">
+          <h3>File, edit and play</h3>
+          <dl>
+            <dt><kbd>Ctrl/Cmd</kbd> + <kbd>N</kbd></dt><dd>New project item or scene command in the default shortcut family.</dd>
+            <dt><kbd>Ctrl/Cmd</kbd> + <kbd>O</kbd></dt><dd>Open.</dd>
+            <dt><kbd>Ctrl/Cmd</kbd> + <kbd>S</kbd></dt><dd>Save.</dd>
+            <dt><kbd>Ctrl/Cmd</kbd> + <kbd>Z</kbd></dt><dd>Undo.</dd>
+            <dt><kbd>Ctrl/Cmd</kbd> + <kbd>Shift</kbd> + <kbd>Z</kbd></dt><dd>Redo on macOS-style layouts; check the active Windows profile if needed.</dd>
+            <dt><kbd>Ctrl/Cmd</kbd> + <kbd>X</kbd> / <kbd>C</kbd> / <kbd>V</kbd></dt><dd>Cut, copy and paste.</dd>
+            <dt><kbd>Ctrl/Cmd</kbd> + <kbd>D</kbd></dt><dd>Duplicate.</dd>
+            <dt><kbd>Ctrl/Cmd</kbd> + <kbd>P</kbd></dt><dd>Play mode in the common default shortcut set.</dd>
+          </dl>
+        </article>
+        <article class="shortcut-card">
+          <h3>GameObjects and views</h3>
+          <dl>
+            <dt><kbd>Ctrl/Cmd</kbd> + <kbd>Shift</kbd> + <kbd>N</kbd></dt><dd>Create a new empty GameObject.</dd>
+            <dt><kbd>Alt</kbd> + <kbd>Shift</kbd> + <kbd>N</kbd></dt><dd>Create a new empty child under the selected GameObject in common default layouts.</dd>
+            <dt><kbd>Ctrl/Cmd</kbd> + <kbd>Alt</kbd> + <kbd>F</kbd></dt><dd>Move selected object to the current view in common default layouts.</dd>
+            <dt><kbd>Ctrl/Cmd</kbd> + <kbd>Shift</kbd> + <kbd>F</kbd></dt><dd>Align selected object with the current view in common default layouts.</dd>
+            <dt><kbd>Ctrl/Cmd</kbd> + <kbd>1</kbd></dt><dd>Scene window.</dd>
+            <dt><kbd>Ctrl/Cmd</kbd> + <kbd>2</kbd></dt><dd>Game window.</dd>
+            <dt><kbd>Ctrl/Cmd</kbd> + <kbd>3</kbd></dt><dd>Inspector window.</dd>
+            <dt><kbd>Ctrl/Cmd</kbd> + <kbd>4</kbd></dt><dd>Hierarchy window.</dd>
+            <dt><kbd>Ctrl/Cmd</kbd> + <kbd>5</kbd></dt><dd>Project window.</dd>
+            <dt><kbd>Ctrl/Cmd</kbd> + <kbd>7</kbd></dt><dd>Profiler window in common default layouts.</dd>
+          </dl>
+        </article>
+        <article class="shortcut-card">
+          <h3>Shortcut management</h3>
+          <dl>
+            <dt>Shortcuts window</dt><dd>Use it to view active bindings, assign shortcuts, remove or reset bindings, and manage profiles.</dd>
+            <dt>Profiles</dt><dd>Unity stores shortcut profiles outside the project, so your shortcuts can follow the Editor user rather than the project.</dd>
+            <dt>Conflicts</dt><dd>Unity can show shortcut conflicts when packages, tools or custom commands share a key combination.</dd>
+            <dt>Custom tools</dt><dd>Custom scripts and packages can add commands and shortcuts through Unity's shortcut-management APIs.</dd>
+          </dl>
+        </article>
+      </div>
+      <ul class="cross-check-list">
+        <li>Use <a href="https://docs.unity.cn/Manual/UnityHotkeys.html" target="_blank" rel="noopener noreferrer">Unity shortcuts</a> for Unity's shortcut overview and the note that static shortcut tables moved to the Shortcuts Manager.</li>
+        <li>Use <a href="https://docs.unity.com/en-us/engine/6000.6/manual/unity-editor/editor-navigating-managing/shortcuts-manager" target="_blank" rel="noopener noreferrer">Keyboard shortcuts</a> for the official Shortcuts window overview.</li>
+        <li>Use <a href="https://docs.unity.com/en-us/engine/6000.6/manual/unity-editor/editor-navigating-managing/shortcuts-manager/shortcuts-manage" target="_blank" rel="noopener noreferrer">Manage keyboard shortcuts</a> for assigning, resetting and resolving conflicts.</li>
+        <li>Use <a href="https://docs.unity3d.com/Manual/SceneViewNavigation.html" target="_blank" rel="noopener noreferrer">Scene view navigation</a> for pan, orbit, zoom, Flythrough, Scene Camera speed and frame-selected controls.</li>
+      </ul>
+    </div>
+  </details>
+
+  <details class="panel collapsible-tool">
+    <summary>Plain-English glossary</summary>
+    <div class="collapsible-tool-body">
+      <div class="glossary-grid">
+        <article class="term-card"><h3>GameObject</h3><p>A core object in a Unity scene. Behaviour and data usually come from Components attached to it.</p></article>
+        <article class="term-card"><h3>Component</h3><p>A modular part attached to a GameObject, such as Transform, Renderer, Collider or a custom script.</p></article>
+        <article class="term-card"><h3>Prefab</h3><p>A reusable GameObject asset that lets you create and update repeated object setups consistently.</p></article>
+        <article class="term-card"><h3>Scene</h3><p>A Unity asset that stores part of the project's world, UI, objects or setup.</p></article>
+        <article class="term-card"><h3>URP</h3><p>The Universal Render Pipeline, often used when broad platform reach and scalable rendering matter.</p></article>
+        <article class="term-card"><h3>HDRP</h3><p>The High Definition Render Pipeline, aimed at high-end visuals where platform and hardware budgets fit.</p></article>
+        <article class="term-card"><h3>Profiler</h3><p>Unity tooling for measuring performance so optimisation starts from evidence.</p></article>
+        <article class="term-card"><h3>Unity Hub</h3><p>The application used to manage Unity Editor installations, modules and projects.</p></article>
+      </div>
+    </div>
+  </details>
+
+  <details class="panel collapsible-tool">
+    <summary>References</summary>
+    <div class="collapsible-tool-body">
+      <p class="source-scope">These are the validated Unity Engine sources used by this page. Open the original source before relying on any answer. Sources last reviewed: 11 October 2026.</p>
+      <ul class="source-list">
+        <li><a href="https://unity.com/products/unity-engine" target="_blank" rel="noopener noreferrer">Unity Engine</a><span class="source-org">Unity</span><p class="source-scope">Official Unity Engine product overview, current positioning and feature areas.</p></li>
+        <li><a href="https://unity.com/releases/unity-6/support" target="_blank" rel="noopener noreferrer">Unity 6 release support</a><span class="source-org">Unity</span><p class="source-scope">Unity 6 release model, LTS support and update-release guidance.</p></li>
+        <li><a href="https://docs.unity.com/" target="_blank" rel="noopener noreferrer">Unity Documentation</a><span class="source-org">Unity Docs</span><p class="source-scope">Central Unity documentation route.</p></li>
+        <li><a href="https://docs.unity3d.com/Manual/index.html" target="_blank" rel="noopener noreferrer">Unity User Manual</a><span class="source-org">Unity Manual</span><p class="source-scope">Feature, UI and workflow documentation.</p></li>
+        <li><a href="https://docs.unity3d.com/ScriptReference/" target="_blank" rel="noopener noreferrer">Unity Scripting API</a><span class="source-org">Unity API</span><p class="source-scope">Official API reference for Unity scripting.</p></li>
+        <li><a href="https://docs.unity3d.com/Manual/UnityBasics.html" target="_blank" rel="noopener noreferrer">Working in Unity</a><span class="source-org">Unity Manual</span><p class="source-scope">Core Editor concepts and workflows.</p></li>
+        <li><a href="https://docs.unity.cn/Manual/UnityHotkeys.html" target="_blank" rel="noopener noreferrer">Unity shortcuts</a><span class="source-org">Unity Manual</span><p class="source-scope">Unity shortcut overview and route to the Shortcuts Manager.</p></li>
+        <li><a href="https://docs.unity.com/en-us/engine/6000.6/manual/unity-editor/editor-navigating-managing/shortcuts-manager" target="_blank" rel="noopener noreferrer">Keyboard shortcuts</a><span class="source-org">Unity Manual</span><p class="source-scope">Viewing, assigning, managing and saving Unity Editor shortcuts.</p></li>
+        <li><a href="https://docs.unity.com/en-us/engine/6000.6/manual/unity-editor/editor-navigating-managing/shortcuts-manager/shortcuts-manage" target="_blank" rel="noopener noreferrer">Manage keyboard shortcuts</a><span class="source-org">Unity Manual</span><p class="source-scope">Assigning, removing, resetting and resolving shortcut conflicts.</p></li>
+        <li><a href="https://docs.unity3d.com/Manual/SceneViewNavigation.html" target="_blank" rel="noopener noreferrer">Scene view navigation</a><span class="source-org">Unity Manual</span><p class="source-scope">Scene view movement, orbit, zoom, Flythrough mode and framing controls.</p></li>
+        <li><a href="https://docs.unity3d.com/Manual/GameObjects.html" target="_blank" rel="noopener noreferrer">GameObjects</a><span class="source-org">Unity Manual</span><p class="source-scope">Scene objects and object composition.</p></li>
+        <li><a href="https://docs.unity3d.com/Manual/Components.html" target="_blank" rel="noopener noreferrer">Components</a><span class="source-org">Unity Manual</span><p class="source-scope">Component-based behaviour and data.</p></li>
+        <li><a href="https://docs.unity3d.com/Manual/Prefabs.html" target="_blank" rel="noopener noreferrer">Prefabs</a><span class="source-org">Unity Manual</span><p class="source-scope">Reusable GameObject asset workflows.</p></li>
+        <li><a href="https://docs.unity3d.com/Manual/Graphics.html" target="_blank" rel="noopener noreferrer">Graphics</a><span class="source-org">Unity Manual</span><p class="source-scope">Rendering and visual feature documentation.</p></li>
+        <li><a href="https://docs.unity3d.com/Packages/com.unity.render-pipelines.universal@latest" target="_blank" rel="noopener noreferrer">Universal Render Pipeline</a><span class="source-org">Unity Packages</span><p class="source-scope">URP package documentation.</p></li>
+        <li><a href="https://docs.unity3d.com/Packages/com.unity.render-pipelines.high-definition@latest" target="_blank" rel="noopener noreferrer">High Definition Render Pipeline</a><span class="source-org">Unity Packages</span><p class="source-scope">HDRP package documentation.</p></li>
+        <li><a href="https://docs.unity3d.com/Manual/PhysicsSection.html" target="_blank" rel="noopener noreferrer">Physics</a><span class="source-org">Unity Manual</span><p class="source-scope">Physics concepts and workflows.</p></li>
+        <li><a href="https://docs.unity3d.com/Manual/ScriptingSection.html" target="_blank" rel="noopener noreferrer">Scripting</a><span class="source-org">Unity Manual</span><p class="source-scope">Unity scripting workflows.</p></li>
+        <li><a href="https://docs.unity3d.com/Manual/AnimationSection.html" target="_blank" rel="noopener noreferrer">Animation</a><span class="source-org">Unity Manual</span><p class="source-scope">Animation system documentation.</p></li>
+        <li><a href="https://docs.unity3d.com/Manual/Audio.html" target="_blank" rel="noopener noreferrer">Audio</a><span class="source-org">Unity Manual</span><p class="source-scope">Audio workflows.</p></li>
+        <li><a href="https://docs.unity3d.com/Manual/UIToolkits.html" target="_blank" rel="noopener noreferrer">User Interfaces</a><span class="source-org">Unity Manual</span><p class="source-scope">UI Toolkit and interface documentation routes.</p></li>
+        <li><a href="https://docs.unity3d.com/Manual/Navigation.html" target="_blank" rel="noopener noreferrer">Navigation and Pathfinding</a><span class="source-org">Unity Manual</span><p class="source-scope">Navigation workflows.</p></li>
+        <li><a href="https://docs.unity3d.com/Manual/AssetWorkflow.html" target="_blank" rel="noopener noreferrer">Asset Workflow</a><span class="source-org">Unity Manual</span><p class="source-scope">Importing, managing and using assets.</p></li>
+        <li><a href="https://docs.unity3d.com/Manual/Profiler.html" target="_blank" rel="noopener noreferrer">Profiler overview</a><span class="source-org">Unity Manual</span><p class="source-scope">Performance measurement and profiling.</p></li>
+        <li><a href="https://docs.unity.com/multiplayer/" target="_blank" rel="noopener noreferrer">Multiplayer and Networking</a><span class="source-org">Unity Docs</span><p class="source-scope">Unity multiplayer documentation.</p></li>
+        <li><a href="https://docs.unity3d.com/Manual/Troubleshooting.html" target="_blank" rel="noopener noreferrer">Troubleshooting</a><span class="source-org">Unity Manual</span><p class="source-scope">Troubleshooting routes for Unity workflows.</p></li>
+        <li><a href="https://docs.unity3d.com/hub/manual/index.html" target="_blank" rel="noopener noreferrer">Unity Hub</a><span class="source-org">Unity Documentation</span><p class="source-scope">Hub installation and project management.</p></li>
+        <li><a href="https://learn.unity.com/" target="_blank" rel="noopener noreferrer">Unity Learn</a><span class="source-org">Unity</span><p class="source-scope">Official learning pathways and tutorials.</p></li>
+        <li><a href="https://support.unity.com/" target="_blank" rel="noopener noreferrer">Unity Support</a><span class="source-org">Unity</span><p class="source-scope">Official support and FAQ route.</p></li>
+      </ul>
+    </div>
+  </details>
+</main>
+
+<footer>
+  <a href="/unityQA/policy.html">Privacy, use policy and disclaimer</a><br>
+  version 1.0.0 | Last updated: 11 October 2026 | &copy; 2026 <a href="/">www.jahosi.co.uk</a>
+</footer>
+
+<script>
+(function(){
+  const TURNSTILE_SITE_KEY = "__TURNSTILE_SITE_KEY__";
+  const CHAT_SESSION_STORAGE_KEY = "unityqa_chat_session_1";
+  const CHAT_HISTORY_STORAGE_KEY = "unityqa_chat_history_1";
+  const DISPLAY_STORAGE_KEY = "unityqa_display_options_1";
+  const TURNSTILE_ENABLED = Boolean(TURNSTILE_SITE_KEY);
+  let turnstileToken = "";
+  let turnstileWidgetId = null;
+  let history = loadHistory();
+  let localChatContext = null;
+
+  const thread = document.getElementById("chat-thread");
+  const form = document.getElementById("chat-form");
+  const input = document.getElementById("chat-input");
+  const send = document.getElementById("chat-send");
+  const clearChat = document.getElementById("clear-chat");
+  const exportPdf = document.getElementById("export-pdf");
+  const chatPanel = document.getElementById("ask");
+  const formNote = document.getElementById("form-note");
+  const contrastToggle = document.getElementById("contrast-toggle");
+  const fontToggle = document.getElementById("font-toggle");
+  const resourceForm = document.getElementById("resource-form");
+  const resourceInput = document.getElementById("resource-input");
+  const resourceSubmit = document.getElementById("resource-submit");
+  const localResults = document.getElementById("local-results");
+  const backToChat = document.getElementById("back-to-chat");
+  const startTool = document.getElementById("start-tool");
+
+  const starters = [
+    "How do I decide between GameObjects, Components and Prefabs for a reusable mechanic?",
+    "What should I check before choosing URP or HDRP?",
+    "How do I debug a Unity script that works in the Editor but not in a build?",
+    "What is the official route for profiling a slow Unity scene?",
+    "When should I use physics instead of moving an object directly in code?"
+  ];
+
+  function loadHistory(){
+    try{
+      const stored = JSON.parse(sessionStorage.getItem(CHAT_HISTORY_STORAGE_KEY) || "[]");
+      return Array.isArray(stored) ? stored.slice(-8) : [];
+    }catch{return [];}
+  }
+  function storeHistory(){
+    try{sessionStorage.setItem(CHAT_HISTORY_STORAGE_KEY, JSON.stringify(history.slice(-8)));}catch{}
+  }
+  function clearStoredHistory(){
+    try{sessionStorage.removeItem(CHAT_HISTORY_STORAGE_KEY);}catch{}
+  }
+  function getSessionToken(){
+    try{return sessionStorage.getItem(CHAT_SESSION_STORAGE_KEY) || "";}catch{return "";}
+  }
+  function storeSessionToken(token){
+    try{sessionStorage.setItem(CHAT_SESSION_STORAGE_KEY, token);}catch{}
+  }
+  function clearSessionToken(){
+    try{sessionStorage.removeItem(CHAT_SESSION_STORAGE_KEY);}catch{}
+  }
+  function loadDisplayOptions(){
+    try{return JSON.parse(localStorage.getItem(DISPLAY_STORAGE_KEY) || "{}");}catch{return {};}
+  }
+  function storeDisplayOptions(options){
+    try{localStorage.setItem(DISPLAY_STORAGE_KEY, JSON.stringify(options));}catch{}
+  }
+  function applyDisplayOptions(options){
+    document.body.classList.toggle("high-contrast", Boolean(options.highContrast));
+    document.body.classList.toggle("large-font", Boolean(options.largeFont));
+    contrastToggle.setAttribute("aria-pressed", String(Boolean(options.highContrast)));
+    fontToggle.setAttribute("aria-pressed", String(Boolean(options.largeFont)));
+  }
+  function updateDisplayOption(key){
+    const options = loadDisplayOptions();
+    options[key] = !options[key];
+    storeDisplayOptions(options);
+    applyDisplayOptions(options);
+  }
+  function setChatInputBlank(){
+    input.classList.remove("has-starter-example");
+    input.value = "";
+  }
+  function randomizeStarterQuestion(){
+    if (!input || input.value) return;
+    input.value = starters[Math.floor(Math.random() * starters.length)];
+    input.classList.add("has-starter-example");
+  }
+  function clearStarterExample(){
+    if (input.classList.contains("has-starter-example")) setChatInputBlank();
+  }
+  function getQuestionForSubmit(){
+    return input.classList.contains("has-starter-example") ? "" : input.value.trim();
+  }
+  function setFormNote(message){
+    formNote.textContent = message || "";
+    formNote.hidden = !message;
+  }
+  function revealFormProblem(message, element){
+    setFormNote(message);
+    revealChat("center");
+    if (element) element.focus({preventScroll:true});
+  }
+  function revealChat(block){
+    chatPanel.classList.add("is-active");
+    chatPanel.scrollIntoView({block:block || "start", behavior:"smooth"});
+    window.setTimeout(function(){chatPanel.classList.remove("is-active");}, 1400);
+  }
+  function revealNewMessage(message){
+    if (!message) return;
+    message.classList.add("is-new");
+    window.setTimeout(function(){message.classList.remove("is-new");}, 1400);
+  }
+  function markExternalLinks(){
+    document.querySelectorAll('a[target="_blank"]').forEach(function(link){
+      if (!link.rel) link.rel = "noopener noreferrer";
+    });
+  }
+  function appendReplyContent(element, content){
+    const urlPattern = /(https?:\/\/[^\s<>"')\]]+)/g;
+    let lastIndex = 0;
+    let match;
+    while ((match = urlPattern.exec(content)) !== null) {
+      if (match.index > lastIndex) element.appendChild(document.createTextNode(content.slice(lastIndex, match.index)));
+      const rawUrl = match[0];
+      const trailing = rawUrl.match(/[.,;:!?]+$/);
+      const cleanUrl = trailing ? rawUrl.slice(0, -trailing[0].length) : rawUrl;
+      try{
+        const parsed = new URL(cleanUrl);
+        const link = document.createElement("a");
+        link.href = parsed.href;
+        link.textContent = "[source]";
+        link.target = "_blank";
+        link.rel = "noopener noreferrer";
+        element.appendChild(link);
+      }catch{
+        element.appendChild(document.createTextNode(cleanUrl));
+      }
+      if (trailing) element.appendChild(document.createTextNode(trailing[0]));
+      lastIndex = match.index + rawUrl.length;
+    }
+    if (lastIndex < content.length) element.appendChild(document.createTextNode(content.slice(lastIndex)));
+  }
+  function appendMessage(role, content){
+    const item = document.createElement("div");
+    item.className = "message " + (role === "user" ? "user" : "bot");
+    const label = document.createElement("strong");
+    label.textContent = role === "user" ? "You" : "UnityQA";
+    item.appendChild(label);
+    if (role === "user") item.appendChild(document.createTextNode(content));
+    else appendReplyContent(item, content);
+    thread.appendChild(item);
+    thread.scrollTop = thread.scrollHeight;
+    return item;
+  }
+  function setBusy(isBusy){
+    send.disabled = isBusy;
+    input.disabled = isBusy;
+    if (clearChat) clearChat.disabled = isBusy;
+    send.textContent = isBusy ? "Checking sources..." : "Ask";
+  }
+  function setResourceBusy(isBusy){
+    resourceSubmit.disabled = isBusy;
+    resourceInput.disabled = isBusy;
+    resourceSubmit.textContent = isBusy ? "Looking..." : "Find resources";
+  }
+  function clearElement(element){
+    while (element.firstChild) element.removeChild(element.firstChild);
+  }
+  function appendLocalLink(list, label, href, note){
+    const item = document.createElement("li");
+    const link = document.createElement("a");
+    link.href = href;
+    link.textContent = label;
+    link.target = "_blank";
+    link.rel = "noopener noreferrer";
+    item.appendChild(link);
+    if (note) item.appendChild(document.createTextNode(" - " + note));
+    list.appendChild(item);
+  }
+  function buildLocalChatContext(data){
+    const links = Array.isArray(data.localLinks) ? data.localLinks.map(function(link){
+      return {label: String(link.label || "").slice(0,120), href: String(link.href || "").slice(0,300)};
+    }).filter(function(link){return link.label && link.href;}) : [];
+    return links.length ? {links: links} : null;
+  }
+  function showLocalMessage(title, message, links){
+    localChatContext = null;
+    clearElement(localResults);
+    const heading = document.createElement("h3");
+    heading.textContent = title;
+    localResults.appendChild(heading);
+    const copy = document.createElement("p");
+    copy.className = "source-scope";
+    copy.textContent = message;
+    localResults.appendChild(copy);
+    if (Array.isArray(links) && links.length) {
+      const list = document.createElement("ul");
+      links.forEach(function(link){appendLocalLink(list, link.label, link.href, link.note);});
+      localResults.appendChild(list);
+    }
+    localResults.hidden = false;
+  }
+  function renderLocalResults(data){
+    clearElement(localResults);
+    const heading = document.createElement("h3");
+    heading.textContent = data.title || "Unity Engine official resources";
+    localResults.appendChild(heading);
+    const intro = document.createElement("p");
+    intro.className = "source-scope";
+    intro.textContent = data.summary || "Use these official Unity links to check the source material before relying on an AI answer.";
+    localResults.appendChild(intro);
+    const list = document.createElement("ul");
+    if (Array.isArray(data.localLinks)) {
+      data.localLinks.forEach(function(link){
+        if (link && link.label && link.href) appendLocalLink(list, link.label, link.href, link.note || "");
+      });
+    }
+    localResults.appendChild(list);
+    if (Array.isArray(data.followUps) && data.followUps.length) {
+      const followUpHeading = document.createElement("p");
+      followUpHeading.className = "source-scope";
+      followUpHeading.textContent = "Useful follow-up prompts:";
+      localResults.appendChild(followUpHeading);
+      const followUpList = document.createElement("ul");
+      data.followUps.forEach(function(prompt){
+        const item = document.createElement("li");
+        item.textContent = prompt;
+        followUpList.appendChild(item);
+      });
+      localResults.appendChild(followUpList);
+    }
+    localChatContext = buildLocalChatContext(data);
+    localResults.hidden = false;
+  }
+  async function lookupLocalSources(topic){
+    if (!topic) {
+      showLocalMessage("Enter a topic", "Enter a Unity topic such as Prefabs, scripting, shortcuts, Scene view navigation, graphics, physics, UI Toolkit, profiler, multiplayer or troubleshooting.", []);
+      return;
+    }
+    setResourceBusy(true);
+    try{
+      const res = await fetch("/unityQA/resource-info?topic=" + encodeURIComponent(topic), {headers: {"Accept":"application/json"}});
+      const data = await res.json().catch(function(){return {};});
+      if (!res.ok) throw new Error("lookup_failed");
+      renderLocalResults(data);
+    }catch{
+      showLocalMessage("Lookup unavailable", "The Unity resource lookup is temporarily unavailable. Use these official links directly.", [
+        {label:"Unity Engine", href:"https://unity.com/products/unity-engine", note:"Official product overview."},
+        {label:"Unity User Manual", href:"https://docs.unity3d.com/Manual/index.html", note:"Start with the manual."},
+        {label:"Unity Scripting API", href:"https://docs.unity3d.com/ScriptReference/", note:"Use for API questions."}
+      ]);
+    }finally{
+      setResourceBusy(false);
+    }
+  }
+  function getConversationLines(){
+    return Array.from(thread.querySelectorAll(".message")).map(function(item){
+      const speaker = item.querySelector("strong");
+      const label = speaker ? speaker.textContent.trim() : "Message";
+      const bodyParts = [];
+      Array.from(item.childNodes).forEach(function(node){
+        if (node === speaker) return;
+        if (node.nodeType === Node.TEXT_NODE) bodyParts.push(node.textContent);
+        else if (node.nodeType === Node.ELEMENT_NODE && node.tagName === "A") bodyParts.push(node.href || node.textContent);
+        else if (node.textContent) bodyParts.push(node.textContent);
+      });
+      return {label: label, body: bodyParts.join("").trim()};
+    }).filter(function(item){return item.body && item.body !== "Thinking...";});
+  }
+  function addWrappedText(doc, text, x, y, options){
+    const pageHeight = doc.internal.pageSize.getHeight();
+    const lines = doc.splitTextToSize(text, options.maxWidth);
+    lines.forEach(function(line){
+      if (y > pageHeight - 18) {doc.addPage(); y = 18;}
+      doc.text(line, x, y);
+      y += options.lineHeight || 6;
+    });
+    return y;
+  }
+  function exportChatPdf(){
+    const jspdf = window.jspdf && window.jspdf.jsPDF;
+    if (!jspdf) {window.print(); return;}
+    const doc = new jspdf({unit:"mm", format:"a4"});
+    const generatedAt = new Date().toLocaleString("en-GB", {dateStyle:"medium", timeStyle:"short"});
+    const siteUrl = "https://jahosi.co.uk/unityQA/";
+    const disclaimer = [
+      "UnityQA is an experimental AI-assisted Unity Engine information page. AI responses can be incomplete, outdated, misread a source, or phrase something too strongly.",
+      "Always open the cited references and check the original official wording yourself.",
+      "Unity workflows vary by package version, render pipeline, platform target, hardware, project scale and exact Editor version.",
+      "For production-critical work, test the workflow in a copy of your own project and check the relevant Unity documentation before acting.",
+      "UnityQA must not invent APIs, package behaviour, menu labels, version changes or unsupported third-party recommendations.",
+      "Do not enter personal, confidential studio, client, account, license or unreleased project details into the chat."
+    ];
+    const references = Array.from(document.querySelectorAll(".source-list li")).map(function(item){
+      const link = item.querySelector("a");
+      const org = item.querySelector(".source-org");
+      return [link ? link.textContent.trim() : "", org ? org.textContent.trim() : "", link ? link.href : ""].filter(Boolean).join(" - ");
+    });
+    let y = 18;
+    doc.setProperties({title:"UnityQA chat export", subject:"Unity Engine workflow Q&A"});
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(18);
+    doc.text("UnityQA chat export", 14, y);
+    y += 8;
+    doc.setFont("helvetica", "normal");
+    doc.setFontSize(10);
+    y = addWrappedText(doc, "Generated: " + generatedAt, 14, y, {maxWidth:180, lineHeight:5});
+    y = addWrappedText(doc, "Website: " + siteUrl, 14, y, {maxWidth:180, lineHeight:5});
+    y += 4;
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(13);
+    doc.text("Important disclaimer", 14, y);
+    y += 7;
+    doc.setFont("helvetica", "normal");
+    doc.setFontSize(10);
+    disclaimer.forEach(function(line){y = addWrappedText(doc, line, 14, y, {maxWidth:180, lineHeight:5}); y += 2;});
+    y += 3;
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(13);
+    doc.text("Chat", 14, y);
+    y += 7;
+    doc.setFontSize(10);
+    getConversationLines().forEach(function(item){
+      doc.setFont("helvetica", "bold");
+      y = addWrappedText(doc, item.label + ":", 14, y, {maxWidth:180, lineHeight:5});
+      doc.setFont("helvetica", "normal");
+      y = addWrappedText(doc, item.body, 14, y, {maxWidth:180, lineHeight:5});
+      y += 3;
+    });
+    y += 3;
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(13);
+    if (y > 270) {doc.addPage(); y = 18;}
+    doc.text("References", 14, y);
+    y += 7;
+    doc.setFont("helvetica", "normal");
+    doc.setFontSize(9);
+    references.forEach(function(line){y = addWrappedText(doc, line, 14, y, {maxWidth:180, lineHeight:4.5}); y += 1.5;});
+    doc.save("unityqa-chat-export.pdf");
+  }
+  function removeThinkingMessage(thinkingMessage){
+    if (thinkingMessage && thinkingMessage.parentNode) thinkingMessage.remove();
+  }
+  function needsGate(){
+    return TURNSTILE_ENABLED && !getSessionToken() && !turnstileToken;
+  }
+  function updateGate(){
+    const shouldShowGate = needsGate();
+    const gate = document.getElementById("chat-gate");
+    if (gate) gate.hidden = !shouldShowGate;
+    if (send) send.hidden = shouldShowGate;
+    if (shouldShowGate) ensureTurnstileWidget();
+  }
+  function resetTurnstile(){
+    turnstileToken = "";
+    if (window.turnstile && typeof window.turnstile.reset === "function" && turnstileWidgetId !== null) {
+      try{window.turnstile.reset(turnstileWidgetId);}catch{}
+    }
+  }
+  function ensureTurnstileWidget(){
+    const container = document.getElementById("chat-turnstile");
+    if (!TURNSTILE_ENABLED || !container || turnstileWidgetId !== null) return;
+    if (!window.turnstile || typeof window.turnstile.render !== "function") return;
+    turnstileWidgetId = window.turnstile.render(container, {
+      sitekey: TURNSTILE_SITE_KEY,
+      size: window.matchMedia("(max-width: 620px)").matches ? "compact" : "normal",
+      callback: function(token){turnstileToken = token || ""; updateGate();},
+      "expired-callback": function(){turnstileToken = ""; updateGate();},
+      "error-callback": function(){turnstileToken = ""; updateGate();}
+    });
+  }
+  function scheduleTurnstile(){
+    if (!TURNSTILE_ENABLED) return;
+    if (window.turnstile && typeof window.turnstile.ready === "function") window.turnstile.ready(function(){ensureTurnstileWidget();});
+    let attempts = 0;
+    const timer = window.setInterval(function(){
+      ensureTurnstileWidget();
+      attempts += 1;
+      if (turnstileWidgetId !== null || attempts >= 40) window.clearInterval(timer);
+    }, 250);
+  }
+  async function askQuestion(question){
+    if (!question) {
+      revealFormProblem("Enter a question before asking UnityQA.", input);
+      return;
+    }
+    if (needsGate() && !turnstileToken) {
+      updateGate();
+      revealChat("center");
+      return;
+    }
+    setFormNote("");
+    revealChat("start");
+    appendMessage("user", question);
+    history.push({role:"user", content:question});
+    storeHistory();
+    setChatInputBlank();
+    setBusy(true);
+    const thinkingMessage = appendMessage("assistant", "Thinking...");
+    thinkingMessage.classList.add("thinking");
+    revealNewMessage(thinkingMessage);
+    try{
+      const payload = {message: question, history: history.slice(-8), chatSessionToken: getSessionToken()};
+      if (localChatContext) payload.localContext = localChatContext;
+      if (turnstileToken) payload.turnstileToken = turnstileToken;
+      const res = await fetch("/unityQA/chat", {
+        method: "POST",
+        headers: {"Content-Type":"application/json"},
+        body: JSON.stringify(payload)
+      });
+      const data = await res.json().catch(function(){return {};});
+      if (res.status === 403 && data && data.error === "turnstile_required") {
+        removeThinkingMessage(thinkingMessage);
+        clearSessionToken();
+        updateGate();
+        revealChat("center");
+        return;
+      }
+      if (res.status === 403 && data && data.error === "turnstile_failed") {
+        removeThinkingMessage(thinkingMessage);
+        clearSessionToken();
+        resetTurnstile();
+        updateGate();
+        revealChat("center");
+        return;
+      }
+      if (!res.ok) throw new Error(data.error || "chat_failed");
+      if (typeof data.chatSessionToken === "string" && data.chatSessionToken) {
+        storeSessionToken(data.chatSessionToken);
+        turnstileToken = "";
+      }
+      const reply = typeof data.reply === "string" ? data.reply : "";
+      if (!reply.trim()) throw new Error("empty_reply");
+      removeThinkingMessage(thinkingMessage);
+      const replyMessage = appendMessage("assistant", reply.trim());
+      revealNewMessage(replyMessage);
+      history.push({role:"assistant", content:reply.trim()});
+      history = history.slice(-8);
+      storeHistory();
+      updateGate();
+    }catch{
+      removeThinkingMessage(thinkingMessage);
+      revealNewMessage(appendMessage("assistant", "I could not complete that request. Please try again, and use the References links directly if the question is urgent."));
+    }finally{
+      setBusy(false);
+    }
+  }
+
+  form.addEventListener("submit", function(event){event.preventDefault(); askQuestion(getQuestionForSubmit());});
+  contrastToggle.addEventListener("click", function(){updateDisplayOption("highContrast");});
+  fontToggle.addEventListener("click", function(){updateDisplayOption("largeFont");});
+  resourceForm.addEventListener("submit", function(event){event.preventDefault(); lookupLocalSources(resourceInput.value.trim());});
+  input.addEventListener("focus", clearStarterExample);
+  input.addEventListener("input", function(){if (input.classList.contains("has-starter-example")) clearStarterExample();});
+  clearChat.addEventListener("click", function(){
+    const confirmed = window.confirm("Clear this chat and start fresh?");
+    if (!confirmed) return;
+    history = [];
+    localChatContext = null;
+    clearStoredHistory();
+    clearSessionToken();
+    resetTurnstile();
+    setFormNote("");
+    clearElement(thread);
+    appendMessage("assistant", "What would you like to learn about Unity Engine today?");
+    setChatInputBlank();
+    randomizeStarterQuestion();
+    updateGate();
+    revealChat("start");
+  });
+  exportPdf.addEventListener("click", exportChatPdf);
+  backToChat.addEventListener("click", function(){revealChat("start"); input.focus({preventScroll:true}); backToChat.hidden = true;});
+  window.addEventListener("scroll", function(){
+    const rect = chatPanel.getBoundingClientRect();
+    const isChatVisible = rect.top < window.innerHeight * .65 && rect.bottom > window.innerHeight * .25;
+    const hasConversation = thread.querySelectorAll(".message").length > 1;
+    backToChat.hidden = isChatVisible || !hasConversation;
+  }, {passive:true});
+  input.addEventListener("keydown", function(event){
+    if (event.key === "Enter" && !event.shiftKey) {event.preventDefault(); form.requestSubmit();}
+  });
+  document.querySelectorAll("[data-question]").forEach(function(button){
+    button.addEventListener("click", function(){
+      setChatInputBlank();
+      input.value = button.getAttribute("data-question") || "";
+      revealChat("start");
+      input.focus({preventScroll:true});
+      askQuestion(input.value.trim());
+    });
+  });
+  document.querySelectorAll("[data-prompt]").forEach(function(button){
+    button.addEventListener("click", function(){
+      setChatInputBlank();
+      input.value = button.getAttribute("data-prompt") || "";
+      if (startTool) startTool.open = false;
+      revealChat("start");
+      input.focus({preventScroll:true});
+      askQuestion(input.value.trim());
+    });
+  });
+  applyDisplayOptions(loadDisplayOptions());
+  randomizeStarterQuestion();
+  markExternalLinks();
+  updateGate();
+  scheduleTurnstile();
+})();
+</script>
+</body>
+</html>
