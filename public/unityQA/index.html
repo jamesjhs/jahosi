@@ -157,6 +157,13 @@ h1{margin:0;font-size:3rem;line-height:1.03;letter-spacing:0}
 .message.bot{background:rgba(24,28,38,.94);border:1px solid rgba(102,224,255,.22)}
 .message.user{margin-left:auto;color:#071016;background:linear-gradient(135deg,#66e0ff,#a4ff70);border:1px solid rgba(255,255,255,.24)}
 .message strong{display:block;margin-bottom:.25rem}
+.message.bot{white-space:normal}
+.message.bot p{margin:.45rem 0}
+.message.bot .reply-heading{display:block;margin:.85rem 0 .35rem;color:#fff;font-weight:900}
+.message.bot .reply-heading:first-of-type{margin-top:.1rem}
+.message.bot ul,.message.bot ol{margin:.45rem 0 .65rem;padding-left:1.35rem}
+.message.bot li{margin:.25rem 0}
+.message.bot em{color:#dce7f5}
 .message.thinking{color:var(--muted);font-style:italic}
 .message.is-new{outline:3px solid rgba(102,224,255,.24);outline-offset:2px}
 .chat-form{border-top:1px solid var(--line);padding:1rem;display:grid;gap:.75rem;background:rgba(14,17,23,.96)}
@@ -678,30 +685,99 @@ body.high-contrast kbd{background:#fff;border:2px solid #000}
       if (!link.rel) link.rel = "noopener noreferrer";
     });
   }
-  function appendReplyContent(element, content){
-    const urlPattern = /(https?:\/\/[^\s<>"')\]]+)/g;
+  function appendInlineContent(element, content){
+    const tokenPattern = /(\*\*[^*\n][^\n]*?\*\*|\*[^*\n][^*\n]*?\*|\bhttps?:\/\/[^\s<>"']+)/gi;
     let lastIndex = 0;
     let match;
-    while ((match = urlPattern.exec(content)) !== null) {
-      if (match.index > lastIndex) element.appendChild(document.createTextNode(content.slice(lastIndex, match.index)));
-      const rawUrl = match[0];
-      const trailing = rawUrl.match(/[.,;:!?]+$/);
-      const cleanUrl = trailing ? rawUrl.slice(0, -trailing[0].length) : rawUrl;
-      try{
-        const parsed = new URL(cleanUrl);
-        const link = document.createElement("a");
-        link.href = parsed.href;
-        link.textContent = "[source]";
-        link.target = "_blank";
-        link.rel = "noopener noreferrer";
-        element.appendChild(link);
-      }catch{
-        element.appendChild(document.createTextNode(cleanUrl));
+    while ((match = tokenPattern.exec(content)) !== null) {
+      if (match.index > lastIndex) {
+        element.appendChild(document.createTextNode(content.slice(lastIndex, match.index)));
       }
-      if (trailing) element.appendChild(document.createTextNode(trailing[0]));
-      lastIndex = match.index + rawUrl.length;
+      const token = match[0];
+      if (token.startsWith("http://") || token.startsWith("https://")) {
+        const trimmedUrl = token.replace(/[),.;:!?]+$/g, "");
+        const trailingText = token.slice(trimmedUrl.length);
+        try{
+          const parsed = new URL(trimmedUrl);
+          if (parsed.protocol === "http:" || parsed.protocol === "https:") {
+            const link = document.createElement("a");
+            link.href = parsed.href;
+            link.textContent = "[source]";
+            link.target = "_blank";
+            link.rel = "noopener noreferrer";
+            element.appendChild(link);
+          } else {
+            element.appendChild(document.createTextNode(trimmedUrl));
+          }
+        }catch{
+          element.appendChild(document.createTextNode(trimmedUrl));
+        }
+        if (trailingText) element.appendChild(document.createTextNode(trailingText));
+      } else if (token.startsWith("**") && token.endsWith("**")) {
+        const strong = document.createElement("strong");
+        strong.style.display = "inline";
+        strong.style.marginBottom = "0";
+        appendInlineContent(strong, token.slice(2, -2));
+        element.appendChild(strong);
+      } else if (token.startsWith("*") && token.endsWith("*")) {
+        const emphasis = document.createElement("em");
+        emphasis.textContent = token.slice(1, -1);
+        element.appendChild(emphasis);
+      } else {
+        element.appendChild(document.createTextNode(token));
+      }
+      lastIndex = match.index + token.length;
     }
-    if (lastIndex < content.length) element.appendChild(document.createTextNode(content.slice(lastIndex)));
+    if (lastIndex < content.length) {
+      element.appendChild(document.createTextNode(content.slice(lastIndex)));
+    }
+  }
+  function appendParagraph(element, text){
+    const paragraph = document.createElement("p");
+    appendInlineContent(paragraph, text);
+    element.appendChild(paragraph);
+  }
+  function appendReplyContent(element, content){
+    const lines = String(content || "").replace(/\r\n?/g, "\n").split("\n");
+    let list = null;
+    let listType = "";
+    function closeList(){
+      list = null;
+      listType = "";
+    }
+    lines.forEach(function(rawLine){
+      const line = rawLine.trim();
+      if (!line) {
+        closeList();
+        return;
+      }
+      const heading = line.match(/^(#{1,6})\s+(.+)$/);
+      if (heading) {
+        closeList();
+        const headingElement = document.createElement("span");
+        headingElement.className = "reply-heading";
+        appendInlineContent(headingElement, heading[2].replace(/#+$/g, "").trim());
+        element.appendChild(headingElement);
+        return;
+      }
+      const bullet = line.match(/^[-*+]\s+(.+)$/);
+      const numbered = line.match(/^\d+[.)]\s+(.+)$/);
+      if (bullet || numbered) {
+        const nextType = bullet ? "ul" : "ol";
+        if (!list || listType !== nextType) {
+          closeList();
+          list = document.createElement(nextType);
+          listType = nextType;
+          element.appendChild(list);
+        }
+        const item = document.createElement("li");
+        appendInlineContent(item, (bullet || numbered)[1]);
+        list.appendChild(item);
+        return;
+      }
+      closeList();
+      appendParagraph(element, line);
+    });
   }
   function appendMessage(role, content){
     const item = document.createElement("div");
