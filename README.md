@@ -14,7 +14,7 @@ Open `http://localhost:3000`.
 ## Private contact page
 
 The app now includes a private contact page served at `CONTACT_PAGE_PATH` (default: `/about/staff-contact-9d2f7c`).
-It is not linked from the public pages and is marked `noindex`.
+It is marked `noindex`. The rendered form posts to a date-varying endpoint in `yymmdd` format, for example `/api/contact/260915/submit`, using `APP_TIMEZONE` if set or `Europe/London` by default. Stale or guessed contact API dates return `404`.
 
 Required environment variables for contact form delivery:
 
@@ -31,6 +31,7 @@ Optional:
 - `CONTACT_PAGE_PATH`
 - `CONTACT_TO_EMAIL` (defaults to `jrowson@gmail.com`)
 - `CONTACT_FROM_EMAIL`
+- `APP_TIMEZONE` (defaults to `Europe/London`)
 
 ## SEO and crawler support
 

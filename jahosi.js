@@ -51,6 +51,8 @@ const CONTACT_PAGE_PATH = normalizeContactPagePath(process.env.CONTACT_PAGE_PATH
 const CONTACT_TO_EMAIL = process.env.CONTACT_TO_EMAIL;
 const CONTACT_FROM_EMAIL = process.env.CONTACT_FROM_EMAIL;
 const CONTACT_HUMAN_CHECK_TTL_MS = 30 * 60 * 1000;
+const APP_TIMEZONE = normalizeEnvString(process.env.APP_TIMEZONE) || "Europe/London";
+const CONTACT_SUBMIT_PATH_PREFIX = "/api/contact";
 const SPLASH_OPENAI_API_KEY = process.env.SPLASH_OPENAI_API_KEY || "";
 const SPLASH_OPENAI_BASE_URL = (process.env.SPLASH_OPENAI_BASE_URL || "https://api.openai.com/v1").replace(
   /\/+$/,
@@ -1014,6 +1016,38 @@ function setPublicFileHeaders(res, filePath) {
   }
 }
 
+function localDateParts(date = new Date()) {
+  const formatter = new Intl.DateTimeFormat("en-GB", {
+    timeZone: APP_TIMEZONE,
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  });
+  const values = Object.fromEntries(formatter.formatToParts(date).map((part) => [part.type, part.value]));
+  return {
+    day: values.day,
+    month: values.month,
+    year: values.year,
+  };
+}
+
+function localYymmdd(date = new Date()) {
+  const parts = localDateParts(date);
+  return `${parts.year.slice(-2)}${parts.month}${parts.day}`;
+}
+
+function currentContactSubmitPath() {
+  return `${CONTACT_SUBMIT_PATH_PREFIX}/${localYymmdd()}/submit`;
+}
+
+function requireCurrentContactSubmitDate(req, res, next) {
+  const requestedDate = String(req.params.contactDate || "");
+  if (!/^\d{6}$/.test(requestedDate) || requestedDate !== localYymmdd()) {
+    return res.status(404).type("text").send("Not found");
+  }
+  return next();
+}
+
 function cleanLabyrinthRuns() {
   const now = Date.now();
   for (const [token, run] of LABYRINTH_RUNS.entries()) {
@@ -1326,7 +1360,7 @@ app.get("/robots.txt", (req, res) => {
     "Allow: /",
     `Disallow: ${CONTACT_PAGE_PATH}`,
     "Disallow: /analytics/",
-    "Disallow: /api/contact/submit",
+    `Disallow: ${CONTACT_SUBMIT_PATH_PREFIX}/`,
     "Disallow: /api/labyrinth/",
     `Sitemap: ${baseUrl}/sitemap.xml`,
   ].join("\n");
@@ -2831,6 +2865,7 @@ function expandBlanderQaRefusal(reply, message) {
 
 function renderContactPage({ status, error, debug }) {
   const humanCheck = createContactHumanCheck();
+  const contactSubmitPath = currentContactSubmitPath();
   const statusMessage =
     status === "sent"
       ? '<div class="rounded-lg border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-800">Thanks. Your message has been sent.</div>'
@@ -2945,7 +2980,7 @@ function renderContactPage({ status, error, debug }) {
       <h1 class="text-3xl font-bold tracking-tight">Contact Me</h1>
       <p class="mt-2 text-sm text-slate-600">Send a private message.</p>
       <div class="mt-4 space-y-3">${statusMessage}${errorMessage}</div>
-      <form class="mt-6 space-y-4" method="post" action="/api/contact/submit" autocomplete="off">
+      <form class="mt-6 space-y-4" method="post" action="${escapeHtml(contactSubmitPath)}" autocomplete="off">
         <input type="hidden" name="submittedAt" value="${Date.now()}">
         <input type="hidden" name="humanCheckToken" value="${escapeHtml(humanCheck.token)}">
         <div class="hidden" aria-hidden="true">
@@ -2991,7 +3026,7 @@ app.get(CONTACT_PAGE_PATH, (req, res) => {
   );
 });
 
-app.post("/api/contact/submit", contactSubmitRateLimit, async (req, res) => {
+app.post(`${CONTACT_SUBMIT_PATH_PREFIX}/:contactDate/submit`, requireCurrentContactSubmitDate, contactSubmitRateLimit, async (req, res) => {
   const ip = req.ip || req.socket.remoteAddress || "unknown";
   const redirectWithError = (code, debugReason) => {
     const params = new URLSearchParams({ error: code });
@@ -3389,4 +3424,6 @@ app.get("*", (req, res) => {
 app.listen(port, "127.0.0.1", () => {
   console.log(`Portfolio server running on http://127.0.0.1:${port}`);
   console.log(`Private contact page path: ${CONTACT_PAGE_PATH}`);
+  console.log(`Contact submit path for local date: ${currentContactSubmitPath()}`);
+  console.log(`App timezone: ${APP_TIMEZONE}`);
 });
