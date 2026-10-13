@@ -141,7 +141,7 @@ const contactSubmitRateLimit = rateLimit({
   standardHeaders: false,
   legacyHeaders: false,
   handler: (_req, res) => {
-    res.redirect(`${CONTACT_PAGE_PATH}?error=blocked`);
+    res.redirect(`${currentContactPagePath()}?error=blocked`);
   },
 });
 const labyrinthReadRateLimit = rateLimit({
@@ -968,12 +968,14 @@ app.use(
 registerAnalyticsRoutes(app);
 
 const INDEX_HTML_TEMPLATE = fs.readFileSync(path.join(__dirname, "public", "index.html"), "utf8");
-const INDEX_HTML = INDEX_HTML_TEMPLATE.replaceAll("__CONTACT_PAGE_PATH__", CONTACT_PAGE_PATH);
+function renderIndexHtml() {
+  return INDEX_HTML_TEMPLATE.replaceAll("__CONTACT_PAGE_PATH__", currentContactPagePath());
+}
 
-// index.html is served dynamically so the contact link reflects CONTACT_PAGE_PATH at runtime.
+// index.html is served dynamically so the contact link reflects today's private contact path.
 app.get(["/", "/index.html"], (req, res) => {
   setNoCacheHeaders(res);
-  res.send(INDEX_HTML);
+  res.send(renderIndexHtml());
 });
 
 app.get("/readyz", (req, res) => {
@@ -1038,6 +1040,18 @@ function localYymmdd(date = new Date()) {
 
 function currentContactSubmitPath() {
   return `${CONTACT_SUBMIT_PATH_PREFIX}/${localYymmdd()}/submit`;
+}
+
+function currentContactPagePath() {
+  return `${CONTACT_PAGE_PATH}/${localYymmdd()}`;
+}
+
+function requireCurrentContactPageDate(req, res, next) {
+  const requestedDate = String(req.params.contactDate || "");
+  if (!/^\d{6}$/.test(requestedDate) || requestedDate !== localYymmdd()) {
+    return res.status(404).type("text").send("Not found");
+  }
+  return next();
 }
 
 function requireCurrentContactSubmitDate(req, res, next) {
@@ -1358,7 +1372,7 @@ app.get("/robots.txt", (req, res) => {
   const robotsTxt = [
     "User-agent: *",
     "Allow: /",
-    `Disallow: ${CONTACT_PAGE_PATH}`,
+    `Disallow: ${CONTACT_PAGE_PATH}/`,
     "Disallow: /analytics/",
     `Disallow: ${CONTACT_SUBMIT_PATH_PREFIX}/`,
     "Disallow: /api/labyrinth/",
@@ -2709,7 +2723,7 @@ function renderSocialQaIndexHtml() {
 }
 const SOCIAL_QA_POLICY_HTML_TEMPLATE = fs.readFileSync(path.join(__dirname, "public", "socialQA", "policy.html"), "utf8");
 function renderSocialQaPolicyHtml() {
-  return SOCIAL_QA_POLICY_HTML_TEMPLATE.replaceAll("__CONTACT_PAGE_PATH__", CONTACT_PAGE_PATH);
+  return SOCIAL_QA_POLICY_HTML_TEMPLATE.replaceAll("__CONTACT_PAGE_PATH__", currentContactPagePath());
 }
 
 const BLANDER_QA_INDEX_HTML_TEMPLATE = fs.readFileSync(path.join(__dirname, "public", "blanderQA", "index.html"), "utf8");
@@ -2718,7 +2732,7 @@ function renderBlanderQaIndexHtml() {
 }
 const BLANDER_QA_POLICY_HTML_TEMPLATE = fs.readFileSync(path.join(__dirname, "public", "blanderQA", "policy.html"), "utf8");
 function renderBlanderQaPolicyHtml() {
-  return BLANDER_QA_POLICY_HTML_TEMPLATE.replaceAll("__CONTACT_PAGE_PATH__", CONTACT_PAGE_PATH);
+  return BLANDER_QA_POLICY_HTML_TEMPLATE.replaceAll("__CONTACT_PAGE_PATH__", currentContactPagePath());
 }
 
 const BLENDER5_QA_INDEX_HTML_TEMPLATE = fs.readFileSync(path.join(__dirname, "public", "blender5QA", "index.html"), "utf8");
@@ -2727,7 +2741,7 @@ function renderBlender5QaIndexHtml() {
 }
 const BLENDER5_QA_POLICY_HTML_TEMPLATE = fs.readFileSync(path.join(__dirname, "public", "blender5QA", "policy.html"), "utf8");
 function renderBlender5QaPolicyHtml() {
-  return BLENDER5_QA_POLICY_HTML_TEMPLATE.replaceAll("__CONTACT_PAGE_PATH__", CONTACT_PAGE_PATH);
+  return BLENDER5_QA_POLICY_HTML_TEMPLATE.replaceAll("__CONTACT_PAGE_PATH__", currentContactPagePath());
 }
 
 const UNITY_QA_INDEX_HTML_TEMPLATE = fs.readFileSync(path.join(__dirname, "public", "unityQA", "index.html"), "utf8");
@@ -2736,7 +2750,7 @@ function renderUnityQaIndexHtml() {
 }
 const UNITY_QA_POLICY_HTML_TEMPLATE = fs.readFileSync(path.join(__dirname, "public", "unityQA", "policy.html"), "utf8");
 function renderUnityQaPolicyHtml() {
-  return UNITY_QA_POLICY_HTML_TEMPLATE.replaceAll("__CONTACT_PAGE_PATH__", CONTACT_PAGE_PATH);
+  return UNITY_QA_POLICY_HTML_TEMPLATE.replaceAll("__CONTACT_PAGE_PATH__", currentContactPagePath());
 }
 
 const TEACH_ME_INDEX_HTML_TEMPLATE = fs.readFileSync(path.join(__dirname, "public", "teachMe", "index.html"), "utf8");
@@ -2745,7 +2759,7 @@ function renderTeachMeIndexHtml() {
 }
 const TEACH_ME_POLICY_HTML_TEMPLATE = fs.readFileSync(path.join(__dirname, "public", "teachMe", "policy.html"), "utf8");
 function renderTeachMePolicyHtml() {
-  return TEACH_ME_POLICY_HTML_TEMPLATE.replaceAll("__CONTACT_PAGE_PATH__", CONTACT_PAGE_PATH);
+  return TEACH_ME_POLICY_HTML_TEMPLATE.replaceAll("__CONTACT_PAGE_PATH__", currentContactPagePath());
 }
 
 function normalizeSocialQaReply(reply) {
@@ -3015,7 +3029,11 @@ function renderContactPage({ status, error, debug }) {
 </html>`;
 }
 
-app.get(CONTACT_PAGE_PATH, (req, res) => {
+app.get(CONTACT_PAGE_PATH, (_req, res) => {
+  res.status(404).type("text").send("Not found");
+});
+
+app.get(`${CONTACT_PAGE_PATH}/:contactDate`, requireCurrentContactPageDate, (req, res) => {
   res.set("X-Robots-Tag", "noindex, nofollow, noarchive");
   res.send(
     renderContactPage({
@@ -3031,10 +3049,10 @@ app.post(`${CONTACT_SUBMIT_PATH_PREFIX}/:contactDate/submit`, requireCurrentCont
   const redirectWithError = (code, debugReason) => {
     const params = new URLSearchParams({ error: code });
     if (debugReason) params.set("debug", debugReason);
-    return res.redirect(`${CONTACT_PAGE_PATH}?${params.toString()}`);
+    return res.redirect(`${currentContactPagePath()}?${params.toString()}`);
   };
   const redirectWithStatus = (code) =>
-    res.redirect(`${CONTACT_PAGE_PATH}?status=${encodeURIComponent(code)}`);
+    res.redirect(`${currentContactPagePath()}?status=${encodeURIComponent(code)}`);
 
   const { name, email, message, website, submittedAt, humanCheck, humanCheckToken } = req.body;
   const filledAt = Number(submittedAt);
@@ -3418,12 +3436,12 @@ app.post("/api/labyrinth/scores", labyrinthWriteRateLimit, express.json({ limit:
 });
 
 app.get("*", (req, res) => {
-  res.status(404).send(INDEX_HTML);
+  res.status(404).send(renderIndexHtml());
 });
 
 app.listen(port, "127.0.0.1", () => {
   console.log(`Portfolio server running on http://127.0.0.1:${port}`);
-  console.log(`Private contact page path: ${CONTACT_PAGE_PATH}`);
+  console.log(`Private contact page path for local date: ${currentContactPagePath()}`);
   console.log(`Contact submit path for local date: ${currentContactSubmitPath()}`);
   console.log(`App timezone: ${APP_TIMEZONE}`);
 });
