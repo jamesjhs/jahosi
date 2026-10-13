@@ -13,8 +13,8 @@ Open `http://localhost:3000`.
 
 ## Private contact page
 
-The app now includes a private contact page served below `CONTACT_PAGE_PATH` (default: `/about/staff-contact-9d2f7c`).
-It is marked `noindex`. The contact page URL and form API both use a date-varying `yymmdd` segment, using `APP_TIMEZONE` if set or `Europe/London` by default. For example, the page is `/about/staff-contact-9d2f7c/260915` and the form posts to `/api/contact/260915/submit`. Stale or guessed contact dates return `404`.
+The app includes a private contact page served at the current `yymmdd` path.
+It is marked `noindex`. The contact page URL and form API both use a date-varying `yymmdd` segment, using `APP_TIMEZONE` if set or `Europe/London` by default. For example, the page is `/260915` and the form posts to `/api/contact/260915/submit`. Stale or guessed contact dates return `404`.
 
 Required environment variables for contact form delivery:
 
@@ -28,7 +28,6 @@ Required environment variables for contact form delivery:
 
 Optional:
 
-- `CONTACT_PAGE_PATH`
 - `CONTACT_TO_EMAIL` (defaults to `jrowson@gmail.com`)
 - `CONTACT_FROM_EMAIL`
 - `APP_TIMEZONE` (defaults to `Europe/London`)

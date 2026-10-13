@@ -24,17 +24,7 @@ function normalizeEnvString(value) {
   return cleaned;
 }
 
-function normalizeContactPagePath(value) {
-  const cleaned = normalizeEnvString(value);
-  if (!cleaned || !cleaned.startsWith("/") || cleaned.startsWith("//") || /[\s"'<>]/.test(cleaned) || cleaned.includes("?") || cleaned.includes("#")) {
-    console.error("CONTACT_PAGE_PATH must be a local absolute path such as /about/contact-random-suffix.");
-    process.exit(1);
-  }
-  return cleaned;
-}
-
 const REQUIRED_ENV = [
-  "CONTACT_PAGE_PATH",
   "CONTACT_TO_EMAIL",
   "CONTACT_FROM_EMAIL",
   "TURNSTILE_SITE_KEY",
@@ -47,7 +37,6 @@ if (missingEnv.length) {
   process.exit(1);
 }
 
-const CONTACT_PAGE_PATH = normalizeContactPagePath(process.env.CONTACT_PAGE_PATH);
 const CONTACT_TO_EMAIL = process.env.CONTACT_TO_EMAIL;
 const CONTACT_FROM_EMAIL = process.env.CONTACT_FROM_EMAIL;
 const CONTACT_HUMAN_CHECK_TTL_MS = 30 * 60 * 1000;
@@ -969,7 +958,7 @@ registerAnalyticsRoutes(app);
 
 const INDEX_HTML_TEMPLATE = fs.readFileSync(path.join(__dirname, "public", "index.html"), "utf8");
 function renderIndexHtml() {
-  return INDEX_HTML_TEMPLATE.replaceAll("__CONTACT_PAGE_PATH__", currentContactPagePath());
+  return INDEX_HTML_TEMPLATE.replaceAll("__CONTACT_PATH__", currentContactPagePath());
 }
 
 // index.html is served dynamically so the contact link reflects today's private contact path.
@@ -1043,7 +1032,7 @@ function currentContactSubmitPath() {
 }
 
 function currentContactPagePath() {
-  return `${CONTACT_PAGE_PATH}/${localYymmdd()}`;
+  return `/${localYymmdd()}`;
 }
 
 function requireCurrentContactPageDate(req, res, next) {
@@ -1372,7 +1361,6 @@ app.get("/robots.txt", (req, res) => {
   const robotsTxt = [
     "User-agent: *",
     "Allow: /",
-    `Disallow: ${CONTACT_PAGE_PATH}/`,
     "Disallow: /analytics/",
     `Disallow: ${CONTACT_SUBMIT_PATH_PREFIX}/`,
     "Disallow: /api/labyrinth/",
@@ -2723,7 +2711,7 @@ function renderSocialQaIndexHtml() {
 }
 const SOCIAL_QA_POLICY_HTML_TEMPLATE = fs.readFileSync(path.join(__dirname, "public", "socialQA", "policy.html"), "utf8");
 function renderSocialQaPolicyHtml() {
-  return SOCIAL_QA_POLICY_HTML_TEMPLATE.replaceAll("__CONTACT_PAGE_PATH__", currentContactPagePath());
+  return SOCIAL_QA_POLICY_HTML_TEMPLATE.replaceAll("__CONTACT_PATH__", currentContactPagePath());
 }
 
 const BLANDER_QA_INDEX_HTML_TEMPLATE = fs.readFileSync(path.join(__dirname, "public", "blanderQA", "index.html"), "utf8");
@@ -2732,7 +2720,7 @@ function renderBlanderQaIndexHtml() {
 }
 const BLANDER_QA_POLICY_HTML_TEMPLATE = fs.readFileSync(path.join(__dirname, "public", "blanderQA", "policy.html"), "utf8");
 function renderBlanderQaPolicyHtml() {
-  return BLANDER_QA_POLICY_HTML_TEMPLATE.replaceAll("__CONTACT_PAGE_PATH__", currentContactPagePath());
+  return BLANDER_QA_POLICY_HTML_TEMPLATE.replaceAll("__CONTACT_PATH__", currentContactPagePath());
 }
 
 const BLENDER5_QA_INDEX_HTML_TEMPLATE = fs.readFileSync(path.join(__dirname, "public", "blender5QA", "index.html"), "utf8");
@@ -2741,7 +2729,7 @@ function renderBlender5QaIndexHtml() {
 }
 const BLENDER5_QA_POLICY_HTML_TEMPLATE = fs.readFileSync(path.join(__dirname, "public", "blender5QA", "policy.html"), "utf8");
 function renderBlender5QaPolicyHtml() {
-  return BLENDER5_QA_POLICY_HTML_TEMPLATE.replaceAll("__CONTACT_PAGE_PATH__", currentContactPagePath());
+  return BLENDER5_QA_POLICY_HTML_TEMPLATE.replaceAll("__CONTACT_PATH__", currentContactPagePath());
 }
 
 const UNITY_QA_INDEX_HTML_TEMPLATE = fs.readFileSync(path.join(__dirname, "public", "unityQA", "index.html"), "utf8");
@@ -2750,7 +2738,7 @@ function renderUnityQaIndexHtml() {
 }
 const UNITY_QA_POLICY_HTML_TEMPLATE = fs.readFileSync(path.join(__dirname, "public", "unityQA", "policy.html"), "utf8");
 function renderUnityQaPolicyHtml() {
-  return UNITY_QA_POLICY_HTML_TEMPLATE.replaceAll("__CONTACT_PAGE_PATH__", currentContactPagePath());
+  return UNITY_QA_POLICY_HTML_TEMPLATE.replaceAll("__CONTACT_PATH__", currentContactPagePath());
 }
 
 const TEACH_ME_INDEX_HTML_TEMPLATE = fs.readFileSync(path.join(__dirname, "public", "teachMe", "index.html"), "utf8");
@@ -2759,7 +2747,7 @@ function renderTeachMeIndexHtml() {
 }
 const TEACH_ME_POLICY_HTML_TEMPLATE = fs.readFileSync(path.join(__dirname, "public", "teachMe", "policy.html"), "utf8");
 function renderTeachMePolicyHtml() {
-  return TEACH_ME_POLICY_HTML_TEMPLATE.replaceAll("__CONTACT_PAGE_PATH__", currentContactPagePath());
+  return TEACH_ME_POLICY_HTML_TEMPLATE.replaceAll("__CONTACT_PATH__", currentContactPagePath());
 }
 
 function normalizeSocialQaReply(reply) {
@@ -3029,11 +3017,7 @@ function renderContactPage({ status, error, debug }) {
 </html>`;
 }
 
-app.get(CONTACT_PAGE_PATH, (_req, res) => {
-  res.status(404).type("text").send("Not found");
-});
-
-app.get(`${CONTACT_PAGE_PATH}/:contactDate`, requireCurrentContactPageDate, (req, res) => {
+app.get("/:contactDate", requireCurrentContactPageDate, (req, res) => {
   res.set("X-Robots-Tag", "noindex, nofollow, noarchive");
   res.send(
     renderContactPage({
