@@ -21,6 +21,62 @@
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&display=swap');
     body { font-family: "Manrope", sans-serif; }
+    .tasker-preview {
+      border: 1px solid #dbe3ee;
+      border-radius: 1rem;
+      background: linear-gradient(135deg, #f8fafc 0%, #eef6ff 100%);
+      box-shadow: 0 18px 45px rgba(15, 23, 42, 0.10);
+      overflow: hidden;
+    }
+    .tasker-window-bar {
+      display: flex;
+      gap: 0.4rem;
+      align-items: center;
+      border-bottom: 1px solid #dbe3ee;
+      background: rgba(255, 255, 255, 0.86);
+      padding: 0.75rem 1rem;
+    }
+    .tasker-dot { width: 0.65rem; height: 0.65rem; border-radius: 999px; }
+    .tasker-card {
+      border: 1px solid #dbe3ee;
+      border-radius: 0.85rem;
+      background: rgba(255, 255, 255, 0.94);
+      padding: 0.85rem;
+    }
+    .tasker-pill {
+      display: inline-flex;
+      align-items: center;
+      border-radius: 999px;
+      padding: 0.24rem 0.58rem;
+      font-size: 0.7rem;
+      font-weight: 800;
+    }
+    .tasker-phone {
+      margin-inline: auto;
+      max-width: 14rem;
+      border-radius: 1.55rem;
+      border: 0.45rem solid #111827;
+      background: #f8fafc;
+      overflow: hidden;
+      box-shadow: 0 18px 35px rgba(15, 23, 42, 0.18);
+    }
+    .tasker-bar-chart {
+      display: grid;
+      gap: 0.45rem;
+    }
+    .tasker-bar {
+      display: grid;
+      grid-template-columns: 4.5rem 1fr 2rem;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.78rem;
+      color: #475569;
+    }
+    .tasker-bar span:nth-child(2) {
+      height: 0.65rem;
+      border-radius: 999px;
+      background: linear-gradient(90deg, #2563eb, #14b8a6);
+    }
   </style>
 </head>
 <body class="min-h-screen bg-slate-50 text-slate-900">
@@ -44,24 +100,173 @@
         <div class="rounded-lg bg-slate-50 border border-slate-200 px-3 py-2 text-center font-semibold text-slate-700">Categories</div>
         <div class="rounded-lg bg-slate-50 border border-slate-200 px-3 py-2 text-center font-semibold text-slate-700">Reports</div>
       </div>
-  <p><img src="../images/tasker (1).png" width="900" alt="Tasker - Helping you analyse your admin workload"></p>
-  <p>&nbsp;</p>
-  <p><img src="../images/tasker (2).png" width="900" alt="Tasker - Helping you analyse your admin workload"></p>
-  <p>&nbsp;</p>
-  <p><img src="../images/tasker (3).png" width="900" alt="Tasker - Helping you analyse your admin workload"></p>
-  <p>&nbsp;</p>
-  <p><img src="../images/tasker (4).png" width="900" alt="Tasker - Helping you analyse your admin workload"></p>
-  <p>&nbsp;</p>
-  <p><img src="../images/tasker (5).png" width="900" alt="Tasker - Helping you analyse your admin workload"></p>
-  <p>&nbsp;</p>
-  <p><img src="../images/tasker (6).png" width="900" alt="Tasker - Helping you analyse your admin workload"></p>
-  <p>&nbsp;</p>
-  <p><img src="../images/tasker (7).png" width="900" alt="Tasker - Helping you analyse your admin workload"></p>
-  <p>&nbsp;</p>
-  <p><img src="../images/tasker (8).png" width="900" alt="Tasker - Helping you analyse your admin workload"></p>
-  <p>&nbsp;</p>
-  <p><img src="../images/tasker (9).png" width="900" alt="Tasker - Helping you analyse your admin workload"></p>
-  <p>&nbsp;</p>
+
+      <figure class="tasker-preview mt-6" aria-label="Tasker mobile logging preview showing task timer and structured category fields">
+        <div class="tasker-window-bar">
+          <span class="tasker-dot bg-rose-400"></span>
+          <span class="tasker-dot bg-amber-300"></span>
+          <span class="tasker-dot bg-emerald-400"></span>
+          <span class="ml-auto text-xs font-bold text-slate-500">Tasker logging flow</span>
+        </div>
+        <div class="grid gap-4 p-4 md:grid-cols-[0.85fr_1.15fr]">
+          <div class="tasker-phone">
+            <div class="bg-blue-700 px-4 py-3 text-white">
+              <p class="text-xs font-bold text-blue-100">Tasker</p>
+              <p class="text-sm font-extrabold">Log Task</p>
+            </div>
+            <div class="space-y-2 p-3">
+              <div class="rounded-lg bg-white p-3 shadow-sm">
+                <p class="text-xs font-bold text-slate-500">Timer</p>
+                <p class="mt-1 text-center font-mono text-2xl font-extrabold text-blue-700">00:08:42</p>
+              </div>
+              <div class="grid grid-cols-2 gap-2 text-center text-xs font-extrabold">
+                <span class="rounded-lg bg-blue-700 px-2 py-2 text-white">My group</span>
+                <span class="rounded-lg border border-blue-200 bg-white px-2 py-2 text-blue-700">Personal</span>
+              </div>
+              <div class="rounded-lg bg-white p-3 shadow-sm">
+                <p class="text-xs font-bold text-slate-500">Category</p>
+                <p class="mt-1 text-sm font-extrabold text-slate-900">Prescription Query</p>
+              </div>
+              <button class="w-full rounded-lg bg-emerald-600 px-3 py-2 text-xs font-extrabold text-white">Complete task</button>
+            </div>
+          </div>
+          <div class="grid content-center gap-3">
+            <div class="tasker-card">
+              <div class="flex items-center justify-between gap-3">
+                <p class="font-extrabold text-slate-900">Fast capture, minimal typing</p>
+                <span class="tasker-pill bg-blue-100 text-blue-700">PWA</span>
+              </div>
+              <p class="mt-2 text-sm text-slate-600">Quick-pick buttons, searchable comboboxes and one-tap date shortcuts keep the logging step short enough to use during a busy shift.</p>
+            </div>
+            <div class="grid gap-3 sm:grid-cols-2">
+              <div class="tasker-card">
+                <p class="text-xs font-bold uppercase tracking-widest text-slate-400">Privacy</p>
+                <p class="mt-2 text-sm font-bold text-slate-700">Anonymous usernames; no real names, emails or patient data in task records.</p>
+              </div>
+              <div class="tasker-card">
+                <p class="text-xs font-bold uppercase tracking-widest text-slate-400">Structure</p>
+                <p class="mt-2 text-sm font-bold text-slate-700">Duty vs personal work, categories, outcomes, flags and interruptions.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </figure>
+      <p class="mt-2 text-xs text-slate-400 text-center">Mock in-app preview — mobile-first timer and structured task capture</p>
+
+      <figure class="tasker-preview mt-6" aria-label="Tasker analytics preview showing charts, filters and Excel export">
+        <div class="tasker-window-bar">
+          <span class="tasker-dot bg-rose-400"></span>
+          <span class="tasker-dot bg-amber-300"></span>
+          <span class="tasker-dot bg-emerald-400"></span>
+          <span class="ml-auto text-xs font-bold text-slate-500">Analytics and export</span>
+        </div>
+        <div class="grid gap-4 p-4 md:grid-cols-[1.05fr_0.95fr]">
+          <div class="space-y-3">
+            <div class="tasker-card">
+              <div class="flex flex-wrap items-center justify-between gap-2">
+                <div>
+                  <p class="text-xs font-bold uppercase tracking-widest text-blue-500">30-day history</p>
+                  <p class="text-lg font-extrabold text-slate-900">Workload evidence</p>
+                </div>
+                <span class="tasker-pill bg-emerald-100 text-emerald-700">XLSX export</span>
+              </div>
+              <div class="tasker-bar-chart mt-4">
+                <div class="tasker-bar"><span>Prescriptions</span><span style="width: 86%"></span><strong>34</strong></div>
+                <div class="tasker-bar"><span>Calls</span><span style="width: 58%"></span><strong>22</strong></div>
+                <div class="tasker-bar"><span>Letters</span><span style="width: 48%"></span><strong>19</strong></div>
+                <div class="tasker-bar"><span>Results</span><span style="width: 32%"></span><strong>12</strong></div>
+              </div>
+            </div>
+            <div class="grid gap-3 sm:grid-cols-3">
+              <div class="tasker-card text-center">
+                <p class="text-2xl font-extrabold text-blue-700">8m</p>
+                <p class="text-xs font-bold text-slate-500">Avg task</p>
+              </div>
+              <div class="tasker-card text-center">
+                <p class="text-2xl font-extrabold text-blue-700">47</p>
+                <p class="text-xs font-bold text-slate-500">Handled</p>
+              </div>
+              <div class="tasker-card text-center">
+                <p class="text-2xl font-extrabold text-blue-700">6</p>
+                <p class="text-xs font-bold text-slate-500">Flags</p>
+              </div>
+            </div>
+          </div>
+          <div class="grid content-center gap-3">
+            <div class="tasker-card">
+              <p class="text-xs font-bold uppercase tracking-widest text-slate-400">Charts</p>
+              <p class="mt-2 text-sm font-bold text-slate-700">Category mix, duty vs personal work, outcomes, flags, activity by hour and trendlines.</p>
+            </div>
+            <div class="tasker-card">
+              <p class="text-xs font-bold uppercase tracking-widest text-slate-400">Exports</p>
+              <p class="mt-2 text-sm font-bold text-slate-700">Raw user data and full analytics workbooks export as Excel files for local review.</p>
+            </div>
+            <div class="tasker-card">
+              <p class="text-xs font-bold uppercase tracking-widest text-slate-400">Retention</p>
+              <p class="mt-2 text-sm font-bold text-slate-700">Task data is kept short-lived, with automatic 30-day deletion.</p>
+            </div>
+          </div>
+        </div>
+      </figure>
+      <p class="mt-2 text-xs text-slate-400 text-center">Mock in-app preview — analytics filters, charts and Excel-ready workload reporting</p>
+
+      <figure class="tasker-preview mt-6" aria-label="Tasker admin preview showing user groups, notices, SMTP, approvals and privacy controls">
+        <div class="tasker-window-bar">
+          <span class="tasker-dot bg-rose-400"></span>
+          <span class="tasker-dot bg-amber-300"></span>
+          <span class="tasker-dot bg-emerald-400"></span>
+          <span class="ml-auto text-xs font-bold text-slate-500">Admin and governance</span>
+        </div>
+        <div class="grid gap-4 p-4 md:grid-cols-2">
+          <div class="space-y-3">
+            <div class="tasker-card">
+              <p class="text-xs font-bold uppercase tracking-widest text-blue-500">Admin panel</p>
+              <p class="mt-2 text-lg font-extrabold text-slate-900">Configure without exposing people</p>
+              <p class="mt-2 text-sm text-slate-600">Admins manage dropdowns, user groups, registration mode, notices, account activation and database backups from one desktop-friendly area.</p>
+            </div>
+            <div class="grid grid-cols-2 gap-3">
+              <div class="tasker-card">
+                <p class="text-sm font-extrabold text-slate-900">User groups</p>
+                <p class="mt-1 text-xs text-slate-500">Tailored option sets by team.</p>
+              </div>
+              <div class="tasker-card">
+                <p class="text-sm font-extrabold text-slate-900">SMTP</p>
+                <p class="mt-1 text-xs text-slate-500">Suggestions emailed, not stored.</p>
+              </div>
+            </div>
+          </div>
+          <div class="space-y-3">
+            <div class="tasker-card">
+              <div class="flex items-center justify-between gap-3">
+                <div>
+                  <p class="font-extrabold text-slate-900">Pending proposals</p>
+                  <p class="mt-1 text-xs text-slate-500">New flags and dropdown options wait for admin review.</p>
+                </div>
+                <span class="tasker-pill bg-amber-100 text-amber-700">Review</span>
+              </div>
+            </div>
+            <div class="tasker-card">
+              <div class="flex items-center justify-between gap-3">
+                <div>
+                  <p class="font-extrabold text-slate-900">Registration controls</p>
+                  <p class="mt-1 text-xs text-slate-500">Disabled, automatic, or administrator-approved access.</p>
+                </div>
+                <span class="tasker-pill bg-blue-100 text-blue-700">Configurable</span>
+              </div>
+            </div>
+            <div class="tasker-card">
+              <div class="flex items-center justify-between gap-3">
+                <div>
+                  <p class="font-extrabold text-slate-900">Security checks</p>
+                  <p class="mt-1 text-xs text-slate-500">CSRF, rate limits, account lockout and optional Turnstile.</p>
+                </div>
+                <span class="tasker-pill bg-emerald-100 text-emerald-700">Protected</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </figure>
+      <p class="mt-2 text-xs text-slate-400 text-center">Mock in-app preview — admin controls for options, users, notices, SMTP and privacy-first governance</p>
     </section>
   </main>
 </body>
