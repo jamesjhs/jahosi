@@ -30,7 +30,20 @@
       <h1 class="text-3xl font-extrabold">Aviation Museum Archives and Gallery</h1>
       <p class="mt-4 text-slate-600">A Node.js-powered image gallery hosting the archive photography collection for a local Aviation Museum. This was the biggest project yet of my journey into exploring the world AI-assisted coding, and before I'd particularly heard of Agentic AI - building on my coding skills and previous knowledge, I wanted to see how easy it was to parse out an exported database (from the museum software Modes, which used a custom Nexus-derived database), to make the content browseable in 21st-Century standards as opposed to the Windows 9x-esque interface of Modes. </p>
       <p class="mt-4 text-slate-600">After a lot of iterative steps, and purely using Google Gemini for help, the website (for internal use only, so far) has actually turned out to be very much a success!</p>
-      <p class="mt-4 text-slate-600">&nbsp;</p>
+      <h2 class="mt-8 text-xl font-bold">Problem and goal</h2>
+      <p class="mt-3 text-sm text-slate-600">The archive material was valuable, but the exported collection was locked into an awkward legacy shape. The goal was to make photographs and metadata easier to browse, search and administer without asking volunteers to keep working through an outdated database interface.</p>
+
+      <h2 class="mt-8 text-xl font-bold">Solution and progress</h2>
+      <p class="mt-3 text-sm text-slate-600">The project parses the export into a web gallery with image listing pages, lightbox-style viewing and back-end configuration. It is currently an internal-use success: the important step was proving that a difficult museum export could be made accessible through a normal browser.</p>
+
+      <h2 class="mt-8 text-xl font-bold">Implementation</h2>
+      <p class="mt-3 text-sm text-slate-600">The implementation uses a Node.js web app, transformed archive data, server-side image handling and a small administrative back end. The development method was iterative: test a parsing approach, inspect the output, improve the browse experience, then add the controls needed to maintain the collection.</p>
+      <div class="mt-3 grid grid-cols-2 gap-2 text-sm sm:grid-cols-4">
+        <div class="rounded-lg bg-slate-50 border border-slate-200 px-3 py-2 text-center font-semibold text-slate-700">Node.js</div>
+        <div class="rounded-lg bg-slate-50 border border-slate-200 px-3 py-2 text-center font-semibold text-slate-700">Archive import</div>
+        <div class="rounded-lg bg-slate-50 border border-slate-200 px-3 py-2 text-center font-semibold text-slate-700">Image gallery</div>
+        <div class="rounded-lg bg-slate-50 border border-slate-200 px-3 py-2 text-center font-semibold text-slate-700">Admin UI</div>
+      </div>
       <p><img src="../images/cnam0-gemini.png" width="1113" height="938" alt="Google Gemini and its programming skills"><br>
       Google Gemini and its programming skills</p>
       <p><img src="../images/cnam3-gallery.png" width="1106" height="938" alt="Gallery listing page"><br>

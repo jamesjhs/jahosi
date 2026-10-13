@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="TLSCheckin is a self-hosted TypeScript status checker for quick private check-ins, follower visibility, Turnstile protection, SQLCipher storage, and admin management.">
+  <meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1">
+  <link rel="canonical" href="https://jahosi.co.uk/portfolio/tlscheckin.html">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="TLSCheckin | Jahosi Portfolio">
+  <meta property="og:description" content="A small self-hosted status checker with rapid check-ins, encrypted storage, secret links, friend approvals, SMS acknowledgement options, and admin controls.">
+  <meta property="og:url" content="https://jahosi.co.uk/portfolio/tlscheckin.html">
+  <meta property="og:site_name" content="Dr James Rowson Portfolio">
+  <meta property="og:image" content="https://jahosi.co.uk/me.jpg">
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="TLSCheckin | Jahosi Portfolio">
+  <meta name="twitter:description" content="Self-hosted TypeScript status checker with encrypted storage and deliberately fast check-in flow.">
+  <meta name="twitter:image" content="https://jahosi.co.uk/me.jpg">
+  <title>TLSCheckin | Jahosi Portfolio</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&display=swap');
+    body { font-family: "Manrope", sans-serif; }
+  </style>
+</head>
+<body class="min-h-screen text-slate-900" style="background:radial-gradient(900px 380px at 8% -10%,#fee2e2,transparent 55%),radial-gradient(850px 340px at 90% 0%,#e0f2fe,transparent 52%),#f8fafc;">
+  <main class="mx-auto max-w-4xl px-4 py-10 sm:px-6">
+    <a href="../index.html" class="text-sm font-semibold text-sky-700 hover:text-sky-900">&larr; Back to portfolio</a>
+
+    <section class="mt-4 rounded-3xl border border-slate-200 bg-white/90 p-8 shadow-xl backdrop-blur-sm">
+      <p class="text-sm font-semibold uppercase tracking-widest text-rose-600">Project</p>
+      <h1 class="mt-2 text-3xl font-extrabold">TLSCheckin</h1>
+      <p class="mt-1 text-sm text-slate-500">Very quick status checker · TypeScript + Express · SQLCipher · Turnstile · self-hosted</p>
+
+      <p class="mt-5 text-slate-600">TLSCheckin is a deliberately small status checker. Its public flow is designed for moments where speed matters: enter a short check-in code, pass Turnstile when configured, and immediately record that you are OK while showing the latest status for the people you follow.</p>
+
+      <p class="mt-4 text-slate-600">The project solves a practical problem around low-friction reassurance. It avoids building a noisy social network or heavy messaging product. Instead, it focuses on the minimum useful loop: private identities, quick check-ins, follower visibility, secret PIN links, optional acknowledgement SMS and an admin page for managing users and relationships.</p>
+
+      <div class="mt-6 rounded-2xl border border-slate-200 shadow-sm overflow-hidden" aria-hidden="true">
+        <div class="grid md:grid-cols-2">
+          <div class="p-5 text-white" style="background:linear-gradient(145deg,#881337,#0f172a);">
+            <p class="text-xs font-semibold uppercase tracking-[0.16em] text-rose-100">Check-in flow</p>
+            <ol class="mt-3 space-y-2 text-sm text-rose-50">
+              <li><span class="font-bold text-rose-200">1.</span> User submits today's date code plus their identity</li>
+              <li><span class="font-bold text-rose-200">2.</span> Server verifies Turnstile and the local-time secret</li>
+              <li><span class="font-bold text-rose-200">3.</span> Status, audit trail and session are updated</li>
+              <li><span class="font-bold text-rose-200">4.</span> The landing page shows followed users and quick account options</li>
+            </ol>
+          </div>
+          <div class="p-5 bg-slate-50">
+            <p class="text-xs font-semibold uppercase tracking-[0.16em] text-slate-500">Product stance</p>
+            <div class="mt-3 space-y-3">
+              <div class="rounded-lg border border-slate-200 bg-white p-3">
+                <p class="text-xs text-slate-500">Focus</p>
+                <p class="mt-1 text-xl font-extrabold text-slate-900">Fast, quiet, private</p>
+              </div>
+              <div class="rounded-lg border border-rose-200 bg-rose-50 p-3">
+                <p class="text-xs text-rose-700">Storage</p>
+                <p class="mt-1 text-sm font-semibold text-rose-950">Encrypted local database with bcrypt-hashed passwords and PINs.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <h2 class="mt-8 text-xl font-bold">What it does</h2>
+      <ul class="mt-3 space-y-1 text-sm text-slate-600 list-disc list-inside">
+        <li>Records public check-ins using a date-based code or a generated secret link plus PIN.</li>
+        <li>Shows each user the latest status of approved followed users.</li>
+        <li>Supports friend requests, follower revocation, one-read personal messages and custom public-login passwords.</li>
+        <li>Stores SMS gateway credentials in the encrypted database and can send acknowledgement messages where configured.</li>
+        <li>Provides an admin interface for users, follow relationships, SMS presets, credentials, password changes and audit events.</li>
+      </ul>
+
+      <h2 class="mt-8 text-xl font-bold">Technologies implemented</h2>
+      <p class="mt-3 text-sm text-slate-600">TLSCheckin is a Node.js TypeScript application with Express 5, SQLCipher through `better-sqlite3-multiple-ciphers`, bcrypt, express-session, Cloudflare Turnstile verification, plain HTML/JavaScript pages, Docker/Compose files, Debian/PM2 deployment notes and a local-time rule for app-visible dates.</p>
+
+      <div class="mt-3 grid gap-2 text-sm sm:grid-cols-2 lg:grid-cols-4">
+        <div class="rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-center font-semibold text-slate-700">TypeScript</div>
+        <div class="rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-center font-semibold text-slate-700">Express 5</div>
+        <div class="rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-center font-semibold text-slate-700">SQLCipher</div>
+        <div class="rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-center font-semibold text-slate-700">Turnstile</div>
+      </div>
+
+      <h2 class="mt-8 text-xl font-bold">Live status</h2>
+      <p class="mt-3 text-sm text-slate-600">The repository is public. The app is designed for private/self-hosted deployment, so this portfolio page links to the source rather than exposing a live check-in instance.</p>
+
+      <div class="mt-8 flex flex-wrap gap-3">
+        <a href="https://github.com/jamesjhs/TLSCheckin" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 rounded-lg bg-rose-700 px-4 py-2 text-sm font-semibold text-white hover:bg-rose-800">GitHub repo &rarr;</a>
+        <a href="../index.html" class="inline-flex items-center gap-2 rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-semibold text-slate-700 hover:border-slate-400 hover:text-slate-900">Back to portfolio</a>
+      </div>
+    </section>
+  </main>
+</body>
+</html>

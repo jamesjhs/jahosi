@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Blender5QA is a plain-English Blender 5.0 Q&A tool using official Blender sources, workflow comparison guidance, and accessibility-aware chat.">
+  <meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1">
+  <link rel="canonical" href="https://jahosi.co.uk/portfolio/blender5qa.html">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Blender5QA | Jahosi Portfolio">
+  <meta property="og:description" content="A source-guided Blender 5.0 learning assistant for modelling, Geometry Nodes, shading, rendering, animation, rigging, troubleshooting, and Python/API basics.">
+  <meta property="og:url" content="https://jahosi.co.uk/portfolio/blender5qa.html">
+  <meta property="og:site_name" content="Dr James Rowson Portfolio">
+  <meta property="og:image" content="https://jahosi.co.uk/me.jpg">
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="Blender5QA | Jahosi Portfolio">
+  <meta name="twitter:description" content="Plain-English Blender 5.0 Q&A using constrained official sources and workflow comparison guidance.">
+  <meta name="twitter:image" content="https://jahosi.co.uk/me.jpg">
+  <title>Blender5QA | Jahosi Portfolio</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&display=swap');
+    body { font-family: "Manrope", sans-serif; }
+  </style>
+</head>
+<body class="min-h-screen text-slate-900" style="background:radial-gradient(900px 380px at 8% -10%,#ddd6fe,transparent 55%),radial-gradient(850px 340px at 90% 0%,#fde68a,transparent 52%),#f8fafc;">
+  <main class="mx-auto max-w-4xl px-4 py-10 sm:px-6">
+    <a href="../index.html" class="text-sm font-semibold text-sky-700 hover:text-sky-900">&larr; Back to portfolio</a>
+
+    <section class="mt-4 rounded-3xl border border-slate-200 bg-white/90 p-8 shadow-xl backdrop-blur-sm">
+      <p class="text-sm font-semibold uppercase tracking-widest text-violet-600">Project</p>
+      <h1 class="mt-2 text-3xl font-extrabold">Blender5QA</h1>
+      <p class="mt-1 text-sm text-slate-500">Blender 5.0 tutorial Q&A · official-source guided · Node/Express + static UI + constrained AI workflow</p>
+
+      <p class="mt-5 text-slate-600">Blender5QA extends the BlanderQA idea to Blender 5.0. It is built for learners who are trying to make sense of a real Blender task while the application, the manual, and the available workflow choices all feel a little too broad at once.</p>
+
+      <p class="mt-4 text-slate-600">The problem it solves is not simply "answer a Blender question". It helps turn short, search-style prompts into clearer learning routes: what official topic to check, which workflow family might fit, and where version-sensitive claims need to be treated carefully.</p>
+
+      <div class="mt-6 rounded-2xl border border-slate-200 shadow-sm overflow-hidden" aria-hidden="true">
+        <div class="grid md:grid-cols-2">
+          <div class="p-5 text-white" style="background:linear-gradient(145deg,#2e1065,#7c3aed);">
+            <p class="text-xs font-semibold uppercase tracking-[0.16em] text-violet-100">Core interaction</p>
+            <ol class="mt-3 space-y-2 text-sm text-violet-50">
+              <li><span class="font-bold text-violet-200">1.</span> Ask a Blender 5.0 workflow or learning question</li>
+              <li><span class="font-bold text-violet-200">2.</span> Search official resources by topic when needed</li>
+              <li><span class="font-bold text-violet-200">3.</span> Compare likely approaches instead of receiving one brittle answer</li>
+              <li><span class="font-bold text-violet-200">4.</span> Check the cited Blender source before relying on the result</li>
+            </ol>
+          </div>
+          <div class="p-5 bg-slate-50">
+            <p class="text-xs font-semibold uppercase tracking-[0.16em] text-slate-500">Interface snapshot</p>
+            <div class="mt-3 space-y-3">
+              <div class="rounded-lg border border-slate-200 bg-white p-3">
+                <p class="text-xs text-slate-500">Focus</p>
+                <p class="mt-1 text-xl font-extrabold text-slate-900">Ask, compare, verify</p>
+              </div>
+              <div class="rounded-lg border border-violet-200 bg-violet-50 p-3">
+                <p class="text-xs text-violet-700">Guardrail</p>
+                <p class="mt-1 text-sm font-semibold text-violet-950">Official Blender 5.0 manual, release, support and API sources.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <h2 class="mt-8 text-xl font-bold">What it does</h2>
+      <ul class="mt-3 space-y-1 text-sm text-slate-600 list-disc list-inside">
+        <li>Explains Blender 5.0 concepts in plain English while pointing back to official sources.</li>
+        <li>Helps users compare direct modelling, modifiers, Geometry Nodes, sculpting and Python/API routes.</li>
+        <li>Supports topic lookup for modelling, shading, rendering, animation, rigging, troubleshooting and add-on development.</li>
+        <li>Keeps OpenAI calls server-side and passes only bounded chat context from the browser.</li>
+        <li>Includes local session history, display preferences, official resource links, policy pages and privacy warnings.</li>
+      </ul>
+
+      <h2 class="mt-8 text-xl font-bold">Technologies implemented</h2>
+      <p class="mt-3 text-sm text-slate-600">Blender5QA lives inside the Jahosi Node/Express portfolio server. The front end is a static HTML/CSS/JavaScript page, while the server owns chat routing, resource lookup, rate limiting, Turnstile-aware session handling, prompt construction and the official Blender source list.</p>
+
+      <div class="mt-3 grid gap-2 text-sm sm:grid-cols-2 lg:grid-cols-4">
+        <div class="rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-center font-semibold text-slate-700">Node.js</div>
+        <div class="rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-center font-semibold text-slate-700">Express</div>
+        <div class="rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-center font-semibold text-slate-700">OpenAI API</div>
+        <div class="rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-center font-semibold text-slate-700">Turnstile-ready</div>
+      </div>
+
+      <h2 class="mt-8 text-xl font-bold">Why it belongs here</h2>
+      <p class="mt-3 text-sm text-slate-600">Like BlanderQA, this project is a practical information tool rather than a generic chatbot. The useful part is the structure around the model: source discipline, version focus, accessible controls, starter prompts, official resource lookup and a clear reminder that production workflows should be tested in the user's own file.</p>
+
+      <div class="mt-8 flex flex-wrap gap-3">
+        <a href="/blender5QA/" class="inline-flex items-center gap-2 rounded-lg bg-violet-700 px-4 py-2 text-sm font-semibold text-white hover:bg-violet-800">Open Blender5QA &rarr;</a>
+        <a href="https://github.com/jamesjhs/jahosi" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-semibold text-slate-700 hover:border-slate-400 hover:text-slate-900">GitHub repo</a>
+        <a href="/blender5QA/policy.html" class="inline-flex items-center gap-2 rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-semibold text-slate-700 hover:border-slate-400 hover:text-slate-900">Policy</a>
+      </div>
+    </section>
+  </main>
+</body>
+</html>

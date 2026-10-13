@@ -29,7 +29,21 @@
     <section class="mt-4 rounded-3xl border border-slate-200 bg-white p-8 shadow-sm">
       <h1 class="text-3xl font-extrabold">Hovercraft Site</h1>
       <p class="mt-4 text-slate-600">Most people on their 16th birthdays don't get given a domain name and a web-hosting package, but I was one of the lucky ones who did... I'd until then had a website hosted on my father's then-domain, www.newslettersuk.com, basically as a static information page about the SRN4 hovercraft. I had developed it from there as a sort of web blog (though 'blog' didn't exist back then), but then as information was added either by me from experiences or by others from getting in touch with me, it rather ballooned into an information site with photo gallery. </p>
-      <p class="mt-4 text-slate-600">Now, it spans decades of hovercraft history, of both hoverports, and past and present craft, and is viewed regularly across the world, with donations from single images all the way up to over 4000 images from The Hovercraft Museum's digital collection. It is being grown and donated to even to this day. It has had many renditions, from basic HTML, to a Microsoft FrontPage Express website, through to a static .html offering using DreamWeaver, and after the 4000+ images were donated, a PHP/SQL backbone for multiple years until now it sits in its present state using a node.JS and sqlite3 back-end serving up content via a custom-made CMS with help from, let's face it, the game-changer that is Microsoft's GitHub Copilot. </p>
+      <p class="mt-4 text-slate-600">Now, it spans decades of hovercraft history, of both hoverports, and past and present craft, and is viewed regularly across the world, with donations from single images all the way up to over 4000 images from The Hovercraft Museum's digital collection. It is being grown and donated to even to this day. It has had many renditions, from basic HTML, to a Microsoft FrontPage Express website, through to a static .html offering using DreamWeaver, and after the 4000+ images were donated, a PHP/SQL backbone for multiple years until now it sits in its present state using a Node.js and SQLite back-end serving up content via a custom-made CMS with help from, let's face it, the game-changer that is Microsoft's GitHub Copilot. </p>
+      <h2 class="mt-8 text-xl font-bold">Problem and goal</h2>
+      <p class="mt-3 text-sm text-slate-600">The site exists because hovercraft history is scattered: old route information, personal photographs, museum material, craft records and enthusiasts' memories can easily disappear into private hard drives or obsolete websites. The goal is to keep that material browsable, searchable and understandable for people who arrive with very different levels of knowledge.</p>
+
+      <h2 class="mt-8 text-xl font-bold">Solution and progress</h2>
+      <p class="mt-3 text-sm text-slate-600">The project has grown from a teenage static page into a long-running public archive with a custom content-management back end. Its progress is visible in the screenshots below: each rebuild solved the next practical bottleneck, from hand-authored pages, to photo galleries, to database-backed archive management after large museum image donations.</p>
+
+      <h2 class="mt-8 text-xl font-bold">Implementation</h2>
+      <p class="mt-3 text-sm text-slate-600">The current version uses a Node.js and SQLite back end, Tailwind-styled public pages, and a custom CMS for managing large hovercraft image and history collections. Earlier versions are deliberately preserved here because the development path is part of the project: the site is both a technical archive and a record of learning by rebuilding.</p>
+      <div class="mt-3 grid grid-cols-2 gap-2 text-sm sm:grid-cols-4">
+        <div class="rounded-lg bg-slate-50 border border-slate-200 px-3 py-2 text-center font-semibold text-slate-700">Node.js</div>
+        <div class="rounded-lg bg-slate-50 border border-slate-200 px-3 py-2 text-center font-semibold text-slate-700">SQLite</div>
+        <div class="rounded-lg bg-slate-50 border border-slate-200 px-3 py-2 text-center font-semibold text-slate-700">Custom CMS</div>
+        <div class="rounded-lg bg-slate-50 border border-slate-200 px-3 py-2 text-center font-semibold text-slate-700">Archive UI</div>
+      </div>
       <p class="mt-4 text-slate-600"><img src="../images/JHS-nlUK-1.png" width="849" height="692" alt="James' Hovercraft Site hosted by NewslettersUK.com in 1999"><br>
         Seen (via the Wayback Machine) as hosted by NewslettersUK.com in 1999
       - apologies for the now-broken image links.</p>
@@ -42,8 +56,8 @@
       James' Hovercraft Site in 2007</p>
       <p class="mt-4 text-slate-600"><img src="../images/JHS-2012.png" width="1227" height="1079" alt="The website after the php/sql upgrade in 2012"> <br>
       The website after the php/sql upgrade in 2012</p>
-      <p class="mt-4 text-slate-600"><img src="../images/JHS-2026.png" width="1227" height="1079" alt="The most current offering, 2026, using Tailwind CSS styling and node.JS/sqlite3 back-end with a custom CMS"><br>
-      The most current offering, 2026, using Tailwind CSS styling and node.JS/sqlite3 back-end with a custom CMS</p>
+      <p class="mt-4 text-slate-600"><img src="../images/JHS-2026.png" width="1227" height="1079" alt="The most current offering, 2026, using Tailwind CSS styling and Node.js/SQLite back-end with a custom CMS"><br>
+      The most current offering, 2026, using Tailwind CSS styling and Node.js/SQLite back-end with a custom CMS</p>
       <p class="mt-4 text-slate-600"><img src="../images/JHS-2026 CMS.png" width="1227" height="1079" alt="The CMS back-end to the website, as of 2026"><br>
       The CMS back-end to the website, as of 2026      </p>
       <p class="mt-4 text-slate-600">I hope you have a look around and enjoy the site! </p>

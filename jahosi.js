@@ -50,6 +50,7 @@ if (missingEnv.length) {
 const CONTACT_PAGE_PATH = normalizeContactPagePath(process.env.CONTACT_PAGE_PATH);
 const CONTACT_TO_EMAIL = process.env.CONTACT_TO_EMAIL;
 const CONTACT_FROM_EMAIL = process.env.CONTACT_FROM_EMAIL;
+const CONTACT_HUMAN_CHECK_TTL_MS = 30 * 60 * 1000;
 const SPLASH_OPENAI_API_KEY = process.env.SPLASH_OPENAI_API_KEY || "";
 const SPLASH_OPENAI_BASE_URL = (process.env.SPLASH_OPENAI_BASE_URL || "https://api.openai.com/v1").replace(
   /\/+$/,
@@ -101,6 +102,11 @@ const SITEMAP_PATHS = [
   "/portfolio/qglimpse.html",
   "/portfolio/pingme-help.html",
   "/portfolio/socialqa.html",
+  "/portfolio/blanderqa.html",
+  "/portfolio/blender5qa.html",
+  "/portfolio/unityqa.html",
+  "/portfolio/jahosi-api.html",
+  "/portfolio/tlscheckin.html",
   "/portfolio/splash.html",
   "/splash/",
   "/splash/help.htm",
@@ -111,6 +117,8 @@ const SITEMAP_PATHS = [
   "/teachMe/policy.html",
   "/blender5QA/",
   "/blender5QA/policy.html",
+  "/unityQA/",
+  "/unityQA/policy.html",
 ];
 
 const MAX_REQUESTS_PER_WINDOW = 5;
@@ -2522,6 +2530,58 @@ function isContactTurnstileReady() {
   return isTurnstileEnabled();
 }
 
+function signContactHumanCheck(payload) {
+  return crypto.createHmac("sha256", TURNSTILE_SECRET_KEY).update(payload).digest("base64url");
+}
+
+function createContactHumanCheck() {
+  const a = crypto.randomInt(1, 10);
+  const b = crypto.randomInt(1, 10);
+  const payload = Buffer.from(
+    JSON.stringify({
+      a,
+      b,
+      ts: Date.now(),
+      nonce: crypto.randomBytes(12).toString("base64url"),
+    })
+  ).toString("base64url");
+  return {
+    a,
+    b,
+    answer: String(a + b),
+    token: `${payload}.${signContactHumanCheck(payload)}`,
+  };
+}
+
+function verifyContactHumanCheck(token, answer) {
+  const [payload, signature] = String(token || "").split(".");
+  if (!payload || !signature) return false;
+
+  const expectedSignature = signContactHumanCheck(payload);
+  const signatureBuffer = Buffer.from(signature);
+  const expectedBuffer = Buffer.from(expectedSignature);
+  if (signatureBuffer.length !== expectedBuffer.length || !crypto.timingSafeEqual(signatureBuffer, expectedBuffer)) {
+    return false;
+  }
+
+  let challenge;
+  try {
+    challenge = JSON.parse(Buffer.from(payload, "base64url").toString("utf8"));
+  } catch {
+    return false;
+  }
+
+  const a = Number(challenge.a);
+  const b = Number(challenge.b);
+  const ts = Number(challenge.ts);
+  if (!Number.isInteger(a) || !Number.isInteger(b) || a < 1 || a > 9 || b < 1 || b > 9) return false;
+  if (!Number.isFinite(ts) || Date.now() - ts > CONTACT_HUMAN_CHECK_TTL_MS || ts - Date.now() > 60 * 1000) {
+    return false;
+  }
+
+  return String(answer || "").trim() === String(a + b);
+}
+
 function verifyTurnstileToken(token, remoteip) {
   if (!isTurnstileEnabled()) return Promise.resolve(true);
   if (!token) return Promise.resolve(false);
@@ -2770,6 +2830,7 @@ function expandBlanderQaRefusal(reply, message) {
 }
 
 function renderContactPage({ status, error, debug }) {
+  const humanCheck = createContactHumanCheck();
   const statusMessage =
     status === "sent"
       ? '<div class="rounded-lg border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-800">Thanks. Your message has been sent.</div>'
@@ -2794,33 +2855,45 @@ function renderContactPage({ status, error, debug }) {
     ? `<script>
   (function () {
     const siteKey = ${JSON.stringify(TURNSTILE_SITE_KEY)};
+    const humanCheckAnswer = ${JSON.stringify(humanCheck.answer)};
+    const humanCheckInput = document.getElementById("contact-human-check");
     const submitButton = document.getElementById("contact-submit");
+    let turnstilePassed = false;
     let renderAttempts = 0;
     const maxRenderAttempts = 40;
     const renderRetryDelayMs = 250;
-    const setCanSubmit = (canSubmit) => {
+    const isHumanCheckPassed = () => humanCheckInput && humanCheckInput.value.trim() === humanCheckAnswer;
+    const updateSubmitState = () => {
       if (!submitButton) return;
+      const canSubmit = turnstilePassed && isHumanCheckPassed();
       submitButton.disabled = !canSubmit;
       submitButton.setAttribute("aria-disabled", canSubmit ? "false" : "true");
     };
+    if (humanCheckInput) {
+      humanCheckInput.addEventListener("input", updateSubmitState);
+    }
     const renderTurnstile = () => {
       const container = document.getElementById("contact-turnstile");
       const note = document.getElementById("contact-turnstile-note");
       if (!container || container.dataset.rendered === "1") return;
       if (!window.turnstile || typeof window.turnstile.render !== "function") return;
-      setCanSubmit(false);
+      turnstilePassed = false;
+      updateSubmitState();
       window.turnstile.render(container, {
         sitekey: siteKey,
         callback() {
+          turnstilePassed = true;
           if (note) note.textContent = "Verification complete.";
-          setCanSubmit(true);
+          updateSubmitState();
         },
         "expired-callback"() {
+          turnstilePassed = false;
           if (note) note.textContent = "Verification expired. Please complete it again.";
-          setCanSubmit(false);
+          updateSubmitState();
         },
         "error-callback"(code) {
-          setCanSubmit(false);
+          turnstilePassed = false;
+          updateSubmitState();
           if (!note) return;
           note.textContent =
             "Verification could not load (code " +
@@ -2830,6 +2903,7 @@ function renderContactPage({ status, error, debug }) {
       });
       container.dataset.rendered = "1";
     };
+    updateSubmitState();
     const renderWithRetry = () => {
       renderTurnstile();
       const container = document.getElementById("contact-turnstile");
@@ -2873,6 +2947,7 @@ function renderContactPage({ status, error, debug }) {
       <div class="mt-4 space-y-3">${statusMessage}${errorMessage}</div>
       <form class="mt-6 space-y-4" method="post" action="/api/contact/submit" autocomplete="off">
         <input type="hidden" name="submittedAt" value="${Date.now()}">
+        <input type="hidden" name="humanCheckToken" value="${escapeHtml(humanCheck.token)}">
         <div class="hidden" aria-hidden="true">
           <label>Website <input type="text" name="website" tabindex="-1" autocomplete="off"></label>
         </div>
@@ -2887,6 +2962,10 @@ function renderContactPage({ status, error, debug }) {
         <label class="block">
           <span class="mb-1 block text-sm font-semibold">Message</span>
           <textarea class="min-h-40 w-full rounded-lg border border-slate-300 px-3 py-2" name="message" maxlength="5000" required></textarea>
+        </label>
+        <label class="block">
+          <span class="mb-1 block text-sm font-semibold">Human check: What is ${humanCheck.a} + ${humanCheck.b}?</span>
+          <input id="contact-human-check" class="w-full rounded-lg border border-slate-300 px-3 py-2" type="text" name="humanCheck" inputmode="numeric" autocomplete="off" required>
         </label>
         ${captchaUi}
         <div class="flex items-center gap-3">
@@ -2922,7 +3001,7 @@ app.post("/api/contact/submit", contactSubmitRateLimit, async (req, res) => {
   const redirectWithStatus = (code) =>
     res.redirect(`${CONTACT_PAGE_PATH}?status=${encodeURIComponent(code)}`);
 
-  const { name, email, message, website, submittedAt } = req.body;
+  const { name, email, message, website, submittedAt, humanCheck, humanCheckToken } = req.body;
   const filledAt = Number(submittedAt);
 
   if (website) {
@@ -2937,6 +3016,7 @@ app.post("/api/contact/submit", contactSubmitRateLimit, async (req, res) => {
     !name ||
     !email ||
     !message ||
+    !verifyContactHumanCheck(humanCheckToken, humanCheck) ||
     name.length > 120 ||
     email.length > 254 ||
     message.length > 5000 ||
