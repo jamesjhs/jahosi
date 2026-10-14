@@ -56,7 +56,7 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Prepare Package, Domain, and Release Metadata
         run: |
@@ -88,7 +88,7 @@ jobs:
           SITE_URL="${{ vars.SITE_URL }}"
           test -n "$SITE_URL"
 
-          SITE_HOSTNAME="$(node -e "console.log(new URL(process.argv[1]).hostname)" "$SITE_URL")"
+          SITE_HOSTNAME="$(node -e "console.log(new URL(process.argv[1]).hostname.toLowerCase().replace(/[.]$/, ''))" "$SITE_URL")"
           JAHOSI_TRAEFIK_RULE="Host(\`${SITE_HOSTNAME}\`)"
 
           IS_DEPLOY_REF=false
@@ -97,19 +97,19 @@ jobs:
           if [ "$GITHUB_REF_TYPE" = "branch" ] && [ "$GITHUB_REF_NAME" = "main" ]; then
             IS_DEPLOY_REF=true
             if [ "$SITE_HOSTNAME" != "www.jahosi.co.uk" ]; then
-              echo "::error::The production SITE_URL must be https://www.jahosi.co.uk."
+              echo "::error::The production SITE_URL must be https://www.jahosi.co.uk; got '${SITE_URL}' with hostname '${SITE_HOSTNAME}'."
               exit 1
             fi
           elif [ "$GITHUB_REF_TYPE" = "branch" ] && [ "$GITHUB_REF_NAME" = "testing" ]; then
             IS_DEPLOY_REF=true
             if [ "$SITE_HOSTNAME" != "www-test.jahosi.co.uk" ]; then
-              echo "::error::The testing SITE_URL must be https://www-test.jahosi.co.uk."
+              echo "::error::The testing SITE_URL must be https://www-test.jahosi.co.uk; got '${SITE_URL}' with hostname '${SITE_HOSTNAME}'."
               exit 1
             fi
           elif [ "$GITHUB_REF_TYPE" = "tag" ] && [[ "$GITHUB_REF_NAME" == v* ]]; then
             IS_RELEASE_TAG=true
             if [ "$SITE_HOSTNAME" != "www.jahosi.co.uk" ]; then
-              echo "::error::Release tags use the production environment, so SITE_URL must be https://www.jahosi.co.uk."
+              echo "::error::Release tags use the production environment, so SITE_URL must be https://www.jahosi.co.uk; got '${SITE_URL}' with hostname '${SITE_HOSTNAME}'."
               exit 1
             fi
           else
@@ -163,10 +163,10 @@ jobs:
           } >> "$GITHUB_ENV"
 
       - name: Set Up Docker Buildx
-        uses: docker/setup-buildx-action@v3
+        uses: docker/setup-buildx-action@v4
 
       - name: Log In to GHCR
-        uses: docker/login-action@v3
+        uses: docker/login-action@v4
         with:
           # `ghcr.io` is GitHub Container Registry. This is the Packages feature
           # being used for a product type it is designed for: Docker/OCI images.
@@ -181,7 +181,7 @@ jobs:
 
       - name: Build and Push Package Image
         id: build-image
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@v7
         with:
           context: .
 
