@@ -433,6 +433,11 @@ jobs:
         env:
           TUNNEL_SERVICE_TOKEN_ID: ${{ secrets.CF_ACCESS_CLIENT_ID }}
           TUNNEL_SERVICE_TOKEN_SECRET: ${{ secrets.CF_ACCESS_CLIENT_SECRET }}
+          # cloudflared reads these exact names when authenticating Access SSH
+          # with a service token. Without them it falls back to browser login,
+          # which cannot work inside a GitHub-hosted runner.
+          CF_ACCESS_CLIENT_ID: ${{ secrets.CF_ACCESS_CLIENT_ID }}
+          CF_ACCESS_CLIENT_SECRET: ${{ secrets.CF_ACCESS_CLIENT_SECRET }}
           # Optional: leave these unset if the GHCR image is public or the Debian
           # host is already logged in to GHCR. The remote script below only runs
           # `docker login ghcr.io` when both values are present.
