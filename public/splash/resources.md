@@ -26,9 +26,9 @@ Lovibond (2026) Pool Water Control. Available at: https://www.lovibond.com/usa-e
 
 ## Local app references
 
-Jahosi (2026) Splash appendices: formulas and validated reference sources. Available at: https://jahosi.co.uk/splash/appendices.htm (Accessed: 20 September 2026).
+Jahosi (2026) Splash appendices: formulas and validated reference sources. Available at: /splash/appendices.htm (Accessed: 20 September 2026).
 
-Jahosi (2026) Splash app README. Available at: https://jahosi.co.uk/splash/README.md (Accessed: 20 September 2026).
+Jahosi (2026) Splash app README. Available at: /splash/README.md (Accessed: 20 September 2026).
 
 ## Chemistry bot safety boundaries
 

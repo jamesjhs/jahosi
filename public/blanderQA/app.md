@@ -165,11 +165,11 @@ Suggested config response:
   },
   "sourceList": {
     "lastReviewed": "2026-09-20",
-    "url": "https://jahosi.co.uk/blanderQA/resources.md"
+    "url": "/blanderQA/resources.md"
   },
   "policy": {
-    "privacyUrl": "https://jahosi.co.uk/blanderQA/policy.html",
-    "responsibleUseUrl": "https://jahosi.co.uk/blanderQA/policy.html"
+    "privacyUrl": "/blanderQA/policy.html",
+    "responsibleUseUrl": "/blanderQA/policy.html"
   }
 }
 ```

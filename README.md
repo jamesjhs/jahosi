@@ -11,6 +11,70 @@ npm start
 
 Open `http://localhost:3000`.
 
+## Docker deployment
+
+This repo is containerised for the same Traefik + Cloudflare Tunnel pattern as `qglimpse`.
+Pushes to `main` deploy to the GitHub `production` environment and serve
+`www.jahosi.co.uk`. Pushes to `testing` deploy to the GitHub `testing`
+environment and serve `www-test.jahosi.co.uk`.
+Pushing a version tag such as `v1.4.0` publishes a versioned GHCR package and
+creates a GitHub Release; it does not deploy by itself.
+
+The server must already have an external Docker network named `proxy`, with
+Traefik attached to it. The workflow builds and pushes a GHCR image, copies
+`docker-compose.yml` and a generated `.env` file over the Cloudflare SSH tunnel,
+then runs `docker compose up -d`.
+
+Production is intentionally served by the `www.jahosi.co.uk` endpoint. If the
+apex domain should also work, handle it at Cloudflare with a redirect from
+`https://jahosi.co.uk/*` to `https://www.jahosi.co.uk/${1}` instead of adding the
+apex host to the application container route.
+
+Required GitHub repository/environment secrets used by deployment:
+
+- Repository secrets: `SSH_PRIVATE_KEY`, `CF_ACCESS_CLIENT_ID`,
+  `CF_ACCESS_CLIENT_SECRET`
+- Environment secrets: `SMTP_USER`, `SMTP_PASS`, `TURNSTILE_SECRET_KEY`
+- Optional repository secrets: `GHCR_USERNAME`, `GHCR_TOKEN` if the Debian host
+  must authenticate to pull private GHCR images
+- Optional environment secrets: `SPLASH_OPENAI_API_KEY`,
+  `SPLASH_CF_ACCESS_CLIENT_ID`, `SPLASH_CF_ACCESS_CLIENT_SECRET`
+
+Required GitHub environment variables:
+
+- `SITE_URL`: `https://www.jahosi.co.uk` in `production`,
+  `https://www-test.jahosi.co.uk` in `testing`
+- `CONTACT_TO_EMAIL`
+- `CONTACT_FROM_EMAIL`
+- `SMTP_HOST`
+- `TURNSTILE_SITE_KEY`
+
+Recommended GitHub environment variables:
+
+- `PORT=3000`
+- `HOST=0.0.0.0`
+- `NODE_ENV=production`
+- `TRUST_PROXY=true`
+- `SERVICE_NAME=jahosi`
+- `APP_TIMEZONE=Europe/London`
+- `SMTP_PORT=587`
+- `SMTP_SECURE=false`
+- `SPLASH_OPENAI_BASE_URL=https://api.openai.com/v1`
+- `ANALYTICS_ENABLED=true`
+- `ANALYTICS_DB_PATH=./data/jahosi.sqlite`
+- `ANALYTICS_RESPECT_DNT=true`
+
+Keep these values in environment variables rather than secrets because they are
+non-sensitive runtime configuration. Keep credentials, API keys, service tokens,
+SMTP passwords, and Turnstile secrets in secrets.
+
+To create a production release marker after the desired commit is on `main`:
+
+```bash
+git tag v1.4.0
+git push origin v1.4.0
+```
+
 ## Private contact page
 
 The app includes a private contact page served at the current `yymmdd` path.

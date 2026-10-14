@@ -431,8 +431,8 @@ Response:
       "lastReviewed": "2026-09-18"
     },
     "policy": {
-      "privacyUrl": "https://jahosi.co.uk/teachMe/policy.html",
-      "resourcesUrl": "https://jahosi.co.uk/teachMe/resources.md"
+      "privacyUrl": "/teachMe/policy.html",
+      "resourcesUrl": "/teachMe/resources.md"
     }
   }
 }
@@ -779,7 +779,7 @@ Required:
 NODE_ENV=production
 PORT=4001
 PUBLIC_API_BASE_URL=https://api.jahosi.co.uk
-WEB_ORIGIN=https://jahosi.co.uk
+WEB_ORIGIN=https://www.jahosi.co.uk
 OPENAI_API_KEY=
 OPENAI_BASE_URL=https://api.openai.com/v1
 TEACHME_OPENAI_MODEL=
@@ -817,8 +817,8 @@ The API server can temporarily support `SPLASH_OPENAI_API_KEY` as a fallback whi
 Allow:
 
 ```text
-https://jahosi.co.uk
 https://www.jahosi.co.uk
+https://www-test.jahosi.co.uk
 ```
 
 Possibly allow staging:

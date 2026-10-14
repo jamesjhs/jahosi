@@ -557,11 +557,11 @@ Response:
   },
   "sourceList": {
     "lastReviewed": "2026-09-18",
-    "url": "https://jahosi.co.uk/teachMe/resources.md"
+    "url": "/teachMe/resources.md"
   },
   "policy": {
-    "privacyUrl": "https://jahosi.co.uk/teachMe/policy.html",
-    "responsibleUseUrl": "https://jahosi.co.uk/teachMe/policy.html"
+    "privacyUrl": "/teachMe/policy.html",
+    "responsibleUseUrl": "/teachMe/policy.html"
   }
 }
 ```

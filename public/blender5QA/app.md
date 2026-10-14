@@ -165,11 +165,11 @@ Suggested config response:
   },
   "sourceList": {
     "lastReviewed": "2026-09-20",
-    "url": "https://jahosi.co.uk/blender5QA/resources.md"
+    "url": "/blender5QA/resources.md"
   },
   "policy": {
-    "privacyUrl": "https://jahosi.co.uk/blender5QA/policy.html",
-    "responsibleUseUrl": "https://jahosi.co.uk/blender5QA/policy.html"
+    "privacyUrl": "/blender5QA/policy.html",
+    "responsibleUseUrl": "/blender5QA/policy.html"
   }
 }
 ```

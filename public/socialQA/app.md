@@ -139,11 +139,11 @@ Suggested config response:
   },
   "sourceList": {
     "lastReviewed": "2026-09-20",
-    "url": "https://jahosi.co.uk/socialQA/resources.md"
+    "url": "/socialQA/resources.md"
   },
   "policy": {
-    "privacyUrl": "https://jahosi.co.uk/socialQA/policy.html",
-    "responsibleUseUrl": "https://jahosi.co.uk/socialQA/policy.html"
+    "privacyUrl": "/socialQA/policy.html",
+    "responsibleUseUrl": "/socialQA/policy.html"
   }
 }
 ```

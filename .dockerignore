@@ -1,0 +1,9 @@
+node_modules
+data
+persistent-data-*
+.git
+.github
+.vscode
+.env
+.env.*
+npm-debug.log*

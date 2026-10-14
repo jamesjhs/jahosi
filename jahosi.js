@@ -11,6 +11,11 @@ const fs = require("fs");
 
 const app = express();
 const port = process.env.PORT || 3000;
+const host = process.env.HOST || "127.0.0.1";
+const trustProxy = normalizeEnvString(process.env.TRUST_PROXY);
+if (trustProxy) {
+  app.set("trust proxy", trustProxy === "true" ? 1 : trustProxy);
+}
 
 function normalizeEnvString(value) {
   if (typeof value !== "string") return "";
@@ -51,9 +56,9 @@ const TURNSTILE_SITE_KEY = normalizeEnvString(process.env.TURNSTILE_SITE_KEY);
 const TURNSTILE_SECRET_KEY = normalizeEnvString(process.env.TURNSTILE_SECRET_KEY);
 const CF_ACCESS_CLIENT_ID = process.env["CF-Access-Client-Id"] || "";
 const CF_ACCESS_CLIENT_SECRET = process.env["CF-Access-Client-Secret"] || "";
-const SITE_URL = (process.env.SITE_URL || "https://jahosi.co.uk").replace(/\/+$/, "");
+const SITE_URL = (process.env.SITE_URL || "https://www.jahosi.co.uk").replace(/\/+$/, "");
 const SERVICE_NAME = process.env.SERVICE_NAME || "jahosi";
-const SERVICE_VERSION = process.env.APP_VERSION || packageJson.version;
+const SERVICE_VERSION = packageJson.version;
 const ANALYTICS_ENABLED = process.env.ANALYTICS_ENABLED || "true";
 const ANALYTICS_DB_PATH = process.env.ANALYTICS_DB_PATH || path.join(__dirname, "data", "jahosi.sqlite");
 const SPLASH_OPENAI_HOST = (() => {
@@ -3423,8 +3428,8 @@ app.get("*", (req, res) => {
   res.status(404).send(renderIndexHtml());
 });
 
-app.listen(port, "127.0.0.1", () => {
-  console.log(`Portfolio server running on http://127.0.0.1:${port}`);
+app.listen(port, host, () => {
+  console.log(`Portfolio server running on http://${host}:${port}`);
   console.log(`Private contact page path for local date: ${currentContactPagePath()}`);
   console.log(`Contact submit path for local date: ${currentContactSubmitPath()}`);
   console.log(`App timezone: ${APP_TIMEZONE}`);

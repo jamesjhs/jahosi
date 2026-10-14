@@ -194,11 +194,11 @@ Suggested config response:
   },
   "sourceList": {
     "lastReviewed": "2026-09-20",
-    "url": "https://jahosi.co.uk/splash/resources.md"
+    "url": "/splash/resources.md"
   },
   "policy": {
-    "appendicesUrl": "https://jahosi.co.uk/splash/appendices.htm",
-    "helpUrl": "https://jahosi.co.uk/splash/help.htm"
+    "appendicesUrl": "/splash/appendices.htm",
+    "helpUrl": "/splash/help.htm"
   }
 }
 ```

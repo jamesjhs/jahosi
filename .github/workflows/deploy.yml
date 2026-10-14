@@ -1,0 +1,473 @@
+name: Deploy to Debian
+
+on:
+  push:
+    branches: [ main, testing ]
+    # Tags are the production versioning mechanism.
+    #
+    # Branch pushes answer "what should be running now?"
+    #   - main    -> build package, publish package, deploy production
+    #   - testing -> build package, publish package, deploy testing
+    #
+    # Version tags answer "what immutable production version did we bless?"
+    #   - v1.4.0 -> build package, publish package as v1.4.0, create GitHub Release
+    #
+    # A tag does not deploy by itself here. That keeps "create a historical release"
+    # separate from "change what the server is running". Production deployment still
+    # happens from the main branch, so the live site follows main and Releases become
+    # auditable checkpoints that point at immutable container images.
+    tags: [ "v*" ]
+
+permissions:
+  # `contents: write` is needed by `gh release create`.
+  #
+  # GitHub Releases are repository content: they attach release notes and assets
+  # to a git tag. With only `contents: read`, the workflow could inspect the repo
+  # but would be forbidden from creating or updating a Release.
+  contents: write
+
+  # `packages: write` is needed by `docker/build-push-action` when it pushes to
+  # GitHub Container Registry (`ghcr.io`). GitHub Packages is the registry family;
+  # GHCR is the Docker/OCI image registry inside that family.
+  packages: write
+
+concurrency:
+  # Only cancel runs for the same ref. A new push to testing should not cancel a
+  # production release tag, and a release tag should not cancel a main deployment.
+  group: deploy-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  SSH_HOST: sshjhs.jahosi.co.uk
+  SSH_USER: dockertunnel
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    # Branches use their matching GitHub Environment:
+    #   main    -> production
+    #   testing -> testing
+    #
+    # Tags use production because a `v*` tag is a production version marker and
+    # should use production repository settings for package metadata and port
+    # defaults. The tag path does not copy secrets to the server or deploy.
+    environment: ${{ github.ref_type == 'tag' && 'production' || (github.ref_name == 'main' && 'production' || 'testing') }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Prepare Package, Domain, and Release Metadata
+        run: |
+          set -euo pipefail
+
+          # GitHub gives us:
+          #   GITHUB_REF_TYPE = "branch" or "tag"
+          #   GITHUB_REF_NAME = "main", "testing", or a tag such as "v1.4.0"
+          #   GITHUB_SHA      = the exact commit being built
+          #
+          # `REF_SLUG` is made filesystem/Docker-label friendly. It is used in
+          # deployment paths and Docker container names, so it must avoid weird
+          # characters even if a future branch/tag contains slashes.
+          REF_SLUG="${GITHUB_REF_NAME//[^A-Za-z0-9_.-]/-}"
+
+          # GHCR image names must be lowercase. GitHub repositories can contain
+          # uppercase characters, so `${GITHUB_REPOSITORY,,}` normalises the owner
+          # and repo before composing the package path.
+          IMAGE_REPOSITORY="ghcr.io/${GITHUB_REPOSITORY,,}"
+
+          # Port 3000 is the canonical application port for Jahosi.
+          # It is still read from GitHub Environment variables so production and
+          # testing stay explicit in repository settings, but the fallback is 3000
+          # everywhere: Dockerfile, Compose, and this workflow.
+          APP_PORT="${{ vars.PORT || '3000' }}"
+
+          # SITE_URL comes from the GitHub Environment, not from source control.
+          # It drives both app canonical URLs and the Traefik host rule validation.
+          SITE_URL="${{ vars.SITE_URL }}"
+          test -n "$SITE_URL"
+
+          SITE_HOSTNAME="$(node -e "console.log(new URL(process.argv[1]).hostname)" "$SITE_URL")"
+          JAHOSI_TRAEFIK_RULE="Host(\`${SITE_HOSTNAME}\`)"
+
+          IS_DEPLOY_REF=false
+          IS_RELEASE_TAG=false
+
+          if [ "$GITHUB_REF_TYPE" = "branch" ] && [ "$GITHUB_REF_NAME" = "main" ]; then
+            IS_DEPLOY_REF=true
+            if [ "$SITE_HOSTNAME" != "www.jahosi.co.uk" ]; then
+              echo "::error::The production SITE_URL must be https://www.jahosi.co.uk."
+              exit 1
+            fi
+          elif [ "$GITHUB_REF_TYPE" = "branch" ] && [ "$GITHUB_REF_NAME" = "testing" ]; then
+            IS_DEPLOY_REF=true
+            if [ "$SITE_HOSTNAME" != "www-test.jahosi.co.uk" ]; then
+              echo "::error::The testing SITE_URL must be https://www-test.jahosi.co.uk."
+              exit 1
+            fi
+          elif [ "$GITHUB_REF_TYPE" = "tag" ] && [[ "$GITHUB_REF_NAME" == v* ]]; then
+            IS_RELEASE_TAG=true
+            if [ "$SITE_HOSTNAME" != "www.jahosi.co.uk" ]; then
+              echo "::error::Release tags use the production environment, so SITE_URL must be https://www.jahosi.co.uk."
+              exit 1
+            fi
+          else
+            echo "::error::Unsupported ref: ${GITHUB_REF_TYPE}/${GITHUB_REF_NAME}"
+            exit 1
+          fi
+
+          # Package tags deliberately serve different jobs:
+          #
+          #   ghcr.io/owner/repo:<sha>
+          #     Immutable build identifier. This is what deployment writes into
+          #     the generated server .env as JAHOSI_IMAGE. Rollbacks are precise
+          #     because a SHA tag never moves.
+          #
+          #   ghcr.io/owner/repo:main or :testing
+          #     Moving branch/channel tag. Handy for humans and quick inspection,
+          #     but not the value we pin the server to.
+          #
+          #   ghcr.io/owner/repo:v1.4.0
+          #     Immutable release/version tag. This is what the GitHub Release
+          #     describes, so the Release page and the package registry tell the
+          #     same story.
+          IMAGE_REF="${IMAGE_REPOSITORY}:${GITHUB_SHA}"
+          {
+            echo "IMAGE_TAGS<<EOF"
+            echo "$IMAGE_REF"
+            if [ "$IS_DEPLOY_REF" = "true" ]; then
+              echo "${IMAGE_REPOSITORY}:${REF_SLUG}"
+            fi
+            if [ "$IS_RELEASE_TAG" = "true" ]; then
+              echo "${IMAGE_REPOSITORY}:${GITHUB_REF_NAME}"
+            fi
+            echo "EOF"
+          } >> "$GITHUB_ENV"
+
+          # The deployment directory includes the branch and port, which allows
+          # production and testing to coexist on the same Debian host while both
+          # containers listen on port 3000 internally.
+          DEPLOY_PATH="/home/dockertunnel/jahosi.${REF_SLUG}-${APP_PORT}"
+
+          {
+            echo "REF_SLUG=${REF_SLUG}"
+            echo "APP_PORT=${APP_PORT}"
+            echo "SITE_URL=${SITE_URL}"
+            echo "JAHOSI_TRAEFIK_RULE=${JAHOSI_TRAEFIK_RULE}"
+            echo "DEPLOY_PATH=${DEPLOY_PATH}"
+            echo "IMAGE_REPOSITORY=${IMAGE_REPOSITORY}"
+            echo "IMAGE_REF=${IMAGE_REF}"
+            echo "IS_DEPLOY_REF=${IS_DEPLOY_REF}"
+            echo "IS_RELEASE_TAG=${IS_RELEASE_TAG}"
+          } >> "$GITHUB_ENV"
+
+      - name: Set Up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log In to GHCR
+        uses: docker/login-action@v3
+        with:
+          # `ghcr.io` is GitHub Container Registry. This is the Packages feature
+          # being used for a product type it is designed for: Docker/OCI images.
+          registry: ghcr.io
+
+          # `github.actor` plus `secrets.GITHUB_TOKEN` is the recommended Actions
+          # authentication path for publishing packages owned by this repository.
+          # It avoids storing a long-lived personal access token just to push the
+          # image produced by this workflow.
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and Push Package Image
+        id: build-image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+
+          # `push: true` is the moment this build becomes a GitHub Package.
+          # Without it, Docker would build an image only inside the temporary
+          # Actions runner and the Debian server would have nothing to pull.
+          push: true
+
+          # The app listens on port 3000 in every environment. We keep this as a
+          # build arg so Dockerfile EXPOSE metadata and runtime PORT agree.
+          build-args: |
+            APP_PORT=${{ env.APP_PORT }}
+
+          # `IMAGE_TAGS` is a newline-separated list prepared above:
+          #   branch push -> SHA tag + branch tag
+          #   release tag -> SHA tag + version tag
+          tags: ${{ env.IMAGE_TAGS }}
+
+          # GitHub Actions cache stores Docker layers between runs. It does not
+          # affect the runtime image contents; it just avoids reinstalling every
+          # npm package from scratch when package-lock.json has not changed.
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: Create GitHub Release for Production Version Tag
+        if: env.IS_RELEASE_TAG == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+
+          # `gh release create` turns the pushed git tag into a GitHub Release.
+          #
+          # `--verify-tag` refuses to create a Release if the tag does not exist.
+          # That matters because Releases are meant to document an actual git ref,
+          # not invent a version name after the fact.
+          #
+          # `--generate-notes` asks GitHub to assemble release notes from commits
+          # and PR metadata since the previous release. This is a good default for
+          # a small app because it keeps releases useful without requiring a hand
+          # written changelog on every tag.
+          #
+          # `--notes "$RELEASE_NOTES"` is deliberately used with `--generate-notes`.
+          # The GitHub CLI prepends manually supplied notes to the generated notes,
+          # which gives us the best of both worlds: an operator-focused package
+          # pointer at the top, followed by GitHub's generated changelog.
+          #
+          # The body adds the exact GHCR image tags and digest. The digest is the
+          # strongest pointer: even if a human accidentally retags an image later,
+          # the digest still identifies the exact built artifact for this release.
+          RELEASE_NOTES="$(cat << EOF
+          ## Deployment package
+
+          Container image:
+
+          \`\`\`text
+          ${IMAGE_REPOSITORY}:${GITHUB_REF_NAME}
+          ${IMAGE_REF}
+          ${IMAGE_REPOSITORY}@${{ steps.build-image.outputs.digest }}
+          \`\`\`
+
+          Production URL:
+
+          \`\`\`text
+          https://www.jahosi.co.uk
+          \`\`\`
+
+          This Release is a production version marker. The image is published to
+          GitHub Packages / GHCR; branch deployments still decide what is live.
+          EOF
+          )"
+
+          gh release create "$GITHUB_REF_NAME" \
+            --verify-tag \
+            --title "Jahosi ${GITHUB_REF_NAME}" \
+            --notes "$RELEASE_NOTES" \
+            --generate-notes
+
+      - name: Install Cloudflared on Runner
+        if: env.IS_DEPLOY_REF == 'true'
+        run: |
+          set -euo pipefail
+
+          # The Debian host is reached through Cloudflare Access SSH, not over a
+          # public raw SSH port. The GitHub-hosted runner is freshly created for
+          # this job, so we download the `cloudflared` client each run.
+          curl -fL https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-amd64 -o cloudflared
+          chmod +x cloudflared
+          sudo mv cloudflared /usr/local/bin/
+          cloudflared --version
+
+      - name: Configure SSH over Cloudflare
+        if: env.IS_DEPLOY_REF == 'true'
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+        run: |
+          set -euo pipefail
+          test -n "$SSH_PRIVATE_KEY"
+
+          # The private key is written only into the ephemeral runner filesystem.
+          # chmod 600 is required by OpenSSH; it refuses to use private keys that
+          # are readable by other users.
+          mkdir -p ~/.ssh
+          echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_ed25519
+          chmod 600 ~/.ssh/id_ed25519
+
+          # ProxyCommand makes every `ssh` and `scp` command below tunnel through
+          # Cloudflare Access. The Access service-token environment variables are
+          # supplied during the deploy step, where cloudflared reads them.
+          cat > ~/.ssh/config << EOF
+          Host ${SSH_HOST}
+            HostName ${SSH_HOST}
+            StrictHostKeyChecking no
+            User ${SSH_USER}
+            IdentityFile ~/.ssh/id_ed25519
+            ProxyCommand /usr/local/bin/cloudflared access ssh --hostname %h --loglevel debug
+          EOF
+          chmod 600 ~/.ssh/config
+
+      - name: Build Secure .env File
+        if: env.IS_DEPLOY_REF == 'true'
+        env:
+          CONTACT_TO_EMAIL: ${{ vars.CONTACT_TO_EMAIL }}
+          CONTACT_FROM_EMAIL: ${{ vars.CONTACT_FROM_EMAIL }}
+          SMTP_HOST: ${{ vars.SMTP_HOST }}
+          SMTP_PORT: ${{ vars.SMTP_PORT }}
+          SMTP_SECURE: ${{ vars.SMTP_SECURE }}
+          SMTP_USER: ${{ secrets.SMTP_USER }}
+          SMTP_PASS: ${{ secrets.SMTP_PASS }}
+          TURNSTILE_SITE_KEY: ${{ vars.TURNSTILE_SITE_KEY }}
+          TURNSTILE_SECRET_KEY: ${{ secrets.TURNSTILE_SECRET_KEY }}
+          SPLASH_OPENAI_API_KEY: ${{ secrets.SPLASH_OPENAI_API_KEY }}
+          SPLASH_OPENAI_BASE_URL: ${{ vars.SPLASH_OPENAI_BASE_URL }}
+          CF_ACCESS_CLIENT_ID: ${{ secrets.SPLASH_CF_ACCESS_CLIENT_ID }}
+          CF_ACCESS_CLIENT_SECRET: ${{ secrets.SPLASH_CF_ACCESS_CLIENT_SECRET }}
+          NODE_ENV: ${{ vars.NODE_ENV }}
+          HOST: ${{ vars.HOST }}
+          SITE_URL: ${{ vars.SITE_URL }}
+          SERVICE_NAME: ${{ vars.SERVICE_NAME }}
+          APP_TIMEZONE: ${{ vars.APP_TIMEZONE }}
+          ANALYTICS_ENABLED: ${{ vars.ANALYTICS_ENABLED }}
+          ANALYTICS_DB_PATH: ${{ vars.ANALYTICS_DB_PATH }}
+          ANALYTICS_RESPECT_DNT: ${{ vars.ANALYTICS_RESPECT_DNT }}
+          TRUST_PROXY: ${{ vars.TRUST_PROXY }}
+        run: |
+          set -euo pipefail
+
+          # This file is generated during deployment instead of stored in git.
+          # Rationale:
+          #   - repo files describe shape and defaults
+          #   - GitHub Environment variables hold non-secret per-env config
+          #   - GitHub Environment secrets hold credentials/API keys
+          #   - the server receives only the merged runtime .env it needs
+          PORT="${APP_PORT:-3000}"
+          BRANCH_NAME="${REF_SLUG:-${GITHUB_REF_NAME}}"
+          NODE_ENV="${NODE_ENV:-production}"
+          HOST="${HOST:-0.0.0.0}"
+          SERVICE_NAME="${SERVICE_NAME:-jahosi}"
+          APP_TIMEZONE="${APP_TIMEZONE:-Europe/London}"
+          ANALYTICS_ENABLED="${ANALYTICS_ENABLED:-true}"
+          ANALYTICS_DB_PATH="${ANALYTICS_DB_PATH:-./data/jahosi.sqlite}"
+          ANALYTICS_RESPECT_DNT="${ANALYTICS_RESPECT_DNT:-true}"
+          TRUST_PROXY="${TRUST_PROXY:-true}"
+          SMTP_PORT="${SMTP_PORT:-587}"
+          SMTP_SECURE="${SMTP_SECURE:-false}"
+          SPLASH_OPENAI_BASE_URL="${SPLASH_OPENAI_BASE_URL:-https://api.openai.com/v1}"
+
+          # Fail fast for required runtime settings. A missing value should stop
+          # deployment before we copy anything to the server.
+          test -n "$JAHOSI_TRAEFIK_RULE"
+          test -n "$SITE_URL"
+          test -n "$CONTACT_TO_EMAIL"
+          test -n "$CONTACT_FROM_EMAIL"
+          test -n "$SMTP_HOST"
+          test -n "$SMTP_USER"
+          test -n "$SMTP_PASS"
+          test -n "$TURNSTILE_SITE_KEY"
+          test -n "$TURNSTILE_SECRET_KEY"
+
+          {
+            echo "BRANCH_NAME=$BRANCH_NAME"
+            echo "JAHOSI_TRAEFIK_RULE=$JAHOSI_TRAEFIK_RULE"
+            echo "JAHOSI_IMAGE=$IMAGE_REF"
+            echo "PORT=$PORT"
+            echo "HOST=$HOST"
+            echo "NODE_ENV=$NODE_ENV"
+            echo "TRUST_PROXY=$TRUST_PROXY"
+            echo "SITE_URL=$SITE_URL"
+            echo "SERVICE_NAME=$SERVICE_NAME"
+            echo "APP_TIMEZONE=$APP_TIMEZONE"
+            echo "CONTACT_TO_EMAIL=$CONTACT_TO_EMAIL"
+            echo "CONTACT_FROM_EMAIL=$CONTACT_FROM_EMAIL"
+            echo "SMTP_HOST=$SMTP_HOST"
+            echo "SMTP_PORT=$SMTP_PORT"
+            echo "SMTP_SECURE=$SMTP_SECURE"
+            echo "SMTP_USER=$SMTP_USER"
+            echo "SMTP_PASS=$SMTP_PASS"
+            echo "TURNSTILE_SITE_KEY=$TURNSTILE_SITE_KEY"
+            echo "TURNSTILE_SECRET_KEY=$TURNSTILE_SECRET_KEY"
+            echo "SPLASH_OPENAI_API_KEY=$SPLASH_OPENAI_API_KEY"
+            echo "SPLASH_OPENAI_BASE_URL=$SPLASH_OPENAI_BASE_URL"
+            echo "CF-Access-Client-Id=$CF_ACCESS_CLIENT_ID"
+            echo "CF-Access-Client-Secret=$CF_ACCESS_CLIENT_SECRET"
+            echo "ANALYTICS_ENABLED=$ANALYTICS_ENABLED"
+            echo "ANALYTICS_DB_PATH=$ANALYTICS_DB_PATH"
+            echo "ANALYTICS_RESPECT_DNT=$ANALYTICS_RESPECT_DNT"
+          } > .env
+
+          echo "Environment variables written to .env file successfully."
+
+          # Print only whether values are present, never the values themselves.
+          # This is useful when debugging Actions configuration without leaking
+          # SMTP passwords, Turnstile secrets, or OpenAI keys into logs.
+          while IFS='=' read -r k v; do
+            if [ -n "$v" ]; then echo "[debug] $k: key is NOT blank"; else echo "[debug] $k: key IS BLANK"; fi
+          done < .env
+
+      - name: Validate Generated Docker Compose Config
+        if: env.IS_DEPLOY_REF == 'true'
+        run: |
+          set -euo pipefail
+
+          # Validate the exact Compose config that will be copied to the server.
+          # This catches missing .env values, broken Traefik interpolation, wrong
+          # branch-specific names, and accidental image fallback before deployment.
+          docker compose config > /tmp/jahosi-compose.yml
+
+          grep -F "container_name: jahosi-${REF_SLUG}" /tmp/jahosi-compose.yml
+          grep -F "image: ${IMAGE_REF}" /tmp/jahosi-compose.yml
+          grep -F "SITE_URL: ${SITE_URL}" /tmp/jahosi-compose.yml
+          grep -F "traefik.http.routers.jahosi-${REF_SLUG}.rule: ${JAHOSI_TRAEFIK_RULE}" /tmp/jahosi-compose.yml
+          grep -F "traefik.http.services.jahosi-${REF_SLUG}.loadbalancer.server.port: \"${APP_PORT}\"" /tmp/jahosi-compose.yml
+
+      - name: Deploy to Server via Tunnel
+        if: env.IS_DEPLOY_REF == 'true'
+        env:
+          TUNNEL_SERVICE_TOKEN_ID: ${{ secrets.CF_ACCESS_CLIENT_ID }}
+          TUNNEL_SERVICE_TOKEN_SECRET: ${{ secrets.CF_ACCESS_CLIENT_SECRET }}
+          # Optional: leave these unset if the GHCR image is public or the Debian
+          # host is already logged in to GHCR. The remote script below only runs
+          # `docker login ghcr.io` when both values are present.
+          GHCR_USERNAME: ${{ secrets.GHCR_USERNAME }}
+          GHCR_TOKEN: ${{ secrets.GHCR_TOKEN }}
+        run: |
+          set -euo pipefail
+
+          # This probe is diagnostic. It confirms the Cloudflare Access service
+          # token can talk to the protected SSH hostname before `ssh` starts doing
+          # more complicated work.
+          curl --silent --show-error --output /tmp/access-preflight-body.txt --write-out "[debug] Access preflight HTTP status: %{http_code}\n" \
+            -H "CF-Access-Client-Id: ${TUNNEL_SERVICE_TOKEN_ID}" \
+            -H "CF-Access-Client-Secret: ${TUNNEL_SERVICE_TOKEN_SECRET}" \
+            "https://${SSH_HOST}/cdn-cgi/access/get-identity" || true
+
+          # Copy only the generated runtime config and Compose file. The server
+          # does not build from source; it pulls the already-built GHCR package.
+          ssh -v "${SSH_HOST}" "mkdir -p ${DEPLOY_PATH}"
+          scp -v .env docker-compose.yml "${SSH_HOST}:${DEPLOY_PATH}/"
+
+          # Quote credentials before interpolating them into the remote shell.
+          # The remote host may need GHCR credentials if the package is private.
+          REMOTE_GHCR_USERNAME=$(printf '%q' "$GHCR_USERNAME")
+          REMOTE_GHCR_TOKEN=$(printf '%q' "$GHCR_TOKEN")
+          ssh -v "${SSH_HOST}" "cd ${DEPLOY_PATH} && GHCR_USERNAME=${REMOTE_GHCR_USERNAME} GHCR_TOKEN=${REMOTE_GHCR_TOKEN} sh -s" <<'REMOTE_DEPLOY'
+          set -eu
+
+          if [ -n "${GHCR_USERNAME}" ] && [ -n "${GHCR_TOKEN}" ]; then
+            echo "${GHCR_TOKEN}" | docker login ghcr.io -u "${GHCR_USERNAME}" --password-stdin
+          fi
+
+          BRANCH_NAME="$(awk -F= '$1 == "BRANCH_NAME" { print $2 }' .env | tail -n 1)"
+          CONTAINER_NAME="jahosi-${BRANCH_NAME:-main}"
+
+          # Remove the existing container explicitly before Compose recreates it.
+          # This avoids name-collision leftovers if labels, image names, or other
+          # Compose metadata changed since the previous deploy.
+          EXISTING_CONTAINER="$(docker ps -aq --filter "name=^/${CONTAINER_NAME}$" | head -n 1)"
+          if [ -n "${EXISTING_CONTAINER}" ]; then
+            echo "Removing existing ${CONTAINER_NAME} container before recreate."
+            docker rm -f "${EXISTING_CONTAINER}"
+          fi
+
+          # Pull the immutable SHA-tagged image referenced by JAHOSI_IMAGE in the
+          # generated .env, then start only this service and prune dangling layers.
+          docker compose pull jahosi
+          docker compose up -d --no-build --remove-orphans jahosi
+          docker image prune -f
+          REMOTE_DEPLOY
+          echo "Deployment finished successfully."
