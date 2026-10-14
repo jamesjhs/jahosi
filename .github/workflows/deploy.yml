@@ -349,17 +349,30 @@ jobs:
           SMTP_SECURE="${SMTP_SECURE:-false}"
           SPLASH_OPENAI_BASE_URL="${SPLASH_OPENAI_BASE_URL:-https://api.openai.com/v1}"
 
+          require_env() {
+            name="$1"
+            value="${2:-}"
+            if [ -z "$value" ]; then
+              echo "::error::Missing required deployment value: ${name}"
+              return 1
+            fi
+          }
+
           # Fail fast for required runtime settings. A missing value should stop
           # deployment before we copy anything to the server.
-          test -n "$JAHOSI_TRAEFIK_RULE"
-          test -n "$SITE_URL"
-          test -n "$CONTACT_TO_EMAIL"
-          test -n "$CONTACT_FROM_EMAIL"
-          test -n "$SMTP_HOST"
-          test -n "$SMTP_USER"
-          test -n "$SMTP_PASS"
-          test -n "$TURNSTILE_SITE_KEY"
-          test -n "$TURNSTILE_SECRET_KEY"
+          missing_required=false
+          require_env JAHOSI_TRAEFIK_RULE "$JAHOSI_TRAEFIK_RULE" || missing_required=true
+          require_env SITE_URL "$SITE_URL" || missing_required=true
+          require_env CONTACT_TO_EMAIL "$CONTACT_TO_EMAIL" || missing_required=true
+          require_env CONTACT_FROM_EMAIL "$CONTACT_FROM_EMAIL" || missing_required=true
+          require_env SMTP_HOST "$SMTP_HOST" || missing_required=true
+          require_env SMTP_USER "$SMTP_USER" || missing_required=true
+          require_env SMTP_PASS "$SMTP_PASS" || missing_required=true
+          require_env TURNSTILE_SITE_KEY "$TURNSTILE_SITE_KEY" || missing_required=true
+          require_env TURNSTILE_SECRET_KEY "$TURNSTILE_SECRET_KEY" || missing_required=true
+          if [ "$missing_required" = "true" ]; then
+            exit 1
+          fi
 
           {
             echo "BRANCH_NAME=$BRANCH_NAME"
