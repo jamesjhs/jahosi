@@ -2987,7 +2987,7 @@ function renderContactPage({ status, error, debug }) {
       <h1 class="text-3xl font-bold tracking-tight">Contact Me</h1>
       <p class="mt-2 text-sm text-slate-600">Send a private message.</p>
       <div class="mt-4 space-y-3">${statusMessage}${errorMessage}</div>
-      <form class="mt-6 space-y-4" method="post" action="${escapeHtml(contactSubmitPath)}" autocomplete="off">
+      <form class="mt-6 space-y-4" method="post" action="${escapeHtml(contactSubmitPath)}" autocomplete="on">
         <input type="hidden" name="submittedAt" value="${Date.now()}">
         <input type="hidden" name="humanCheckToken" value="${escapeHtml(humanCheck.token)}">
         <div class="hidden" aria-hidden="true">
@@ -2995,7 +2995,7 @@ function renderContactPage({ status, error, debug }) {
         </div>
         <label class="block">
           <span class="mb-1 block text-sm font-semibold">Name</span>
-          <input class="w-full rounded-lg border border-slate-300 px-3 py-2" type="text" name="name" maxlength="120" required>
+          <input class="w-full rounded-lg border border-slate-300 px-3 py-2" type="text" name="name" autocomplete="name" maxlength="120" required>
         </label>
         <label class="block">
           <span class="mb-1 block text-sm font-semibold">Email</span>
@@ -3113,8 +3113,8 @@ app.post(`${CONTACT_SUBMIT_PATH_PREFIX}/:contactDate/submit`, requireCurrentCont
       from: CONTACT_FROM_EMAIL,
       to: CONTACT_TO_EMAIL,
       replyTo: email,
-      subject: `Jahosi: ${escapeHtml(subject.trim())} [Human check: passed (${String(humanCheck).trim()}); Turnstile: passed]`,
-      text: `Name: ${name}\nEmail: ${email}\n\nMessage:\n${message}`,
+      subject: `Jahosi: ${escapeHtml(subject.trim())}`,
+      text: `Name: ${name}\nEmail: ${email}\n\nMessage:\n${message}\n\n[Human check: passed (${String(humanCheck).trim()}); Turnstile: passed]`,
     });
 
     return redirectWithStatus("sent");

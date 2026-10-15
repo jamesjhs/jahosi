@@ -335,6 +335,8 @@ jobs:
           #   - GitHub Environment variables hold non-secret per-env config
           #   - GitHub Environment secrets hold credentials/API keys
           #   - the server receives only the merged runtime .env it needs
+          # Export defaults as strings for the Compose env-file writer.
+          set -a
           PORT="${APP_PORT:-3000}"
           BRANCH_NAME="${REF_SLUG:-${GITHUB_REF_NAME}}"
           NODE_ENV="${NODE_ENV:-production}"
@@ -348,6 +350,7 @@ jobs:
           SMTP_PORT="${SMTP_PORT:-587}"
           SMTP_SECURE="${SMTP_SECURE:-false}"
           SPLASH_OPENAI_BASE_URL="${SPLASH_OPENAI_BASE_URL:-https://api.openai.com/v1}"
+          set +a
 
           require_env() {
             name="$1"
@@ -374,43 +377,7 @@ jobs:
             exit 1
           fi
 
-          {
-            echo "BRANCH_NAME=$BRANCH_NAME"
-            echo "JAHOSI_TRAEFIK_RULE=$JAHOSI_TRAEFIK_RULE"
-            echo "JAHOSI_IMAGE=$IMAGE_REF"
-            echo "PORT=$PORT"
-            echo "HOST=$HOST"
-            echo "NODE_ENV=$NODE_ENV"
-            echo "TRUST_PROXY=$TRUST_PROXY"
-            echo "SITE_URL=$SITE_URL"
-            echo "SERVICE_NAME=$SERVICE_NAME"
-            echo "APP_TIMEZONE=$APP_TIMEZONE"
-            echo "CONTACT_TO_EMAIL=$CONTACT_TO_EMAIL"
-            echo "CONTACT_FROM_EMAIL=$CONTACT_FROM_EMAIL"
-            echo "SMTP_HOST=$SMTP_HOST"
-            echo "SMTP_PORT=$SMTP_PORT"
-            echo "SMTP_SECURE=$SMTP_SECURE"
-            echo "SMTP_USER=$SMTP_USER"
-            echo "SMTP_PASS=$SMTP_PASS"
-            echo "TURNSTILE_SITE_KEY=$TURNSTILE_SITE_KEY"
-            echo "TURNSTILE_SECRET_KEY=$TURNSTILE_SECRET_KEY"
-            echo "SPLASH_OPENAI_API_KEY=$SPLASH_OPENAI_API_KEY"
-            echo "SPLASH_OPENAI_BASE_URL=$SPLASH_OPENAI_BASE_URL"
-            echo "CF-Access-Client-Id=$CF_ACCESS_CLIENT_ID"
-            echo "CF-Access-Client-Secret=$CF_ACCESS_CLIENT_SECRET"
-            echo "ANALYTICS_ENABLED=$ANALYTICS_ENABLED"
-            echo "ANALYTICS_DB_PATH=$ANALYTICS_DB_PATH"
-            echo "ANALYTICS_RESPECT_DNT=$ANALYTICS_RESPECT_DNT"
-          } > .env
-
-          echo "Environment variables written to .env file successfully."
-
-          # Print only whether values are present, never the values themselves.
-          # This is useful when debugging Actions configuration without leaking
-          # SMTP passwords, Turnstile secrets, or OpenAI keys into logs.
-          while IFS='=' read -r k v; do
-            if [ -n "$v" ]; then echo "[debug] $k: key is NOT blank"; else echo "[debug] $k: key IS BLANK"; fi
-          done < .env
+          node scripts/write-deployment-env.js
 
       - name: Validate Generated Docker Compose Config
         if: env.IS_DEPLOY_REF == 'true'
