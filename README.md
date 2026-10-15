@@ -35,8 +35,8 @@ Required GitHub repository/environment secrets used by deployment:
 - Repository secrets: `SSH_PRIVATE_KEY`, `CF_ACCESS_CLIENT_ID`,
   `CF_ACCESS_CLIENT_SECRET`
 - Environment secrets: `SMTP_USER`, `SMTP_PASS`, `TURNSTILE_SECRET_KEY`
-- Optional repository secrets: `GHCR_USERNAME`, `GHCR_TOKEN` if the Debian host
-  must authenticate to pull private GHCR images
+- Optional repository secrets: `GHCR_USERNAME`, `GHCR_TOKEN` to override registry
+  authentication; deployment defaults to the workflow's GitHub token
 - Optional environment secrets: `SPLASH_OPENAI_API_KEY`,
   `SPLASH_CF_ACCESS_CLIENT_ID`, `SPLASH_CF_ACCESS_CLIENT_SECRET`
 
@@ -79,6 +79,8 @@ git push origin v1.4.0
 
 The app includes a private contact page served at the current `yymmdd` path.
 It is marked `noindex`. The contact page URL and form API both use a date-varying `yymmdd` segment, using `APP_TIMEZONE` if set or `Europe/London` by default. For example, the page is `/260915` and the form posts to `/api/contact/260915/submit`. Stale or guessed contact dates return `404`.
+
+Senders can add an optional subject of up to 140 characters, enforced in the form and on the server. Subject text is HTML-escaped and control characters are rejected. Email subjects use `Jahosi: <subject> [Human check: passed (<answer>); Turnstile: passed]`, with check results appended only after server verification.
 
 Required environment variables for contact form delivery:
 

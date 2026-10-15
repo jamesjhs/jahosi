@@ -33,13 +33,16 @@ Create these under:
 
 ## Optional Repository Secrets
 
-These are not required if the GHCR package is public or if the Debian host is
-already logged in to GHCR outside the workflow.
+Deployment authenticates to GHCR using the workflow's GitHub token by default.
+These secrets can override that login for packages requiring a different account.
+Credentials are passed over SSH stdin and stored in a temporary Docker config
+that is removed when the remote script exits. The image is pulled before the
+existing container is removed.
 
 | Name | Purpose |
 | --- | --- |
 | `GHCR_USERNAME` | Optional username used by the Debian host when pulling private GHCR images. |
-| `GHCR_TOKEN` | Optional token used by the Debian host when pulling private GHCR images. |
+| `GHCR_TOKEN` | Optional token override used with `GHCR_USERNAME` when pulling private GHCR images; otherwise the workflow token is used. |
 
 ## Repository Variables
 

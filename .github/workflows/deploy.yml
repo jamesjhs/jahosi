@@ -438,11 +438,10 @@ jobs:
           # which cannot work inside a GitHub-hosted runner.
           CF_ACCESS_CLIENT_ID: ${{ secrets.CF_ACCESS_CLIENT_ID }}
           CF_ACCESS_CLIENT_SECRET: ${{ secrets.CF_ACCESS_CLIENT_SECRET }}
-          # Optional: leave these unset if the GHCR image is public or the Debian
-          # host is already logged in to GHCR. The remote script below only runs
-          # `docker login ghcr.io` when both values are present.
-          GHCR_USERNAME: ${{ secrets.GHCR_USERNAME }}
-          GHCR_TOKEN: ${{ secrets.GHCR_TOKEN }}
+          # Use an explicit credential pair when configured; otherwise use this
+          # job's token, which already has access to the image it published.
+          GHCR_USERNAME: ${{ secrets.GHCR_TOKEN && secrets.GHCR_USERNAME || github.actor }}
+          GHCR_TOKEN: ${{ secrets.GHCR_TOKEN || github.token }}
         run: |
           set -euo pipefail
 
@@ -459,16 +458,23 @@ jobs:
           ssh -v "${SSH_HOST}" "mkdir -p ${DEPLOY_PATH}"
           scp -v .env docker-compose.yml "${SSH_HOST}:${DEPLOY_PATH}/"
 
-          # Quote credentials before interpolating them into the remote shell.
-          # The remote host may need GHCR credentials if the package is private.
-          REMOTE_GHCR_USERNAME=$(printf '%q' "$GHCR_USERNAME")
-          REMOTE_GHCR_TOKEN=$(printf '%q' "$GHCR_TOKEN")
-          ssh -v "${SSH_HOST}" "cd ${DEPLOY_PATH} && GHCR_USERNAME=${REMOTE_GHCR_USERNAME} GHCR_TOKEN=${REMOTE_GHCR_TOKEN} sh -s" <<'REMOTE_DEPLOY'
+          # Send credentials through SSH stdin, keeping them out of the remote
+          # command and verbose SSH diagnostics. The remote shell reads the two
+          # credential lines before executing the deployment script that follows.
+          {
+          printf '%s\n' "$GHCR_USERNAME" "$GHCR_TOKEN"
+          cat <<'REMOTE_DEPLOY'
           set -eu
 
-          if [ -n "${GHCR_USERNAME}" ] && [ -n "${GHCR_TOKEN}" ]; then
-            echo "${GHCR_TOKEN}" | docker login ghcr.io -u "${GHCR_USERNAME}" --password-stdin
-          fi
+          # Keep job credentials separate from the host's persistent Docker login.
+          DOCKER_CONFIG="$(mktemp -d)"
+          export DOCKER_CONFIG
+          trap 'rm -rf -- "$DOCKER_CONFIG"' EXIT
+          printf '%s\n' "${GHCR_TOKEN}" | docker login ghcr.io -u "${GHCR_USERNAME}" --password-stdin
+          unset GHCR_TOKEN
+
+          # Authenticate and pull before removing the running container.
+          docker compose pull jahosi
 
           BRANCH_NAME="$(awk -F= '$1 == "BRANCH_NAME" { print $2 }' .env | tail -n 1)"
           CONTAINER_NAME="jahosi-${BRANCH_NAME:-main}"
@@ -482,10 +488,9 @@ jobs:
             docker rm -f "${EXISTING_CONTAINER}"
           fi
 
-          # Pull the immutable SHA-tagged image referenced by JAHOSI_IMAGE in the
-          # generated .env, then start only this service and prune dangling layers.
-          docker compose pull jahosi
+          # Start the downloaded SHA-tagged image and prune dangling layers.
           docker compose up -d --no-build --remove-orphans jahosi
           docker image prune -f
           REMOTE_DEPLOY
+          } | ssh "${SSH_HOST}" "cd ${DEPLOY_PATH} && IFS= read -r GHCR_USERNAME && IFS= read -r GHCR_TOKEN && export GHCR_USERNAME GHCR_TOKEN && sh -s"
           echo "Deployment finished successfully."

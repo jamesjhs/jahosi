@@ -3002,6 +3002,10 @@ function renderContactPage({ status, error, debug }) {
           <input class="w-full rounded-lg border border-slate-300 px-3 py-2" type="email" name="email" maxlength="254" required>
         </label>
         <label class="block">
+          <span class="mb-1 block text-sm font-semibold">Subject (optional, up to 140 characters)</span>
+          <input class="w-full rounded-lg border border-slate-300 px-3 py-2" type="text" name="subject" maxlength="140">
+        </label>
+        <label class="block">
           <span class="mb-1 block text-sm font-semibold">Message</span>
           <textarea class="min-h-40 w-full rounded-lg border border-slate-300 px-3 py-2" name="message" maxlength="5000" required></textarea>
         </label>
@@ -3043,7 +3047,7 @@ app.post(`${CONTACT_SUBMIT_PATH_PREFIX}/:contactDate/submit`, requireCurrentCont
   const redirectWithStatus = (code) =>
     res.redirect(`${currentContactPagePath()}?status=${encodeURIComponent(code)}`);
 
-  const { name, email, message, website, submittedAt, humanCheck, humanCheckToken } = req.body;
+  const { name, email, subject = "", message, website, submittedAt, humanCheck, humanCheckToken } = req.body;
   const filledAt = Number(submittedAt);
 
   if (website) {
@@ -3058,6 +3062,9 @@ app.post(`${CONTACT_SUBMIT_PATH_PREFIX}/:contactDate/submit`, requireCurrentCont
     !name ||
     !email ||
     !message ||
+    typeof subject !== "string" ||
+    subject.length > 140 ||
+    /[\u0000-\u001f\u007f-\u009f\u2028\u2029]/.test(subject) ||
     !verifyContactHumanCheck(humanCheckToken, humanCheck) ||
     name.length > 120 ||
     email.length > 254 ||
@@ -3106,7 +3113,7 @@ app.post(`${CONTACT_SUBMIT_PATH_PREFIX}/:contactDate/submit`, requireCurrentCont
       from: CONTACT_FROM_EMAIL,
       to: CONTACT_TO_EMAIL,
       replyTo: email,
-      subject: `Portfolio contact from ${name}`,
+      subject: `Jahosi: ${escapeHtml(subject.trim())} [Human check: passed (${String(humanCheck).trim()}); Turnstile: passed]`,
       text: `Name: ${name}\nEmail: ${email}\n\nMessage:\n${message}`,
     });
 
