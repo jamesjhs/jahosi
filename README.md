@@ -35,8 +35,8 @@ Required GitHub repository/environment secrets used by deployment:
 - Repository secrets: `SSH_PRIVATE_KEY`, `CF_ACCESS_CLIENT_ID`,
   `CF_ACCESS_CLIENT_SECRET`
 - Environment secrets: `SMTP_USER`, `SMTP_PASS`, `TURNSTILE_SECRET_KEY`
-- Optional repository secrets: `GHCR_USERNAME`, `GHCR_TOKEN` if the Debian host
-  must authenticate to pull private GHCR images
+- Optional repository secrets: `GHCR_USERNAME`, `GHCR_TOKEN` to override registry
+  authentication; deployment defaults to the workflow's GitHub token
 - Optional environment secrets: `SPLASH_OPENAI_API_KEY`,
   `SPLASH_CF_ACCESS_CLIENT_ID`, `SPLASH_CF_ACCESS_CLIENT_SECRET`
 
