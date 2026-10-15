@@ -68,6 +68,24 @@ Keep these values in environment variables rather than secrets because they are
 non-sensitive runtime configuration. Keep credentials, API keys, service tokens,
 SMTP passwords, and Turnstile secrets in secrets.
 
+For Resend, set the `SMTP_USER` secret to `resend` and `SMTP_PASS` to a Resend
+API key. Use `SMTP_HOST=smtp.resend.com`, `SMTP_PORT=587`, and `SMTP_SECURE=false`
+for STARTTLS. Set the `CONTACT_FROM_EMAIL` variable to a sender on your
+Resend-verified domain, for example `Jahosi Contact <contact@jahosi.co.uk>` if
+that domain is verified. This is separate from the recipient `CONTACT_TO_EMAIL`
+and SMTP login. An `EENVELOPE` error means SMTP rejected the sender or recipients;
+check the server log's SMTP response for the exact reason.
+See [Resend's SMTP settings](https://resend.com/docs/send-with-smtp).
+
+Both `CONTACT_FROM_EMAIL` and the public `TURNSTILE_SITE_KEY` must be present in
+the GitHub environment variables. The deployment validates email address syntax,
+SMTP types, and the Resend username before copying configuration to the server.
+Generated env-file values are quoted so Compose preserves credentials literally.
+In GitHub's variable value field, enter only the value: for example,
+`Jahosi Contact <contact@jahosi.co.uk>` or a plain sender address. Do not include
+the `CONTACT_FROM_EMAIL=` prefix or wrap the whole value in quotes. Enter the
+public Turnstile site key directly in `TURNSTILE_SITE_KEY` the same way.
+
 To create a production release marker after the desired commit is on `main`:
 
 ```bash
@@ -91,11 +109,11 @@ Required environment variables for contact form delivery:
 - `SMTP_PASS`
 - `TURNSTILE_SITE_KEY`
 - `TURNSTILE_SECRET_KEY`
+- `CONTACT_TO_EMAIL`
+- `CONTACT_FROM_EMAIL` (sender on a domain verified by your email provider)
 
 Optional:
 
-- `CONTACT_TO_EMAIL` (defaults to `jrowson@gmail.com`)
-- `CONTACT_FROM_EMAIL`
 - `APP_TIMEZONE` (defaults to `Europe/London`)
 
 ## SEO and crawler support
