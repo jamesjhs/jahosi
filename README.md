@@ -15,7 +15,7 @@ Open `http://localhost:3000`.
 
 This repo is containerised for the same Traefik + Cloudflare Tunnel pattern as `qglimpse`.
 Pushes to `main` deploy to the GitHub `production` environment and serve
-`www.jahosi.co.uk`. Pushes to `testing` deploy to the GitHub `testing`
+both `jahosi.co.uk` and `www.jahosi.co.uk`. Pushes to `testing` deploy to the GitHub `testing`
 environment and serve `www-test.jahosi.co.uk`.
 Pushing a version tag such as `v1.4.0` publishes a versioned GHCR package and
 creates a GitHub Release; it does not deploy by itself.
@@ -25,10 +25,12 @@ Traefik attached to it. The workflow builds and pushes a GHCR image, copies
 `docker-compose.yml` and a generated `.env` file over the Cloudflare SSH tunnel,
 then runs `docker compose up -d`.
 
-Production is intentionally served by the `www.jahosi.co.uk` endpoint. If the
-apex domain should also work, handle it at Cloudflare with a redirect from
-`https://jahosi.co.uk/*` to `https://www.jahosi.co.uk/${1}` instead of adding the
-apex host to the application container route.
+Production's Traefik rule accepts both `jahosi.co.uk` and `www.jahosi.co.uk`
+and routes them to the same container without a hostname redirect. Cloudflare
+must forward both domains to Traefik while preserving the requested Host header.
+Keep `SITE_URL=https://www.jahosi.co.uk` as the canonical URL for SEO; no additional
+GitHub variables are needed for the apex domain. The workflow generates the
+two-host production rule and keeps testing on `www-test.jahosi.co.uk` only.
 
 Required GitHub repository/environment secrets used by deployment:
 

@@ -84,7 +84,8 @@ jobs:
           APP_PORT="${{ vars.PORT || '3000' }}"
 
           # SITE_URL comes from the GitHub Environment, not from source control.
-          # It drives both app canonical URLs and the Traefik host rule validation.
+          # It drives app canonical URLs and validates the branch's primary host.
+          # Production also accepts the apex domain through the same router.
           SITE_URL="${{ vars.SITE_URL }}"
           test -n "$SITE_URL"
 
@@ -100,6 +101,7 @@ jobs:
               echo "::error::The production SITE_URL must be https://www.jahosi.co.uk; got '${SITE_URL}' with hostname '${SITE_HOSTNAME}'."
               exit 1
             fi
+            JAHOSI_TRAEFIK_RULE='Host(`jahosi.co.uk`) || Host(`www.jahosi.co.uk`)'
           elif [ "$GITHUB_REF_TYPE" = "branch" ] && [ "$GITHUB_REF_NAME" = "testing" ]; then
             IS_DEPLOY_REF=true
             if [ "$SITE_HOSTNAME" != "www-test.jahosi.co.uk" ]; then

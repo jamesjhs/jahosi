@@ -8,15 +8,15 @@
 # Expected branch/domain mapping:
 #   BRANCH_NAME=main
 #     SITE_URL=https://www.jahosi.co.uk
-#     JAHOSI_TRAEFIK_RULE=Host(`www.jahosi.co.uk`)
+#     JAHOSI_TRAEFIK_RULE=Host(`jahosi.co.uk`) || Host(`www.jahosi.co.uk`)
 #
 #   BRANCH_NAME=testing
 #     SITE_URL=https://www-test.jahosi.co.uk
 #     JAHOSI_TRAEFIK_RULE=Host(`www-test.jahosi.co.uk`)
 #
 # SITE_URL is the app's canonical public URL. JAHOSI_TRAEFIK_RULE is generated
-# from it by the workflow because Docker Compose cannot parse a URL into a
-# Traefik Host() expression by itself.
+# by the workflow from the branch and SITE_URL because Docker Compose cannot
+# parse a URL into a Traefik Host() expression by itself.
 services:
   jahosi:
     # Deployment sets JAHOSI_IMAGE to an immutable SHA-tagged GHCR image, for
@@ -70,8 +70,8 @@ services:
       # for this container.
       - "traefik.enable=true"
 
-      # Route requests by Host header. The workflow generates this from SITE_URL:
-      #   production: Host(`www.jahosi.co.uk`)
+      # Route requests by Host header. The workflow generates this per branch:
+      #   production: Host(`jahosi.co.uk`) || Host(`www.jahosi.co.uk`)
       #   testing:    Host(`www-test.jahosi.co.uk`)
       #
       # The `:?message` syntax makes Compose fail fast if a required deployment

@@ -8,7 +8,7 @@ const { deploymentEnv } = require("./write-deployment-env");
 const nodemailer = require("nodemailer");
 
 const settings = {
-  BRANCH_NAME: "main", JAHOSI_TRAEFIK_RULE: "Host(`www.jahosi.co.uk`)",
+  BRANCH_NAME: "main", JAHOSI_TRAEFIK_RULE: "Host(`jahosi.co.uk`) || Host(`www.jahosi.co.uk`)",
   IMAGE_REF: "ghcr.io/example/jahosi:test", PORT: "3000",
   CONTACT_FROM_EMAIL: "Jahosi Contact <contact@example.com>",
   CONTACT_TO_EMAIL: "recipient@example.com", SMTP_HOST: "smtp.resend.com",
