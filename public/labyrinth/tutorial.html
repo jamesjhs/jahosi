@@ -1,0 +1,418 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Inside Life Runner — a complete game design and web technology tutorial</title>
+  <meta name="description" content="A source-led tutorial of Life Runner: JavaScript, procedural mazes, Three.js, Canvas raycasting, lighting, collision, scoring, APIs, performance and accessible game design.">
+  <meta name="robots" content="index,follow">
+  <link rel="canonical" href="/labyrinth/tutorial.html">
+  <meta property="og:title" content="Inside Life Runner — build, understand, improve">
+  <meta property="og:description" content="Follow a real browser maze game from its HTML shell to its renderer, algorithms, controls and scoreboard.">
+  <meta property="og:type" content="article">
+  <meta property="og:url" content="/labyrinth/tutorial.html">
+  <style>
+    :root{color-scheme:light;--ink:#17283e;--muted:#475b70;--paper:#fff;--bg:#edf3f8;--accent:#006b83;--line:#cddce7;--code:#0c1c2e}
+    *{box-sizing:border-box}html{scroll-padding-top:1rem}body{margin:0;background:var(--bg);color:var(--ink);font:1.05rem/1.75 system-ui,-apple-system,"Segoe UI",sans-serif}a{color:var(--accent);text-underline-offset:.2em}a:hover{text-decoration-thickness:2px}a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,summary:focus-visible{outline:3px solid #b94b00;outline-offset:4px}header{background:var(--code);color:#eefaff;padding:4rem max(1.3rem,calc((100vw - 1160px)/2))}header a{color:#8ee9fa}.eyebrow{font-size:.8rem;font-weight:750;letter-spacing:.16em;text-transform:uppercase;color:#8ee9fa}h1{font-size:clamp(2.25rem,5vw,4.4rem);line-height:1.08;max-width:850px;margin:.7rem 0 1.3rem}header p{max-width:760px;color:#cbdce9}.actions{display:flex;gap:.8rem;flex-wrap:wrap}.button{display:inline-block;border:1px solid currentColor;border-radius:.5rem;padding:.55rem 1rem;font-weight:700;text-decoration:none}.layout{max-width:1200px;margin:auto;display:grid;grid-template-columns:245px minmax(0,1fr);gap:2.4rem;padding:2.4rem 1.3rem}nav{font-size:.88rem}nav ol{padding-left:1.5rem}nav li{margin:.45rem 0}nav .sticky{position:sticky;top:1rem;max-height:94vh;overflow:auto;padding:.4rem .5rem 1rem}main{min-width:0}section{background:var(--paper);border:1px solid var(--line);border-radius:.8rem;padding:clamp(1.2rem,3vw,2.4rem);margin:0 0 1.6rem}h2{font-size:1.7rem;line-height:1.25;margin:0 0 1.2rem}h3{font-size:1.2rem;line-height:1.4;margin:1.8rem 0 .5rem}p{margin:.8rem 0}li{margin:.4rem 0}code,kbd{font-family:ui-monospace,Consolas,monospace;font-size:.9em;overflow-wrap:anywhere}p code,li code,td code{background:#edf3f8;padding:.1em .3em;border-radius:.2rem}pre{background:var(--code);color:#e0f1ff;border-radius:.5rem;padding:1.2rem;overflow:auto;font-size:.9rem;line-height:1.65}pre code{overflow-wrap:normal}table{border-collapse:collapse;width:100%;font-size:.92rem}th,td{border:1px solid var(--line);padding:.65rem .8rem;text-align:left;vertical-align:top}th{background:#edf5f8}caption{text-align:left;font-weight:700;padding:.5rem 0}.table-wrap{overflow-x:auto}.note,.exercise{border-left:4px solid var(--accent);background:#eef8fa;padding:.8rem 1rem;margin:1.3rem 0}.exercise{border-color:#a05a00;background:#fff7e8}.source{font-size:.85rem;color:var(--muted)}details{margin:1rem 0;border:1px solid var(--line);padding:.7rem 1rem;border-radius:.4rem}summary{cursor:pointer;font-weight:700}figure{margin:1.5rem 0}figcaption{font-size:.85rem;color:var(--muted)}svg{display:block;width:100%;height:auto}.flow{display:flex;gap:.5rem;flex-wrap:wrap;align-items:center}.flow span{border:1px solid var(--line);border-radius:.3rem;padding:.5rem .7rem;background:#f0f7fa}.formula{font-weight:650;padding:.8rem;background:#edf5f8;border-radius:.4rem}label{display:block;margin:.9rem 0 .3rem;font-weight:650}input,select,button{font:inherit;max-width:100%}input[type=range]{width:100%;accent-color:var(--accent)}select,button{padding:.45rem .7rem;border:1px solid #8098ad;border-radius:.3rem;background:white;color:var(--ink)}output{display:block;font-size:1.2rem;font-weight:750;margin:1rem 0}footer{max-width:1160px;margin:0 auto;padding:1rem 1.3rem 3rem;color:var(--muted);font-size:.9rem}.skip{position:absolute;left:1rem;top:-100px;background:white;padding:.7rem;z-index:10}.skip:focus{top:1rem}.badge{display:inline-block;font-size:.8rem;background:#e6f6f3;color:#135f51;border-radius:2rem;padding:.2rem .7rem}.cols{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+    @media(max-width:900px){.layout{grid-template-columns:1fr;gap:1rem}nav .sticky{position:static;max-height:none}nav ol{columns:2;column-gap:2rem}nav li{break-inside:avoid}.cols{grid-template-columns:1fr}}
+    @media(max-width:520px){nav ol{columns:1}header{padding-top:2.5rem}section{border-radius:.4rem}.layout{padding:.8rem}table{font-size:.86rem}}
+    @media print{body{background:white;font-size:10.5pt}header{background:white;color:black;padding:0 0 1rem}header p,.eyebrow,header a{color:black}.layout{display:block;padding:0;max-width:none}nav .sticky{position:static;max-height:none}nav ol{columns:2}section{border:0;border-radius:0;padding:.6rem 0;margin:0;break-before:auto}h2,h3,summary{break-after:avoid}pre,table,figure,.note,.exercise{break-inside:avoid}pre{white-space:pre-wrap;background:#f0f0f0;color:black}a{color:black}header .actions,.skip,.lab-controls{display:none}footer{padding:1rem 0}details>*{display:block}details{border:0}p,li{orphans:3;widows:3}}
+  </style>
+</head>
+<body>
+<a class="skip" href="#main">Skip to tutorial</a>
+<header id="top">
+  <p class="eyebrow">Labyrinth / Life Runner · source-led instructable</p>
+  <h1>Inside Life Runner</h1>
+  <p>A complete guided tour of a first-person browser maze: understand its design, read its code, follow the mathematics, and learn how to improve it.</p>
+  <p>Based on the checked-in web game, version <strong>0.5.1</strong>. Inspected 5 November 2026. Beginner foundations lead into intermediate graphics and engineering. Allow several study sessions, with the game and its source open alongside this page.</p>
+  <div class="actions"><a class="button" href="/labyrinth/labyrinth.html">Play Life Runner</a><a class="button" href="/portfolio/labyrinth.html">Labyrinth information page</a><a class="button" href="/labyrinth/labyrinth.html" download="life-runner-source.html">Download game source</a></div>
+</header>
+<div class="layout">
+<nav aria-label="Tutorial contents"><div class="sticky"><strong>Work through the package</strong><ol>
+  <li><a href="#orientation">What you are studying</a></li><li><a href="#setup">Run and inspect it</a></li><li><a href="#stack">Technology and dependencies</a></li><li><a href="#shell">HTML, CSS and interface layers</a></li><li><a href="#language">JavaScript methods and symbols</a></li><li><a href="#architecture">Architecture and state</a></li><li><a href="#generation">Procedural maze generation</a></li><li><a href="#paths">Pathfinding and hints</a></li><li><a href="#coordinates">Coordinates and camera maths</a></li><li><a href="#rendering">The Three.js rendering pipeline</a></li><li><a href="#lighting">Lighting, shading and glow</a></li><li><a href="#fallback">Canvas raycasting fallback</a></li><li><a href="#movement">Input, movement and collision</a></li><li><a href="#loop">Time and the animation loop</a></li><li><a href="#balance">Rules, difficulty and scoring</a></li><li><a href="#persistence">Storage, APIs and trust</a></li><li><a href="#efficiency">Efficiency and resource budgets</a></li><li><a href="#experience">User experience and accessibility</a></li><li><a href="#review">Source review and debugging</a></li><li><a href="#workshop">Build-along exercises</a></li><li><a href="#reference">Function atlas and references</a></li>
+</ol><a href="#top">Back to top ↑</a></div></nav>
+<main id="main">
+<section id="orientation">
+  <span class="badge">01 · Start here</span><h2>What you are studying</h2>
+  <p><strong>Life Runner</strong> is the title inside <code>public/labyrinth/labyrinth.html</code>; <strong>Labyrinth</strong> is its portfolio name and URL namespace. This tutorial concerns that browser game. The separate LabyrinthApp portfolio entry describes an Android project and is not the implementation in this folder.</p>
+  <p>The player explores a generated maze from eye level, uses temporary hints, and tries to reach an exit. Practice removes score pressure; Timed Run adds countdowns and lives; High Score rewards speed without a countdown. The core design problem is <em>orientation under uncertainty</em>: a simple maze graph becomes challenging when the player can see only one corridor at a time.</p>
+  <div class="note"><strong>JavaScript, not Java.</strong> No Java source, JVM, Java applet or Java build system is used here. JavaScript runs in the browser and Node.js. The two languages share some punctuation, but have different type systems, libraries and execution environments. A Java comparison appears below to help transfer programming knowledge accurately.</div>
+  <h3>Learning goals</h3>
+  <ul><li>Trace an action from a DOM event through game state to a rendered frame.</li><li>Explain why depth-first generation and breadth-first routing solve different problems.</li><li>Distinguish geometry, materials, lights, shaders, fog and decorative glow.</li><li>Calculate movement, timer allowances, scores and rendering costs.</li><li>Review the implementation critically, with reproducible evidence.</li></ul>
+  <p>Descriptions marked <strong>implemented</strong> refer to inspected code. Examples marked <strong>teaching example</strong> simplify it. Items marked <strong>proposed</strong> are exercises or improvements, not features already present.</p>
+</section>
+<section id="setup">
+  <span class="badge">02 · Tools</span><h2>Run and inspect it</h2>
+  <p>You need a browser with developer tools and a text editor. Node.js and npm run the existing portfolio server. In a checkout of the repository, install the package dependencies and use its start script:</p>
+  <pre><code>npm install
+npm start
+# Visit http://localhost:3000/labyrinth/labyrinth.html
+# Tutorial: http://localhost:3000/labyrinth/tutorial.html</code></pre>
+  <p>The root server requires the contact and Turnstile environment settings listed in <code>.env.example</code> and <code>README.md</code>. Configure those locally before starting; do not put credentials in HTML. If the server exits with “Missing required environment variables”, that is portfolio configuration, not a graphics fault.</p>
+  <p>For front-end study alone, serve <code>public</code> with a local static HTTP server. The game can use local scores and its Canvas fallback without the score API. Opening via <code>file://</code> changes origin and fetch/storage behaviour, so it is a poor way to reproduce hosted behaviour. Static hosting does not provide the Express API.</p>
+  <ol><li>Play a Practice level. Locate the preview, HUD, compass, hint and summary.</li><li>Open DevTools → Network. Reload and identify the version request, attempted engine URLs, and score requests.</li><li>Open Sources and search for <code>boot</code>, <code>CFG</code>, <code>generateMaze</code> and <code>tick</code>.</li><li>Inspect Application/Storage for <code>life_runner_progress_v1</code> and <code>life_runner_scores_v1</code>. Use a test browser profile before clearing them.</li><li>Use responsive device emulation to inspect the layout; test real touch hardware for final control judgement.</li></ol>
+  <div class="exercise"><strong>Checkpoint:</strong> Explain why a page can render and accept movement even if <code>/api/labyrinth/scores</code> fails. <details><summary>Answer</summary><p>Maze rules and rendering live in the page. Fetch errors are caught and local storage supplies a fallback scoreboard; the API is an enhancement rather than the simulation engine.</p></details></div>
+</section>
+<section id="stack">
+  <span class="badge">03 · Inventory</span><h2>Technology and dependencies</h2>
+  <div class="table-wrap"><table><caption>What runs where</caption><thead><tr><th>Technology</th><th>Job in this package</th><th>Boundary to understand</th></tr></thead><tbody>
+  <tr><td>HTML5 and the DOM</td><td>Menus, buttons, inputs, HUD and overlay canvases.</td><td>Elements are retrieved once and updated from state.</td></tr>
+  <tr><td>CSS</td><td>Full-screen layout, neon panels, gradients, compass and touch zones.</td><td>CSS box shadows decorate UI; they do not light the 3D world.</td></tr>
+  <tr><td>JavaScript</td><td>Procedural algorithms, input, simulation, loading, storage and network calls.</td><td>A browser event loop coordinates work; no framework or transpiler is required by the game.</td></tr>
+  <tr><td>Three.js → WebGL → GPU</td><td>Scene graph, geometry, standard materials, lights and perspective rendering.</td><td>Remote fallbacks pin Three.js to r128 / 0.128.0.</td></tr>
+  <tr><td>Canvas 2D</td><td>Preview/minimap, generated glow texture, backup first-person ray renderer.</td><td>The fallback paints pixels with CPU-side JavaScript draw calls.</td></tr>
+  <tr><td>Browser APIs</td><td>Fetch, streamed response reading, TextDecoder, Pointer Lock, touch/keyboard events, localStorage, matchMedia, performance.now and requestAnimationFrame.</td><td>Capabilities can be absent, restricted or device-dependent.</td></tr>
+  <tr><td>Node.js + Express</td><td>Static files, version endpoint, global score and run-session endpoints in <code>jahosi.js</code>.</td><td>Server code is outside the single-file game.</td></tr>
+  <tr><td>Node crypto and filesystem; express-rate-limit</td><td>Random run tokens, persistent JSON scores, throttled API traffic.</td><td>These are server capabilities, unavailable as browser globals.</td></tr>
+  </tbody></table></div>
+  <p>The root package also includes <code>dotenv</code> for configuration, <code>nodemailer</code> for portfolio email, and <code>better-sqlite3</code> for site analytics. They are not maze-rendering dependencies. Labyrinth scores use a JSON file rather than that analytics database.</p>
+  <h3>Single-file packaging has a precise meaning</h3>
+  <p>The game’s HTML, CSS, rules, fallback renderer and UI are in one document. The preferred 3D engine remains an external dependency. The loader first tries <code>./assets/vendor/three.min.js</code>, then cdnjs, then jsDelivr. <strong>The inspected folder contains only the game HTML before this tutorial is added; the local vendor file is absent.</strong> A normal load therefore attempts a missing local file before using a CDN.</p>
+  <p>There are no downloaded character models, image texture packs, sound files or external physics engine in this game. The geometry and glow texture are generated in code. There is no service-worker registration or manifest here, so comments about “PWA-friendly” loading do not establish an installed offline PWA.</p>
+  <p>The portfolio information page separately uses Tailwind’s CDN and a Google font. This tutorial embeds its own CSS, diagram and optional calculator script; it needs no CDN, font, image or library to read offline.</p>
+</section>
+<section id="shell">
+  <span class="badge">04 · Presentation</span><h2>HTML, CSS and interface layers</h2>
+  <p>The document places <code>#sceneHost</code> behind the interface. JavaScript inserts either the WebGL canvas or a 2D canvas there. Other elements sit above it: a loader, menu, score screen, level preview, transitions, HUD, compass, actions and touch controls. The maze is drawn in a canvas; buttons remain ordinary HTML controls.</p>
+  <p><code>position: fixed</code> and <code>inset: 0</code> fill the viewport. Absolute positioning anchors child layers. <code>z-index</code> establishes visual priority; an invisible layer with active pointer handling can still block a button, so inspect both stacking and hit testing when controls stop responding.</p>
+  <div class="table-wrap"><table><thead><tr><th>CSS notation</th><th>Read it as</th><th>In Life Runner</th></tr></thead><tbody>
+  <tr><td><code>:root</code>, <code>--blue</code>, <code>var(--blue)</code></td><td>Root selector, custom property, property lookup.</td><td>Palette, glow and safe-offset tokens.</td></tr><tr><td><code>#hud</code> / <code>.panel</code></td><td>ID selector / reusable class selector.</td><td>One specific UI node / a presentation pattern.</td></tr><tr><td><code>rgba(..., 0.65)</code></td><td>Colour with alpha transparency.</td><td>Panels reveal the scene below.</td></tr><tr><td><code>min()</code>, <code>clamp()</code>, <code>vw</code></td><td>Responsive limits and viewport-relative units.</td><td>Readable cards and scalable titles.</td></tr><tr><td><code>@media</code></td><td>Apply styles under a viewport or input condition.</td><td>Small-screen HUD and coarse-pointer controls.</td></tr><tr><td><code>!important</code></td><td>Override normal declaration priority.</td><td>The coarse-pointer rule hides joystick base/stick graphics even when JavaScript sets their inline display.</td></tr></tbody></table></div>
+  <p>The touch zones still receive input when their decorative joystick graphics are hidden. That is an implemented distinction: invisible controls can operate, but users may find them harder to discover.</p>
+  <p>The game viewport sets <code>user-scalable=no</code>, and the body suppresses scrolling. These choices support a full-screen game but limit magnification. Its <code>SAFE_TOP</code>/<code>SAFE_BOTTOM</code> values are fixed offsets, not measurements of every device’s notch. A proposed revision would combine layout tokens with <code>env(safe-area-inset-top)</code> and test zoom and orientation changes.</p>
+  <div class="exercise"><strong>Try it:</strong> Temporarily change <code>--panel</code> in DevTools. Only UI surfaces should change. Then change <code>floorMaterial</code> in a local source copy: that changes a world surface. This separates CSS appearance from 3D shading.</div>
+</section>
+<section id="language">
+  <span class="badge">05 · Read the code</span><h2>JavaScript methods and symbols</h2>
+  <p>The large game script is enclosed by <code>(function () { ... })();</code>, an immediately invoked function expression (IIFE). It creates a private scope, avoiding a global variable for every piece of game state. The early version-check script is another private scope; it deliberately shares one promise via <code>window.__labyrinthVersionRefreshPromise</code>.</p>
+  <div class="table-wrap"><table><caption>A practical symbol decoder</caption><thead><tr><th>Syntax</th><th>Meaning and example</th></tr></thead><tbody>
+  <tr><td><code>const</code>, <code>let</code></td><td>A binding that cannot be reassigned / one that can. <code>const CFG = {...}</code> does not freeze its properties; the code treats them as configuration by convention.</td></tr>
+  <tr><td><code>{ }</code>, <code>[ ]</code></td><td>Object or statement block / array or property indexing. <code>maze[y][x].walls.n</code> accesses a nested grid object.</td></tr>
+  <tr><td><code>.</code>, <code>:</code>, <code>,</code>, <code>;</code></td><td>Member access; object key/value separator; item separator; statement terminator. Context matters: braces after <code>if</code> form a block, not an object.</td></tr>
+  <tr><td><code>=</code>, <code>===</code>, <code>!==</code></td><td>Assign, strictly compare, strictly differ. <code>gameState === "playing"</code> tests state without type coercion.</td></tr>
+  <tr><td><code>&amp;&amp;</code>, <code>||</code>, <code>!</code></td><td>Short-circuit AND, OR, negation. <code>value || 1</code> uses 1 for any falsy value, including 0 and an empty string; it does not mean “missing only”.</td></tr>
+  <tr><td><code>? :</code>, <code>?.</code></td><td>Conditional expression / optional chaining. <code>document.exitPointerLock?.()</code> calls only if that method exists.</td></tr>
+  <tr><td><code>+</code>, <code>-</code>, <code>*</code>, <code>/</code>, <code>%</code></td><td>Arithmetic; <code>+</code> also concatenates strings. <code>%</code> is remainder, used to wrap hue. Angle values use radians.</td></tr>
+  <tr><td><code>+=</code>, <code>-=</code>, <code>++</code></td><td>Update a value in place, e.g. <code>timer -= dt</code> and <code>hintsLeft -= 1</code>.</td></tr>
+  <tr><td><code>=&gt;</code></td><td>Arrow function used as a callback: <code>scores.sort((a,b) =&gt; b.score-a.score)</code> sorts descending.</td></tr>
+  <tr><td><code>new</code>, <code>this</code></td><td>Construct an instance / refer to the receiver of a method call. The fallback clock uses <code>this._t</code>.</td></tr>
+  <tr><td><code>async</code>, <code>await</code>, <code>Promise</code></td><td>Asynchronous sequencing. Awaiting a click promise yields execution; it does not freeze browser painting or event handling.</td></tr>
+  <tr><td><code>try</code>, <code>catch</code>, <code>throw</code></td><td>Handle or propagate errors. Storage failure is caught; loader failure selects the fallback renderer.</td></tr>
+  <tr><td><code>void showLevelPreview()</code></td><td>Discard the return value and intentionally do not await the promise. This alone does not handle a rejected promise.</td></tr>
+  <tr><td><code>//</code>, <code>/* ... */</code></td><td>Line and block comments. Comments explain intent but can become stale; executable expressions decide actual behaviour.</td></tr>
+  <tr><td><code>/pattern/i</code>, <code>^</code>, <code>$</code></td><td>Regular expression, case-insensitive flag, start/end anchors. Server-side alias validation uses regexes before saving.</td></tr>
+  <tr><td><code>`text ${value}`</code></td><td>Template literal with interpolation; used in server filenames and messages.</td></tr>
+  </tbody></table></div>
+  <h3>Collections, callbacks and closures</h3>
+  <p>An <code>Array</code> stores cells, routes and scores. A <code>Set</code> avoids duplicate wall keys or repeated BFS visits. A <code>Map</code> links each reached cell to its predecessor. <code>Object.create(null)</code> makes a keyboard dictionary without inherited keys such as <code>constructor</code>. JSON serializes data as text; it cannot preserve a function or a live Three.js mesh.</p>
+  <p><code>bindJoystick</code> is a higher-order function: a callback tells it where to send normalized input. Its inner event handlers form closures over <code>activeId</code> and the touch origin. Each joystick therefore keeps its own active finger without creating a custom class.</p>
+  <pre><code>// Teaching example: data → transformation → result
+const topTen = scores
+  .map(item =&gt; ({ name: String(item.name), score: Number(item.score) || 0 }))
+  .sort((a, b) =&gt; b.score - a.score)
+  .slice(0, 10);</code></pre>
+  <p><code>map</code> creates a transformed array; <code>sort</code> mutates that new array; <code>slice</code> selects a portion without mutating it. Read chained calls left to right. Distinguish <code>slice</code> from <code>splice</code>, which removes or replaces items in the original array.</p>
+  <h3>Bridge from Java</h3>
+  <pre><code>// JavaScript teaching example
+const cell = { walls: { n: true, e: true, s: true, w: true } };
+cell.walls.n = false;
+
+// Comparable Java data model — not used by this game
+final class Cell {
+    boolean north = true, east = true, south = true, west = true;
+}
+Cell cell = new Cell();
+cell.north = false;</code></pre>
+  <p>JavaScript objects can gain properties at runtime; Java class fields are declared in a compiled type. JavaScript’s <code>Number</code> generally represents double-precision values; Java separates <code>int</code>, <code>float</code> and <code>double</code>. JavaScript <code>===</code> compares primitive strings by value, whereas Java normally uses <code>.equals()</code> for string contents. A browser promise is not a Java thread: <code>await</code> resumes a continuation after the awaited result becomes available.</p>
+</section>
+<section id="architecture">
+  <span class="badge">06 · Follow the flow</span><h2>Architecture and state</h2>
+  <p>The code separates configuration (<code>CFG</code>), cached DOM references, renderer objects, run state, maze data, player state and input intent. These are logically separated inside one closure, rather than split into modules. This makes the document portable, while increasing the number of dependencies each function can reach.</p>
+  <div class="flow" aria-label="Startup flow"><span>Version check</span>→<span>Quality profile</span>→<span>Load Three.js or fallback</span>→<span>Bind controls</span>→<span>Menu</span>→<span>tick()</span></div>
+  <h3>States and transitions</h3>
+  <pre><code>boot → menu → preview → playing → gameover → menu
+                            │       ↑
+                            ├ timeout → retry same maze
+                            └ clear → continue → next level → preview</code></pre>
+  <p><code>gameState</code> holds <code>boot</code>, <code>menu</code>, <code>preview</code>, <code>playing</code> or <code>gameover</code>. <code>isLevelTransition</code> and <code>isTimeoutTransition</code> add substates while <code>gameState</code> remains <code>playing</code>. <code>applyUIState()</code> derives which panels should appear from state; <code>updateHUD()</code> copies numbers and mode labels to the screen.</p>
+  <p>A transition waits for a promise whose resolver is saved in a variable. A button click invokes that resolver. This gives readable sequential code—show explanation, wait, prepare next level—without a blocking loop. Guards after each <code>await</code> check that the player has not left the run.</p>
+  <p><code>escapeToMenuAndScores()</code> resolves pending waiters before ending the run, so an async flow is not left waiting forever. A larger game could use a state machine with explicit transition events or a run generation ID to prevent an old asynchronous operation affecting a newer run.</p>
+  <div class="exercise"><strong>Trace one action:</strong> Hint click → guard in <code>setupInput</code> → <code>activateHint</code> → decrement hint count and calculate BFS route → save expiry time → next <code>tick</code> updates floor/minimap feedback. The click does not render a new maze or directly move the player.</div>
+</section>
+<section id="generation">
+  <span class="badge">07 · Algorithms</span><h2>Procedural maze generation</h2>
+  <p>A maze is an <code>N × N</code> array of cells, indexed <code>grid[y][x]</code>. Each cell begins sealed with north, east, south and west walls. Openings must be reciprocal: removing east from one cell also removes west from its neighbour. This invariant makes movement, rendering and pathfinding agree.</p>
+  <pre><code>// Actual cell structure before the carving pass
+{ visited: false, walls: { n: true, e: true, s: true, w: true } }
+
+// Teaching example of a reciprocal passage
+grid[y][x].walls.e = false;
+grid[y][x + 1].walls.w = false;</code></pre>
+  <h3>Step 1: randomized iterative depth-first search</h3>
+  <ol><li>Create all cells and mark the centre visited.</li><li>Push its coordinates onto a stack.</li><li>Inspect the stack’s last cell and gather unvisited orthogonal neighbours.</li><li>If any exist, randomly select one, open both sides of the connecting wall, mark it visited and push it.</li><li>If none exist, pop the stack to backtrack.</li><li>Repeat until the stack is empty, then remove the temporary <code>visited</code> properties.</li></ol>
+  <p>This first pass forms a spanning tree: every cell is reachable and there is one simple path between any pair. The stack avoids a deeply recursive function consuming the JavaScript call stack. Random neighbour choice favours the long winding passages typical of depth-first mazes; it does not sample every possible maze with equal probability.</p>
+  <h3>Step 2: introduce loops</h3>
+  <p>The code collects closed internal east/south walls, then removes up to <code>floor(N² × 0.055)</code> of them. Looking east and south avoids counting each wall twice. At size 5 this requests one extra opening; at size 9 it requests four. A loop adds alternate routes to a connected maze; it does not create a disconnected region. “Extra openings” are a count based on cell area, not a 5.5% independent chance for every wall.</p>
+  <h3>Step 3: place exit and player</h3>
+  <p>Choose a random boundary exit excluding corners and open its outward wall. Reflect the exit coordinates across the maze centre to get an opposite point. Place the player about 67% of the way from centre toward that point, clamped to the interior. The carving seed and player start are different concepts. Random spawn yaw prevents the initial camera direction revealing the exit direction.</p>
+  <p><code>Math.random()</code> provides variety without a stored seed. Reproducing a particular maze is therefore difficult. <strong>Proposed:</strong> inject a seeded generator, record its seed and rules version, and use the same seed for regression tests and shareable challenges.</p>
+  <div class="exercise"><strong>Reason before coding:</strong> Why can removing more walls never disconnect this maze? <details><summary>Answer</summary><p>Removing a wall adds a graph edge. Existing paths remain available, so connectivity cannot decrease. Adding a wall would require a new connectivity check.</p></details></div>
+</section>
+<section id="paths">
+  <span class="badge">08 · Routing</span><h2>Pathfinding and hints</h2>
+  <p><code>shortestPath()</code> runs breadth-first search (BFS). It uses a queue, a visited set and a predecessor map. Each cell is a graph node; an open wall is an edge of equal cost. BFS examines routes in increasing number of edges, so the first arrival at the exit is shortest in cell steps.</p>
+  <pre><code>// Teaching example: efficient queue traversal for a future refactor
+const queue = [[startX, startY]];
+let head = 0;
+while (head &lt; queue.length) {
+  const [x, y] = queue[head++];
+  // For each open, in-bounds, unseen neighbour:
+  // mark seen, record predecessor, then queue.push(neighbour).
+}</code></pre>
+  <p>The current implementation instead uses <code>q.shift()</code>. That is concise but repeatedly removes from the front of an array. A head index avoids repeated front-removal work. Once the destination is found, the predecessor links reconstruct a reversed route, then <code>reverse()</code> puts it in start-to-exit order.</p>
+  <p>A path contains both endpoints. Thus a path of 13 cells represents 12 inter-cell moves. Returning <code>[]</code> indicates no route. BFS is shortest for equal costs; if you add mud, slopes or turn penalties, use a cost-aware search such as Dijkstra’s algorithm or A* with a justified heuristic.</p>
+  <h3>How hints reuse the solution</h3>
+  <p><code>activateHint()</code> calculates a route from the current player cell, spends one hint, stores the full route for the minimap, and stores up to eight route cells for world highlighting. The five-second duration is an absolute <code>performance.now()</code> deadline. Eight cells include the current cell, so the segment shows at most seven onward cell transitions.</p>
+  <p><code>updateHintVisuals()</code> changes floor colours and emissive values while active, then restores the saved base values. <code>drawMazeMap()</code> is shared between preview and hint map, preventing two competing map implementations. The preview hides the player direction; the hint map includes it.</p>
+  <p>The full-map route is more generous than the short world segment. This is an important design choice: a hint helps next-step navigation in first person, but also briefly reveals the complete route to a player who can read the overhead map.</p>
+</section>
+<section id="coordinates">
+  <span class="badge">09 · Spatial maths</span><h2>Coordinates and camera maths</h2>
+  <p>Maze data uses integer <code>(x,y)</code> cells. The world uses continuous <code>(x,z)</code> floor coordinates; world <code>y</code> is height. Cell centres are four world units apart and the maze is centred around the origin.</p>
+  <pre><code>centre = (mazeSize - 1) / 2
+worldX = (cellX - centre) × 4
+worldZ = (cellY - centre) × 4
+
+cellX = round(worldX / 4 + centre)
+cellY = round(worldZ / 4 + centre)</code></pre>
+  <p>For a 5 × 5 maze, cell <code>(2,2)</code> maps to world <code>(0,0)</code>; cell <code>(4,0)</code> maps to <code>(8,-8)</code>. <code>worldToCell()</code> clamps the result to the grid. That prevents invalid indexing, but also means it cannot independently prove that a point is outside the physical maze.</p>
+  <figure><svg viewBox="0 0 640 265" role="img" aria-labelledby="axes-title axes-desc"><title id="axes-title">Maze grid and world axes</title><desc id="axes-desc">The centre cell is the world origin. North is negative Z, south positive Z, east positive X and west negative X. The camera sits above the floor.</desc><defs><pattern id="grid" width="42" height="42" patternUnits="userSpaceOnUse"><path d="M42 0H0V42" fill="none" stroke="#a6bccb"/></pattern></defs><rect x="35" y="25" width="210" height="210" fill="url(#grid)" stroke="#a6bccb"/><rect x="119" y="109" width="42" height="42" fill="#a5e5e8"/><circle cx="140" cy="130" r="5" fill="#006b83"/><path d="M140 130V40m0 0-6 12m6-12 6 12M140 130H230m0 0-12-6m12 6-12 6" fill="none" stroke="#006b83" stroke-width="3"/><g fill="#17283e" font-family="system-ui,sans-serif" font-size="16"><text x="150" y="57">−Z / north</text><text x="174" y="155">+X</text><text x="110" y="256">+Z / south</text><text x="290" y="70">Grid (2, 2) → world (0, 0)</text><text x="290" y="110">Yaw 0 → looks north (−Z)</text><text x="290" y="150">Positive yaw → turns west</text><text x="290" y="190">Camera height → Y = 1.35</text><text x="290" y="230">Wall height → 2.4 units</text></g></svg><figcaption>Top-down teaching diagram. The grid’s second coordinate becomes world Z, not world height.</figcaption></figure>
+  <p>At yaw zero, forward movement follows negative Z. Facing direction is <code>(-sin(yaw), -cos(yaw))</code>. The implementation multiplies its positive sine/cosine vector by a negative forward input, producing that result. Positive yaw turns toward west. Radians satisfy <code>π = 180°</code>; <code>π/2</code> is a quarter turn.</p>
+  <p>The camera uses Euler order <code>YXZ</code>: yaw, pitch, then roll. Eye height is 1.35; wall height is 2.4. The perspective camera has a 72° vertical field of view, near plane 0.05 and far plane 380. Horizontal field of view varies with aspect ratio. Near/far distances affect clipping and depth precision, not movement rules.</p>
+</section>
+<section id="rendering">
+  <span class="badge">10 · Graphics</span><h2>The Three.js rendering pipeline</h2>
+  <p><code>initThree()</code> creates a <code>WebGLRenderer</code>, <code>Scene</code> and <code>PerspectiveCamera</code>. <code>buildWorld()</code> converts the maze data into meshes beneath a per-level <code>Group</code>. A group is a transform/ownership hierarchy, not a guarantee that its children render in one draw call.</p>
+  <div class="flow" aria-label="Rendering pipeline"><span>Maze cells</span>→<span>Geometry + material</span>→<span>Meshes in scene</span>→<span>Camera transforms</span>→<span>GPU shaders</span>→<span>Canvas pixels</span></div>
+  <h3>Geometry and scene construction</h3>
+  <p>Floors are thin boxes sized <code>4 × 0.08 × 4</code>. Walls use two box orientations with 0.28 thickness and 2.4 height. The longer wall dimension includes thickness so joins overlap rather than leave visible cracks. Shared floor/wall geometry reduces geometry allocation, while a <code>Set</code> of wall keys prevents placing one shared wall twice.</p>
+  <p>Each floor tile receives a cloned material so hints can recolour one tile without affecting all tiles. Cell coordinates and original colours live in mesh <code>userData</code>. The renderer’s objects are therefore a presentation of the graph; they are not the authoritative collision model.</p>
+  <p>A cylinder and torus mark the exit. A box, torus, glow sprite and point light mark the start. A distant sphere, halo sprite and directional light establish the sun. Hint beams use transparent cone meshes and sprites. These are generated primitives, not imported art assets.</p>
+  <h3>From triangles to pixels</h3>
+  <p>Three.js submits mesh buffers and shader programs to WebGL. Vertex processing transforms triangle vertices from model space to world, camera and clip space. Rasterization determines covered fragments. Fragment shading combines material properties, lighting and fog into colour; depth testing determines which visible surface wins. The browser composites the canvas with the HTML overlays.</p>
+  <p>The package does not author custom GLSL vertex or fragment shaders. Its material choices select Three.js shader implementations. Knowing shader stages is still valuable: changing a light is a lighting input; changing a box is geometry; changing the camera modifies projection.</p>
+  <p>Resizing updates camera aspect, projection matrix, renderer size and pixel ratio. CSS canvas size and drawing-buffer resolution are distinct: a 1000 × 600 CSS canvas at ratio 2 has about 2.4 million buffer pixels, four times the ratio-1 pixel count.</p>
+</section>
+<section id="lighting">
+  <span class="badge">11 · Look development</span><h2>Lighting, shading and glow</h2>
+  <p><strong>Lighting</strong> describes light sources. <strong>Shading</strong> describes how a surface responds to them. <strong>Glow</strong> here is largely a deliberate visual construction. Keeping these separate prevents the common mistake of expecting a bright-looking object to illuminate everything around it.</p>
+  <div class="table-wrap"><table><caption>The actual lighting setup</caption><thead><tr><th>Source or effect</th><th>Implementation</th><th>Purpose</th></tr></thead><tbody>
+  <tr><td>Sky/ground fill</td><td><code>HemisphereLight</code> with cyan sky and dark-blue ground colours.</td><td>Broad ambient orientation and readable shaded surfaces.</td></tr><tr><td>Warm directional lights</td><td>A scene directional light plus the per-level sun directional light.</td><td>Consistent warm directional modelling.</td></tr><tr><td>Purple fill</td><td>Scene <code>PointLight</code> near (-8,8,-7).</td><td>Colour separation and local illumination.</td></tr><tr><td>Start marker light</td><td>Point light with animated intensity.</td><td>Help the player identify the start.</td></tr><tr><td>Hint beam light</td><td>Point light initially at zero intensity.</td><td>Brighten the exit during hint feedback.</td></tr><tr><td>Fog</td><td><code>FogExp2</code>, density 0.022 or 0.026.</td><td>Blend distant surfaces into atmosphere; it does not by itself remove geometry from rendering.</td></tr></tbody></table></div>
+  <h3>Standard materials</h3>
+  <p>Floor and wall materials use <code>MeshStandardMaterial</code>, Three.js’s metallic/roughness physically based shading model. The floor uses metalness 0.25 and roughness 0.5; walls use 0.25 and 0.45. A higher roughness spreads reflections, while higher metalness changes the balance of diffuse and specular response. These are artistic values; the package does not measure a real material or load an environment map.</p>
+  <pre><code>// Excerpt from the wall material
+new THREE.MeshStandardMaterial({
+  color: new THREE.Color().setHSL(levelHue01() + 0.05, 0.58, 0.23),
+  emissive: new THREE.Color().setHSL(levelHue01() + 0.05, 0.62, 0.12),
+  metalness: 0.25,
+  roughness: 0.45
+});</code></pre>
+  <p><code>color</code> provides base colour. <code>emissive</code> contributes self-lit appearance. Emissive colour does not automatically cast light onto neighbouring meshes; explicit point lights supply that visible lighting. <code>MeshBasicMaterial</code>, used for the sun and beams, is unlit, so its colour remains visible without standard lighting response.</p>
+  <h3>Palette and spatial readability</h3>
+  <p><code>levelHue01()</code> advances hue by 0.11 per level and wraps it. HSL separates hue from saturation/lightness, making a family of palettes easy to generate. Each floor’s ring index is <code>max(abs(x-centre), abs(y-centre))</code>: a square-ring distance, not Euclidean distance. Interpolating inner/outer colours makes outer floor tiles brighter, offering a subtle location cue.</p>
+  <h3>How the glow is built</h3>
+  <p><code>getHintGlowTexture()</code> draws a radial gradient to a canvas and wraps it in a <code>CanvasTexture</code>, cached for reuse. A sprite is a camera-facing textured quad. Layering wide transparent sprites with narrow cone meshes creates a bright beam impression at modest geometric cost.</p>
+  <p><code>AdditiveBlending</code> adds light-like colour to the existing image. <code>transparent: true</code> enables transparency handling; opacity controls visibility. Beam materials disable depth writing, reducing unwanted transparent depth occlusion, while depth testing still matters. <code>DoubleSide</code> makes the open cones visible from inside and outside. Overlapping transparent layers can become expensive because the same pixel is shaded repeatedly.</p>
+  <p>Sine waves animate intensity, scale and opacity; for example <code>0.5 + 0.5 * sin(t)</code> oscillates between zero and one. This is a periodic pulse, not random flicker. Ring rotation currently increments per frame, a separate timing issue discussed later.</p>
+  <div class="note"><strong>Shadows and bloom:</strong> the code does not enable shadow maps, assign mesh shadow flags, or run a bloom/postprocessing pass. Soft halos are sprites and additive geometry; wall shading is not a cast shadow. Adding shadow maps would require shadow-enabled lights, receivers/casters and a performance budget.</div>
+  <h3>Version-specific colour output</h3>
+  <p>The game assigns <code>renderer.outputColorSpace = THREE.SRGBColorSpace</code>, but its remote libraries are r128. That release uses <code>outputEncoding</code>, so this assignment does not configure r128’s intended output conversion. This is a source compatibility issue, not a reason to copy newer documentation blindly. For an r128-specific correction, investigate <code>renderer.outputEncoding = THREE.sRGBEncoding</code>; a modern upgrade requires a broader colour-management review. See the <a href="https://github.com/mrdoob/three.js/blob/r128/src/renderers/WebGLRenderer.js">pinned r128 renderer source</a>.</p>
+  <div class="exercise"><strong>Experiment in a local copy:</strong> Set wall emissive colour to black, keep lights unchanged, and compare corridor readability. Then remove the purple fill light. Record which change alters self-lit surfaces and which alters illumination. This teaches causal control of the look.</div>
+</section>
+<section id="fallback">
+  <span class="badge">12 · A second renderer</span><h2>Canvas raycasting fallback</h2>
+  <p>If engine loading or initialization throws, <code>boot()</code> creates a Canvas 2D renderer. It reads the same maze and player data and presents a simpler first-person view. This is a useful example of separating simulation from display, though the fallback does not achieve full feature parity.</p>
+  <h3>One frame, step by step</h3>
+  <ol><li>Paint sky and floor gradients, using the level hue.</li><li>Project a south-facing sun cue when it falls within the view angle.</li><li>For each screen column (or pair of columns on lower-end devices), calculate a ray angle across a <code>0.62π</code> horizontal field of view, about 111.6°.</li><li>Advance that ray in world-space steps of 0.14 or 0.22 units. On a cell change, ask whether the connecting wall is open.</li><li>Convert the first hit distance into a vertical wall strip.</li><li>Shade by distance and an approximate side factor. Add a floor tint during hints.</li></ol>
+  <pre><code>// Equations used by the fallback
+correctedDistance = hitDistance × cos(rayAngle - playerYaw)
+wallPixelHeight = min(0.95 × canvasHeight,
+                      WALL_HEIGHT × canvasHeight / correctedDistance)
+shade = clamp(1 - correctedDistance / maxDistance, 0.08, 1)
+sideMultiplier = hitSide ? 0.85 : 1</code></pre>
+  <p>Cosine correction reduces fisheye distortion by using distance perpendicular to the view plane. The wall-height expression is a simple projection approximation; it does not reproduce the Three.js camera exactly. Side shading is a heuristic, not a surface-normal lighting calculation. The renderer is a stepped grid raycaster, not physically based ray tracing.</p>
+  <p>The background is not textured floor casting: gradients are enough to imply depth cheaply. The fallback ignores camera pitch and uses a different field of view, so it will feel different from WebGL. Its hint floor wash is not the 3D route-cell highlight; the Canvas minimap still carries the route.</p>
+  <h3>Resilience needs deliberate testing</h3>
+  <p>Use DevTools request blocking to block both Three.js CDN patterns, then reload and confirm the local vendor path also fails. Re-enable requests after the test. A throttled request that never completes is different from a failed request: the script loader has load/error handlers but no explicit timeout.</p>
+  <p>Mouse-look, pointer-lock and resize listeners are installed inside <code>initThree()</code>, not in the fallback initializer. Keyboard arrows strafe rather than turn. As written, desktop ray mode therefore lacks the normal mouse turning path; touch look is wired separately. A failed WebGL initialization can also leave partially created objects/canvas behind. These are concrete parity/cleanup tasks for a future revision.</p>
+  <div class="exercise"><strong>Proposed optimization:</strong> Replace small-distance stepping with grid DDA, which jumps directly to the next vertical or horizontal cell boundary. First preserve ray hit tests and wall-side results. Compare time spent rendering the same seeded maze, rather than assuming the new algorithm is faster everywhere.</div>
+</section>
+<section id="movement">
+  <span class="badge">13 · Game feel</span><h2>Input, movement and collision</h2>
+  <p>Event handlers record intent; <code>updatePlayer(dt)</code> turns that intent into motion once per frame. WASD and arrow keys supply forward/back/strafe values. The mouse changes yaw/pitch while pointer lock is active. Touch movement and look joysticks supply continuous values from -1 to 1. H activates a hint; Escape ends the current run or returns to menu/scores.</p>
+  <p>Pointer Lock delivers relative mouse movement without stopping at the screen edge. The implementation requests it on appropriate clicks, exits it for overlays, and attempts recovery after focus returns. Browsers control whether a request is accepted; a click remains the dependable recovery action. <a href="https://developer.mozilla.org/en-US/docs/Web/API/Pointer_Lock_API">MDN’s Pointer Lock guide</a> explains the event and activation model.</p>
+  <h3>Normalize, smooth, integrate</h3>
+  <p>Combined input is normalized if its length exceeds one. Without this, pressing forward and right yields magnitude <code>√2</code>, giving an unfair diagonal speed boost. Small analogue input remains small rather than being forced to full speed.</p>
+  <pre><code>// Teaching example of the movement sequence
+const magnitude = Math.hypot(ix, iy);
+if (magnitude &gt; 1) { ix /= magnitude; iy /= magnitude; }
+const alpha = 1 - Math.exp(-acceleration * dt);
+velocity = lerp(velocity, targetVelocity, alpha);
+position += velocity * dt;</code></pre>
+  <p><code>lerp(a,b,t)</code> means <code>a + (b-a)t</code>. Exponential alpha gives a similar response over elapsed time at different frame rates. Movement speed is 5.2 units/second; acceleration response is 12.5 and deceleration response 10.5. These are smoothing-rate parameters, not a full mass/force physics simulation. Fast deceleration feels precise; slow deceleration feels slippery.</p>
+  <p>Touch look has its own smoothing and sensitivity. Pitch is limited to <code>0.47π</code> on desktop and <code>π/6</code> for coarse pointers. The narrower mobile range reduces accidental vertical drift. An invert toggle changes the touch vertical-look sign.</p>
+  <h3>Touch identity and cancellation</h3>
+  <p><code>bindJoystick()</code> tracks a finger by its touch identifier. The initial touch defines the origin; the stick is clamped to a radius of 48 pixels and normalized. <code>touchend</code> and <code>touchcancel</code> reset only the joystick owning that finger. This prevents one lifted finger from cancelling the other joystick and prevents stuck motion after cancellation.</p>
+  <h3>Collision without a physics engine</h3>
+  <p><code>tryMoveAxis()</code> moves X first, then Z. Each axis may stay in the same cell or cross one open neighbour. Axis separation permits sliding along a wall during diagonal motion. <code>applyWallCollisionBuffer()</code> keeps the camera 0.38 units away from present wall boundaries, approximating a small player body.</p>
+  <p>Maximum nominal travel in one clamped frame is <code>5.2 × 0.05 = 0.26</code> units, much smaller than the four-unit cell. This supports the adjacent-cell test. Raising speed or the timestep cap substantially could invalidate that assumption; collision design must be revisited with movement tuning.</p>
+  <p>The outer world clamp and exit test do not currently agree. The intended design is to cross the outward edge of the exit cell, but the code tests every open side and clamps the player short of the outward threshold. The <a href="#review">source review</a> gives the arithmetic and a focused debugging exercise.</p>
+</section>
+<section id="loop">
+  <span class="badge">14 · Time</span><h2>Time and the animation loop</h2>
+  <p><code>tick()</code> measures time, advances eligible game rules, updates feedback, renders once and requests another frame. <code>requestAnimationFrame</code> aligns work with the browser’s animation schedule; it is not a promise of 60 FPS. Background tabs commonly pause or reduce callbacks. See <a href="https://developer.mozilla.org/en-US/docs/Web/API/Window/requestAnimationFrame">MDN’s animation-frame reference</a>.</p>
+  <ol><li>Check that the chosen renderer is initialized.</li><li>Read clock delta and clamp it to at most 0.05 seconds.</li><li>If playing outside transitions, decrease the timed countdown or increase elapsed time, then update the player.</li><li>Update compass, hints, toast, throttled minimap and HUD.</li><li>Sample performance and adjust WebGL pixel ratio if eligible.</li><li>Render WebGL or Canvas, then schedule <code>tick</code> again.</li></ol>
+  <h3>Three different meanings of time</h3>
+  <div class="table-wrap"><table><thead><tr><th>Clock</th><th>Used for</th><th>Consequence</th></tr></thead><tbody><tr><td>Clamped frame delta</td><td>Motion, countdown, high-score elapsed time, FPS sample accumulator.</td><td>Long frames and background gaps contribute at most 50 ms each.</td></tr><tr><td><code>performance.now()</code></td><td>Hint expiry, pulses, toast, start timestamp.</td><td>A hint may expire while the simulation barely advances.</td></tr><tr><td>Server <code>Date.now()</code></td><td>Run lifetime and submission plausibility.</td><td>Measures real server elapsed time, independently of browser simulation.</td></tr></tbody></table></div>
+  <p>Clamping prevents a giant movement jump after a stall, but silently slows game time below 20 FPS. A 200 ms real frame counts as only 50 ms. Therefore the countdown and high-score elapsed time do not remain wall-clock accurate under severe slowdown. Pausing on visibility changes or separating simulation delta from scoring time would make the rule clearer.</p>
+  <p>The same clamped delta contaminates the FPS estimate: at a real 10 FPS, ten frames each contribute 0.05 seconds, giving an estimate near 20 FPS. The low-resolution threshold can still trigger, but the number is not actual FPS. Measure performance using the unclamped elapsed time and reserve a capped delta for motion.</p>
+  <p>Most pulsing uses absolute time, but rings rotate by a fixed increment each frame. They spin faster on a high-refresh monitor. <strong>Proposed:</strong> express rotation as radians per second times <code>dt</code>, or calculate orientation from elapsed time.</p>
+</section>
+<section id="balance">
+  <span class="badge">15 · Systems design</span><h2>Rules, difficulty and scoring</h2>
+  <div class="table-wrap"><table><thead><tr><th>Mode</th><th>Implemented rules</th><th>Design purpose</th></tr></thead><tbody><tr><td>Practice</td><td>Choose a level, no countdown or points; completing it leads to a summary rather than an endless sequence.</td><td>Learn navigation and study mazes without penalty.</td></tr><tr><td>Timed Run</td><td>Adaptive countdown, three lives on a freshly prepared level, points for level/time/lives.</td><td>Pressure, mastery and retries.</td></tr><tr><td>High Score</td><td>No countdown failure; score depends on pace against the route target.</td><td>Reward speed while allowing continued exploration.</td></tr></tbody></table></div>
+  <h3>Difficulty grows in area</h3>
+  <p>The executable formula is <code>N = 5 + (level - 1) × 2</code>: side lengths 5, 7, 9, 11 and so on. A comment says four cells per level, but <code>SIZE_INCREMENT</code> is 2. Cell counts grow as N²: 25, 49, 81, 121. Level 20 already has a 43 × 43 grid (1,849 cells). There is no client-side global size cap.</p>
+  <p>Hints are <code>level + 2</code> per level. A timed retry keeps the same maze, returns to the marked start, randomizes facing and resets the timer and hints. Lives decrement on timeout. A newly prepared next level resets lives to three, so lives are a per-level retry budget rather than a permanently shrinking run budget.</p>
+  <h3>The adaptive timer</h3>
+  <div class="formula">T = factor × max(1, path.length − 1) × CELL_SIZE / MOVE_SPEED</div>
+  <p>The factor is 3 for normal pointers and 4 for coarse pointers. For a 12-step route: distance is 48 units, ideal straight travel time is about 9.23 seconds, and the allowances are about 27.69 seconds and 36.92 seconds. The multiplier covers turns, acceleration, exploration and input friction; the formula does not explicitly model them. It measures centre-to-centre route length and omits the final boundary travel.</p>
+  <div class="note"><strong>Timer workbench · teaching tool</strong><p>Change the shortest-route length to see the implemented allowance. This calculator does not alter the game.</p><div class="lab-controls"><label for="routeSteps">Route steps: <span id="stepsLabel">12</span></label><input id="routeSteps" type="range" min="1" max="150" value="12"><label for="pointerFactor">Input allowance</label><select id="pointerFactor"><option value="3">Desktop / normal pointer ×3</option><option value="4">Touch / coarse pointer ×4</option></select></div><output id="timerResult" aria-live="polite">12 steps · 48 units · 27.69 seconds allowed</output><noscript><p>JavaScript is disabled. The worked 12-step example above gives both allowances.</p></noscript></div>
+  <h3>Exact score formulas</h3>
+  <pre><code>// Timed Run, per completed level
+floor(220 + level × 42 + max(0, floor(timeLeft)) × 6 + lives × 110)
+
+// High Score, per completed level
+target = max(1, timerFromOptimalRoute())
+elapsed = max(1, elapsedSeconds)
+pace = clamp(target / elapsed, 0.25, 3)
+floor(220 + level × 42 + pace × 6 × 20)</code></pre>
+  <p>Completing level 1 with 10 whole seconds left and three lives gives <code>220 + 42 + 60 + 330 = 652</code>. At high-score pace 2 on level 1, the reward is <code>220 + 42 + 240 = 502</code>. The pace cap limits the maximum speed bonus to 360 points; the lower clamp still grants 30 speed points on a very slow completion.</p>
+  <p>High Score reuses the pointer-dependent target timer, so the same elapsed time can yield a different pace on coarse-pointer and desktop devices. Timed Run’s leftover-time points also favour longer allowances. Combining these results in one board is a fairness decision worth measuring, not assuming equivalent.</p>
+  <p>Continue stores only the highest reached level. It generates a new maze there, restores three lives, and estimates earlier score from <code>220 + level × 42</code> per previous level. It does not resume the original maze, exact score, time or position. Present that distinction clearly to players.</p>
+</section>
+<section id="persistence">
+  <span class="badge">16 · Web services</span><h2>Storage, APIs and trust</h2>
+  <h3>Local progress and scores</h3>
+  <p><code>localStorage</code> persists strings per origin. The game JSON-encodes progress and top-ten scores, catches read/write errors, normalizes records and caps the display at ten rows. Local data is editable by the user, so it cannot prove a competitive result. <code>life_runner_app_version</code> records the version check separately.</p>
+  <p>Progress is saved when a scored level is prepared, not only when completed. <code>renderScoresInto()</code> uses DOM nodes and <code>textContent</code> for aliases rather than inserting them as HTML. That preserves text as data and avoids treating a player name as markup.</p>
+  <h3>The host’s score protocol</h3>
+  <div class="table-wrap"><table><thead><tr><th>Request</th><th>Role</th><th>Important behaviour</th></tr></thead><tbody><tr><td><code>GET /api/labyrinth/version</code></td><td>Return server version.</td><td>Client compares 0.5.1, clears matching Cache Storage entries on mismatch, then changes query parameters and reloads up to twice.</td></tr><tr><td><code>GET /api/labyrinth/scores</code></td><td>Read global top ten.</td><td>Client replaces its displayed/cached board when refresh succeeds.</td></tr><tr><td><code>POST /api/labyrinth/runs</code></td><td>Begin scored run using mode and start level.</td><td>Returns a random run token with a two-hour lifetime. Practice does not request one.</td></tr><tr><td><code>POST /api/labyrinth/scores</code></td><td>Submit token, alias, score, level and mode.</td><td>Validates input and plausibility, consumes the token and writes the board.</td></tr></tbody></table></div>
+  <p>The score-read limiter allows 90 requests per minute. The write limiter is shared across run creation and score submission, allowing 20 requests per 15 minutes. POST JSON is limited to 8 KB. Rate limits constrain traffic; they do not establish that a maze was solved.</p>
+  <p>The server creates 32-byte random tokens, stores run metadata in memory, and checks mode, finite positive score, level range up to 60, minimum duration, expiry, progression frequency and a score upper bound. Alias validation restricts length and characters and rejects URLs, contact-like strings and blocked terms. Fuzzy blocked-term checking uses normalization and Levenshtein edit distance; broad substring filters can produce false positives.</p>
+  <p>These are plausibility checks, not authoritative gameplay. The server does not regenerate a recorded maze or verify the player’s trajectory. A recorded IP is not checked against the submitter in the inspected route. Server restarts lose in-memory run tokens; multiple instances would need shared session state.</p>
+  <h3>Durable writes and failure paths</h3>
+  <p>The host retains up to 100 positive-score records in <code>data/labyrinth-scores.json</code>, exposing ten. It queues read-modify-write work with a promise chain to avoid simultaneous requests overwriting one another within a single process. Writing a temporary file and renaming it reduces the risk of readers seeing partly written JSON. It is not a distributed database transaction.</p>
+  <p>If fetching/submitting fails at the network level, the client can fall back to local storage. An explicit HTTP rejection sets an error message rather than silently saving locally. A valid global score response refreshes the local cache. The current messages do not always make local/global save status sufficiently distinct.</p>
+  <p><strong>Review point:</strong> run tokens are consumed before the file write succeeds. A disk error can leave a legitimate user unable to retry that submission. Also, once a global board is loaded, <code>loadScores()</code> prefers it; a local-only insert can be hidden on a subsequent render. Both are worthwhile failure-path exercises.</p>
+  <h3>Loading, caching and security boundaries</h3>
+  <p>The engine loader fetches same-origin script bytes, shows byte progress when Content-Length is known, decodes them with <code>TextDecoder</code>, then executes them with <code>new Function</code>. CDN sources use injected script tags because cross-origin script loading and readable fetch responses have different CORS requirements. Remote progress is simulated, not a measured byte percentage.</p>
+  <p>Executing fetched code makes that engine source a code-trust boundary. A stricter Content Security Policy may block <code>new Function</code>; a proposed production revision would use a pinned local script/module and an appropriate policy instead of adding permission for dynamic evaluation. The current CDN scripts have no integrity attributes. Pinning a version supports reproducibility but does not replace dependency review.</p>
+  <p>The version checker uses <code>cache: "no-store"</code>. Deleting named Cache Storage entries does not purge all browser HTTP cache, and no service worker is implemented here. Query parameters provide cache-busting URLs; the two-reload guard prevents a persistent client/server version mismatch looping forever.</p>
+</section>
+<section id="efficiency">
+  <span class="badge">17 · Engineering budgets</span><h2>Efficiency and resource budgets</h2>
+  <p>Optimisation begins with a measurement and a target device. Small mazes can hide problems that dominate after many levels. CPU work includes algorithms, draw preparation, DOM updates and ray stepping; GPU work includes triangles, material/light shading, transparent overdraw and pixel count.</p>
+  <div class="table-wrap"><table><caption>Costs and trade-offs in the inspected implementation</caption><thead><tr><th>System</th><th>Cost / implemented choice</th><th>Possible next step</th></tr></thead><tbody>
+  <tr><td>Grid generation</td><td>Base DFS and storage scale with N² cells. Random <code>splice</code> removals in the extra-wall list add copying work.</td><td>Swap a selected item with the last and pop if order is irrelevant.</td></tr><tr><td>Routing</td><td>BFS is conceptually O(V+E); front-removal queue operations can add overhead.</td><td>Use a head-index queue and integer cell indices.</td></tr><tr><td>Meshes/materials</td><td>O(N²) tiles and walls; shared geometry, but each floor has its own material.</td><td>Measure draw calls, then consider instancing with per-instance colour/hint state.</td></tr><tr><td>Hints</td><td>Every playing frame builds an active set and visits all floor-highlight meshes.</td><td>Update only changed tiles or use a cached lookup keyed by cell.</td></tr><tr><td>Minimap</td><td>Capped at 14 FPS and displayed during hints; full maze redrawn.</td><td>Cache static walls and redraw only the moving player/path layer.</td></tr><tr><td>HUD</td><td>Values copied to DOM every playing frame, even when unchanged.</td><td>Update only changed text, especially integer timer ticks.</td></tr><tr><td>Canvas rays</td><td>Approximate work grows with columns × maximum distance / step length.</td><td>DDA, lower render width, or adaptive ray spacing.</td></tr><tr><td>Resolution</td><td>Initial pixel-ratio cap 1.3 on lower-end profiles, 1.8 otherwise.</td><td>Use actual frame timing to tune resolution and power draw.</td></tr><tr><td>Level replacement</td><td>Removes old group from scene, without explicit GPU-resource disposal.</td><td>Track owned geometries/materials and dispose of each unique resource safely.</td></tr>
+  </tbody></table></div>
+  <h3>Adaptive graphics</h3>
+  <p><code>detectQualityProfile()</code> uses optional device memory/core hints and touch/screen heuristics. Lower-end profiles disable antialiasing, reduce pixel ratio and change fog density and light intensity. Touch input is not proof of a slow GPU; these are starting guesses.</p>
+  <p>Every nominal two sampled seconds, WebGL resolution drops by 0.1 below an estimated 27 FPS, or rises by 0.1 above 52 FPS, within configured limits. The gap between thresholds avoids constant oscillation. The minimum ratio is 0.85. Fix the clamped-delta measurement issue before treating these numbers as true frame rates. Resizing currently reapplies the initial device/profile ratio, potentially overriding the adaptive choice.</p>
+  <h3>Resource lifetime matters</h3>
+  <p>JavaScript garbage collection and GPU resource release are separate concerns. <code>scene.remove(worldRoot)</code> stops rendering a group; it does not explicitly dispose its buffers, materials and textures. A proposed cleanup routine should collect unique resources into sets, dispose geometries/materials once, and preserve the shared cached glow texture until the game is finished. Do not dispose a resource still referenced by the next level.</p>
+  <p>Use <code>renderer.info.render.calls</code>, triangle counts and <code>renderer.info.memory</code> during a local debugging session; combine them with a browser Performance recording. Check a fixed maze at a fixed viewport, then repeated level replacement. Improvement means a measured reduction without changed rules or broken hints.</p>
+  <div class="exercise"><strong>Budget exercise:</strong> At level 20, N=43. Count 1,849 floor meshes before walls and markers. Estimate pixel cost at ratios 1 and 1.8: the latter has 3.24 times the pixels. Decide whether your bottleneck is likely draw calls or fill rate only after a profile.</div>
+</section>
+<section id="experience">
+  <span class="badge">18 · The player’s perspective</span><h2>User experience and accessibility</h2>
+  <p>A technically correct maze can still be confusing. The preview gives planning time before the clock starts. A fixed southern sun and compass reduce disorientation. Distinct start/exit markers and palette changes help identify place and level. Timeout messaging lets players understand failure before retrying the same map, preserving learning from the previous attempt.</p>
+  <p>The game’s original Taskit brief imagined spending earned tokens on help. This standalone file instead grants hints per level and resets lives during preparation; it does not call a Taskit wallet or implement token purchasing. Avoid presenting the original product concept as an existing integration.</p>
+  <h3>Design choices to evaluate with players</h3>
+  <ul><li><strong>Two continuation steps after a clear:</strong> success → continue → staging message → continue → preview → start creates several clicks. Test whether the pacing feels celebratory or repetitive.</li><li><strong>Navigation cues:</strong> full-map hints help map readers, but colour-only cues can fail for colour-vision differences. Pair colour with shapes and text.</li><li><strong>Control discovery:</strong> hidden joystick graphics and mouse capture need a clear first-use demonstration. Arrow keys strafe, which may surprise players expecting turning.</li><li><strong>Failure feedback:</strong> distinguish a timeout, an API rejection, a local save and a global save. Each requires a different next action.</li><li><strong>Mode expectations:</strong> “Continue” is a new maze at the saved level, Practice ends after one clear, and a timed next level restores lives.</li><li><strong>Competitive fairness:</strong> input factors, random route lengths, continued-run estimates and shared mode boards affect score comparability.</li></ul>
+  <h3>Proposed accessibility work</h3>
+  <p>Keep keyboard focus visible, move it into newly opened dialogs, trap it appropriately, and restore it when closing. Give overlays accessible names and dialog semantics. Announce meaningful events such as “hint used” or “life lost”, rather than streaming the timer every frame to a screen reader. Test each menu with keyboard only.</p>
+  <p>Offer remappable controls, explicit keyboard turning, mouse/touch sensitivity, adjustable field of view, reduced motion/pulsing and a high-contrast cue set. Respect reduced-motion preferences in decorative effects. Preserve zoom where possible and provide scalable HUD text. A canvas first-person maze also needs an alternative navigable representation if nonvisual play is an intended requirement; ARIA labels alone cannot make a spatial game equivalent.</p>
+  <p>There is no implemented audio or haptic system. Optional directional audio and event sounds could help feedback, but should be independently controllable and supplemented visually. Evaluate motion comfort with real players instead of treating a narrow pitch range as a complete accessibility solution.</p>
+  <div class="exercise"><strong>Usability session:</strong> Ask a new player to start Practice, orient north, use a hint and explain what Continue will restore. Observe hesitation without coaching. Repeat with touch and keyboard-only menus. Record task completion, confusion and comfort, not just whether a button technically worked.</div>
+</section>
+<section id="review">
+  <span class="badge">19 · Critical reading</span><h2>Source review and debugging</h2>
+  <p>The following findings come from static inspection of this snapshot. They distinguish intended design from executable behaviour. This tutorial documents them; it does not silently patch game rules.</p>
+  <h3>1. Exit collision and completion disagree</h3>
+  <p><code>applyWallCollisionBuffer()</code> clamps the player to <code>mazeHalfWorld − 0.38</code>. The intended outward completion threshold is only <code>0.38 × 0.22 = 0.0836</code> units inside the outer edge. The player is stopped 0.2964 units before that threshold. Additionally, <code>checkExitCross()</code> tests any open north/south/west/east side of the exit cell instead of using <code>exitCell.dir</code>. An internal open side can therefore trigger completion.</p>
+  <p><strong>Reproduce:</strong> use a small test maze with a known north exit; put the player in the exit cell, approach the boundary, and inspect position after the collision clamp. Then cross an internal open edge and watch the completion condition. <strong>Proposed correction:</strong> agree on a single exit plane and outward direction; allow only the intended exit corridor through the boundary clamp, or put a reachable finish threshold inside it. Test all four exit directions and nearby non-exit cells.</p>
+  <h3>2. Client/server score bounds have different maze rules</h3>
+  <p>The client uses <code>5 + (level−1) × 2</code> and speed 5.2. The server’s <code>labyrinthLevelSize()</code> instead returns <code>min(15, 6 + level−1)</code>, and its timed bound uses speed 5.5. Its maze size caps at 15 while the client keeps growing. These are different assumptions; at later levels the server’s bound may reject legitimate timed scores. Derive both rules from shared versioned configuration or submit verifiable run data before claiming the validator matches the game.</p>
+  <h3>3. Graphics compatibility and lifetime</h3>
+  <p>r128 colour output uses the older encoding API; removed world groups lack explicit disposal; fallback setup omits desktop turning/resize wiring; loader requests lack a timeout. Verify each independently instead of grouping all failures under “WebGL is slow”.</p>
+  <h3>4. Time and interaction edge cases</h3>
+  <p>Clamped time changes scoring under low FPS, ring rotation depends on refresh rate, and focus loss is not an explicit paused state. Keyboard state is set on keydown and cleared on keyup; focus loss can miss keyup. Proposed blur handling should clear held input and define a consistent pause policy.</p>
+  <p>Async run creation is launched without awaiting it. If an old request resolves after a new run starts, it can overwrite run-token state. Test delayed requests and rapid run restarts; a request generation ID can reject stale responses. Practice summary text suggests entries can be saved, while the save handler returns “Practice runs are not scored”; reconcile the product wording with the actual action.</p>
+  <h3>A focused verification matrix</h3>
+  <div class="table-wrap"><table><thead><tr><th>Area</th><th>Check</th><th>Evidence to capture</th></tr></thead><tbody><tr><td>Generation</td><td>Reciprocal walls, connected cells, one selected outward exit.</td><td>Run seeded small/large samples and assert invariants.</td></tr><tr><td>Routing</td><td>Known shortest route, loops, same-cell route, unreachable test fixture.</td><td>Compare exact route length and legal adjacent steps.</td></tr><tr><td>Collision</td><td>Solid walls, sliding, corners, every exit orientation.</td><td>Positions before/after motion and completion trigger count.</td></tr><tr><td>Lifecycle</td><td>Preview, retry, menu during transition, rapid restarts.</td><td>No stale promise/token mutation or double completion.</td></tr><tr><td>Rendering</td><td>WebGL, blocked engine, resize and repeated rebuild.</td><td>Visual output, control parity, draw calls and memory trend.</td></tr><tr><td>Storage/API</td><td>Blocked storage, malformed records, network failure, HTTP rejection, disk failure.</td><td>Clear user status and recoverable retry path.</td></tr><tr><td>Time/UX</td><td>Slow frames, background tab, coarse pointer, keyboard-only menus.</td><td>Defined timing rules, usable focus and readable controls.</td></tr></tbody></table></div>
+</section>
+<section id="workshop">
+  <span class="badge">20 · Build and explain</span><h2>Build-along exercises</h2>
+  <p>Work in a local copy or branch. Change one system at a time. Write down a prediction, implement, then compare the observed result. The examples above are teaching fragments, not replacements for the complete game.</p>
+  <ol><li><strong>Extract a deterministic maze core.</strong> Move cell creation and generation into pure functions accepting a random-number function. Generate two mazes with the same seed; their walls, start and exit must match.</li><li><strong>Prove the graph contract.</strong> For each neighbour pair, assert east equals west and north equals south. Flood-fill from start and require N² reachable cells. Check that the selected exit is on the boundary and not a corner.</li><li><strong>Build a tiny overhead viewer.</strong> Render a 5 × 5 maze using Canvas lines. Overlay a BFS solution. Confirm the path stays inside open passages and includes both endpoints.</li><li><strong>Repair exit semantics.</strong> Test the clamp/finish-plane interaction before changing it. Add tests for all exit directions and for walking across an internal open wall of the exit cell.</li><li><strong>Make renderer-independent controls.</strong> Move shared keyboard/look/resize wiring out of <code>initThree</code>. Force fallback mode and verify turning, hints, menu escape and resizing on desktop and touch.</li><li><strong>Separate real time from simulation time.</strong> Keep a motion delta cap, but choose and document whether countdown and high-score pace use active real time. Simulate a long frame and a hidden tab; assert the chosen policy.</li><li><strong>Optimise with evidence.</strong> Replace BFS shift with a head index, then profile. Next compare ordinary meshes with instanced geometry on a fixed large maze; preserve per-tile hint behaviour.</li><li><strong>Improve service resilience.</strong> Reject stale run-creation responses; distinguish local/global status; keep a legitimate submission retryable after persistence failure. Exercise each with a mocked delayed/failing server.</li><li><strong>Design a fair challenge mode.</strong> Use one seed, input policy, scoring version and starting state for a cohort. Explain which remaining client-trust problems require server authority.</li><li><strong>Teach it back.</strong> Explain to another learner how a key press becomes displacement, how a wall becomes pixels, and why the shortest-path algorithm cannot use DFS as a drop-in replacement.</li></ol>
+  <details><summary>Self-check: why not use the rendered meshes as the only maze data?</summary><p>A compact cell graph supports generation, hints, movement and the fallback without depending on a graphics engine. Meshes are a presentation that can be rebuilt. Keeping the rules independent makes tests and alternative renderers easier.</p></details>
+  <details><summary>Self-check: why doesn’t increasing emissive intensity create a shadow?</summary><p>Emissive shading changes the surface’s own light-like contribution. A cast shadow requires an occlusion technique such as shadow mapping and appropriate light/mesh configuration. This package has no enabled shadow-map pipeline.</p></details>
+  <details><summary>Self-check: does a run token prove a score is honest?</summary><p>No. It proves possession of a server-issued session token and lets the server enforce some constraints. The inspected server still trusts client-reported progress within plausibility bounds; it does not replay the maze navigation.</p></details>
+</section>
+<section id="reference">
+  <span class="badge">21 · Keep beside the editor</span><h2>Function atlas and references</h2>
+  <p>Search these exact names in the downloaded game HTML. Grouping by responsibility is more useful than line numbers that change with every edit.</p>
+  <div class="table-wrap"><table><thead><tr><th>Responsibility</th><th>Source entry points</th></tr></thead><tbody>
+  <tr><td>Version and startup</td><td><code>clearLabyrinthCaches</code>, <code>checkLabyrinthVersion</code>, <code>boot</code></td></tr>
+  <tr><td>Utilities and palette</td><td><code>clamp</code>, <code>lerp</code>, <code>sleep</code>, <code>levelHue01</code>, <code>hslCss</code>, <code>randInt</code>, <code>keyForCell</code>, <code>yawToward</code>, <code>getHintGlowTexture</code>. Some helpers/settings are leftovers; a declared helper is not proof it is called.</td></tr>
+  <tr><td>Mode selection</td><td><code>modeLabel</code>, <code>selectedMode</code>, <code>selectedPracticeLevel</code>, <code>isScoredMode</code>, <code>hasCountdownTimer</code>, <code>updateModeHelp</code></td></tr>
+  <tr><td>Local persistence</td><td><code>loadProgress</code>, <code>saveProgress</code>, <code>loadScores</code>, <code>loadLocalScores</code>, <code>saveScores</code>, <code>insertLocalScore</code></td></tr>
+  <tr><td>Score service and view</td><td><code>refreshScoresFromApi</code>, <code>beginScoreRunSession</code>, <code>scoreErrorMessage</code>, <code>qualifiesForTop10</code>, <code>insertScore</code>, <code>renderScoresInto</code></td></tr>
+  <tr><td>Engine and quality</td><td><code>detectQualityProfile</code>, <code>loadThreeWithProgress</code>, <code>isSameOriginUrl</code>, <code>loadThreeFromFetch</code>, <code>loadThreeViaScriptTag</code>, <code>initThree</code>, <code>onResize</code></td></tr>
+  <tr><td>Fallback drawing</td><td><code>initRayRenderer</code>, <code>renderRayFrame</code>, <code>raycastDistance</code></td></tr>
+  <tr><td>UI and waits</td><td><code>showOverlay</code>, <code>applyUIState</code>, <code>updateHUD</code>, <code>waitForLevelContinue</code>, <code>waitForTimeoutContinue</code>, <code>waitForLevelStart</code>, <code>setBar</code>, <code>openMenu</code>, <code>setupUIEvents</code></td></tr>
+  <tr><td>Rules and progression</td><td><code>levelSizeFor</code>, <code>hintsForLevel</code>, <code>timerFromOptimalRoute</code>, <code>levelClearBonus</code>, <code>speedClearBonus</code>, <code>cumulativeScoreUntilLevel</code>, <code>startRun</code>, <code>continueRun</code>, <code>prepareLevel</code>, <code>updateProgressIfNeeded</code></td></tr>
+  <tr><td>Maze and world</td><td><code>makeCell</code>, <code>generateMaze</code>, <code>cellToWorld</code>, <code>worldToCell</code>, <code>buildWorld</code></td></tr>
+  <tr><td>Input, collision and exit</td><td><code>setupInput</code>, <code>bindJoystick</code>, <code>hasWall</code>, <code>withinBoundsCell</code>, <code>canCrossFromCell</code>, <code>applyWallCollisionBuffer</code>, <code>tryMoveAxis</code>, <code>checkExitCross</code>, <code>updatePlayer</code></td></tr>
+  <tr><td>Completion and failure</td><td><code>onLevelComplete</code>, <code>onLifeLost</code>, <code>onTimerExpired</code>, <code>onGameOver</code>, <code>escapeToMenuAndScores</code></td></tr>
+  <tr><td>Hints, maps and frame loop</td><td><code>shortestPath</code>, <code>activateHint</code>, <code>updateHintVisuals</code>, <code>drawMazeMap</code>, <code>showLevelPreview</code>, <code>drawMinimap</code>, <code>updateNorthPointer</code>, <code>tick</code></td></tr>
+  </tbody></table></div>
+  <h3>Primary sources and further reading</h3>
+  <p>The implementation evidence is <code>public/labyrinth/labyrinth.html</code> (web game 0.5.1), <code>jahosi.js</code> (host routes and score validation), <code>package.json</code> (host dependencies), and <code>README.md</code> (running/deployment). The <a href="/portfolio/labyrinth.html">information page</a> explains the original product brief; <a href="/labyrinth/labyrinth.html" download="life-runner-source.html">download the game HTML</a> to follow the exact function names.</p>
+  <ul><li><a href="https://github.com/mrdoob/three.js/tree/r128">Three.js r128 source</a> — the release used by the game’s CDN fallbacks.</li><li><a href="https://github.com/mrdoob/three.js/blob/r128/src/renderers/WebGLRenderer.js">r128 WebGLRenderer</a> — renderer configuration, including the historical encoding API.</li><li><a href="https://threejs.org/docs/">Three.js documentation</a> — concepts and current API reference; compare against the pinned source before changing this older game.</li><li><a href="https://developer.mozilla.org/en-US/docs/Web/API/Window/requestAnimationFrame">MDN: requestAnimationFrame</a> — animation scheduling and background behaviour.</li><li><a href="https://developer.mozilla.org/en-US/docs/Web/API/Pointer_Lock_API">MDN: Pointer Lock API</a> — relative mouse input and capture lifecycle.</li></ul>
+  <p class="source">This is an instructional review of the inspected repository snapshot, not a claim that every proposed enhancement is implemented or that every device was tested. Recheck the source version when applying the lessons to a later release.</p>
+</section>
+</main>
+</div>
+<footer><p><a href="/portfolio/labyrinth.html">Return to Labyrinth information</a> · <a href="/labyrinth/labyrinth.html">Play Life Runner</a> · <a href="#top">Back to top</a></p><p>Single HTML tutorial · embedded styles, diagram and calculator · browser Print can produce a paper/PDF study copy.</p></footer>
+<script>
+  (() => {
+    const steps = document.getElementById('routeSteps');
+    const factor = document.getElementById('pointerFactor');
+    const result = document.getElementById('timerResult');
+    const label = document.getElementById('stepsLabel');
+    function updateTimerLesson() {
+      const count = Math.max(1, Number(steps.value) || 1);
+      const multiplier = Number(factor.value) === 4 ? 4 : 3;
+      label.textContent = String(count);
+      result.textContent = count + ' steps · ' + count * 4 + ' units · '
+        + (multiplier * count * 4 / 5.2).toFixed(2) + ' seconds allowed';
+    }
+    steps.addEventListener('input', updateTimerLesson);
+    factor.addEventListener('change', updateTimerLesson);
+    updateTimerLesson();
+  })();
+</script>
+</body>
+</html>
