@@ -11,6 +11,14 @@ npm start
 
 Open `http://localhost:3000`.
 
+Deep Space Command is available at `/deepspace/`. It uses the existing
+`SPLASH_OPENAI_API_KEY`, `SPLASH_OPENAI_BASE_URL`, Cloudflare Access and Turnstile
+configuration, with its commander persona defined server-side in `jahosi.js`.
+The page keeps conversation history in memory in the current tab and supports
+reduced motion and pausing the canvas starfield. No additional configuration is required.
+Run its isolated route checks with `node --test scripts/deepspace.test.js`;
+these mock the AI and verification services without using live credentials.
+
 ## Docker deployment
 
 This repo is containerised for the same Traefik + Cloudflare Tunnel pattern as `qglimpse`.
