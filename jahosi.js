@@ -100,6 +100,7 @@ const SITEMAP_PATHS = [
   "/portfolio/socialqa.html",
   "/portfolio/blanderqa.html",
   "/portfolio/blender5qa.html",
+  "/portfolio/deepspace.html",
   "/portfolio/unityqa.html",
   "/portfolio/jahosi-api.html",
   "/portfolio/tlscheckin.html",
@@ -108,6 +109,7 @@ const SITEMAP_PATHS = [
   "/splash/help.htm",
   "/splash/appendices.htm",
   "/socialQA/",
+  "/deepspace/",
   "/socialQA/policy.html",
   "/teachMe/",
   "/teachMe/policy.html",
@@ -1374,6 +1376,13 @@ app.get("/robots.txt", (req, res) => {
   res.type("text/plain").send(`${robotsTxt}\n`);
 });
 
+app.get(/^\/deepspace$/, (_req, res) => res.redirect(308, "/deepspace/"));
+app.get(["/deepspace/", "/deepspace/index.html"], (req, res) => {
+  setNoCacheHeaders(res);
+  res.send(renderDeepSpaceIndexHtml(req));
+});
+app.use("/deepspace", express.static(path.join(__dirname, "public", "deepspace"), { index: false, setHeaders: setPublicFileHeaders }));
+
 app.get(/^\/socialQA$/, (req, res) => {
   res.redirect("/socialQA/");
 });
@@ -2182,6 +2191,50 @@ app.get("/unityQA/resource-info", (req, res) => {
   });
 });
 
+const DEEP_SPACE_CHAT_GUIDELINES = [
+  "You are a seasoned, deeply philosophical commander of a long-range space exploratory vessel. When faced with a crisis, you prioritize diplomacy, ethical debate, and peaceful resolution over aggression. You frequently reference classical literature, history, and archaeology to frame modern problems. You speak with measured, formal authority, rarely using contractions, and you actively solicit the expertise of your specialized senior staff before making final decisions.",
+  "Never reference any existing science fiction franchises, television shows, or copyrighted characters. If asked about your ship, crew, or universe, generate completely original names and backstories. Do not use the phrases 'Make it so' or 'Engage'.",
+].join("\n\n");
+
+app.post("/deepspace/chat", splashChatRateLimit, express.json({ limit: "50kb" }), async (req, res) => {
+  if (!SPLASH_OPENAI_API_KEY) return res.status(404).json({ error: "disabled" });
+  const body = req.body && typeof req.body === "object" ? req.body : {};
+  const message = typeof body.message === "string" ? body.message.trim() : "";
+  if (!message || message.length > 2000) return res.status(400).json({ error: "invalid_message" });
+
+  let chatSessionToken = typeof body.chatSessionToken === "string" ? body.chatSessionToken.trim() : "";
+  if (isTurnstileEnabled() && !validateChemChatSession(chatSessionToken)) {
+    const token = typeof body.turnstileToken === "string" ? body.turnstileToken.trim() : "";
+    if (!token) return res.status(403).json({ error: "turnstile_required" });
+    if (!(await verifyTurnstileToken(token, req.ip || req.socket.remoteAddress))) {
+      return res.status(403).json({ error: "turnstile_failed" });
+    }
+    chatSessionToken = mintChemChatSession();
+  }
+  const history = (Array.isArray(body.history) ? body.history : []).slice(-8)
+    .filter((item) => item && typeof item === "object" && ["user", "assistant"].includes(item.role))
+    .map((item) => ({ role: item.role, content: String(item.content || "").slice(0, 2500) }))
+    .filter((item) => item.content.trim());
+  try {
+    const upstream = await fetch(`${SPLASH_OPENAI_BASE_URL}/chat/completions`, {
+      method: "POST",
+      headers: chatCompletionHeaders(),
+      signal: AbortSignal.timeout(45000),
+      body: JSON.stringify({
+        model: "gpt-4o-mini", temperature: 0.7,
+        messages: [{ role: "system", content: DEEP_SPACE_CHAT_GUIDELINES }, ...history, { role: "user", content: message }],
+      }),
+    });
+    if (!upstream.ok) return res.status(502).json({ error: "upstream_failed" });
+    const data = await upstream.json();
+    const reply = data?.choices?.[0]?.message?.content;
+    if (typeof reply !== "string" || !reply.trim()) return res.status(502).json({ error: "upstream_empty" });
+    return res.json({ reply: reply.trim(), ...(chatSessionToken ? { chatSessionToken } : {}) });
+  } catch {
+    return res.status(502).json({ error: "upstream_error" });
+  }
+});
+
 app.post("/blanderQA/chat", splashChatRateLimit, express.json({ limit: "50kb" }), async (req, res) => {
   if (!SPLASH_OPENAI_API_KEY) {
     return res.status(404).json({ error: "disabled" });
@@ -2708,6 +2761,13 @@ function chatCompletionHeaders() {
 const SPLASH_INDEX_HTML_TEMPLATE = fs.readFileSync(path.join(__dirname, "public", "splash", "index.htm"), "utf8");
 function renderSplashIndexHtml() {
   return SPLASH_INDEX_HTML_TEMPLATE.replace('"__TURNSTILE_SITE_KEY__"', JSON.stringify(TURNSTILE_SITE_KEY));
+}
+
+const DEEP_SPACE_INDEX_HTML_TEMPLATE = fs.readFileSync(path.join(__dirname, "public", "deepspace", "index.html"), "utf8");
+function renderDeepSpaceIndexHtml(req) {
+  return DEEP_SPACE_INDEX_HTML_TEMPLATE
+    .replace('"__TURNSTILE_SITE_KEY__"', JSON.stringify(TURNSTILE_SITE_KEY).replace(/</g, "\\u003c"))
+    .replaceAll("__CANONICAL_URL__", escapeHtml(`${resolvePublicBaseUrl(req)}/deepspace/`));
 }
 
 const SOCIAL_QA_INDEX_HTML_TEMPLATE = fs.readFileSync(path.join(__dirname, "public", "socialQA", "index.html"), "utf8");

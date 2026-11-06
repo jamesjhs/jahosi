@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Deep Space Command | A philosophical space exploration chatbot</title>
+  <meta name="description" content="Converse with an original deep-space commander. Explore first contact, ethical dilemmas and distant worlds through diplomacy, history and philosophical debate.">
+  <meta name="robots" content="index,follow,max-snippet:-1">
+  <meta name="theme-color" content="#070c1a">
+  <link rel="canonical" href="__CANONICAL_URL__">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Deep Space Command">
+  <meta property="og:description" content="Beyond the familiar. Guided by curiosity. A conversation with a philosophical commander exploring an original universe.">
+  <meta property="og:url" content="__CANONICAL_URL__">
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="Deep Space Command">
+  <meta name="twitter:description" content="An original space exploration chatbot shaped by diplomacy, ethics and the wisdom of history.">
+  <link rel="icon" href="/favicon.ico">
+  <link rel="stylesheet" href="/deepspace/style.css">
+</head>
+<body>
+  <canvas id="stars" aria-hidden="true"></canvas>
+  <a class="skip" href="#message">Skip to communication</a>
+  <div class="shell">
+    <header class="masthead">
+      <a class="home" href="/">JAHOSI <span>/ EXPLORATIONS</span></a>
+      <button id="motion" class="quiet" type="button" aria-pressed="false">Pause starfield</button>
+    </header>
+    <main>
+      <section class="intro" aria-labelledby="title">
+        <p class="eyebrow"><span class="beacon"></span> LONG-RANGE EXPLORATION DIVISION</p>
+        <h1 id="title">Deep Space<br><span>Command</span><span class="orbit" aria-hidden="true">✧</span></h1>
+        <div class="intro-bottom"><p>Beyond the familiar. Guided by curiosity.<br>Every encounter begins with a conversation.</p><span class="coordinates" aria-hidden="true">UNMAPPED SECTOR<br>∞ / OPEN HORIZON</span></div>
+      </section>
+      <section class="console" aria-label="Commander communications">
+        <div class="console-header"><div><span class="beacon"></span> COMMAND CHANNEL <span class="channel">/ 01</span></div><button id="reset" class="quiet" type="button">New conversation ↗</button></div>
+        <div id="thread" class="thread" role="log" aria-label="Conversation" aria-live="polite" aria-relevant="additions" tabindex="0">
+          <article class="message commander"><p class="speaker">COMMANDER <span> / INCOMING TRANSMISSION</span></p><p>The unknown deserves our curiosity before our suspicion. Bring me your dilemma, your discovery, or the question that has followed you across the stars. We shall consider it together, with the counsel of our senior staff.</p></article>
+        </div>
+        <form id="chat-form">
+          <label for="message">Your transmission</label>
+          <div class="compose"><textarea id="message" name="message" rows="2" maxlength="2000" placeholder="Commander, we have encountered…" required></textarea><button id="send" type="submit">Transmit <span aria-hidden="true">↗</span></button></div>
+          <div class="form-meta"><span>Enter to send · Shift + Enter for a new line</span><span id="count">0 / 2000</span></div>
+          <div id="gate" hidden><div id="turnstile"></div></div>
+          <p id="status" role="status">Establishing a secure channel…</p>
+        </form>
+      </section>
+      <footer><span>FICTIONAL UNIVERSE. REAL CURIOSITY.</span><p>AI-generated roleplay · Messages are sent to the AI service. Keep personal information out of transmissions. Conversation stays in this tab until you reload or clear it.</p></footer>
+    </main>
+  </div>
+  <script>
+    window.DEEP_SPACE_SITE_KEY = "__TURNSTILE_SITE_KEY__";
+    window.deepSpaceTurnstileReady = function () {
+      if (window.deepSpaceInitTurnstile) window.deepSpaceInitTurnstile();
+    };
+  </script>
+  <script src="/deepspace/chat.js" defer></script>
+  <script src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit&amp;onload=deepSpaceTurnstileReady" async defer></script>
+</body>
+</html>
