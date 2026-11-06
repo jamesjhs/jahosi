@@ -11,6 +11,13 @@ test('Deep Space routes, verification, bounded history, persona and upstream fai
   let payload, upstreamMode = 'ok', verificationCalls = 0;
   const context = vm.createContext({
     require: (name) => {
+      if (name === './deepspace/server') {
+        const appModule = { exports: {} };
+        const moduleSource = fs.readFileSync(path.join(__dirname, 'server.js'), 'utf8');
+        const load = vm.runInContext(`(function(require, module, __dirname) { ${moduleSource}\n})`, context);
+        load(context.require, appModule, __dirname);
+        return appModule.exports;
+      }
       if (name === 'express') {
         const express = localRequire('express');
         const factory = () => {
@@ -65,6 +72,9 @@ test('Deep Space routes, verification, bounded history, persona and upstream fai
       assert.match(response.headers.get('cache-control'), /no-store/);
     }
     for (const asset of ['style.css', 'chat.js']) assert.equal((await fetch(`${base}/deepspace/${asset}`)).status, 200);
+    for (const privateFile of ['instructions.md', 'server.js', 'deepspace.test.js']) {
+      assert.equal((await fetch(`${base}/deepspace/${privateFile}`)).status, 404);
+    }
     assert.match(await (await fetch(`${base}/sitemap.xml`)).text(), /\/deepspace\//);
     assert.equal((await post({ message: '' })).status, 400);
     assert.equal((await post({ message: 'a'.repeat(2001) })).status, 400);

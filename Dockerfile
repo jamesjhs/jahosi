@@ -43,6 +43,7 @@ COPY package*.json ./
 COPY --from=deps /app/node_modules node_modules
 COPY analytics.js jahosi.js ./
 COPY public public
+COPY deepspace deepspace
 
 # SQLite-backed runtime data lives under /app/data. Compose bind-mounts this
 # directory to a branch-specific host directory so production and testing data do
