@@ -3,12 +3,12 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Deep Space Command is an original space exploration chatbot built around diplomacy, philosophy and ethical debate. Learn about the project, try the live preview and open the app.">
+  <meta name="description" content="Deep Space Command is an original space exploration chatbot built around diplomacy, philosophy and ethical debate. Learn about the project, view the interface preview and open the live app.">
   <meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1">
   <link rel="canonical" href="/portfolio/deepspace.html">
   <meta property="og:type" content="website">
   <meta property="og:title" content="Deep Space Command | Jahosi Portfolio">
-  <meta property="og:description" content="An original universe, a philosophical commander and a conversation-led approach to exploration. Includes an interactive preview of the actual app.">
+  <meta property="og:description" content="An original universe, a philosophical commander and a conversation-led approach to exploration. Includes a static interface preview and a link to the live app.">
   <meta property="og:url" content="/portfolio/deepspace.html">
   <meta property="og:site_name" content="Dr James Rowson Portfolio">
   <meta name="twitter:card" content="summary">
@@ -20,8 +20,10 @@
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&display=swap');
     body { font-family: "Manrope", sans-serif; }
-    .app-preview { display:block; width:100%; height:900px; border:0; background:#070c1a; }
-    @media (max-width:600px) { .app-preview { height:1050px; } }
+    .app-preview { padding:clamp(20px,5vw,48px); color:#edf3ff; background:radial-gradient(circle at 15% 25%,#cbdcff 1px,transparent 1.5px) 0 0/71px 67px,radial-gradient(circle at 75% 65%,#cbdcff 1px,transparent 1.5px) 0 0/113px 101px,radial-gradient(ellipse at 85% 20%,#40346877,transparent 60%),radial-gradient(ellipse at 0% 80%,#16496477,transparent 60%),#070c1a; }
+    .preview-console { border:1px solid #bdd5ff38; border-radius:14px; overflow:hidden; background:#0a1121ed; }
+    .preview-input { width:100%; min-width:0; border:1px solid #99b9f040; border-radius:7px; background:#070e1b; padding:12px 14px; color:#8292af; resize:none; opacity:1; }
+    .preview-send { border-radius:7px; background:#d3e4ff; color:#101b30; padding:12px 22px; font-weight:700; opacity:.55; cursor:default; }
   </style>
 </head>
 <body class="min-h-screen text-slate-900" style="background:radial-gradient(900px 380px at 8% -10%,#ddd6fe,transparent 55%),radial-gradient(850px 340px at 90% 0%,#dbeafe,transparent 52%),#f8fafc;">
@@ -37,22 +39,40 @@
 
       <div class="mt-6 flex flex-wrap gap-3">
         <a href="/deepspace/" class="inline-flex items-center rounded-lg bg-indigo-700 px-4 py-2 text-sm font-semibold text-white hover:bg-indigo-800">Open Deep Space Command &rarr;</a>
-        <a href="#live-preview" class="inline-flex items-center rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-semibold text-slate-700 hover:border-indigo-400">Try the live preview &darr;</a>
+        <a href="#app-preview" class="inline-flex items-center rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-semibold text-slate-700 hover:border-indigo-400">View the preview &darr;</a>
       </div>
 
       <h2 class="mt-8 text-xl font-bold">Why build it?</h2>
       <p class="mt-3 text-slate-600">This project explores how a deliberately defined point of view can shape an AI conversation. Its purpose is imaginative storytelling and thoughtful discussion: considering competing responsibilities, listening to different perspectives and asking what a peaceful outcome might require.</p>
 
-      <section id="live-preview" class="mt-8 scroll-mt-6" aria-labelledby="preview-title">
+      <section id="app-preview" class="mt-8 scroll-mt-6" aria-labelledby="preview-title">
         <div class="flex flex-wrap items-center justify-between gap-3">
-          <h2 id="preview-title" class="text-xl font-bold">Live app preview</h2>
+          <h2 id="preview-title" class="text-xl font-bold">Interface preview</h2>
           <a href="/deepspace/" target="_blank" rel="noopener noreferrer" class="text-sm font-semibold text-sky-700 hover:text-sky-900">Open full page in a new tab &nearr;</a>
         </div>
-        <p id="preview-description" class="mt-3 text-sm text-slate-600">This is the actual Deep Space Command app, embedded below. You can use the starfield controls and chat here after completing verification. Messages are sent to the AI service; keep personal information out of transmissions. Responses are fictional AI-generated roleplay.</p>
+        <p id="preview-description" class="mt-3 text-sm text-slate-600">A non-interactive preview of the command channel. Open the live app to start a conversation.</p>
         <div class="mt-4 overflow-hidden rounded-2xl border border-slate-300 shadow-sm">
-          <iframe class="app-preview" src="/deepspace/" title="Deep Space Command — interactive live app" aria-describedby="preview-description" loading="lazy"></iframe>
+          <div class="app-preview" role="group" aria-label="Static Deep Space Command interface preview" aria-describedby="preview-description">
+            <p class="text-[10px] uppercase tracking-widest text-blue-200">Long-range exploration division</p>
+            <p class="mt-4 text-4xl font-semibold leading-tight tracking-tight sm:text-5xl">Deep Space<br><span class="text-blue-200">Command ✧</span></p>
+            <p class="mt-4 text-sm text-slate-300">Beyond the familiar. Guided by curiosity.<br>Every encounter begins with a conversation.</p>
+            <div class="preview-console mt-6">
+              <div class="border-b border-white/15 px-5 py-4 text-[10px] tracking-widest text-blue-100">● COMMAND CHANNEL / 01</div>
+              <div class="px-5 py-6 sm:p-7">
+                <p class="text-[10px] tracking-widest text-blue-200">COMMANDER / INCOMING TRANSMISSION</p>
+                <p class="mt-3 text-sm leading-relaxed text-slate-200">The unknown deserves our curiosity before our suspicion. Bring me your dilemma, your discovery, or the question that has followed you across the stars. We shall consider it together, with the counsel of our senior staff.</p>
+              </div>
+              <div class="border-t border-white/15 bg-slate-900/80 p-5">
+                <label for="preview-message" class="mb-2 block text-xs text-slate-300">Your transmission</label>
+                <div class="flex flex-col gap-3 sm:flex-row">
+                  <textarea id="preview-message" class="preview-input" rows="2" disabled placeholder="Commander, we have encountered…"></textarea>
+                  <button class="preview-send text-sm" type="button" disabled>Transmit ↗</button>
+                </div>
+                <p class="mt-3 text-xs text-slate-400">Preview only · Open the live app to transmit.</p>
+              </div>
+            </div>
+          </div>
         </div>
-        <p class="mt-3 text-sm text-slate-600">If the embedded app does not load, <a href="/deepspace/" class="font-semibold text-sky-700 underline">open Deep Space Command directly</a>.</p>
       </section>
 
       <h2 class="mt-8 text-xl font-bold">How it works</h2>
