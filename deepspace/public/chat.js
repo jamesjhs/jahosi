@@ -3,12 +3,26 @@
   const $ = (id) => document.getElementById(id);
   const input = $('message'), send = $('send'), thread = $('thread'), status = $('status');
   const key = window.DEEP_SPACE_SITE_KEY || '';
+  const storageKey = 'deepspace-chat-v1';
+  const starter = 'Commander, we have encountered';
   let history = [], session = '', token = '', widget = null, busy = false;
   const welcome = thread.firstElementChild.cloneNode(true);
+  let storageAvailable = true;
+  function persist() {
+    try {
+      if (!history.length && !input.value) localStorage.removeItem(storageKey);
+      else localStorage.setItem(storageKey, JSON.stringify({ history, draft: input.value }));
+      storageAvailable = true;
+    } catch { storageAvailable = false; }
+    $('storage-note').textContent = storageAvailable
+      ? 'Chat is saved in this browser between visits. Clear chat removes the saved conversation.'
+      : 'Browser storage is unavailable or full. This chat may not be saved between visits; export it to keep a copy.';
+  }
   function update() {
     input.disabled = busy;
-    send.disabled = busy || !input.value.trim() || Boolean(key && !session && !token);
+    send.disabled = busy || input.value.trim().split(/\s+/).filter(Boolean).length <= 4 || Boolean(key && !session && !token);
     $('reset').disabled = busy;
+    $('export').disabled = busy || !history.length;
     $('gate').hidden = !key || Boolean(session);
     $('count').textContent = `${input.value.length} / 2000`;
   }
@@ -35,7 +49,20 @@
     article.append(label, body); thread.append(article); thread.scrollTop = thread.scrollHeight;
     return article;
   }
-  input.addEventListener('input', update);
+  try {
+    const saved = JSON.parse(localStorage.getItem(storageKey) || 'null');
+    if (saved && Array.isArray(saved.history)) {
+      history = saved.history.filter((item) => item && ['user', 'assistant'].includes(item.role)
+        && typeof item.content === 'string' && item.content.trim());
+      history.forEach((item) => addMessage(item.role, item.content));
+      if (typeof saved.draft === 'string') input.value = saved.draft.slice(0, 2000);
+    }
+  } catch { /* A corrupt or unavailable saved chat must not prevent a new conversation. */ }
+  persist();
+  input.addEventListener('focus', () => {
+    if (!input.value.trim()) { input.value = starter + ' '; update(); persist(); }
+  });
+  input.addEventListener('input', () => { update(); persist(); });
   input.addEventListener('keydown', (event) => {
     if (event.key === 'Enter' && !event.shiftKey && !event.isComposing) {
       event.preventDefault(); if (!send.disabled) $('chat-form').requestSubmit();
@@ -43,7 +70,37 @@
   });
   $('reset').addEventListener('click', () => {
     history = []; input.value = ''; thread.replaceChildren(welcome.cloneNode(true));
-    status.textContent = 'New conversation opened.'; update(); input.focus();
+    persist(); status.textContent = 'Chat cleared. New conversation opened.'; update();
+  });
+  $('export').addEventListener('click', () => {
+    if (busy || !history.length) return;
+    const Pdf = window.jspdf && window.jspdf.jsPDF;
+    if (!Pdf) { window.print(); return; }
+    try {
+      const doc = new Pdf({ unit: 'mm', format: 'a4' });
+      let y = 18;
+      function write(text) {
+        for (const line of doc.splitTextToSize(text, 180)) {
+          if (y > doc.internal.pageSize.getHeight() - 18) { doc.addPage(); y = 18; }
+          doc.text(line, 14, y); y += 5;
+        }
+        y += 3;
+      }
+      doc.setProperties({ title: 'Deep Space Command chat export', subject: 'Fictional space exploration conversation' });
+      doc.setFont('helvetica', 'bold'); doc.setFontSize(18);
+      write('Deep Space Command');
+      doc.setFont('helvetica', 'normal'); doc.setFontSize(10);
+      write('Generated: ' + new Date().toLocaleString('en-GB', { dateStyle: 'medium', timeStyle: 'short' }));
+      write('Website: ' + window.location.origin + '/deepspace/');
+      write('AI-generated roleplay in a fictional universe.');
+      const introduction = welcome.lastElementChild.textContent;
+      for (const item of [{ role: 'assistant', content: introduction }, ...history]) {
+        doc.setFont('helvetica', 'bold'); write(item.role === 'user' ? 'You:' : 'Commander:');
+        doc.setFont('helvetica', 'normal'); write(item.content);
+      }
+      doc.save('deepspace-chat-export.pdf');
+      status.textContent = 'Chat exported as PDF.';
+    } catch { status.textContent = 'PDF export failed. Please try again.'; }
   });
   $('chat-form').addEventListener('submit', async (event) => {
     event.preventDefault(); if (send.disabled) return;
@@ -75,7 +132,7 @@
       if (typeof data.reply !== 'string' || !data.reply.trim()) throw new Error('An empty transmission arrived. Please try again.');
       if (data.chatSessionToken) { session = data.chatSessionToken; token = ''; }
       history.push({ role: 'user', content: message }, { role: 'assistant', content: data.reply });
-      history = history.slice(-8); addMessage('assistant', data.reply); input.value = '';
+      addMessage('assistant', data.reply); input.value = ''; persist();
       status.textContent = 'Transmission received. Channel ready.';
     } catch (error) {
       outgoing.remove();

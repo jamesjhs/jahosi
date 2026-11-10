@@ -65,7 +65,7 @@
               <div class="border-t border-white/15 bg-slate-900/80 p-5">
                 <label for="preview-message" class="mb-2 block text-xs text-slate-300">Your transmission</label>
                 <div class="flex flex-col gap-3 sm:flex-row">
-                  <textarea id="preview-message" class="preview-input" rows="2" disabled placeholder="Commander, we have encountered…"></textarea>
+                  <textarea id="preview-message" class="preview-input" rows="2" disabled placeholder="Commander, we have encountered"></textarea>
                   <button class="preview-send text-sm" type="button" disabled>Transmit ↗</button>
                 </div>
                 <p class="mt-3 text-xs text-slate-400">Preview only · Open the live app to transmit.</p>
@@ -77,7 +77,7 @@
 
       <h2 class="mt-8 text-xl font-bold">How it works</h2>
       <p class="mt-3 text-slate-600">The app runs inside the Jahosi Node.js and Express backend, using the same server-side AI connection, request limits and Turnstile session checks as the Q&amp;A apps. Its commander instructions stay on the server, and only a bounded conversation history is sent with each message.</p>
-      <p class="mt-4 text-slate-600">The interface uses an HTML5 canvas starfield over a nebula-style background. Animation can be paused and respects reduced-motion preferences. Conversation history stays in memory in the current tab and is cleared on reload or when a new conversation is started.</p>
+      <p class="mt-4 text-slate-600">The interface uses an HTML5 canvas starfield over a nebula-style background. Animation can be paused and respects reduced-motion preferences. Conversation history is saved in your browser between visits. Use Clear chat to remove the saved conversation, or Export PDF to keep a copy. Click the transmission box for a starting prompt, then extend it to at least five words to transmit.</p>
       <div class="mt-6 flex flex-wrap gap-3">
         <a href="/deepspace/" class="inline-flex items-center rounded-lg bg-indigo-700 px-4 py-2 text-sm font-semibold text-white hover:bg-indigo-800">Launch the app &rarr;</a>
         <a href="https://github.com/jamesjhs/jahosi" target="_blank" rel="noopener noreferrer" class="inline-flex items-center rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-semibold text-slate-700 hover:border-slate-400">GitHub repository &nearr;</a>
