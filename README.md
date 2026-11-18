@@ -4,12 +4,19 @@ Node.js portfolio website (Express + Tailwind CDN).
 
 ## Run locally
 
+Use Node.js 22 or newer (Docker uses Node.js 24). After switching Node versions,
+run `npm rebuild better-sqlite3` to refresh its native SQLite binding.
+
 ```bash
 npm install
 npm start
 ```
 
 Open `http://localhost:3000`.
+
+Signal Sprint is available directly at `/signal-sprint/` as a standalone Morse-code
+game, without a portfolio listing. Its self-contained assets live in
+`public/signal-sprint/`; it requires no TaskIt services or additional configuration.
 
 Deep Space Command is available at `/deepspace/`. It uses the existing
 `SPLASH_OPENAI_API_KEY`, `SPLASH_OPENAI_BASE_URL`, Cloudflare Access and Turnstile

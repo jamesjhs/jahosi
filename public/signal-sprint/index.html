@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="description" content="Decode Morse code in Signal Sprint, a standalone listening and memory game." />
+  <title>Signal Sprint</title>
+  <style>
+    * { box-sizing: border-box; }
+    html { min-height: 100%; background: #f8fafc; }
+    body { margin: 0; color: #1f2937; font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
+    main { max-width: 1120px; margin: 0 auto; padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left); }
+    #signal-sprint-game, #signal-sprint-game > .ss-root { min-height: 100vh; min-height: 100dvh; }
+    button:focus-visible { outline: 3px solid #4f46e5; outline-offset: 3px; }
+    noscript { display: block; padding: 24px; text-align: center; }
+  </style>
+  <script src="signal-sprint.js" defer></script>
+</head>
+<body>
+  <main aria-label="Signal Sprint">
+    <div id="signal-sprint-game"></div>
+    <noscript>Enable JavaScript to play Signal Sprint.</noscript>
+  </main>
+</body>
+</html>
