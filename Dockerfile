@@ -4,7 +4,7 @@
 #   during `npm ci`.
 # - The runtime stage copies only node_modules and app files, leaving build tools
 #   behind so the final image is smaller and has less installed surface area.
-FROM node:20-alpine AS deps
+FROM node:24-alpine AS deps
 
 WORKDIR /app
 
@@ -20,7 +20,7 @@ RUN npm ci --omit=dev
 # - It runs the Express application directly with `npm start`.
 # - No .env file is baked into the image. Runtime configuration is injected by
 #   Docker Compose from the generated server .env file.
-FROM node:20-alpine AS runtime
+FROM node:24-alpine AS runtime
 
 ENV NODE_ENV=production
 
